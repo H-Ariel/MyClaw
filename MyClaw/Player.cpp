@@ -562,6 +562,7 @@ D2D1_RECT_F Player::GetRect() // TODO: improve this function
 		rc.top = 20;
 		rc.bottom = 90;
 	}
+	/*
 	else if (_aniName == "LOOKUP" || _aniName == "WALK" || _aniName == "KICK" || _aniName == "FALL" ||
 		_aniName == "UPPERCUT" || _aniName == "PUNCH" || _aniName == "SWIPE" ||
 		_aniName == "PREDYNAMITE" || _aniName == "THROW" || startsWith(_aniName, "LIFT") ||
@@ -575,25 +576,14 @@ D2D1_RECT_F Player::GetRect() // TODO: improve this function
 	else
 	{
 		throw Exception(__FUNCTION__ " - unknown rect. aniName=" + _aniName);
-
-		/*
- 		rc = _ani->GetRect();
-
-		// ignore the tail:
-		if (_forward)
-		{
-			rc.left = rc.right - 50;
-		}
-		else
-		{
-			rc.right = rc.left + 50;
-		}
-
-		rc.top -= position.y;
-		rc.bottom -= position.y;
-		rc.left -= position.x;
-		rc.right -= position.x;
-		*/
+	}
+	*/
+	else
+	{
+		rc.left = -7.f + 15 * (!_forward);
+		rc.right = rc.left + 50;
+		rc.top = 5;
+		rc.bottom = 115;
 	}
 
 
