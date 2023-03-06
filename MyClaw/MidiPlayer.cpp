@@ -1,5 +1,4 @@
 #include "MidiPlayer.h"
-//#include "XmiFile.h"
 
 
 const LARGE_INTEGER EMPTY_LARGE_INTEGER = {};
