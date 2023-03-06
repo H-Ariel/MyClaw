@@ -1,0 +1,175 @@
+#include "Pegs.h"
+#include "../AssetsManager.h"
+#include "../PathManager.h"
+
+
+TogglePeg::TogglePeg(const WwdObject& obj, Player* player)
+	: BaseStaticPlaneObject(obj, player), _state(States::WaitAppear),
+	_totalTime(0), _startTimeDelay(0), _timeOn(0), _timeOff(0)
+{
+	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
+	_aniAppear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, true);
+	_aniDisappear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath);
+
+	_ani = _aniDisappear;
+	_ani->updateFrames = false;
+
+	if (obj.speed > 0)
+	{
+		_startTimeDelay = obj.speed;
+	}
+	else if (obj.logic == "TogglePeg")
+	{
+		_startTimeDelay = 0;
+	}
+	else if (obj.logic == "TogglePeg2")
+	{
+		_startTimeDelay = 750;
+	}
+	else if (obj.logic == "TogglePeg3")
+	{
+		_startTimeDelay = 1500;
+	}
+	else if (obj.logic == "TogglePeg4")
+	{
+		_startTimeDelay = 2250;
+	}
+
+	if (obj.speedX > 0)
+	{
+		_timeOn = obj.speedX;
+	}
+	else
+	{
+		_timeOn = 1500;
+	}
+	if (obj.speedY > 0)
+	{
+		_timeOff = obj.speedY;
+	}
+	else
+	{
+		_timeOff = 1500;
+	}
+
+	if (obj.smarts & 0x1)
+	{
+		_timeOff = 0; // it's always on
+	}
+
+	setObjectRectangle();
+}
+void TogglePeg::Logic(uint32_t elapsedTime)
+{
+	if (_startTimeDelay > 0)
+	{
+		_startTimeDelay -= elapsedTime;
+		return;
+	}
+
+	_totalTime += elapsedTime;
+
+	switch (_state)
+	{
+	case States::Appear:
+		if (_ani->isFinishAnimation())
+		{
+			_state = States::WaitAppear;
+			_totalTime = 0;
+			_ani->updateFrames = false;
+		}
+		break;
+
+	case States::WaitAppear:
+		if (_totalTime >= _timeOn && _timeOff > 0)
+		{
+			_state = States::Disappear;
+			_ani = _aniDisappear;
+			setObjectRectangle();
+			_ani->reset();
+			_ani->loopAni = false;
+		}
+		break;
+
+	case States::Disappear:
+		if (_ani->isFinishAnimation())
+		{
+			_state = States::WaitDisappear;
+			_totalTime = 0;
+			_ani->updateFrames = false;
+		}
+		break;
+
+	case States::WaitDisappear:
+		if (_totalTime >= _timeOff)
+		{
+			_state = States::Appear;
+			_ani = _aniAppear;
+			setObjectRectangle();
+			_ani->reset();
+			_ani->loopAni = false;
+		}
+		break;
+	}
+
+	_ani->Logic(elapsedTime);
+
+	if ((_state == States::Appear && _ani->isPassedHalf()) || 
+		(_state == States::Disappear && !_ani->isPassedHalf()) || 
+		_state == States::WaitAppear)
+	{
+		tryCatchPlayer();
+	}
+}
+
+CrumblingPeg::CrumblingPeg(const WwdObject& obj, Player* player)
+	: BaseStaticPlaneObject(obj, player), _delayTime(obj.counter)
+{
+	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
+	_ani->position = position;
+	Reset();
+	setObjectRectangle();
+}
+void CrumblingPeg::Logic(uint32_t elapsedTime)
+{
+	if (!_draw) return;
+
+	if (_used)
+		if (tryCatchPlayer())
+		{
+			_state = States::Wait;
+		}
+
+	if (_state == States::Wait)
+	{
+		_timeCounter += elapsedTime;
+		if (_timeCounter >= _delayTime)
+		{
+			_state = States::Crumbling;
+			_ani->updateFrames = true;
+		}
+	}
+
+	if (_state == States::Crumbling)
+	{
+		// if it's finished crumbling we don't need that object anymore
+		_draw = !_ani->isFinishAnimation();
+		_used = !_ani->isPassedHalf();
+		_ani->Logic(elapsedTime);
+	}
+}
+void CrumblingPeg::Draw()
+{
+	if (_draw)
+		BaseStaticPlaneObject::Draw();
+}
+void CrumblingPeg::Reset()
+{
+	_ani->reset();
+	_ani->updateFrames = false;
+	_ani->loopAni = false;
+	_timeCounter = 0;
+	_state = States::Appear;
+	_used = true;
+	_draw = true;
+}

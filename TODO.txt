@@ -1,0 +1,6 @@
+* complete Raux logic
+* display screens between levels
+* collect all items
+* add all objects
+* fix enemies movement range (not all of them)
+* find a way to run faster (threads?)

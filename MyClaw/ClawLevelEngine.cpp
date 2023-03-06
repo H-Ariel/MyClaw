@@ -1,0 +1,107 @@
+#include "ClawLevelEngine.h"
+#include "AssetsManager.h"
+#include "WindowManager.h"
+#include "MenuEngine.h"
+
+
+ClawLevelEngine::ClawLevelEngine(int8_t lvlNo)
+	: _state(State::Play), saveBgColor(0), _lvlNo(lvlNo)
+{
+	_helpImage = DBG_NEW MenuBackgroundImage("STATES/HELP/SCREENS/HELP.PCX");
+	_elementsList.push_back(_levelMap = DBG_NEW LevelMap(this, lvlNo));
+	_elementsList.push_back(_hud = DBG_NEW LevelHUD(_player = _levelMap->getPlayer(), *_levelMap->getWindowOffset()));
+	WindowManager::setWindowOffset(_levelMap->getWindowOffset());
+
+//	if (lvlNo == 1) _player->position = { 17485, 1500 }; // END OF LEVEL
+//	if (lvlNo == 1) _player->position = { 5775, 4347 };
+//	if (lvlNo == 1) _player->position = { 9696, 772 };
+//	if (lvlNo == 1) _player->position = { 5226, 4035 };
+//	if (lvlNo == 1) _player->position = { 2596,4155 };
+//	if (lvlNo == 1) _player->position = { 4400, 4347 };
+//	if (lvlNo == 1) _player->position = { 11039, 1851 };
+//	if (lvlNo == 2) _player->position = { 9196, 3958 };
+//	if (lvlNo == 2) _player->position = { 16734, 1542 };
+//	if (lvlNo == 2) _player->position = { 10881, 3382 };
+//	if (lvlNo == 2) _player->position = { 593, 4086 };
+//	if (lvlNo == 2) _player->position = { 17044, 3062};
+//	if (lvlNo == 2) _player->position = { 4596, 3958 };
+	if (lvlNo == 2) _player->position = { 20070, 2092 }; // END OF LEVEL
+//	if (lvlNo == 3) _player->position = { 23072, 6141 };
+}
+ClawLevelEngine::~ClawLevelEngine()
+{
+	delete _helpImage;
+	delete _hud;
+	delete _levelMap;
+
+	AssetsManager::clearLevelAssets(_lvlNo);
+}
+
+void ClawLevelEngine::Logic(uint32_t elapsedTime)
+{
+	BaseEngine::Logic(elapsedTime);
+
+	if (_state == State::Play)
+	{
+		if (!_player->hasLives())
+		{
+			if (_player->isFinishDeathAnimation())
+			{
+				MessageBoxA(nullptr, "You died", "", 0);
+				StopEngine = true;
+			//	changeEngine<MenuEngine>();
+			}
+		}
+		else if (_player->isFinishLevel())
+		{
+			changeEngine<LevelEndEngine>(_lvlNo);
+		}
+	}
+}
+
+void ClawLevelEngine::OnKeyUp(int key)
+{
+	if (key == 0xFF) return; // `Fn` key
+
+	if (_state == State::Play)
+	{
+		if (key == VK_F1)
+		{
+			_state = State::Help;
+			saveBgColor = backgroundColor;
+			backgroundColor = ColorF::Black;
+			_elementsList.clear();
+			_elementsList.push_back(_helpImage);
+			WindowManager::setWindowOffset(nullptr);
+		}
+		/*
+		else if (key == VK_ADD)
+		{
+			if (WindowManager::PixelSize <= 3.5f)
+				WindowManager::PixelSize += 0.5f;
+		}
+		else if (key == VK_SUBTRACT)
+		{
+			if (WindowManager::PixelSize >= 1)
+				WindowManager::PixelSize -= 0.5f;
+		}
+		*/
+		else
+		{
+			_player->keyUp(key);
+		}
+	}
+	else // if (_state == State::Help)
+	{
+		_state = State::Play;
+		backgroundColor = saveBgColor;
+		_elementsList.clear();
+		_elementsList.push_back(_levelMap);
+		_elementsList.push_back(_hud);
+		WindowManager::setWindowOffset(_levelMap->getWindowOffset());
+	}
+}
+void ClawLevelEngine::OnKeyDown(int key)
+{
+	_player->keyDown(key);
+}

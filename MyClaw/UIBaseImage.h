@@ -1,0 +1,25 @@
+#pragma once
+
+#include "UIBaseElement.h"
+
+
+class UIBaseImage : public UIBaseElement
+{
+public:
+	UIBaseImage(ID2D1Bitmap* bitmap, D2D1_POINT_2F offset = {});
+	
+	void Draw() override;
+	D2D1_RECT_F GetRect() override;
+
+	shared_ptr<UIBaseImage> getCopy();
+
+	
+	const D2D1_POINT_2F offset;
+	D2D1_SIZE_F size;
+	bool mirrored; // flag to set whether to draw normal or inverted
+
+private:
+	ID2D1Bitmap* const _bitmap;
+
+	friend class ImagesManager;
+};

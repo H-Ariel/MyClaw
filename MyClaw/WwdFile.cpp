@@ -1,0 +1,331 @@
+#include "WwdFile.h"
+#include "Miniz.h"
+#include "AssetsManager.h"
+
+
+//#define readRect(reader, rect) reader.read(rect.left, rect.top, rect.right, rect.bottom);
+#define readRect(reader, rect) reader.read(rect);
+
+enum WwdFlags
+{
+	WwdFlag_UseZCoords = 1 << 0,
+	WwdFlag_Compress = 1 << 1,
+};
+enum WwdPlaneFlags
+{
+	WwdPlaneFlags_MainPlane = 1 << 0,
+	WwdPlaneFlags_NoDraw = 1 << 1,
+	WwdPlaneFlags_XWrapping = 1 << 2,
+	WwdPlaneFlags_YWrapping = 1 << 3,
+	WwdPlaneFlags_AutoTileSize = 1 << 4
+};
+
+
+WwdObject::WwdObject()
+{
+	id = 0;
+	x = 0;
+	y = 0;
+	z = 0;
+	i = 0;
+	addFlags = 0;
+	dynamicFlags = 0;
+	drawFlags = 0;
+	userFlags = 0;
+	score = 0;
+	points = 0;
+	powerup = 0;
+	damage = 0;
+	smarts = 0;
+	health = 0;
+	moveRect = {};
+	hitRect = {};
+	attackRect = {};
+	clipRect = {};
+	userRect1 = {};
+	userRect2 = {};
+	userValue1 = 0;
+	userValue2 = 0;
+	userValue3 = 0;
+	userValue4 = 0;
+	userValue5 = 0;
+	userValue6 = 0;
+	userValue7 = 0;
+	userValue8 = 0;
+	minX = 0;
+	minY = 0;
+	maxX = 0;
+	maxY = 0;
+	speedX = 0;
+	speedY = 0;
+	tweakX = 0;
+	tweakY = 0;
+	counter = 0;
+	speed = 0;
+	width = 0;
+	height = 0;
+	direction = 0;
+	faceDir = 0;
+	timeDelay = 0;
+	frameDelay = 0;
+	objectType = 0;
+	hitTypeFlags = 0;
+	moveResX = 0;
+	moveResY = 0;
+}
+
+WwdPlane::WwdPlane()
+	:fillColor(0), tilePixelWidth(0), tilePixelHeight(0),
+	tilesOnAxisX(0), tilesOnAxisY(0), movementPercentX(0), movementPercentY(0),
+	ZCoord(0), isWrappedX(false), isWrappedY(false), isMainPlane(false) {}
+
+WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
+{
+	uint32_t wwdSignature; // signature holds WWD header size, if size does not match then it is not supported WWD file
+	wwdFileReader->read(wwdSignature);
+	if (wwdSignature != 1524)
+	{
+		throw Exception("invlaid WWD file");
+	}
+
+	string imageDirectoryPath;
+	uint32_t numPlanes, mainBlockLength;
+	uint32_t planesOffset, tileDescriptionsOffset;
+	uint32_t flags; // WwdFlags
+	uint8_t i;
+
+	wwdFileReader->skip(4);
+	wwdFileReader->read(flags);
+	wwdFileReader->skip(4);
+	levelName = wwdFileReader->ReadString(64);
+	wwdFileReader->skip(384); // 64 bytes - author, 64 bytes - birth, 256 bytes - rezFile
+	imageDirectoryPath = replaceString(wwdFileReader->ReadString(128), '\\', '/');
+	shared_ptr<PidPalette> palette = AssetsManager::loadPidPalette(replaceString(wwdFileReader->ReadString(128), '\\', '/'));
+
+	wwdFileReader->read(startX);
+	wwdFileReader->read(startY);
+	wwdFileReader->skip(4);
+	wwdFileReader->read(numPlanes);
+	wwdFileReader->read(planesOffset);
+	wwdFileReader->read(tileDescriptionsOffset);
+	wwdFileReader->read(mainBlockLength);
+	wwdFileReader->skip(136); // 4 checksum + 4 unk + 128 launch app
+
+	for (i = 0; i < 4; i++, imageSet.push_back(replaceString(wwdFileReader->ReadString(128), '\\', '/')));
+	for (i = 0; i < 4; i++, prefix.push_back(replaceString(wwdFileReader->ReadString(32), '\\', '/')));
+
+
+	if (flags & WwdFlag_Compress)
+	{
+		// Uncompressed WWD file payload info
+		uint32_t decompressedMainBlockLength = planesOffset + mainBlockLength;
+		uint8_t* decompressedMainBlock = DBG_NEW uint8_t[decompressedMainBlockLength];
+		memcpy(decompressedMainBlock, wwdFileReader->getCData(), planesOffset);
+
+		// Inflate compressed WWD file payload
+		mz_uncompress(decompressedMainBlock + planesOffset, mainBlockLength, wwdFileReader->getCData() + planesOffset, (uint32_t)wwdFileReader->getSize() - planesOffset);
+
+
+		BufferReader wwdFileStreamInflated(decompressedMainBlock, decompressedMainBlockLength, false);
+
+		planes.resize(numPlanes);
+		wwdFileStreamInflated.setIndex(planesOffset);
+		readPlanes(wwdFileStreamInflated, palette->colors, imageDirectoryPath);
+		wwdFileStreamInflated.setIndex(tileDescriptionsOffset);
+		readTileDescriptions(wwdFileStreamInflated);
+
+		delete[] decompressedMainBlock;
+	}
+	else
+	{
+		throw Exception(__FUNCTION__ ": `(flags & WwdFlag_Compress)` is false");
+	}
+
+	if (flags & WwdFlag_UseZCoords)
+	{
+		sort(planes.begin(), planes.end(), [](const WwdPlane& a, const WwdPlane& b) { return a.ZCoord < b.ZCoord; });
+	}
+}
+void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath)
+{
+	int64_t currIdx;
+	uint32_t fillColor, imageSetsCount, objectsCount;
+	uint32_t tilesOffset, imageSetsOffset, objectsOffset;
+	uint32_t movementPercentX, movementPercentY;
+	uint32_t flags; // WwdPlaneFlags flags
+
+	for (WwdPlane& pln : planes)
+	{
+		reader.skip(8);
+		reader.read(flags);
+		reader.skip(4);
+		pln.name = reader.ReadString(64);
+		reader.skip(8); // total pixel width, total pixel height
+		reader.read(pln.tilePixelWidth);
+		reader.read(pln.tilePixelHeight);
+		reader.read(pln.tilesOnAxisX);
+		reader.read(pln.tilesOnAxisY);
+		reader.skip(8);
+		reader.read(movementPercentX);
+		reader.read(movementPercentY);
+		reader.read(fillColor);
+		reader.read(imageSetsCount);
+		reader.read(objectsCount);
+		reader.read(tilesOffset);
+		reader.read(imageSetsOffset);
+		reader.read(objectsOffset);
+		reader.read(pln.ZCoord);
+
+		pln.movementPercentX = movementPercentX / 100.f;
+		pln.movementPercentY = movementPercentY / 100.f;
+
+		currIdx = reader.getIndex() + 12; // save the current index and skip 12 bytes
+
+		// read tiles
+		reader.setIndex(tilesOffset);
+		pln.tiles.resize(pln.tilesOnAxisY);
+		for (vector<int32_t>& vec : pln.tiles)
+		{
+			vec.resize(pln.tilesOnAxisX);
+			for (int32_t& i : vec)
+			{
+				reader.read(i);
+				if (i < 0) i = -1;
+			}
+		}
+
+		// read image sets
+		pln.imageSets.resize(imageSetsCount);
+		reader.setIndex(imageSetsOffset);
+		for (string& s : pln.imageSets) s = reader.ReadNullTerminatedString();
+
+		// read objects
+		pln.objects.resize(objectsCount);
+		reader.setIndex(objectsOffset);
+		readPlaneObjects(reader, pln);
+
+		reader.setIndex(currIdx);
+
+		pln.isWrappedX = flags & WwdPlaneFlags_XWrapping;
+		pln.isWrappedY = flags & WwdPlaneFlags_YWrapping;
+		pln.isMainPlane = flags & WwdPlaneFlags_MainPlane;
+		pln.fillColor = ColorF(colors[fillColor].r / 255.f, colors[fillColor].g / 255.f, colors[fillColor].b / 255.f);
+		pln.tilesImages = AssetsManager::loadPlaneTilesImages(imageDirectoryPath + '/' + pln.imageSets[0]);
+	}
+}
+void WapWorld::readPlaneObjects(BufferReader& reader, WwdPlane& pln)
+{
+	uint32_t nameLength, logicLength, imageSetLength, animationLength;
+
+	for (WwdObject& obj : pln.objects)
+	{
+		reader.read(obj.id);
+		reader.read(nameLength);
+		reader.read(logicLength);
+		reader.read(imageSetLength);
+		reader.read(animationLength);
+		reader.read(obj.x);
+		reader.read(obj.y);
+		reader.read(obj.z);
+		reader.read(obj.i);
+		reader.read(obj.addFlags);
+		reader.read(obj.dynamicFlags);
+		reader.read(obj.drawFlags);
+		reader.read(obj.userFlags);
+		reader.read(obj.score);
+		reader.read(obj.points);
+		reader.read(obj.powerup);
+		reader.read(obj.damage);
+		reader.read(obj.smarts);
+		reader.read(obj.health);
+
+		reader.read(obj.moveRect);
+		reader.read(obj.hitRect);
+		reader.read(obj.attackRect);
+		reader.read(obj.clipRect);
+		reader.read(obj.userRect1);
+		reader.read(obj.userRect2);
+
+		reader.read(obj.userValue1);
+		reader.read(obj.userValue2);
+		reader.read(obj.userValue3);
+		reader.read(obj.userValue4);
+		reader.read(obj.userValue5);
+		reader.read(obj.userValue6);
+		reader.read(obj.userValue7);
+		reader.read(obj.userValue8);
+		reader.read(obj.minX);
+		reader.read(obj.minY);
+		reader.read(obj.maxX);
+		reader.read(obj.maxY);
+		reader.read(obj.speedX);
+		reader.read(obj.speedY);
+		reader.read(obj.tweakX);
+		reader.read(obj.tweakY);
+		reader.read(obj.counter);
+		reader.read(obj.speed);
+		reader.read(obj.width);
+		reader.read(obj.height);
+		reader.read(obj.direction);
+		reader.read(obj.faceDir);
+		reader.read(obj.timeDelay);
+		reader.read(obj.frameDelay);
+		reader.read(obj.objectType);
+		reader.read(obj.hitTypeFlags);
+		reader.read(obj.moveResX);
+		reader.read(obj.moveResY);
+
+		obj.name = reader.ReadString(nameLength);
+		obj.logic = reader.ReadString(logicLength);
+		obj.imageSet = reader.ReadString(imageSetLength);
+		obj.animation = reader.ReadString(animationLength);
+	}
+
+	sort(pln.objects.begin(), pln.objects.end(), [](const WwdObject& a, const WwdObject& b) { return a.z < b.z; });
+}
+void WapWorld::readTileDescriptions(BufferReader& reader)
+{
+	uint32_t tilesDescCount;
+
+	reader.skip(8);
+	reader.read(tilesDescCount);
+	reader.skip(20);
+
+	vector<WwdTileDescription> tilesDescList(tilesDescCount);
+
+	for (WwdTileDescription& tileDesc : tilesDescList)
+	{
+		reader.read(tileDesc.type);
+		reader.skip(4);
+		reader.read(tileDesc.width);
+		reader.read(tileDesc.height);
+
+		switch (tileDesc.type)
+		{
+		case WwdTileDescription::TileType_Single:
+			reader.read(tileDesc.insideAttrib);
+			break;
+		
+		case WwdTileDescription::TileType_Double:
+			reader.read(tileDesc.outsideAttrib);
+			reader.read(tileDesc.insideAttrib);
+			readRect(reader, tileDesc.rect);
+			break;
+		
+		default:
+			throw Exception(__FUNCTION__ ": invalid value");
+		}
+	}
+
+	// save only what we need...
+	tilesDescription[-1].type = WwdTileDescription::TileType_Empty;
+	for (const WwdPlane& pln : planes)
+		if (pln.isMainPlane)
+		{
+			for (const vector<int32_t>& vec : pln.tiles)
+				for (const int32_t& tileId : vec)
+					if (tilesDescription.count(tileId) == 0)
+						tilesDescription[tileId] = tilesDescList[tileId];
+			break;
+		}
+}
