@@ -162,6 +162,12 @@
     <ClCompile Include="Objects\Rope.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\RobberThief.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\CutThroat.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -310,6 +316,12 @@
     </ClInclude>
     <ClInclude Include="Objects\Rope.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\RobberThief.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\CutThroat.h">
+      <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

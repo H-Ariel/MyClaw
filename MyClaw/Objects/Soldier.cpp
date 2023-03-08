@@ -67,7 +67,7 @@ pair<D2D1_RECT_F, int8_t> Soldier::GetAttackRect()
 			else
 			{
 				rc.left = -15;
-				rc.right = -15;
+				rc.right = 15;
 			}
 
 			rc.top = 0;

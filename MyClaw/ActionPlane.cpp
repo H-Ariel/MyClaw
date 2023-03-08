@@ -9,6 +9,8 @@
 #include "Objects/Officer.h"
 #include "Objects/Soldier.h"
 #include "Objects/Rat.h"
+#include "Objects/RobberThief.h"
+#include "Objects/CutThroat.h"
 #include "Objects/Raux.h"
 #include "Objects/SoundTrigger.h"
 #include "Objects/Pegs.h"
@@ -566,7 +568,9 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
 		|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"
-		|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup" /*|| obj.logic == "CursePowerup"*/)
+		|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup" 
+		|| obj.logic == "EndOfLevelPowerup" || obj.logic == "MagicPowerup"
+		/*|| obj.logic == "CursePowerup"*/)
 	{
 		_objects.push_back(Item::getItem(obj, _player));
 	}
@@ -594,6 +598,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "PunkRat")
 	{
 		ADD_ENEMY(DBG_NEW PunkRat(obj, _player));
+	}
+	else if (obj.logic == "RobberThief")
+	{
+		ADD_ENEMY(DBG_NEW RobberThief(obj, _player));
+	}
+	else if (obj.logic == "CutThroat")
+	{
+		ADD_ENEMY(DBG_NEW CutThroat(obj, _player));
 	}
 #endif
 	else if (obj.logic == "Raux")
