@@ -18,7 +18,7 @@ void PowderKeg::Logic(uint32_t elapsedTime)
 	if (shouldMakeExplos())
 	{
 		_state = State::Explos;
-		_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/EXPLODE.ANI");
+		_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/EXPLODE.ANI", _imageSet);
 		_ani->loopAni = false;
 	}
 
@@ -90,7 +90,7 @@ void PowderKeg::raise()
 void PowderKeg::thrown(bool forward)
 {
 	_state = State::Thrown;
-	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI");
+	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI", _imageSet);
 	_ani->loopAni = false;
 
 	_speed.x = forward ? 0.35f : -0.35f;
@@ -99,7 +99,7 @@ void PowderKeg::thrown(bool forward)
 void PowderKeg::fall()
 {
 	_state = State::Thrown;
-	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI");
+	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI", _imageSet);
 	_ani->loopAni = false;
 	_speed.y = 0.01f; // almost no speed
 }

@@ -140,6 +140,10 @@ void Elevator::mainLogic(uint32_t elapsedTime)
 	}
 	/////////////////////////
 
+	mainMainLogic(elapsedTime);
+}
+void Elevator::mainMainLogic(uint32_t elapsedTime)
+{
 	const float deltaX = _speed.x * elapsedTime;
 	const float deltaY = _speed.y * elapsedTime;
 
@@ -184,4 +188,55 @@ bool Elevator::tryCatchPlayer()
 		return true;
 	}
 	return false;
+}
+
+
+PathElevator::PathElevator(const WwdObject& obj, Player* player)
+	: Elevator(obj, player)
+{
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
+	
+	_totalSpeed = obj.speed / 1000.f;
+	if (_totalSpeed == 0) _totalSpeed = 0.125f;
+	
+	if (obj.moveRect.left		!= 0) _paths.push_back({ obj.moveRect.left		, obj.moveRect.top });
+	if (obj.moveRect.right		!= 0) _paths.push_back({ obj.moveRect.right		, obj.moveRect.bottom });
+	if (obj.hitRect.left		!= 0) _paths.push_back({ obj.hitRect.left		, obj.hitRect.top });
+	if (obj.hitRect.right		!= 0) _paths.push_back({ obj.hitRect.right		, obj.hitRect.bottom });
+	if (obj.attackRect.left		!= 0) _paths.push_back({ obj.attackRect.left	, obj.attackRect.top });
+	if (obj.attackRect.right	!= 0) _paths.push_back({ obj.attackRect.right	, obj.attackRect.bottom });
+	if (obj.clipRect.left		!= 0) _paths.push_back({ obj.clipRect.left		, obj.clipRect.top });
+	if (obj.clipRect.right		!= 0) _paths.push_back({ obj.clipRect.right		, obj.clipRect.bottom });
+
+	if (_paths.size() == 0)
+	{
+		throw Exception(__FUNCTION__ " - no paths");
+	}
+
+	_pathIdx = -1;
+	_timeCounter = 0;
+}
+void PathElevator::Logic(uint32_t elapsedTime)
+{
+	_timeCounter -= elapsedTime;
+
+	if (_timeCounter <= 0)
+	{
+		_pathIdx = (_pathIdx + 1) % _paths.size();
+		_timeCounter = int32_t(_paths[_pathIdx].second / _totalSpeed);
+		switch (_paths[_pathIdx].first)
+		{
+		case WwdObject::Direction_BottomLeft:	_speed = { -_totalSpeed, _totalSpeed }; break;
+		case WwdObject::Direction_Down:			_speed = { 0, _totalSpeed }; break;
+		case WwdObject::Direction_BottomRight:	_speed = { _totalSpeed, _totalSpeed }; break;
+		case WwdObject::Direction_Left:			_speed = { -_totalSpeed, 0 }; break;
+		case WwdObject::Direction_Right:		_speed = { _totalSpeed, 0 }; break;
+		case WwdObject::Direction_TopLeft:		_speed = { -_totalSpeed, -_totalSpeed }; break;
+		case WwdObject::Direction_Up:			_speed = { 0, -_totalSpeed }; break;
+		case WwdObject::Direction_TopRight:		_speed = { _totalSpeed, -_totalSpeed }; break;
+		default: _speed = {}; break;
+		}
+	}
+
+	mainMainLogic(elapsedTime);
 }

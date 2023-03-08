@@ -70,6 +70,7 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
 	_powderKegs.clear();
 	_enemies.clear();
 	_projectiles.clear();
+	_floorSpikes.clear();
 
 
 	WwdObject playerData;
@@ -556,6 +557,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW Elevator(obj, _player));
 	}
+	else if (obj.logic == "PathElevator")
+	{
+		_objects.push_back(DBG_NEW PathElevator(obj, _player));
+	}
 	else if (obj.logic == "Checkpoint")
 	{
 		_objects.push_back(DBG_NEW Checkpoint(obj, _player));
@@ -567,11 +572,6 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "TogglePeg" || obj.logic == "TogglePeg2" || obj.logic == "TogglePeg3" || obj.logic == "TogglePeg4")
 	{
 		_objects.push_back(DBG_NEW TogglePeg(obj, _player));
-	}
-	else if (obj.logic == "FloorSpike" || obj.logic == "FloorSpike2" || obj.logic == "FloorSpike3" || obj.logic == "FloorSpike4")
-	{
-		FloorSpike* s = DBG_NEW FloorSpike(obj, _player);
-		_objects.push_back(s); _floorSpikes.push_back(s);
 	}
 	else if (obj.logic == "CrumblingPeg")
 	{
@@ -589,7 +589,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW Rope(obj, _player));
 	}
-#if 01
+#if 0
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
 	{
 		_objects.push_back(DBG_NEW TowerCannon(obj, _player));
@@ -617,6 +617,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "CutThroat")
 	{
 		ADD_ENEMY(DBG_NEW CutThroat(obj, _player));
+	}
+	else if (obj.logic == "FloorSpike" || obj.logic == "FloorSpike2" || obj.logic == "FloorSpike3" || obj.logic == "FloorSpike4")
+	{
+		FloorSpike* s = DBG_NEW FloorSpike(obj, _player);
+		_objects.push_back(s); _floorSpikes.push_back(s);
 	}
 #endif
 	else if (obj.logic == "Raux")

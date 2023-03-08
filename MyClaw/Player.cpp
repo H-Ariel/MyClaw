@@ -1,10 +1,9 @@
 #include "Player.h"
 #include "AssetsManager.h"
 #include "ActionPlane.h"
-#include "Objects/Elevator.h"
 #include "Objects/Rope.h"
 #include "Objects/Projectile.h"
-#include "Objects/Officer.h"
+#include "Objects/BaseEnemy.h"
 
 
 // TODO: find perfect values (if they are still not perfect :D )
