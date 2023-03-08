@@ -2,6 +2,7 @@
 #include "AssetsManager.h"
 #include "ActionPlane.h"
 #include "Objects/Elevator.h"
+#include "Objects/Rope.h"
 #include "Objects/Projectile.h"
 #include "Objects/Officer.h"
 
@@ -202,13 +203,9 @@ void Player::Logic(uint32_t elapsedTime)
 	}
 
 
-	D2D1_POINT_2F positionOffset = {};
 	const D2D1_POINT_2F prevPosition = position;
 
 	const bool inAir = isFalling() || isJumping();
-
-	_upPressed = _upPressed && !_useWeapon && !_isAttack && !_altPressed;
-
 	const bool lookup = _upPressed && (isStanding() || _aniName == "LOOKUP");
 	const bool duck = _downPressed && (isStanding() || isDuck());
 
@@ -218,11 +215,9 @@ void Player::Logic(uint32_t elapsedTime)
 		_useWeapon = false;
 	}
 
-	_leftPressed = _leftPressed && !_useWeapon && (!_isAttack || (_isAttack && inAir)) && !duck && !lookup && !_altPressed;
-	_rightPressed = _rightPressed && !_useWeapon && (!_isAttack || (_isAttack && inAir)) && !duck && !lookup && !_altPressed;
-
-	const bool goLeft = _leftPressed && !_leftCollision && !_isOnLadder;
-	const bool goRight = _rightPressed && !_rightCollision && !_isOnLadder;
+	const bool canWalk = !_useWeapon && (!_isAttack || (_isAttack && inAir)) && !duck && !lookup && !_altPressed && !_isOnLadder;
+	const bool goLeft = _leftPressed && !_leftCollision && canWalk;
+	const bool goRight = _rightPressed && !_rightCollision && canWalk;
 
 	bool climbUp = false, climbDown = false;
 
@@ -274,7 +269,7 @@ void Player::Logic(uint32_t elapsedTime)
 	else
 	{
 		_isOnLadder = false;
-		if (elevator == nullptr)
+		if (!elevator && !rope)
 		{
 			_speed.y += GRAVITY * elapsedTime;
 		}
@@ -316,6 +311,12 @@ void Player::Logic(uint32_t elapsedTime)
 		else if (lookup)
 		{
 			_aniName = "LOOKUP";
+		}
+		else if (rope)
+		{
+			_aniName = "SWING";
+			_forward = !rope->isPassedHalf();
+			_speed = {};
 		}
 		else if (_isAttack)
 		{
@@ -526,15 +527,10 @@ void Player::Logic(uint32_t elapsedTime)
 				}
 			}
 		}
-
-		if (isDuck())
-		{
-			positionOffset.y = 10;
-		}
 	}
 
 	_ani->mirrored = !_forward && !_isOnLadder;
-	_ani->position = { position.x - positionOffset.x, position.y - positionOffset.y };
+	_ani->position = position;
 	_ani->Logic(elapsedTime);
 }
 void Player::Draw()
@@ -753,6 +749,7 @@ void Player::jump()
 	else
 		_speed.y = -SpeedY_RegularJump;
 	elevator = nullptr;
+	rope = nullptr;
 }
 bool Player::checkForHurts()
 {
@@ -958,6 +955,7 @@ void Player::backToLife()
 	_useWeapon = false;
 	_isAttack = false;
 	elevator = nullptr;
+	rope = nullptr;
 	_health = 100;
 	_aniName = "STAND";
 	_ani = _animations["STAND"];
@@ -1027,8 +1025,8 @@ void Player::keyUp(int key)
 	case '2':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Magic; break;
 	case '3':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Dynamite; break;
 
-	case VK_MENU:		_useWeapon = !_isOnLadder; _altPressed = false; break;
-	case VK_CONTROL:	_isAttack = !_isOnLadder && !_altPressed; break;
+	case VK_MENU:		_useWeapon = !_isOnLadder && !rope; _altPressed = false; break;
+	case VK_CONTROL:	_isAttack = !_isOnLadder && !_altPressed && !rope; break;
 	}
 }
 void Player::keyDown(int key)
@@ -1037,16 +1035,16 @@ void Player::keyDown(int key)
 
 	switch (key)
 	{
-	case VK_UP:		_upPressed = true; break;
-	case VK_DOWN:	_downPressed = true; break;
+	case VK_UP:		if (!rope && !_useWeapon && !_isAttack && !_altPressed) _upPressed = true; break;
+	case VK_DOWN:	if (!rope) _downPressed = true; break;
 	case VK_LEFT:	_leftPressed = true; break;
 	case VK_RIGHT:	_rightPressed = true; break;
 	case VK_SPACE:	_spacePressed = true; break;
-	case 'Z':		_zPressed = true; break;
-	case VK_MENU:
+	case 'Z':		if (!rope) _zPressed = true; break;
+	case VK_MENU:	if (!rope) {
 		if (!_altPressed) _holdAltTime = 0;
 		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount[ClawProjectile::Types::Dynamite] > 0);
-		break;
+	} break;
 	}
 }
 

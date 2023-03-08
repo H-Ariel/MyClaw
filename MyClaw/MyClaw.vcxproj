@@ -160,9 +160,9 @@
     <ClCompile Include="Objects\Projectile.cpp" />
     <ClCompile Include="Objects\Rat.cpp" />
     <ClCompile Include="Objects\Raux.cpp" />
+    <ClCompile Include="Objects\Rope.cpp" />
     <ClCompile Include="Objects\Soldier.cpp" />
     <ClCompile Include="Objects\SoundTrigger.cpp" />
-    <ClCompile Include="Objects\Warp.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="PidPalette.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -212,9 +212,9 @@
     <ClInclude Include="Objects\Projectile.h" />
     <ClInclude Include="Objects\Rat.h" />
     <ClInclude Include="Objects\Raux.h" />
+    <ClInclude Include="Objects\Rope.h" />
     <ClInclude Include="Objects\Soldier.h" />
     <ClInclude Include="Objects\SoundTrigger.h" />
-    <ClInclude Include="Objects\Warp.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="PidPalette.h" />
     <ClInclude Include="Player.h" />

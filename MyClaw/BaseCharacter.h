@@ -25,6 +25,6 @@ protected:
 	map<string, shared_ptr<Animation>> _animations; // map of all animations of this character. format: [name]=animation
 	D2D1_RECT_F _lastAttackRect; // the player/enemy attackRect (that this character get, e.g. officer use it after player hit him)
 	int8_t _health;
-	bool _forward;
+	bool _forward; // TODO use `_isMirrored`
 	bool _isAttack;
 };

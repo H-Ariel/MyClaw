@@ -1,5 +1,4 @@
 #include "Item.h"
-#include "Warp.h"
 #include "../AssetsManager.h"
 #include "../Player.h"
 #include "../PathManager.h"
@@ -117,6 +116,30 @@ string getItemPath(Item::Type type, string imageSet)
 
 	return "";
 }
+
+
+class Warp : public Item
+{
+public:
+	Warp(const WwdObject& obj, Player* player, int8_t type)
+		: Item(obj, player, type), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)
+	{
+	}
+	void Logic(uint32_t elapsedTime) override
+	{
+		if (CollisionDistances::isCollision(GetRect(), _player->GetRect()))
+		{
+			_player->position = _destination;
+			_player->stopFalling(0);
+			removeObject = _oneTimeWarp;
+			// TODO: cool animation
+		}
+	}
+
+private:
+	const D2D1_POINT_2F _destination;
+	const bool _oneTimeWarp; // flag to determine whether to delete an object after using it
+};
 
 
 Item::Item(const WwdObject& obj, Player* player, int8_t type)

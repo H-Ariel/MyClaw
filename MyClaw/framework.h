@@ -39,6 +39,7 @@
 #include <thread>
 #include <mutex>
 #include <stack>
+#include <set>
 
 #include "Exception.hpp"
 #include "CollisionDistances.h"

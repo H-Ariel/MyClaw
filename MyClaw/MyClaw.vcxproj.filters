@@ -144,9 +144,6 @@
     <ClCompile Include="Objects\Officer.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Warp.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\PowderKeg.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -161,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="Objects\Soldier.cpp">
       <Filter>Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Rope.cpp">
+      <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -275,9 +275,6 @@
     <ClInclude Include="Objects\Soldier.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Warp.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\SoundTrigger.h">
       <Filter>Objects</Filter>
     </ClInclude>
@@ -309,6 +306,9 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Checkpoint.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Rope.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

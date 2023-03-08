@@ -14,6 +14,7 @@
 #include "Objects/Pegs.h"
 #include "Objects/DoNothing.h"
 #include "Objects/Cannon.h"
+#include "Objects/Rope.h"
 
 
 #define EMPTY_TILE -1
@@ -568,6 +569,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 		|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup" /*|| obj.logic == "CursePowerup"*/)
 	{
 		_objects.push_back(Item::getItem(obj, _player));
+	}
+	else if (obj.logic == "AniRope")
+	{
+		_objects.push_back(DBG_NEW Rope(obj, _player));
 	}
 #if 01
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")

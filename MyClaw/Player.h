@@ -7,6 +7,7 @@
 
 class Elevator;
 class PowderKeg;
+class Rope;
 class PowerupSparkle;
 
 
@@ -67,6 +68,7 @@ public:
 
 	D2D1_POINT_2F startPosition;
 	Elevator* elevator; // stores the elevator it is standing on (if any)
+	Rope* rope;
 	bool isCollideWithLadder;
 
 
