@@ -2,7 +2,6 @@
 #include "../PathManager.h"
 #include "../AssetsManager.h"
 #include "../Player.h"
-#include "../CollisionDistances.h"
 
 
 #define RECT_OFFSET 15

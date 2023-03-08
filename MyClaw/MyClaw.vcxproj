@@ -154,6 +154,7 @@
     <ClCompile Include="Objects\CutThroat.cpp" />
     <ClCompile Include="Objects\DoNothing.cpp" />
     <ClCompile Include="Objects\Elevator.cpp" />
+    <ClCompile Include="Objects\FloorSpike.cpp" />
     <ClCompile Include="Objects\Item.cpp" />
     <ClCompile Include="Objects\Officer.cpp" />
     <ClCompile Include="Objects\Pegs.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Objects\CutThroat.h" />
     <ClInclude Include="Objects\DoNothing.h" />
     <ClInclude Include="Objects\Elevator.h" />
+    <ClInclude Include="Objects\FloorSpike.h" />
     <ClInclude Include="Objects\Item.h" />
     <ClInclude Include="Objects\Officer.h" />
     <ClInclude Include="Objects\Pegs.h" />

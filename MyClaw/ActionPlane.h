@@ -3,6 +3,7 @@
 #include "LevelPlane.h"
 #include "Player.h"
 #include "Objects/PowderKeg.h"
+#include "Objects/FloorSpike.h"
 
 
 class BaseEnemy;
@@ -23,6 +24,7 @@ public:
 	static const vector<PowderKeg*>& getPowderKegs();
 	static const vector<BaseEnemy*>& getEnemies();
 	static const vector<Projectile*>& getProjectiles();
+	static const vector<FloorSpike*>& getFloorSpikes();
 
 private:
 	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath);
@@ -32,6 +34,7 @@ private:
 	static vector<PowderKeg*> _powderKegs; // TODO: make non-static
 	static vector<BaseEnemy*> _enemies; // TODO: make non-static
 	static vector<Projectile*> _projectiles; // TODO: make non-static
+	static vector<FloorSpike*> _floorSpikes; // TODO: make non-static
 	static bool _needSort; // TODO: make non-static
 	shared_ptr<WapWorld> _wwd;
 	Player* _player;

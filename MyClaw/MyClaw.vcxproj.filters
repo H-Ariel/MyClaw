@@ -168,6 +168,9 @@
     <ClCompile Include="Objects\CutThroat.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\FloorSpike.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -322,6 +325,9 @@
     </ClInclude>
     <ClInclude Include="Objects\CutThroat.h">
       <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\FloorSpike.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -58,6 +58,7 @@ vector<BasePlaneObject*> ActionPlane::_objects;
 vector<PowderKeg*> ActionPlane::_powderKegs;
 vector<BaseEnemy*> ActionPlane::_enemies;
 vector<Projectile*> ActionPlane::_projectiles;
+vector<FloorSpike*> ActionPlane::_floorSpikes;
 bool ActionPlane::_needSort;
 
 
@@ -315,6 +316,11 @@ const vector<PowderKeg*>& ActionPlane::getPowderKegs() { return _powderKegs; }
 const vector<BaseEnemy*>& ActionPlane::getEnemies() { return _enemies; }
 const vector<Projectile*>& ActionPlane::getProjectiles() { return _projectiles; }
 
+const vector<FloorSpike*>& ActionPlane::getFloorSpikes()
+{
+	return _floorSpikes;
+}
+
 void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath)
 {
 	static const float N = 2.5f; // this number indicate how many tile we will check from every side
@@ -561,6 +567,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "TogglePeg" || obj.logic == "TogglePeg2" || obj.logic == "TogglePeg3" || obj.logic == "TogglePeg4")
 	{
 		_objects.push_back(DBG_NEW TogglePeg(obj, _player));
+	}
+	else if (obj.logic == "FloorSpike" || obj.logic == "FloorSpike2" || obj.logic == "FloorSpike3" || obj.logic == "FloorSpike4")
+	{
+		FloorSpike* s = DBG_NEW FloorSpike(obj, _player);
+		_objects.push_back(s); _floorSpikes.push_back(s);
 	}
 	else if (obj.logic == "CrumblingPeg")
 	{

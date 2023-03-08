@@ -753,13 +753,14 @@ void Player::jump()
 }
 bool Player::checkForHurts()
 {
+	pair<D2D1_RECT_F, int8_t> atkRc;
+
 	for (BaseEnemy* enemy : ActionPlane::getEnemies())
 	{
 		if (enemy->isAttack())
 		{
-			pair<D2D1_RECT_F, int8_t> atkRc = enemy->GetAttackRect();
-
-			if (CollisionDistances::isCollision(_saveCurrRect, atkRc.first) && _lastAttackRect != atkRc.first)
+			atkRc = enemy->GetAttackRect();
+			if (_lastAttackRect != atkRc.first && CollisionDistances::isCollision(_saveCurrRect, atkRc.first))
 			{
 				_lastAttackRect = atkRc.first;
 				_health -= atkRc.second;
@@ -781,10 +782,11 @@ bool Player::checkForHurts()
 		}
 	}
 
+	int8_t damage;
+
 	for (PowderKeg* p : ActionPlane::getPowderKegs())
 	{
-		int8_t damage = p->getDamage();
-		if (p != _lastPowderKegExplos && damage > 0)
+		if (p != _lastPowderKegExplos && (damage = p->getDamage()) > 0)
 		{
 			if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
 			{
@@ -793,6 +795,16 @@ bool Player::checkForHurts()
 				return true;
 			}
 		}
+	}
+	
+	for (FloorSpike* s : ActionPlane::getFloorSpikes())
+	{
+		if ((damage = s->getDamage()) > 0)
+			if (CollisionDistances::isCollision(_saveCurrRect, s->GetRect()))
+			{
+				_health -= damage;
+				return true;
+			}
 	}
 
 	_lastAttackRect = {};
