@@ -167,26 +167,23 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_raisedPowderKeg)
 		speedX = SpeedX_LiftPowderKeg;
 
-	if (!isTakeDamage())
+	if (checkForHurts())
 	{
-		if (checkForHurts())
+		if (_health <= 0)
 		{
-			if (_health <= 0)
-			{
-				_aniName = "FALLDEATH";
-			}
-			else
-			{
-				_aniName = "DAMAGE" + to_string(getRandomInt(1, 2));
-			}
-
-			_ani = _animations[_aniName];
-			_ani->reset();
-			_ani->loopAni = false;
-			_ani->mirrored = !_forward; ////////
-			_ani->position = position; ////////
-			_isOnLadder = false;
+			_aniName = "FALLDEATH";
 		}
+		else
+		{
+			_aniName = "DAMAGE" + to_string(getRandomInt(1, 2));
+		}
+
+		_ani = _animations[_aniName];
+		_ani->reset();
+		_ani->loopAni = false;
+		_ani->mirrored = !_forward; ////////
+		_ani->position = position; ////////
+		_isOnLadder = false;
 	}
 	if (isTakeDamage() || _aniName == "FALLDEATH")
 	{
@@ -752,6 +749,8 @@ void Player::jump()
 }
 bool Player::checkForHurts()
 {
+	if (isTakeDamage()) return false;
+
 	pair<D2D1_RECT_F, int8_t> atkRc;
 
 	for (BaseEnemy* enemy : ActionPlane::getEnemies())

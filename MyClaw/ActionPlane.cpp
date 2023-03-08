@@ -32,6 +32,8 @@
 
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 
+//#define SAVE_LOGICS
+
 
 class SimpleObject : public BasePlaneObject
 {
@@ -79,8 +81,16 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
 	playerData.z = 4000;
 	_player = DBG_NEW Player(playerData, _planeSize);
 
+#ifdef SAVE_LOGICS
+	set<string> allLogics;
+#endif
+
 	for (const WwdObject& obj : plane.objects)
 	{
+#ifdef SAVE_LOGICS
+		allLogics.insert(obj.logic);
+#endif
+
 		try
 		{
 			addObject(obj);
@@ -94,6 +104,10 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
 #endif
 		}
 	}
+#ifdef SAVE_LOGICS
+	ofstream of("c:/users/ariel/desktop/remain- level4 logics.txt");
+	for (auto& i : allLogics) of << i << endl;
+#endif
 
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
 
@@ -316,11 +330,7 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 const vector<PowderKeg*>& ActionPlane::getPowderKegs() { return _powderKegs; }
 const vector<BaseEnemy*>& ActionPlane::getEnemies() { return _enemies; }
 const vector<Projectile*>& ActionPlane::getProjectiles() { return _projectiles; }
-
-const vector<FloorSpike*>& ActionPlane::getFloorSpikes()
-{
-	return _floorSpikes;
-}
+const vector<FloorSpike*>& ActionPlane::getFloorSpikes() { return _floorSpikes; }
 
 void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath)
 {
