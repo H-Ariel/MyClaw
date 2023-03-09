@@ -1,7 +1,6 @@
 #include "Cannon.h"
 #include "Projectile.h"
 #include "../Player.h"
-#include "../PathManager.h"
 #include "../AssetsManager.h"
 #include "../ActionPlane.h"
 
@@ -9,7 +8,6 @@
 Cannon::Cannon(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _timeCounter(0), _shootDirection(NotShoot), _ballOffset(0)
 {
-//	const string imagesPath = PathManager::getImageSetPath(obj.imageSet);
 	const string anisPath = PathManager::getAnimationSetPath(obj.imageSet);
 
 	_home = AssetsManager::loadAnimation(anisPath + "/HOME.ANI", obj.imageSet);

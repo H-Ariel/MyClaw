@@ -110,7 +110,7 @@ Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH" };
 
-	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
+	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 125, false);
 }
 
 void Player::Logic(uint32_t elapsedTime)
@@ -736,16 +736,21 @@ void Player::stopMovingRight(float collisionSize)
 		_rightCollision = true;
 	}
 }
-void Player::jump()
+void Player::jump(float force)
 {
 	if (_aniName == "LOOKUP" || isDuck() || _raisedPowderKeg) return;
 
-	if (_currPowerup == PowerupType::Catnip)
-		_speed.y = -SpeedY_SuperJump;
-	else
-		_speed.y = -SpeedY_RegularJump;
 	elevator = nullptr;
 	rope = nullptr;
+
+	_speed.y = -force;
+}
+void Player::jump()
+{
+	if (_currPowerup == PowerupType::Catnip)
+		jump(SpeedY_SuperJump);
+	else
+		jump(SpeedY_RegularJump);
 }
 bool Player::checkForHurts()
 {

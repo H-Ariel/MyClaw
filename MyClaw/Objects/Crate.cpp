@@ -2,7 +2,6 @@
 #include "Projectile.h"
 #include "../Player.h"
 #include "../AssetsManager.h"
-#include "../PathManager.h"
 #include "../ActionPlane.h"
 
 #define CRATE_HEIGHT 43
@@ -22,7 +21,7 @@ Crate::Crate(const WwdObject& obj, Player* player)
 	if (obj.userRect2.top		> 0) _itemsTypes.push_back(obj.userRect2.top);
 	if (_itemsTypes.size()	   == 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
 	
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100);
+	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false);
 	_ani->updateFrames = false;
 
 	setObjectRectangle();

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "framework.h"
+#include <string>
+
+using std::string;
 
 
 class PathManager

@@ -1,5 +1,4 @@
 #include "CutThroat.h"
-#include "../PathManager.h"
 
 
 CutThroat::CutThroat(const WwdObject& obj, Player* player)

@@ -1,5 +1,4 @@
 #include "Soldier.h"
-#include "../PathManager.h"
 
 
 Soldier::Soldier(const WwdObject& obj, Player* player)

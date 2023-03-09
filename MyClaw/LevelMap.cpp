@@ -2,7 +2,6 @@
 #include "ClawLevelEngine.h"
 #include "AssetsManager.h"
 #include "WindowManager.h"
-#include "PathManager.h"
 
 
 LevelMap::LevelMap(ClawLevelEngine* engine, uint8_t levelNumber)

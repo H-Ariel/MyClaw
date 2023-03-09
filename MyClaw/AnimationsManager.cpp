@@ -63,6 +63,7 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromFromPidImage(const s
 	{
 		vector<Animation::FrameData*> images = { DBG_NEW Animation::FrameData(pidPath) };
 		_loadedAnimations[pidPath] = allocNewSharedPtr<Animation>(images);
+		_loadedAnimations[pidPath]->updateFrames = false;
 	}
 	return _loadedAnimations[pidPath];
 }

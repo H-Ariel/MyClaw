@@ -1,7 +1,6 @@
 #include "SoundTrigger.h"
 #include "../AssetsManager.h"
 #include "../Player.h"
-#include "../PathManager.h"
 
 
 SoundObjectBase::SoundObjectBase(const WwdObject& obj, Player* player)

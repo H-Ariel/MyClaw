@@ -1,6 +1,5 @@
 #include "DoNothing.h"
 #include "../AssetsManager.h"
-#include "../PathManager.h"
 
 
 DoNothing::DoNothing(const WwdObject& obj)

@@ -1,15 +1,16 @@
-#include "FloorSpike.h"
-#include "../Player.h"
+#include "SteppingStone.h"
 #include "../AssetsManager.h"
 
 
-FloorSpike::FloorSpike(const WwdObject& obj, Player* player)
+// TODO: looks same to TogglePeg ... (NOTE: the times in the ctor are different!)
+
+SteppingStone::SteppingStone(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _state(States::WaitAppear),
 	_totalTime(0), _startTimeDelay(0), _timeOn(0), _timeOff(0)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
-	_aniAppear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, false);
-	_aniDisappear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, true);
+	_aniAppear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, true);
+	_aniDisappear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, false);
 
 	_ani = _aniDisappear;
 	_ani->updateFrames = false;
@@ -18,21 +19,14 @@ FloorSpike::FloorSpike(const WwdObject& obj, Player* player)
 	{
 		_startTimeDelay = obj.speed;
 	}
-	else if (obj.logic == "FloorSpike")
+	else
 	{
-		_startTimeDelay = 0;
-	}
-	else if (obj.logic == "FloorSpike2")
-	{
-		_startTimeDelay = 750;
-	}
-	else if (obj.logic == "FloorSpike3")
-	{
-		_startTimeDelay = 1500;
-	}
-	else if (obj.logic == "FloorSpike4")
-	{
-		_startTimeDelay = 2250;
+		switch (obj.logic[obj.logic.length() - 1])
+		{
+		case '2': _startTimeDelay = 500; break;
+		case '3': _startTimeDelay = 1000; break;
+		case '4': _startTimeDelay = 1500; break;
+		}
 	}
 
 	if (obj.speedX > 0)
@@ -41,7 +35,7 @@ FloorSpike::FloorSpike(const WwdObject& obj, Player* player)
 	}
 	else
 	{
-		_timeOn = 1500;
+		_timeOn = 250;
 	}
 	if (obj.speedY > 0)
 	{
@@ -49,13 +43,13 @@ FloorSpike::FloorSpike(const WwdObject& obj, Player* player)
 	}
 	else
 	{
-		_timeOff = 1500;
+		_timeOff = 500;
 	}
+
 
 	setObjectRectangle();
 }
-
-void FloorSpike::Logic(uint32_t elapsedTime)
+void SteppingStone::Logic(uint32_t elapsedTime)
 {
 	if (_startTimeDelay > 0)
 	{
@@ -109,12 +103,11 @@ void FloorSpike::Logic(uint32_t elapsedTime)
 	}
 
 	_ani->Logic(elapsedTime);
-}
 
-int8_t FloorSpike::getDamage() const
-{
-	if ((_state == States::Disappear && !_ani->isPassedHalf()) ||
-		(_state == States::Appear && _ani->isPassedHalf()) ||
-		_state == States::WaitAppear) return 10;
-	return 0;
+	if ((_state == States::Appear && _ani->isPassedHalf()) ||
+		(_state == States::Disappear && !_ani->isPassedHalf()) ||
+		_state == States::WaitAppear)
+	{
+		tryCatchPlayer();
+	}
 }

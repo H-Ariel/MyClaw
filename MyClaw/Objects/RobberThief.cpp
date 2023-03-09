@@ -1,5 +1,4 @@
 #include "RobberThief.h"
-#include "../PathManager.h"
 
 
 RobberThief::RobberThief(const WwdObject& obj, Player* player)

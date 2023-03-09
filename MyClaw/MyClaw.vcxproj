@@ -92,7 +92,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -120,7 +120,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -166,6 +166,8 @@
     <ClCompile Include="Objects\Rope.cpp" />
     <ClCompile Include="Objects\Soldier.cpp" />
     <ClCompile Include="Objects\SoundTrigger.cpp" />
+    <ClCompile Include="Objects\SpringBoard.cpp" />
+    <ClCompile Include="Objects\SteppingStone.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="PidPalette.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -221,6 +223,8 @@
     <ClInclude Include="Objects\Rope.h" />
     <ClInclude Include="Objects\Soldier.h" />
     <ClInclude Include="Objects\SoundTrigger.h" />
+    <ClInclude Include="Objects\SpringBoard.h" />
+    <ClInclude Include="Objects\SteppingStone.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="PidPalette.h" />
     <ClInclude Include="Player.h" />

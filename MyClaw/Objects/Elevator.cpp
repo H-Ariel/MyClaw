@@ -1,7 +1,6 @@
 #include "Elevator.h"
 #include "../Player.h"
 #include "../AssetsManager.h"
-#include "../PathManager.h"
 
 
 Elevator::Elevator(const WwdObject& obj, Player* player)
@@ -13,7 +12,7 @@ Elevator::Elevator(const WwdObject& obj, Player* player)
 	_isOneWayElevator(contains(obj.logic, "OneWay")),
 	_operateElevator(true)
 {
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
+	_ani = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
 
 	if (obj.minX > 0 && obj.maxX > 0)
 	{

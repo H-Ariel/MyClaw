@@ -1,4 +1,4 @@
-#include "PathManager.h"
+#include "framework.h"
 
 
 string PathManager::_levelRoot;

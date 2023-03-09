@@ -28,7 +28,8 @@ ClawLevelEngine::ClawLevelEngine(int8_t lvlNo)
 	if (lvlNo == 2) _player->position = { 20070, 2092 }; // END OF LEVEL
 //	if (lvlNo == 3) _player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
 //	if (lvlNo == 3) _player->position = { 6080, 6224 };
-	if (lvlNo == 3) _player->position = { 11054, 8720 };
+//	if (lvlNo == 3) _player->position = { 11054, 8720 };
+//	if (lvlNo == 4) _player->position = { 15757, 1560 };
 }
 ClawLevelEngine::~ClawLevelEngine()
 {

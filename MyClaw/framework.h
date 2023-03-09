@@ -43,6 +43,7 @@
 
 #include "Exception.hpp"
 #include "CollisionDistances.h"
+#include "PathManager.h"
 
 
 #pragma comment(lib, "d2d1")

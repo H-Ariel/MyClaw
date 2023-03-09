@@ -1,5 +1,4 @@
 #include "Rope.h"
-#include "../PathManager.h"
 #include "../AssetsManager.h"
 #include "../Player.h"
 
@@ -59,7 +58,7 @@ Rope::Rope(const WwdObject& obj, Player* player)
 	speed += speed;
 	speed /= 120;
 
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), speed);
+	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), speed, false);
 	_ani->position = position;
 }
 

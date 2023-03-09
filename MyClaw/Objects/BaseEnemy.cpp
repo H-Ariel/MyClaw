@@ -4,7 +4,6 @@
 #include "../Player.h"
 #include "../AssetsManager.h"
 #include "../ActionPlane.h"
-#include "../PathManager.h"
 #include "../WindowManager.h"
 
 

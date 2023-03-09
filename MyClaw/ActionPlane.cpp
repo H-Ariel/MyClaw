@@ -17,6 +17,8 @@
 #include "Objects/DoNothing.h"
 #include "Objects/Cannon.h"
 #include "Objects/Rope.h"
+#include "Objects/SteppingStone.h"
+#include "Objects/SpringBoard.h"
 
 
 #define EMPTY_TILE -1
@@ -529,7 +531,8 @@ void ActionPlane::addObject(const WwdObject& obj)
 #ifndef LOW_DETAILS
 	if (obj.logic == "FrontCandy" || obj.logic == "BehindCandy" ||
 		obj.logic == "BehindAniCandy" || obj.logic == "FrontAniCandy" ||
-		obj.logic == "DoNothing" || obj.logic == "AniCycle" || obj.logic == "GooCoverup")
+		obj.logic == "DoNothing" || obj.logic == "DoNothingNormal" ||
+		obj.logic == "AniCycle" || obj.logic == "GooCoverup")
 	{
 		_objects.push_back(DBG_NEW DoNothing(obj));
 	}
@@ -553,14 +556,13 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW StackedCrates(obj, _player));
 	}
-	else
-#endif
-		if (obj.logic == "PowderKeg")
+	else if (obj.logic == "PowderKeg")
 	{
 		PowderKeg* p = DBG_NEW PowderKeg(obj, _player);
 		_objects.push_back(p); _powderKegs.push_back(p);
 	}
 	else
+#endif
 	if (obj.logic == "Elevator"
 		|| obj.logic == "TriggerElevator"|| obj.logic == "OneWayTriggerElevator"
 		|| obj.logic == "StartElevator" || obj.logic == "OneWayStartElevator")
@@ -579,9 +581,13 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW SuperCheckpoint(obj, _player));
 	}
-	else if (obj.logic == "TogglePeg" || obj.logic == "TogglePeg2" || obj.logic == "TogglePeg3" || obj.logic == "TogglePeg4")
+	else if (contains(obj.logic, "TogglePeg"))
 	{
 		_objects.push_back(DBG_NEW TogglePeg(obj, _player));
+	}
+	else if (contains(obj.logic, "SteppingStone"))
+	{
+		_objects.push_back(DBG_NEW SteppingStone(obj, _player));
 	}
 	else if (obj.logic == "CrumblingPeg")
 	{
@@ -598,6 +604,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "AniRope")
 	{
 		_objects.push_back(DBG_NEW Rope(obj, _player));
+	}
+	else if (obj.logic == "SpringBoard")
+	{
+		_objects.push_back(DBG_NEW SpringBoard(obj, _player));
 	}
 #if 0
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")

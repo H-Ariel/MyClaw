@@ -34,6 +34,7 @@ public:
 
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
+	void jump(float force); // the force go to `_speed.y`
 
 	bool collectItem(Item* item); // returns true if the item collected and should be removed. else - false
 

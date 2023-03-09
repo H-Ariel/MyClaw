@@ -1,7 +1,6 @@
 #include "Item.h"
 #include "../AssetsManager.h"
 #include "../Player.h"
-#include "../PathManager.h"
 
 
 static const initializer_list<Item::Type> UpdateFramesTypes = {

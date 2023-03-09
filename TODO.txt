@@ -1,4 +1,6 @@
 * complete Raux logic
+* play all objects WAV file
+* play 2 WAV in the same time
 * display screens between levels
 * collect all items
 * add all objects

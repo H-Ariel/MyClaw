@@ -1,9 +1,7 @@
 #include "PowderKeg.h"
 #include "Projectile.h"
 #include "../AssetsManager.h"
-#include "../PathManager.h"
 #include "../Player.h"
-#include "../CollisionDistances.h"
 #include "../ActionPlane.h"
 
 

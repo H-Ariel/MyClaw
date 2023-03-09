@@ -1,6 +1,5 @@
 #include "Pegs.h"
 #include "../AssetsManager.h"
-#include "../PathManager.h"
 
 
 TogglePeg::TogglePeg(const WwdObject& obj, Player* player)
@@ -9,7 +8,7 @@ TogglePeg::TogglePeg(const WwdObject& obj, Player* player)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
 	_aniAppear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, true);
-	_aniDisappear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath);
+	_aniDisappear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, false);
 
 	_ani = _aniDisappear;
 	_ani->updateFrames = false;
@@ -18,21 +17,14 @@ TogglePeg::TogglePeg(const WwdObject& obj, Player* player)
 	{
 		_startTimeDelay = obj.speed;
 	}
-	else if (obj.logic == "TogglePeg")
+	else
 	{
-		_startTimeDelay = 0;
-	}
-	else if (obj.logic == "TogglePeg2")
-	{
-		_startTimeDelay = 750;
-	}
-	else if (obj.logic == "TogglePeg3")
-	{
-		_startTimeDelay = 1500;
-	}
-	else if (obj.logic == "TogglePeg4")
-	{
-		_startTimeDelay = 2250;
+		switch (obj.logic[obj.logic.length() - 1])
+		{
+		case '2': _startTimeDelay = 750; break;
+		case '3': _startTimeDelay = 1500; break;
+		case '4': _startTimeDelay = 2250; break;
+		}
 	}
 
 	if (obj.speedX > 0)
@@ -125,7 +117,7 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 CrumblingPeg::CrumblingPeg(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _delayTime(obj.counter)
 {
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
+	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
 	_ani->position = position;
 	Reset();
 	setObjectRectangle();
