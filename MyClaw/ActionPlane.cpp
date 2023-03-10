@@ -557,6 +557,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW StackedCrates(obj, _player));
 	}
+	else if (obj.logic == "FrontStatue" || obj.logic == "BehindStatue")
+	{
+		_objects.push_back(DBG_NEW Statue(obj, _player));
+	}
 	else if (obj.logic == "PowderKeg")
 	{
 		PowderKeg* p = DBG_NEW PowderKeg(obj, _player);
@@ -574,17 +578,9 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW PathElevator(obj, _player));
 	}
-	else if (obj.logic == "FrontStatue" || obj.logic == "BehindStatue")
+	else if (endsWith(obj.logic ,"Checkpoint"))
 	{
-		_objects.push_back(DBG_NEW Statue(obj, _player));
-	}
-	else if (obj.logic == "Checkpoint")
-	{
-		_objects.push_back(DBG_NEW Checkpoint(obj, _player));
-	}
-	else if (obj.logic == "FirstSuperCheckpoint" || obj.logic == "SecondSuperCheckpoint")
-	{
-		_objects.push_back(DBG_NEW SuperCheckpoint(obj, _player));
+		_objects.push_back(Checkpoint::createCheckpoint(obj, _player, contains(obj.logic, "Super")));
 	}
 	else if (contains(obj.logic, "TogglePeg"))
 	{

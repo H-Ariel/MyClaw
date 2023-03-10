@@ -3,19 +3,16 @@
 #include "../AssetsManager.h"
 
 
-Checkpoint::Checkpoint(const WwdObject& obj, Player* player)
-	: Checkpoint(obj, player, "GAME/IMAGES/CHECKPOINTFLAG/")
+Checkpoint* Checkpoint::createCheckpoint(const WwdObject& obj, Player* player, bool isSuperCheckpoint)
 {
+	if (isSuperCheckpoint) return DBG_NEW Checkpoint(obj, player, "GAME/IMAGES/SUPERCHECKPOINT/", true);
+	return DBG_NEW Checkpoint(obj, player, "GAME/IMAGES/CHECKPOINTFLAG/", false);
 }
-Checkpoint::Checkpoint(const WwdObject& obj, Player* player, string imageSetPath)
-	: BaseStaticPlaneObject(obj, player), _state(States::Down), _imageSetPath(imageSetPath)
+
+Checkpoint::Checkpoint(const WwdObject& obj, Player* player, string imageSetPath, bool isSuperCheckpoint)
+	: BaseStaticPlaneObject(obj, player), _state(States::Down),
+	_imageSetPath(imageSetPath), _isSuperCheckpoint(isSuperCheckpoint)
 {
-	/*string imageName;
-	if (_imageSetPath == "GAME/IMAGES/SUPERCHECKPOINT/")
-	{
-		imageName = "FRAME";
-	}
-	_ani = AssetsManager::createCopyAnimationFromFromPidImage(_imageSetPath + imageName + "01.PID");*/
 	_ani = AssetsManager::createCopyAnimationFromFromPidImage(_imageSetPath + "001.PID");
 	setObjectRectangle();
 }
@@ -31,6 +28,11 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 			_ani->position = position;
 			_state = States::Rise;
 			_player->startPosition = position;
+
+			if (_isSuperCheckpoint)
+			{
+				// TODO: save player state (only in the first time)
+			}
 		}
 		break;
 
@@ -45,17 +47,4 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 	}
 
 	_ani->Logic(elapsedTime);
-}
-
-SuperCheckpoint::SuperCheckpoint(const WwdObject& obj, Player* player)
-	: Checkpoint(obj, player, "GAME/IMAGES/SUPERCHECKPOINT/")
-{
-}
-void SuperCheckpoint::Logic(uint32_t elapsedTime)
-{
-	if (CollisionDistances::isCollision(_objRc, _player->GetRect()))
-	{
-		// TODO: save player state (only in the first time)
-	}
-	Checkpoint::Logic(elapsedTime);
 }

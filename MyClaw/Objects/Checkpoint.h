@@ -6,22 +6,15 @@
 class Checkpoint : public BaseStaticPlaneObject
 {
 public:
-	Checkpoint(const WwdObject& obj, Player* player);
+	static Checkpoint* createCheckpoint(const WwdObject& obj, Player* player, bool isSuperCheckpoint);
+	
 	void Logic(uint32_t elapsedTime) override;
-
-protected:
-	Checkpoint(const WwdObject& obj, Player* player, string imageSetPath);
 
 private:
+	Checkpoint(const WwdObject& obj, Player* player, string imageSetPath, bool isSuperCheckpoint);
+
+	enum class States : int8_t { Down, Rise, Wave };
 	const string _imageSetPath;
-	enum class States { Down, Rise, Wave };
 	States _state;
-};
-
-class SuperCheckpoint : public Checkpoint
-{
-public:
-	SuperCheckpoint(const WwdObject& obj, Player* player);
-
-	void Logic(uint32_t elapsedTime) override;
+	const bool _isSuperCheckpoint;
 };
