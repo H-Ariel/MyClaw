@@ -3,7 +3,7 @@
 
 Raux::Raux(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 100, 10, "ADVANCE", "HITHIGH", "HITLOW",
-		"STRIKE", "", "", { { "HOME", 1000 }, { "HOME1", 1000 } })
+		"KILLFALL", "STRIKE", "", "", { { "HOME", 1000 }, { "HOME1", 1000 } })
 {
 }
 

@@ -31,6 +31,9 @@ public:
 protected:
 	virtual void makeAttack();
 
+	bool PreLogic(uint32_t elapsedTime); // called before `Logic`. returns `true` if we need do `Logic`
+	void PostLogic(uint32_t elapsedTime); // called after `Logic`
+
 
 	bool isWalkAnimation() const;
 	bool checkForHurt(pair<D2D1_RECT_F, uint8_t> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
@@ -48,7 +51,6 @@ protected:
 	const string _walkAni, _hit1, _hit2, _fallDead, _strikeAniName, _shootAniName, _shootDuckAniName, _projectileAniDir;
 	vector<int8_t> _itemsTypes;
 	vector<shared_ptr<StandAniData>> _standAni;
-	D2D1_RECT_F _saveCurrRect;
 	size_t _standAniIdx;
 	const float _minX, _maxX;
 	int8_t _damage; // the amount of health that enemy took when he hit Claw
@@ -56,6 +58,8 @@ protected:
 	bool _isStanding;
 	const bool _canStrike, _canShoot, _canShootDuck;
 	const bool _isStaticEnemy; // it always idle
+
+	static const float ENEMY_PATROL_SPEED, GEM_SPEED;
 };
 
 
@@ -65,7 +69,7 @@ public:
 	// same ot BaseEnemy c'tor
 	BaseBoss(const WwdObject& obj, Player* player,
 		int8_t health, int8_t damage, string walkAni,
-		string hit1, string hit2, string strikeAni,
+		string hit1, string hit2, string fallDead, string strikeAni,
 		string shootAni, string projectileAniDir,
 		vector<pair<string, uint32_t>> standAnisData);
 	// `standAnis` is list of { ani-name, ani-duration (ms) }

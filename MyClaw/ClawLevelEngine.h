@@ -8,7 +8,7 @@
 class ClawLevelEngine : public BaseEngine
 {
 public:
-	ClawLevelEngine(int8_t lvlNo);
+	ClawLevelEngine(int8_t levelNumber);
 	~ClawLevelEngine() override;
 
 	void Logic(uint32_t elapsedTime) override;
@@ -26,5 +26,5 @@ private:
 	MenuBackgroundImage* _helpImage;
 	ColorF saveBgColor;
 	State _state;
-	const int8_t _lvlNo;
+	const int8_t _levelNumber;
 };

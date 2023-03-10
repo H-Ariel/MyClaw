@@ -85,7 +85,6 @@ private:
 	map<size_t, PowerupSparkle> _powerupSparkles;
 	map<ClawProjectile::Types, int8_t> _weaponsAmount;
 	const D2D1_SIZE_F& _planeSize; // in pixels
-	D2D1_RECT_F _saveCurrRect;
 	PowderKeg* _lastPowderKegExplos; // saves the last explos so he does not take damage over and over again.
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
 	uint32_t _score;

@@ -3,7 +3,8 @@
 
 
 BaseCharacter::BaseCharacter(const WwdObject& obj, Player* player)
-	: BaseDynamicPlaneObject(obj, player), _health(obj.health), _forward(true), _lastAttackRect({}), _isAttack(false)
+	: BaseDynamicPlaneObject(obj, player), _health(obj.health), _forward(true), 
+	_lastAttackRect({}), _saveCurrRect({}), _isAttack(false)
 {
 }
 

@@ -1,5 +1,6 @@
 #include "Pegs.h"
 #include "../AssetsManager.h"
+#include "../WindowManager.h"
 
 
 TogglePeg::TogglePeg(const WwdObject& obj, Player* player)
@@ -153,7 +154,7 @@ void CrumblingPeg::Logic(uint32_t elapsedTime)
 void CrumblingPeg::Draw()
 {
 	if (_draw)
-		BaseStaticPlaneObject::Draw();
+		_ani->Draw();
 }
 void CrumblingPeg::Reset()
 {
@@ -164,4 +165,12 @@ void CrumblingPeg::Reset()
 	_state = States::Appear;
 	_used = true;
 	_draw = true;
+}
+
+BreakPlank::BreakPlank(const WwdObject& obj, Player* player, WwdRect tileRc)
+	: CrumblingPeg(obj, player)
+{
+	D2D1_RECT_F rc = _objRc;
+	rc.top += tileRc.top;
+	myMemCpy(_objRc, rc);
 }

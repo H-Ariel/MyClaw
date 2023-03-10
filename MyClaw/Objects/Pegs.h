@@ -34,3 +34,10 @@ private:
 	States _state;
 	bool _used, _draw;
 };
+
+
+class BreakPlank : public CrumblingPeg
+{
+public:
+	BreakPlank(const WwdObject& obj, Player* player, WwdRect tileRc);
+};

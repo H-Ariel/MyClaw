@@ -11,6 +11,13 @@ LevelMap::LevelMap(ClawLevelEngine* engine, uint8_t levelNumber)
 	WindowManager::setTitle(_wwd->levelName);
 	PathManager::setLevelRoot(levelNumber);
 
+	// TODO: move to `WapWorld()`
+	if (levelNumber == 5)
+	{
+		_wwd->tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		_wwd->tilesDescription[509].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+
 	engine->backgroundColor = _wwd->planes[0].fillColor;
 	for (WwdPlane& pln : _wwd->planes)
 	{

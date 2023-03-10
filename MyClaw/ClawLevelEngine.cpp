@@ -4,32 +4,33 @@
 #include "MenuEngine.h"
 
 
-ClawLevelEngine::ClawLevelEngine(int8_t lvlNo)
-	: _state(State::Play), saveBgColor(0), _lvlNo(lvlNo)
+ClawLevelEngine::ClawLevelEngine(int8_t levelNumber)
+	: _state(State::Play), saveBgColor(0), _levelNumber(levelNumber)
 {
 	_helpImage = DBG_NEW MenuBackgroundImage("STATES/HELP/SCREENS/HELP.PCX");
-	_elementsList.push_back(_levelMap = DBG_NEW LevelMap(this, lvlNo));
+	_elementsList.push_back(_levelMap = DBG_NEW LevelMap(this, levelNumber));
 	_elementsList.push_back(_hud = DBG_NEW LevelHUD(_player = _levelMap->getPlayer(), *_levelMap->getWindowOffset()));
 	WindowManager::setWindowOffset(_levelMap->getWindowOffset());
 
-//	if (lvlNo == 1) _player->position = { 17485, 1500 }; // END OF LEVEL
-//	if (lvlNo == 1) _player->position = { 5775, 4347 };
-//	if (lvlNo == 1) _player->position = { 9696, 772 };
-//	if (lvlNo == 1) _player->position = { 5226, 4035 };
-//	if (lvlNo == 1) _player->position = { 2596,4155 };
-//	if (lvlNo == 1) _player->position = { 4400, 4347 };
-//	if (lvlNo == 1) _player->position = { 11039, 1851 };
-//	if (lvlNo == 2) _player->position = { 9196, 3958 };
-//	if (lvlNo == 2) _player->position = { 16734, 1542 };
-//	if (lvlNo == 2) _player->position = { 10881, 3382 };
-//	if (lvlNo == 2) _player->position = { 593, 4086 };
-//	if (lvlNo == 2) _player->position = { 17044, 3062};
-//	if (lvlNo == 2) _player->position = { 4596, 3958 };
-	if (lvlNo == 2) _player->position = { 20070, 2092 }; // END OF LEVEL
-//	if (lvlNo == 3) _player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
-//	if (lvlNo == 3) _player->position = { 6080, 6224 };
-//	if (lvlNo == 3) _player->position = { 11054, 8720 };
-//	if (lvlNo == 4) _player->position = { 15757, 1560 };
+//	if (levelNumber == 1) _player->position = { 17485, 1500 }; // END OF LEVEL
+//	if (levelNumber == 1) _player->position = { 5775, 4347 };
+//	if (levelNumber == 1) _player->position = { 9696, 772 };
+//	if (levelNumber == 1) _player->position = { 5226, 4035 };
+//	if (levelNumber == 1) _player->position = { 2596,4155 };
+//	if (levelNumber == 1) _player->position = { 4400, 4347 };
+//	if (levelNumber == 1) _player->position = { 11039, 1851 };
+//	if (levelNumber == 2) _player->position = { 9196, 3958 };
+//	if (levelNumber == 2) _player->position = { 16734, 1542 };
+//	if (levelNumber == 2) _player->position = { 10881, 3382 };
+//	if (levelNumber == 2) _player->position = { 593, 4086 };
+//	if (levelNumber == 2) _player->position = { 17044, 3062};
+//	if (levelNumber == 2) _player->position = { 4596, 3958 };
+	if (levelNumber == 2) _player->position = { 20070, 2092 }; // END OF LEVEL
+//	if (levelNumber == 3) _player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
+//	if (levelNumber == 3) _player->position = { 6080, 6224 };
+//	if (levelNumber == 3) _player->position = { 11054, 8720 };
+	if (levelNumber == 4) _player->position = { 16010, 1464 }; // END OF LEVEL
+//	if (levelNumber == 5)_player->position = { 9981, 3616};
 }
 ClawLevelEngine::~ClawLevelEngine()
 {
@@ -37,7 +38,7 @@ ClawLevelEngine::~ClawLevelEngine()
 	delete _hud;
 	delete _levelMap;
 
-	AssetsManager::clearLevelAssets(_lvlNo);
+	AssetsManager::clearLevelAssets(_levelNumber);
 }
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
@@ -57,7 +58,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		}
 		else if (_player->isFinishLevel())
 		{
-			changeEngine<LevelEndEngine>(_lvlNo);
+			changeEngine<LevelEndEngine>(_levelNumber);
 		}
 	}
 }

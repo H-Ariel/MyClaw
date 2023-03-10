@@ -156,6 +156,7 @@
     <ClCompile Include="Objects\Elevator.cpp" />
     <ClCompile Include="Objects\FloorSpike.cpp" />
     <ClCompile Include="Objects\Item.cpp" />
+    <ClCompile Include="Objects\Katherine.cpp" />
     <ClCompile Include="Objects\Officer.cpp" />
     <ClCompile Include="Objects\Pegs.cpp" />
     <ClCompile Include="Objects\PowderKeg.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="Objects\Raux.cpp" />
     <ClCompile Include="Objects\RobberThief.cpp" />
     <ClCompile Include="Objects\Rope.cpp" />
+    <ClCompile Include="Objects\Seagull.cpp" />
     <ClCompile Include="Objects\Soldier.cpp" />
     <ClCompile Include="Objects\SoundTrigger.cpp" />
     <ClCompile Include="Objects\SpringBoard.cpp" />
@@ -214,6 +216,7 @@
     <ClInclude Include="Objects\Elevator.h" />
     <ClInclude Include="Objects\FloorSpike.h" />
     <ClInclude Include="Objects\Item.h" />
+    <ClInclude Include="Objects\Katherine.h" />
     <ClInclude Include="Objects\Officer.h" />
     <ClInclude Include="Objects\Pegs.h" />
     <ClInclude Include="Objects\PowderKeg.h" />
@@ -222,6 +225,7 @@
     <ClInclude Include="Objects\Raux.h" />
     <ClInclude Include="Objects\RobberThief.h" />
     <ClInclude Include="Objects\Rope.h" />
+    <ClInclude Include="Objects\Seagull.h" />
     <ClInclude Include="Objects\Soldier.h" />
     <ClInclude Include="Objects\SoundTrigger.h" />
     <ClInclude Include="Objects\SpringBoard.h" />

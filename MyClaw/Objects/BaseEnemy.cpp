@@ -14,8 +14,7 @@
 #define ANIMATION_SHOOT		_animations.at(_shootAniName)
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
-#define ENEMY_PATROL_SPEED	0.1f
-#define GEM_SPEED			0.2f
+const float BaseEnemy::ENEMY_PATROL_SPEED = 0.1f, GEM_SPEED = 0.2f;
 
 
 BaseEnemy::StandAniData::StandAniData(shared_ptr<Animation> ani, uint32_t duration)
@@ -80,10 +79,11 @@ void BossGem::Logic(uint32_t elapsedTime)
 
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
-	int8_t health, int8_t damage, string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
-	string shootAni, string shootDuckAni, string projectileAniDir, vector<pair<string, uint32_t>> standAnisData, bool noTreasures)
+	int8_t health, int8_t damage, string walkAni, string hit1, string hit2,
+	string fallDead, string strikeAni, string shootAni, string shootDuckAni,
+	string projectileAniDir, vector<pair<string, uint32_t>> standAnisData, bool noTreasures)
 	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
-	_saveCurrRect({}), _isStanding(false), _standAniIdx(0), _strikeAniName(strikeAni), _canStrike(!strikeAni.empty()),
+	_isStanding(false), _standAniIdx(0), _strikeAniName(strikeAni), _canStrike(!strikeAni.empty()),
 	_walkAni(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni),
 	_canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir), _hit1(hit1), _hit2(hit2),
 	_fallDead(fallDead), _minX((float)obj.minX), _maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1)
@@ -145,25 +145,7 @@ BaseEnemy::~BaseEnemy()
 
 void BaseEnemy::Logic(uint32_t elapsedTime)
 {
-	if (isTakeDamage() && !_ani->isFinishAnimation())
-	{
-		_ani->Logic(elapsedTime);
-		return;
-	}
-
-	if (checkForHurts())
-	{
-		_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
-		_ani->reset();
-		_ani->loopAni = false;
-		_ani->mirrored = _forward;
-		_ani->position = position;
-		_isAttack = false;
-		_isStanding = true;
-		_standAniIdx = 0;
-		_lastAttackRect = {};
-		return;
-	}
+	if (!PreLogic(elapsedTime)) return;
 
 	if (_isStanding)
 	{
@@ -219,14 +201,11 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	_ani->mirrored = _forward;
-	_ani->position = position;
-	_ani->Logic(elapsedTime);
+	PostLogic(elapsedTime);
 }
 void BaseEnemy::makeAttack()
 {
-	const float deltaX = abs(_player->position.x - position.x);
-	const float deltaY = abs(_player->position.y - position.y);
+	const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
 	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
 
 	if (_isStanding || isInRange)
@@ -277,6 +256,38 @@ void BaseEnemy::makeAttack()
 		}
 	}
 }
+
+bool BaseEnemy::PreLogic(uint32_t elapsedTime)
+{
+	if (isTakeDamage() && !_ani->isFinishAnimation())
+	{
+		_ani->Logic(elapsedTime);
+		return false;
+	}
+
+	if (checkForHurts())
+	{
+		_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
+		_ani->reset();
+		_ani->loopAni = false;
+		_ani->mirrored = _forward;
+		_ani->position = position;
+		_isAttack = false;
+		_isStanding = true;
+		_standAniIdx = 0;
+		_lastAttackRect = {};
+		return false;
+	}
+
+	return true;
+}
+void BaseEnemy::PostLogic(uint32_t elapsedTime)
+{
+	_ani->mirrored = _forward;
+	_ani->position = position;
+	_ani->Logic(elapsedTime);
+}
+
 bool BaseEnemy::isStanding() const { return _isStanding; }
 bool BaseEnemy::isDuck() const { return _ani == ANIMATION_SHOOTDUCK; }
 bool BaseEnemy::isTakeDamage() const { return (_ani == ANIMATION_HITHIGH || _ani == ANIMATION_HITLOW) && !_ani->isFinishAnimation(); }
@@ -369,9 +380,9 @@ bool BaseEnemy::checkForHurts()
 
 
 BaseBoss::BaseBoss(const WwdObject& obj, Player* player, int8_t health,
-	int8_t damage, string walkAni, string hit1, string hit2, string strikeAni,
+	int8_t damage, string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
 	string shootAni, string projectileAniDir, vector<pair<string, uint32_t>> standAnisData)
-	: BaseEnemy(obj, player, health, damage, walkAni, hit1, hit2, "KILLFALL", strikeAni, shootAni,
+	: BaseEnemy(obj, player, health, damage, walkAni, hit1, hit2, fallDead, strikeAni, shootAni,
 		"", projectileAniDir, standAnisData, true), _gemPos({ obj.speedX, obj.speedY })
 {
 }

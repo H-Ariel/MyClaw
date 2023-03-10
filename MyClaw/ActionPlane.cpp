@@ -11,7 +11,9 @@
 #include "Objects/Rat.h"
 #include "Objects/RobberThief.h"
 #include "Objects/CutThroat.h"
+#include "Objects/Seagull.h"
 #include "Objects/Raux.h"
+#include "Objects/Katherine.h"
 #include "Objects/SoundTrigger.h"
 #include "Objects/Pegs.h"
 #include "Objects/DoNothing.h"
@@ -594,6 +596,19 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW CrumblingPeg(obj, _player));
 	}
+	else if (obj.logic == "BreakPlank")
+	{
+		// TODO: if (levelNumber == 5) rc=_wwd->tilesDescription[509]
+
+		int32_t tmp = obj.x;
+		for (int32_t i = 0; i < obj.width; i++)
+		{
+			_objects.push_back(DBG_NEW BreakPlank(obj, _player, _wwd->tilesDescription[509].rect));
+			//obj.x += 64;
+			tmp += 64;
+			myMemCpy(obj.x, tmp);
+		}
+	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
 		|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"
 		|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup" 
@@ -645,9 +660,17 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_objects.push_back(s); _floorSpikes.push_back(s);
 	}
 #endif
+	else if (obj.logic == "Seagull")
+	{
+		ADD_ENEMY(DBG_NEW Seagull(obj, _player));
+	}
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW Raux(obj, _player));
+	}
+	else if (obj.logic == "Katherine")
+	{
+		ADD_ENEMY(DBG_NEW Katherine(obj, _player));
 	}
 
 	//	throw Exception("TODO: logic=" + obj.logic);

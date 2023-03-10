@@ -9,6 +9,8 @@ BasePlaneObject::BasePlaneObject(const WwdObject& obj, Player* player)
 	_isVisible(!(obj.drawFlags& WwdObject::NoDraw)) {}
 void BasePlaneObject::Draw()
 {
+	// TODO: some object need only `_ani->Draw();`, so we need create 2 functions...
+
 	if (_isVisible && _ani)
 	{
 		_ani->position = position;
@@ -19,6 +21,8 @@ void BasePlaneObject::Draw()
 }
 D2D1_RECT_F BasePlaneObject::GetRect()
 {
+	// TODO: some object need only `_ani->GetRect();`, so we need create 2 functions...
+
 	_ani->position = position;
 	_ani->mirrored = _isMirrored;
 	_ani->updateImageData();
