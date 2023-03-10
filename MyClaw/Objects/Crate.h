@@ -8,12 +8,12 @@ class Crate : public BaseStaticPlaneObject
 public:
 	Crate(const WwdObject& obj, Player* player);
 	void Logic(uint32_t elapsedTime) override;
-	bool isCracking() const;
-	vector<Item*> getItems();
+	bool isBreaking() const;
+	virtual vector<Item*> getItems();
 
 private:
 	vector<int8_t> _itemsTypes; // contents of the crate
-	bool _flag; // store if the items were taken from this crate. TODO: rename
+	bool _itemsTaken; // store if the items were taken from this crate
 
 	friend class StackedCrates;
 };

@@ -123,7 +123,7 @@ int8_t ClawDynamite::getDamage() const
 
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, string projectileAniDir) : Projectile(obj, 10, projectileAniDir) {}
 
-class RatBombExplos :public BaseStaticPlaneObject
+class RatBombExplos : public BaseStaticPlaneObject
 {
 public:
 	RatBombExplos(const WwdObject& obj)

@@ -7,9 +7,13 @@ DoNothing::DoNothing(const WwdObject& obj)
 {
 	string path(PathManager::getImageSetPath(obj.imageSet));
 
-	if (obj.imageSet == "LEVEL_ARCHESFRONT")
+	if (obj.imageSet == "LEVEL_ARCHESFRONT" || obj.imageSet == "LEVEL_WANTED") // TODO: somthing else
 	{
-		_ani = AssetsManager::createAnimationFromFromPidImage(path + getArchesfrontImagePath(obj.i));
+		char str[9];
+		int32_t i = obj.i;
+		if (i == -1) i = 1;
+		sprintf(str, "/%03d.PID", i);
+		_ani = AssetsManager::createAnimationFromFromPidImage(path + str);
 	}
 	else
 	{
@@ -26,12 +30,4 @@ DoNothing::DoNothing(const WwdObject& obj)
 			_ani = AssetsManager::loadAnimation(PathManager::getAnimationPath(obj.animation), obj.imageSet);
 		}
 	}
-}
-string DoNothing::getArchesfrontImagePath(int32_t objI)
-{
-	char str[9];
-	if (objI < 1 || 5 < objI)
-		objI = 1;
-	sprintf(str, "/%03d.PID", objI);
-	return str;
 }

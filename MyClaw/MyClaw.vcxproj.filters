@@ -114,9 +114,6 @@
     <ClCompile Include="XmiFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\BaseEnemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\Cannon.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -175,6 +172,12 @@
       <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="Objects\SpringBoard.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Statue.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\BaseEnemy.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -278,9 +281,6 @@
     <ClInclude Include="WwdFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\BaseEnemy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\PowderKeg.h">
       <Filter>Objects</Filter>
     </ClInclude>
@@ -339,6 +339,12 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\SpringBoard.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Statue.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\BaseEnemy.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

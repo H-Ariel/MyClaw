@@ -8,7 +8,7 @@
 
 
 Crate::Crate(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _flag(false)
+	: BaseStaticPlaneObject(obj, player), _itemsTaken(false)
 {
 	if (obj.powerup				> 0) _itemsTypes.push_back(obj.powerup);
 	if (obj.userRect1.left		> 0) _itemsTypes.push_back(obj.userRect1.left);
@@ -23,6 +23,7 @@ Crate::Crate(const WwdObject& obj, Player* player)
 	
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false);
 	_ani->updateFrames = false;
+	_ani->loopAni = false;
 
 	setObjectRectangle();
 }
@@ -39,7 +40,7 @@ void Crate::Logic(uint32_t elapsedTime)
 	{
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
-			if (isClawProjectile(p))
+			if (isProjectile(p))
 			{
 				if (p->isClawDynamite() && p->getDamage() == 0) continue;
 				if (CollisionDistances::isCollision(_objRc, p->GetRect()))
@@ -68,7 +69,7 @@ void Crate::Logic(uint32_t elapsedTime)
 
 	removeObject = _ani->isFinishAnimation();
 }
-bool Crate::isCracking() const
+bool Crate::isBreaking() const
 {
 	return _ani->updateFrames;
 }
@@ -76,7 +77,7 @@ vector<Item*> Crate::getItems()
 {
 	vector<Item*> items;
 
-	if (!_flag)
+	if (!_itemsTaken)
 	{
 		WwdObject newObj;
 		newObj.x = (int32_t)position.x;
@@ -86,11 +87,11 @@ vector<Item*> Crate::getItems()
 		for (int8_t t : _itemsTypes)
 		{
 			Item* itm = Item::getItem(newObj, _player, t);
-			itm->_speed.y = -0.6f;
+			itm->setSpeedY(-0.6f);
 			items.push_back(itm);
 		}
 
-		_flag = true;
+		_itemsTaken = true;
 	}
 
 	return items;
@@ -156,13 +157,13 @@ vector<Item*> StackedCrates::getItems()
 	vector<Item*> allItems;
 	for (size_t i = 0; i < crates.size(); i++)
 	{
-		if (crates[i]->isCracking())
+		if (crates[i]->isBreaking())
 		{
 			vector<Item*> tmp = crates[i]->getItems();
 
 			for (Item* i : tmp)
 			{
-				i->_speed.x = getRandomFloat(-0.25f, 0.25f) * (getRandomInt(0, 1) == 1 ? 1 : -1);
+				i->setSpeedX(getRandomFloat(-0.25f, 0.25f) * (getRandomInt(0, 1) == 1 ? 1 : -1));
 			}
 
 			allItems.insert(allItems.end(), tmp.begin(), tmp.end());

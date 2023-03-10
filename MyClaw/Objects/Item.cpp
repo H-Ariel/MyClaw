@@ -117,30 +117,6 @@ string getItemPath(Item::Type type, string imageSet)
 }
 
 
-class Warp : public Item
-{
-public:
-	Warp(const WwdObject& obj, Player* player, int8_t type)
-		: Item(obj, player, type), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)
-	{
-	}
-	void Logic(uint32_t elapsedTime) override
-	{
-		if (CollisionDistances::isCollision(GetRect(), _player->GetRect()))
-		{
-			_player->position = _destination;
-			_player->stopFalling(0);
-			removeObject = _oneTimeWarp;
-			// TODO: cool animation
-		}
-	}
-
-private:
-	const D2D1_POINT_2F _destination;
-	const bool _oneTimeWarp; // flag to determine whether to delete an object after using it
-};
-
-
 Item::Item(const WwdObject& obj, Player* player, int8_t type)
 	: BaseDynamicPlaneObject(obj, player), _type((Type)type), _useGlitter(false), _glitterAnimation(nullptr)
 {
@@ -214,7 +190,6 @@ void Item::Draw()
 		_glitterAnimation->Draw();
 	}
 }
-
 void Item::stopFalling(float collisionSize)
 {
 	_speed.y = 0;
@@ -223,6 +198,10 @@ void Item::stopFalling(float collisionSize)
 }
 Item::Type Item::getType() const { return _type; }
 int32_t Item::getDuration() const { return _duration; }
+float Item::getSpeedX() const { return _speed.x; }
+float Item::getSpeedY() const { return _speed.y; }
+void Item::setSpeedX(float speedX) { _speed.x = speedX; }
+void Item::setSpeedY(float speedY) { _speed.y = speedY; }
 
 Item* Item::getItem(const WwdObject& obj, Player* player, int8_t type)
 {
@@ -246,4 +225,20 @@ Item* Item::getItem(const WwdObject& obj, Player* player, int8_t type)
 void Item::resetItemsPaths()
 {
 	ItemsPaths.clear();
+}
+
+
+Warp::Warp(const WwdObject& obj, Player* player, int8_t type)
+	: Item(obj, player, type), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)
+{
+}
+void Warp::Logic(uint32_t elapsedTime)
+{
+	if (CollisionDistances::isCollision(GetRect(), _player->GetRect()))
+	{
+		_player->position = _destination;
+		_player->stopFalling(0);
+		removeObject = _oneTimeWarp;
+		// TODO: cool animation
+	}
 }

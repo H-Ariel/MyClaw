@@ -82,7 +82,7 @@ void BossGem::Logic(uint32_t elapsedTime)
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int8_t health, int8_t damage, string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
 	string shootAni, string shootDuckAni, string projectileAniDir, vector<pair<string, uint32_t>> standAnisData, bool noTreasures)
-	: BaseCharacter(obj, player), _flag(false), _damage(damage),
+	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
 	_saveCurrRect({}), _isStanding(false), _standAniIdx(0), _strikeAniName(strikeAni), _canStrike(!strikeAni.empty()),
 	_walkAni(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni),
 	_canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir), _hit1(hit1), _hit2(hit2),
@@ -285,7 +285,7 @@ vector<Item*> BaseEnemy::getItems()
 {
 	vector<Item*> items;
 
-	if (!_flag)
+	if (!_itemsTaken)
 	{
 		WwdObject newObj;
 		newObj.x = (int32_t)position.x;
@@ -295,11 +295,11 @@ vector<Item*> BaseEnemy::getItems()
 		for (int8_t t : _itemsTypes)
 		{
 			Item* i = Item::getItem(newObj, _player, t);
-			i->_speed.y = -0.6f;
-			i->_speed.x = getRandomFloat(-0.25f, 0.25f) * (getRandomInt(0, 1) == 1 ? 1 : -1);
+			i->setSpeedY(-0.6f);
+			i->setSpeedX(getRandomFloat(-0.25f, 0.25f) * (getRandomInt(0, 1) == 1 ? 1 : -1));
 			items.push_back(i);
 		}
-		_flag = true;
+		_itemsTaken = true;
 	}
 
 	return items;

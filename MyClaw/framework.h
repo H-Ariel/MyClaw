@@ -31,7 +31,6 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <string>
 #include <map>
 #include <cmath>
 #include <functional>
@@ -141,13 +140,6 @@ void SafeRelease(T** ppT)
 	}
 }
 
-// reverses the bytes order of `obj`
-template <class T>
-inline void reverseBytes(T& obj)
-{
-	uint8_t* ptr = (uint8_t*)(&obj);
-	reverse(ptr, ptr + sizeof(T));
-}
 
 // allocate new object as `shared_ptr`
 template <class T, class ... Args>

@@ -28,6 +28,14 @@ public:
 
 class ExtendedBufferWriter : public BufferWriter
 {
+private:
+	// reverses the bytes order of `obj`
+	template <class T>
+	static inline void reverseBytes(T& obj)
+	{
+		uint8_t* ptr = (uint8_t*)(&obj);
+		reverse(ptr, ptr + sizeof(T));
+	}
 public:
 	void writeBigEndianUInt16(uint16_t iValue) { reverseBytes(iValue); write(iValue); }
 	void writeBigEndianUInt32(uint32_t iValue) { reverseBytes(iValue); write(iValue); }

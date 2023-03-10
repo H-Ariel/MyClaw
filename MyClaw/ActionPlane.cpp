@@ -19,6 +19,7 @@
 #include "Objects/Rope.h"
 #include "Objects/SteppingStone.h"
 #include "Objects/SpringBoard.h"
+#include "Objects/Statue.h"
 
 
 #define EMPTY_TILE -1
@@ -188,7 +189,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		else if (isinstance<Item>(obj))
 		{
 			Item* item = (Item*)obj;
-			if (item->_speed.y != 0)
+			if (item->getSpeedY() != 0)
 			{
 				checkCollides(item, [obj] { obj->removeObject = true; });
 			}
@@ -198,10 +199,10 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			vector<Item*> items = ((StackedCrates*)obj)->getItems();
 			_objects.insert(_objects.end(), items.begin(), items.end());
 		}
-		else if (isinstance<Crate>(obj))
+		else if (isbaseinstance<Crate>(obj))
 		{
 			Crate* crate = (Crate*)obj;
-			if (crate->isCracking())
+			if (crate->isBreaking())
 			{
 				vector<Item*> items = crate->getItems();
 				_objects.insert(_objects.end(), items.begin(), items.end());
@@ -572,6 +573,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "PathElevator")
 	{
 		_objects.push_back(DBG_NEW PathElevator(obj, _player));
+	}
+	else if (obj.logic == "FrontStatue" || obj.logic == "BehindStatue")
+	{
+		_objects.push_back(DBG_NEW Statue(obj, _player));
 	}
 	else if (obj.logic == "Checkpoint")
 	{

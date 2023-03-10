@@ -167,6 +167,7 @@
     <ClCompile Include="Objects\Soldier.cpp" />
     <ClCompile Include="Objects\SoundTrigger.cpp" />
     <ClCompile Include="Objects\SpringBoard.cpp" />
+    <ClCompile Include="Objects\Statue.cpp" />
     <ClCompile Include="Objects\SteppingStone.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="PidPalette.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Objects\Soldier.h" />
     <ClInclude Include="Objects\SoundTrigger.h" />
     <ClInclude Include="Objects\SpringBoard.h" />
+    <ClInclude Include="Objects\Statue.h" />
     <ClInclude Include="Objects\SteppingStone.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="PidPalette.h" />

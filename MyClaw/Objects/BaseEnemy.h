@@ -52,7 +52,7 @@ protected:
 	size_t _standAniIdx;
 	const float _minX, _maxX;
 	int8_t _damage; // the amount of health that enemy took when he hit Claw
-	bool _flag; // store if the items were taken from this crate. TODO: rename
+	bool _itemsTaken; // store if the items were taken from this crate. TODO: rename
 	bool _isStanding;
 	const bool _canStrike, _canShoot, _canShootDuck;
 	const bool _isStaticEnemy; // it always idle

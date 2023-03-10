@@ -81,6 +81,11 @@ public:
 
 	Type getType() const;
 	int32_t getDuration() const;
+	float getSpeedX() const;
+	float getSpeedY() const;
+
+	void setSpeedX(float speedX);
+	void setSpeedY(float speedY);
 
 	static Item* getItem(const WwdObject& obj, Player* player, int8_t type = Type::None);
 	static void resetItemsPaths();
@@ -94,11 +99,16 @@ private:
 	int32_t _duration; // (in milliseconds). used in Catnip, Fire-Sword, etc.
 	// TODO: use `obj.damage` - [not] respawning (see "Logics.pdf" 2.170)
 	bool _useGlitter;
+};
 
 
-	// friends to set/get `_speed`
-	friend class Crate;
-	friend class StackedCrates;
-	friend class ActionPlane;
-	friend class BaseEnemy;
+class Warp : public Item
+{
+public:
+	Warp(const WwdObject& obj, Player* player, int8_t type);
+	void Logic(uint32_t elapsedTime) override;
+
+private:
+	const D2D1_POINT_2F _destination;
+	const bool _oneTimeWarp; // flag to determine whether to delete an object after using it
 };
