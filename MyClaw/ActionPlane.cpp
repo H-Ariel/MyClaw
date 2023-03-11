@@ -654,12 +654,12 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW CutThroat(obj, _player));
 	}
+#endif
 	else if (obj.logic == "FloorSpike" || obj.logic == "FloorSpike2" || obj.logic == "FloorSpike3" || obj.logic == "FloorSpike4")
 	{
 		FloorSpike* s = DBG_NEW FloorSpike(obj, _player);
 		_objects.push_back(s); _floorSpikes.push_back(s);
 	}
-#endif
 	else if (obj.logic == "Seagull")
 	{
 		ADD_ENEMY(DBG_NEW Seagull(obj, _player));

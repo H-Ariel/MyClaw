@@ -115,7 +115,7 @@ Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 
 void Player::Logic(uint32_t elapsedTime)
 {
-	if (_aniName == "LIFT" || _aniName == "THROW" ||
+	if (_aniName == "LIFT" || _aniName == "THROW" || _aniName == "FALLDEATH" ||
 		_aniName == "EMPTYPOSTDYNAMITE" || _aniName == "DUCKEMPTYPOSTDYNAMITE")
 	{
 		if (!_ani->isFinishAnimation())
@@ -138,7 +138,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_rightCollision = false;
 	}
 
-	if (_holdAltTime < 1050) _holdAltTime += elapsedTime; // the max time for holding is 2 seconds
+	if (_holdAltTime < 1050) _holdAltTime += elapsedTime; // the max time for holding is 1050 milliseconds
 	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
 	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
 	else
@@ -167,11 +167,13 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_raisedPowderKeg)
 		speedX = SpeedX_LiftPowderKeg;
 
+	_damageRest -= elapsedTime;
 	if (checkForHurts())
 	{
 		if (_health <= 0)
 		{
 			_aniName = "FALLDEATH";
+			// TODO: in that case CC should fall down (out of window) and show the "black screen"
 		}
 		else
 		{
@@ -195,6 +197,10 @@ void Player::Logic(uint32_t elapsedTime)
 
 		_ani->Logic(elapsedTime);
 		_lastAttackRect = {}; // TODO: delete this or what in `checkEnemyHits`
+
+		if (_ani->isFinishAnimation())
+			_damageRest = 250;
+
 		return;
 	}
 
@@ -274,7 +280,7 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_speed.y > SpeedY_MAX)
 		_speed.y = SpeedY_MAX;
 
-	if (_aniName != "SPIKEDEATH")
+	if (!isInDeathAnimation())
 	{
 		// update position based on speed, but make sure we don't go outside the level
 		position.x += _speed.x * elapsedTime;
@@ -754,7 +760,7 @@ void Player::jump()
 }
 bool Player::checkForHurts()
 {
-	if (isTakeDamage()) return false;
+	if (isTakeDamage() || _damageRest > 0) return false;
 
 	pair<D2D1_RECT_F, int8_t> atkRc;
 
@@ -984,6 +990,7 @@ void Player::backToLife()
 	_lastPowderKegExplos = nullptr;
 	_raisedPowderKeg = nullptr;
 	_lastAttackRect = {};
+	_damageRest = 0;
 }
 bool Player::hasLives() const
 {
@@ -991,8 +998,11 @@ bool Player::hasLives() const
 }
 void Player::loseLife()
 {
+	// TODO: in that case we should show the "black screen"
+
 	_lives -= 1;
 	_health = 0;
+	_damageRest = 0;
 	_aniName = "SPIKEDEATH";
 	_ani = _animations[_aniName];
 	_ani->reset();

@@ -1,15 +1,16 @@
 #include "Seagull.h"
 #include "../Player.h"
 
-// TODO : continue speed and times
 
-#define DIVE_SPEED_X	(abs(position.x - _player->position.x) / 500.f)
-#define DIVE_SPEED_Y	((_maxY - _minY) / 500.f)
+inline float calcSpeed(float srcPos, float dstPos, int msTime = 500)
+{
+	return (dstPos - srcPos) / msTime;
+}
 
 
 Seagull::Seagull(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 1, 10, "FLYING", "FEATHEREXPLODE", "FEATHERFLOAT", "KILLFALL", "", "", "", "", {}),
-	_state(States::Fly), _minY(obj.y), _maxY(obj.y + 192)
+	_state(States::Fly), _minY((float)obj.y), _maxY((float)obj.y + 192), _attackRest(0)
 {
 }
 
@@ -24,49 +25,48 @@ void Seagull::Logic(uint32_t elapsedTime)
 
 	switch (_state)
 	{
-	case States::Fly: {
-		const bool canDive = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
+	case States::Fly:
+		_attackRest -= elapsedTime;
 
-		if (canDive &&
+		// if CC close to enemy - dive
+		if (_attackRest <= 0 &&
+			((_forward && _player->position.x > position.x) ||
+				(!_forward && _player->position.x < position.x)) &&
 			(_minX <= _player->position.x && _player->position.x <= _maxX) &&
-			(_minY <= _player->position.y && _player->position.y <= _maxY)
-			) // if CC close to enemy - dive
+			(_minY <= _player->position.y && _player->position.y <= _maxY))
 		{
 			_state = States::DiveIn;
 			_isAttack = true;
-			_speed.x = _forward ? DIVE_SPEED_X : -DIVE_SPEED_X;
-			_speed.y = DIVE_SPEED_Y;
-			_ani = _animations["DIVE1"];
+			_speed.x = calcSpeed(position.x, _player->position.x);
+			_speed.y = calcSpeed(position.y, _player->position.y);
+			_ani = _animations["DIVE" + to_string(getRandomInt(1, 4))];
 		}
-	}	break;
+		break;
 
 	case States::DiveIn:
-		if (
-			(position.y > _player->position.y) ||
-			CollisionDistances::isCollision(GetRect(), _player->GetRect())
-			)
+		if (position.y >= _player->position.y ||
+			CollisionDistances::isCollision(GetRect(), _player->GetRect()))
 		{
 			_state = States::DiveOut;
 			_isAttack = false;
-			_speed.x = _forward ? -DIVE_SPEED_X : DIVE_SPEED_X;
-			_speed.y = -DIVE_SPEED_Y;
+			_speed.x = calcSpeed(position.x, _forward ? _maxX : _minX); // TODO: find better `dstPos`
+			_speed.y = calcSpeed(position.y, _minY);
 
-			_ani = _animations["DIVE2"];
+			_ani = _animations["HOME"];
 		}
 		break;
 
 	case States::DiveOut:
-
 		if (position.y < _minY)
 		{
 			position.y = _minY;
 			_speed.x = _forward ? -ENEMY_PATROL_SPEED : ENEMY_PATROL_SPEED;
 			_speed.y = 0;
+			_attackRest = 1000;
 
 			_ani = _animations["FLYING"];
 			_state = States::Fly;
 		}
-
 		break;
 	}
 

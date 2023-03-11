@@ -15,5 +15,6 @@ public:
 private:
 	enum class States : int8_t { Fly, DiveIn, DiveOut };
 	const float _minY, _maxY;
+	int32_t _attackRest; // rest time between attacks
 	States _state;
 };

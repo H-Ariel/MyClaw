@@ -90,6 +90,7 @@ private:
 	uint32_t _score;
 	int32_t _dialogLeftTime, _powerupLeftTime; // in milliseconds
 	int32_t _holdAltTime; // in milliseconds. it used for pre-dynamite
+	int32_t _damageRest; // rest time between enemies attacks
 	ClawProjectile::Types _currWeapon;
 	PowerupType _currPowerup;
 	int8_t _lives;
