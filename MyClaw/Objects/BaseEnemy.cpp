@@ -407,5 +407,6 @@ void BaseBoss::Logic(uint32_t elapsedTime)
 }
 bool BaseBoss::checkForHurts()
 {
+	throw Exception(__FUNCTION__ ": Write Me!");
 	return checkForHurt(_player->GetAttackRect());
 }
