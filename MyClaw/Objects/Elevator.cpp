@@ -217,6 +217,8 @@ PathElevator::PathElevator(const WwdObject& obj, Player* player)
 }
 void PathElevator::Logic(uint32_t elapsedTime)
 {
+	// TODO: something wrong when `WindowManager::PixelSize` changed
+
 	_timeCounter -= elapsedTime;
 
 	if (_timeCounter <= 0)

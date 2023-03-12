@@ -19,4 +19,5 @@ private:
 
 	int32_t _attackRest;
 	int32_t _hitsCuonter; // count the times CC hit LR
+	bool _blockClaw;
 };

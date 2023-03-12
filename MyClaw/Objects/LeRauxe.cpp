@@ -10,7 +10,7 @@
 #define ANIMATION_HITLOW	_animations.at(_hit2AniName)
 #define ANIMATION_BLOCKHIGH	_animations.at("BLOCKHIGH")
 #define ANIMATION_BLOCKLOW	_animations.at("BLOCKLOW")
-#define ANIMATION_JUMP		_animations.at("JUMP")
+#define ANIMATION_JUMP		_animations.at("JUMPBACK")
 
 
 // TODO: same to "Seagull" ...
@@ -23,7 +23,7 @@ inline float calcSpeed(float srcPos, float dstPos, int msTime = 500)
 LeRauxe::LeRauxe(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 100, 10, "ADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "STRIKE", "", "", { { "HOME", 1000 }, { "HOME1", 1000 } }),
-	_attackRest(0), _hitsCuonter(0)
+	_attackRest(0), _hitsCuonter(1), _blockClaw(false)
 {
 }
 
@@ -49,16 +49,25 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 	// Real Logic
 	
-	if (_hitsCuonter >= /*3*/1)
+	// jump/block every 3 hits
+	_hitsCuonter = _hitsCuonter % 3;
+
+	/*
+	
+	// TODO: sometime LR jump, so we need to continue this case
+	 
+	if (_hitsCuonter == 0)
 	{
-		static const int msTime = 500/2;
-		_hitsCuonter = 0;
 		_ani = ANIMATION_JUMP;
-		_speed.x = calcSpeed(position.x, position.x > _player->position.x ? _minX : _maxX, msTime*2);
-		_speed.y = -(192.f / msTime - (GRAVITY * msTime) / 2);
+		_speed.x = (_player->position.x > position.x) ? -0.35f : 0.35f;
+		_speed.y = -0.4f;
 		_isStanding = false;
 		_isAttack = false;
 	}
+	*/
+
+	_blockClaw = (_hitsCuonter == 1 && !_blockClaw);
+
 
 	if (_isStanding)
 	{
@@ -73,11 +82,8 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 			if (_standAniIdx == _standAni.size())
 			{
-				if (!_isStaticEnemy)
-				{
-					_isStanding = false;
-					_ani = ANIMATION_WALK;
-				}
+				_isStanding = false;
+				_ani = ANIMATION_WALK;
 				_standAniIdx = 0;
 			}
 		}
@@ -87,12 +93,11 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	if (!_isStanding && !_isAttack && !_isStaticEnemy)
+	if (!_isStanding && !_isAttack)
 	{
 		position.x += _speed.x * elapsedTime;
 		position.y += _speed.y * elapsedTime;
-		if (_ani == ANIMATION_JUMP)
-			_speed.y += GRAVITY * elapsedTime;
+		_speed.y += GRAVITY * elapsedTime;
 
 		if (position.x < _minX) { stopMovingLeft(_minX - position.x); position.y = _player->position.y; }
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); position.y = _player->position.y; }
@@ -105,10 +110,6 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_JUMP)
 	{
-		if (_isStaticEnemy)
-		{
-			_isStanding = true;
-		}
 		makeAttack();
 	}
 	else
@@ -120,10 +121,6 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 			_forward = _speed.x > 0;
 		}
 	}
-
-	// TODO: sometime LR blocks CC sword attack, so we need to continue this case
-	// TODO: sometime LR jump, so we need to continue this case
-
 
 	if (_ani != prevAni)
 		_ani->reset();
@@ -245,8 +242,18 @@ bool LeRauxe::checkForHurts()
 
 		if (checkForHurt(_player->GetAttackRect()))
 		{
-			_hitsCuonter += 1;
-			return true;
+			if (_blockClaw)
+			{
+				if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+				else _ani = ANIMATION_BLOCKHIGH;
+				_isStanding = false;
+				return false;
+			}
+			else
+			{
+				_hitsCuonter += 1;
+				return true;
+			}
 		}
 	}
 
