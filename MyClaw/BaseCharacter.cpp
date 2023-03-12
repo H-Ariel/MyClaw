@@ -21,5 +21,3 @@ void BaseCharacter::Draw()
 bool BaseCharacter::isStanding() const { return false; }
 bool BaseCharacter::isDuck() const { return false; }
 bool BaseCharacter::isTakeDamage() const { return false; }
-bool BaseCharacter::hasHealth() const { return _health > 0; }
-bool BaseCharacter::isAttack() const { return _isAttack; }

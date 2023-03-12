@@ -79,13 +79,13 @@ public:
 
 	void stopFalling(float collisionSize) override;
 
-	Type getType() const;
-	int32_t getDuration() const;
-	float getSpeedX() const;
-	float getSpeedY() const;
+	Type getType() { return _type; }
+	int32_t getDuration() const { return _duration; }
+	float getSpeedX() const { return _speed.x; }
+	float getSpeedY() const { return _speed.y; }
 
-	void setSpeedX(float speedX);
-	void setSpeedY(float speedY);
+	void setSpeedX(float speedX) { _speed.x = speedX; }
+	void setSpeedY(float speedY) { _speed.y = speedY; }
 
 	static Item* getItem(const WwdObject& obj, Player* player, int8_t type = Type::None);
 	static void resetItemsPaths();

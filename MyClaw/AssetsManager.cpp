@@ -2,6 +2,16 @@
 #include "Objects/Item.h"
 
 
+// check if `str` is number as string
+static bool isNumber(string str)
+{
+	for (const char& c : str)
+		if (!isdigit(c))
+			return false;
+	return true;
+}
+
+
 RezArchive* AssetsManager::_rezArchive = nullptr;
 ImagesManager* AssetsManager::_imagesManager = nullptr;
 AnimationsManager* AssetsManager::_animationsManager = nullptr;

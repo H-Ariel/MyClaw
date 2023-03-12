@@ -88,12 +88,6 @@ enum class MouseButtons
 };
 
 
-struct ColorRGBA
-{
-	uint8_t r, g, b, a;
-};
-
-
 using namespace std;
 using namespace D2D1;
 
@@ -101,22 +95,16 @@ using namespace D2D1;
 // replace `src` with `dst` in `str`
 string replaceString(string str, char src, char dst);
 
-// check if `str` is number as string
-bool isNumber(string str);
-
 // check if `str` is starts with `prefix`
 bool startsWith(string str, string prefix);
 // check if `str` is ends with `suffix`
 bool endsWith(string str, string suffix);
 // check is `str1` contains `str2`
-bool contains(string str1, string str2);
-
-// split `str` by `delim`
-vector<string> splitStringIntoTokens(string str, char delim);
+inline bool contains(string str1, string str2) { return str1.find(str2) != string::npos; }
 
 // reterns a random number in range [a,b]
-float getRandomFloat(float a, float b);
-int getRandomInt(int a, int b);
+inline float getRandomFloat(float a, float b) { return (float)rand() / RAND_MAX * (b - a) + a; }
+inline int getRandomInt(int a, int b) { return rand() % (b - a + 1) + a; }
 
 bool operator!=(D2D1_RECT_F a, D2D1_RECT_F b);
 
@@ -131,7 +119,7 @@ inline bool FindInArray(ArrT arr, ValT val)
 
 // safe release for COM objects
 template <class T>
-void SafeRelease(T** ppT)
+inline void SafeRelease(T** ppT)
 {
 	if (*ppT)
 	{
@@ -143,7 +131,7 @@ void SafeRelease(T** ppT)
 
 // allocate new object as `shared_ptr`
 template <class T, class ... Args>
-shared_ptr<T> allocNewSharedPtr(Args... args)
+inline shared_ptr<T> allocNewSharedPtr(Args... args)
 {
 	return shared_ptr<T>(DBG_NEW T(args...));
 }

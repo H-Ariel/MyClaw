@@ -48,11 +48,10 @@
 static int32_t MAX_DYNAMITE_SPEED = DEFAULT_PROJECTILE_SPEED * 8 / 7;
 
 
-class PowerupSparkle : public BaseStaticPlaneObject
+class PowerupSparkle
 {
 public:
 	PowerupSparkle()
-		: BaseStaticPlaneObject({})
 	{
 		_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/GLITTER1.ANI");
 		removeObject = true; // force Player to call "init()"
@@ -77,12 +76,17 @@ public:
 		_ani->position.y = y + (playerRc.bottom + playerRc.top) / 2;
 	}
 
-	void Logic(uint32_t elapsedTime) override
+	void Logic(uint32_t elapsedTime)
 	{
 		_ani->Logic(elapsedTime);
 		removeObject = _ani->isFinishAnimation();
 	}
-	void Draw() override { _ani->Draw(); }
+	void Draw() { _ani->Draw(); }
+
+	bool removeObject;
+
+private:
+	shared_ptr<Animation> _ani;
 };
 
 
@@ -217,7 +221,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_useWeapon = false;
 	}
 
-	const bool canWalk = !_useWeapon && (!_isAttack || (_isAttack && inAir)) && !duck && !lookup && !_altPressed && !_isOnLadder;
+	const bool canWalk = (!_useWeapon || (_useWeapon && inAir)) && (!_isAttack || (_isAttack && inAir)) && !duck && !lookup && !_altPressed && !_isOnLadder;
 	const bool goLeft = _leftPressed && !_leftCollision && canWalk;
 	const bool goRight = _rightPressed && !_rightCollision && canWalk;
 
@@ -931,18 +935,6 @@ bool Player::collectItem(Item* item)
 	return false;
 }
 
-bool Player::isJumping() const
-{
-	return _speed.y < 0 && !_isOnLadder;
-}
-bool Player::isFalling() const
-{
-	return _speed.y > 0 && !_isOnLadder;
-}
-bool Player::isClimbing() const
-{
-	return _isOnLadder;
-}
 bool Player::isStanding() const
 {
 	return _aniName == "STAND" || _aniName == "IDLE";
@@ -992,10 +984,6 @@ void Player::backToLife()
 	_lastAttackRect = {};
 	_damageRest = 0;
 }
-bool Player::hasLives() const
-{
-	return _lives > 0;
-}
 void Player::loseLife()
 {
 	// TODO: in that case we should show the "black screen"
@@ -1011,26 +999,6 @@ void Player::loseLife()
 	_powerupSparkles.clear();
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
 }
-bool Player::isInDeathAnimation() const
-{
-	return endsWith(_aniName, "DEATH");
-}
-bool Player::isFinishDeathAnimation() const
-{
-	return isInDeathAnimation() && _ani->isFinishAnimation();
-}
-
-bool Player::isFinishLevel() const
-{
-	return _finishLevel;
-}
-
-ClawProjectile::Types Player::getCurrentWeapon() const { return _currWeapon; }
-int8_t Player::getHealthAmount() const { return _health; }
-int8_t Player::getLivesAmount() const { return _lives; }
-int8_t Player::getWeaponAmount() const { return _weaponsAmount.at(_currWeapon); }
-uint32_t Player::getScore() const { return _score; }
-int32_t Player::getPowerupLeftTime() const { return _powerupLeftTime; }
 
 void Player::keyUp(int key)
 {
@@ -1071,9 +1039,4 @@ void Player::keyDown(int key)
 		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount[ClawProjectile::Types::Dynamite] > 0);
 	} break;
 	}
-}
-
-void Player::activateDialog(int32_t duration)
-{
-	_dialogLeftTime = duration;
 }

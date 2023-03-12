@@ -39,11 +39,6 @@ void MidiPlayer::stop()
 	_mutex.unlock();
 }
 
-bool MidiPlayer::isPlaying() const
-{
-	return _isPlaying;
-}
-
 void MidiPlayer::playSync(bool infinite)
 {
 	if (midiOutOpen(&_midiOut, MIDI_MAPPER, 0, 0, CALLBACK_NULL) != MMSYSERR_NOERROR)

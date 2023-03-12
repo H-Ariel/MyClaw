@@ -1,7 +1,9 @@
 #include "WavPlayer.h"
 
+
 #define WAV_CALL(func) { MMRESULT mmResult; if ((mmResult = func) != MMSYSERR_NOERROR) WavError(mmResult); }
 #define WAV_VOLUME_MAX 0xFFFF
+
 
 inline DWORD make_dword(WORD hi, WORD lo)
 {
@@ -79,10 +81,6 @@ void WavPlayer::setVolume(int32_t volume)
 		WAV_CALL(waveOutSetVolume(_wav, _volume));
 	}*/
 }
-
-uint32_t WavPlayer::getDuration() const { return _duration; }
-bool WavPlayer::shouldPlay() const { return !_isPlaying && _infinite && !_tryPlaying; }
-bool WavPlayer::isInfinite() const { return _infinite; }
 
 void WavPlayer::WavError(MMRESULT mmResult)
 {

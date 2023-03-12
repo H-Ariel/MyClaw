@@ -57,12 +57,3 @@ void LevelMap::Draw()
 		p->Draw();
 	}
 }
-
-Player* LevelMap::getPlayer()
-{
-	return _actionPlane->getPlayer();
-}
-const D2D1_POINT_2F* LevelMap::getWindowOffset()
-{
-	return &_actionPlane->position;
-}

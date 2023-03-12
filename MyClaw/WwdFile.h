@@ -1,9 +1,7 @@
 #pragma once
 
-#include "RezArchive.h"
-
-
-class UIBaseImage;
+#include "PidPalette.h"
+#include "UIBaseImage.h"
 
 
 struct WwdRect

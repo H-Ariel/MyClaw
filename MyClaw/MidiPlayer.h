@@ -14,7 +14,7 @@ public:
 	void play(bool infinite); // start sound the MIDI file (or continue)
 	void stop(); // stop (or puase)
 	void reset();
-	bool isPlaying() const;
+	bool isPlaying() const { return _isPlaying; }
 
 private:
 	struct MidiEvent

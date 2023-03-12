@@ -3,6 +3,8 @@
 #include "../AssetsManager.h"
 
 
+// This functions are same to TogglePeg. maybe we can combine them
+
 FloorSpike::FloorSpike(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _state(States::WaitAppear),
 	_totalTime(0), _startTimeDelay(0), _timeOn(0), _timeOff(0)

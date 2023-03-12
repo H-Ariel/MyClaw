@@ -35,10 +35,7 @@ bool Projectile::isClawBullet() const
 		return ((ClawProjectile*)this)->type == ClawProjectile::Types::Pistol;
 	return false;
 }
-bool Projectile::isClawDynamite() const
-{
-	return isinstance<ClawDynamite>(this);
-}
+
 int8_t Projectile::getDamage() const { return _damage; }
 
 ClawProjectile* ClawProjectile::createNew(Types type, const WwdObject& data)

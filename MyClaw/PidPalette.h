@@ -3,6 +3,12 @@
 #include "RezArchive.h"
 
 
+struct ColorRGBA
+{
+	uint8_t r, g, b, a;
+};
+
+
 class PidPalette
 {
 public:

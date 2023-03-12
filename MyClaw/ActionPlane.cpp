@@ -55,12 +55,6 @@ public:
 };
 
 
-/*inline bool isEnemy(BasePlaneObject* obj)
-{
-	return isbaseinstance<BaseEnemy>(obj);
-}*/
-
-
 vector<BasePlaneObject*> ActionPlane::_objects;
 vector<PowderKeg*> ActionPlane::_powderKegs;
 vector<BaseEnemy*> ActionPlane::_enemies;
@@ -320,11 +314,6 @@ void ActionPlane::Draw()
 #endif
 }
 
-Player* ActionPlane::getPlayer() const
-{
-	return _player;
-}
-
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 {
 	// TODO? if (obj == nullptr) return; 
@@ -332,10 +321,6 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 	_needSort = true;
 	if (isProjectile(obj)) _projectiles.push_back((Projectile*)obj);
 }
-const vector<PowderKeg*>& ActionPlane::getPowderKegs() { return _powderKegs; }
-const vector<BaseEnemy*>& ActionPlane::getEnemies() { return _enemies; }
-const vector<Projectile*>& ActionPlane::getProjectiles() { return _projectiles; }
-const vector<FloorSpike*>& ActionPlane::getFloorSpikes() { return _floorSpikes; }
 
 void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath)
 {
@@ -527,7 +512,7 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 	else if (cumulatedCollision.right > 0) obj->stopMovingRight(cumulatedCollision.right);
 }
 
-#define ADD_ENEMY(p) BaseEnemy* enemy=p; _objects.push_back(enemy); _enemies.push_back(enemy);
+#define ADD_ENEMY(p) { BaseEnemy* enemy=p; _objects.push_back(enemy); _enemies.push_back(enemy); }
 
 void ActionPlane::addObject(const WwdObject& obj)
 {
@@ -654,7 +639,6 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW CutThroat(obj, _player));
 	}
-#endif
 	else if (obj.logic == "FloorSpike" || obj.logic == "FloorSpike2" || obj.logic == "FloorSpike3" || obj.logic == "FloorSpike4")
 	{
 		FloorSpike* s = DBG_NEW FloorSpike(obj, _player);
@@ -664,6 +648,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW Seagull(obj, _player));
 	}
+#endif
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW Raux(obj, _player));

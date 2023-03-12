@@ -16,8 +16,8 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 
-	Player* getPlayer();
-	const D2D1_POINT_2F* getWindowOffset();
+	Player* getPlayer() const { return _actionPlane->getPlayer(); }
+	const D2D1_POINT_2F* getWindowOffset() const { return &_actionPlane->position; }
 
 
 private:

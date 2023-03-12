@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BufferReader.hpp"
+#include "BufferReader.h"
 
 
 class RezArchive;
@@ -15,7 +15,7 @@ public:
 	vector<uint8_t> getData() const;
 	shared_ptr<BufferReader> getBufferReader() const;
 	string getFullPath() const;
-	bool isPidFile() const;
+	bool isPidFile() const { return strcmp(extension, "PID") == 0; }
 
 	const string name;
 	const char extension[4];
@@ -58,10 +58,10 @@ class RezArchive
 public:
 	RezArchive(string filename);
 
-	const RezDirectory* getDirectory(string dirPath) const;
-	const RezFile* getFile(string filePath) const;
-	vector<uint8_t> getFileData(string filePath);
-	shared_ptr<BufferReader> getFileBufferReader(string filePath);
+	const RezDirectory* getDirectory(string dirPath) const { return _root->getDirectory(dirPath); }
+	const RezFile* getFile(string filePath) const { return _root->getFile(filePath); }
+	vector<uint8_t> getFileData(string filePath) const { return getFile(filePath)->getData(); }
+	shared_ptr<BufferReader> getFileBufferReader(string filePath) const { return getFile(filePath)->getBufferReader(); }
 
 private:
 	void readRezDirectory(unique_ptr<RezDirectory>& dir, uint32_t dirOffset);

@@ -9,13 +9,13 @@ public:
 	static void Initialize(const TCHAR WindowClassName[], void* lpParam);
 	static void Finalize();
 
-	static void setTitle(string title);
-	static void setTitle(wstring title);
+	static void setTitle(string title) { setTitle(wstring(title.begin(), title.end())); }
+	static void setTitle(wstring title) { SetWindowText(_hWnd, title.c_str()); }
 	static void resizeRenderTarget(D2D1_SIZE_U newSize);
 	static D2D1_SIZE_F getSize(); // get screen size and consider PixelSize
 	static D2D1_SIZE_F getRealSize();
 	static void setSize(D2D1_SIZE_F size);
-	static HWND getHwnd();
+	static HWND getHwnd() { return _hWnd; }
 
 	static void drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width = 1);
 	static void drawRect(D2D1_RECT_F dst, ColorF color, float width = 1);

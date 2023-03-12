@@ -17,10 +17,9 @@ public:
 	// set the volume. value range is [0,100]
 	void setVolume(int32_t volume);
 
-	uint32_t getDuration() const;
-
-	bool shouldPlay() const;
-	bool isInfinite() const;
+	uint32_t getDuration() const { return _duration; }
+	bool shouldPlay() const { return !_isPlaying && _infinite && !_tryPlaying; }
+	bool isInfinite() const { return _infinite; }
 
 
 private:

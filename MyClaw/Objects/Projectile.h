@@ -5,6 +5,9 @@
 #define DEFAULT_PROJECTILE_SPEED 400
 
 
+class ClawDynamite;
+
+
 class Projectile : public BaseDynamicPlaneObject
 {
 public:
@@ -15,7 +18,7 @@ public:
 	void stopFalling(float collisionSize) override;
 
 	bool isClawBullet() const; // pistol shot
-	bool isClawDynamite() const;
+	bool isClawDynamite() const { return isinstance<ClawDynamite>(this); }
 
 	virtual int8_t getDamage() const;
 

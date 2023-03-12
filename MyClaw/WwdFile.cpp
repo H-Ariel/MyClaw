@@ -3,9 +3,6 @@
 #include "AssetsManager.h"
 
 
-//#define readRect(reader, rect) reader.read(rect.left, rect.top, rect.right, rect.bottom);
-#define readRect(reader, rect) reader.read(rect);
-
 enum WwdFlags
 {
 	WwdFlag_UseZCoords = 1 << 0,
@@ -309,7 +306,7 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
 		case WwdTileDescription::TileType_Double:
 			reader.read(tileDesc.outsideAttrib);
 			reader.read(tileDesc.insideAttrib);
-			readRect(reader, tileDesc.rect);
+			reader.read(tileDesc.rect);
 			break;
 		
 		default:

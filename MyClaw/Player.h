@@ -38,33 +38,33 @@ public:
 
 	bool collectItem(Item* item); // returns true if the item collected and should be removed. else - false
 
-	bool isJumping() const;
-	bool isFalling() const;
-	bool isClimbing() const;
+	bool isJumping() const { return _speed.y < 0 && !_isOnLadder; }
+	bool isFalling() const { return _speed.y > 0 && !_isOnLadder; }
+	bool isClimbing() const { return _isOnLadder; }
 	bool isStanding() const override;
 	bool isDuck() const override;
 	bool isTakeDamage() const override;
 
 	void backToLife();
-	bool hasLives() const;
+	bool hasLives() const { return _lives > 0; }
 	void loseLife();
-	bool isInDeathAnimation() const;
-	bool isFinishDeathAnimation() const;
+	bool isInDeathAnimation() const { return endsWith(_aniName, "DEATH"); }
+	bool isFinishDeathAnimation() const { return isInDeathAnimation() && _ani->isFinishAnimation(); }
 
-	bool isFinishLevel() const;
+	bool isFinishLevel() const { return _finishLevel; }
 
-	ClawProjectile::Types getCurrentWeapon() const;
-	int8_t getHealthAmount() const;
-	int8_t getLivesAmount() const;
-	int8_t getWeaponAmount() const;
-	uint32_t getScore() const;
-	int32_t getPowerupLeftTime() const; // in milliseconds
+	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
+	int8_t getHealthAmount() const { return _health; }
+	int8_t getLivesAmount() const { return _lives; }
+	int8_t getWeaponAmount() const { return _weaponsAmount.at(_currWeapon); }
+	uint32_t getScore() const { return _score; }
+	int32_t getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
 
 	// used to move player
 	void keyUp(int key);
 	void keyDown(int key);
 
-	void activateDialog(int32_t duration);
+	void activateDialog(int32_t duration) { _dialogLeftTime = duration; }
 
 
 	D2D1_POINT_2F startPosition;

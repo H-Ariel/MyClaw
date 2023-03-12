@@ -17,8 +17,8 @@ public:
 	virtual bool isDuck() const;
 	virtual bool isTakeDamage() const;
 
-	bool hasHealth() const;
-	bool isAttack() const;
+	bool hasHealth() const { return _health > 0; }
+	bool isAttack() const { return _isAttack; }
 
 
 protected:

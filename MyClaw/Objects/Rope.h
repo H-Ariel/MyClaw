@@ -12,8 +12,5 @@ public:
 	void Draw() override;
 	D2D1_RECT_F GetRect() override;
 
-	bool isPassedHalf() const;
-
-private:
-	D2D1_POINT_2F getRopeEdgePos();
+	bool isPassedHalf() const { return _ani->isPassedHalf(); }
 };

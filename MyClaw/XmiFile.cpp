@@ -1,5 +1,5 @@
-#include "BufferReader.hpp"
-#include "BufferWriter.hpp"
+#include "BufferReader.h"
+#include "BufferWriter.h"
 
 
 class ExtendedBufferReader : public BufferReader

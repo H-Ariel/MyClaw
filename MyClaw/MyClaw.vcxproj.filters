@@ -186,6 +186,15 @@
     <ClCompile Include="Objects\Seagull.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="BaseBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -203,7 +212,7 @@
     <ClInclude Include="AudioManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseBuffer.hpp">
+    <ClInclude Include="BaseBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseCharacter.h">
@@ -215,10 +224,10 @@
     <ClInclude Include="BasePlaneObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BufferReader.hpp">
+    <ClInclude Include="BufferReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BufferWriter.hpp">
+    <ClInclude Include="BufferWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClawLevelEngine.h">

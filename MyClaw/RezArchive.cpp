@@ -1,19 +1,25 @@
 #include "RezArchive.h"
 
 
-#define DIRECTORY_SEPARATOR '/'
+#define fileRead(t) _rezFileStream.read((char*)&t, sizeof(t));
 
 
-template<class T>
-inline void fileRead(ifstream& file, T& t)
+// split `str` by `delim`
+static vector<string> splitStringIntoTokens(string input, char delim)
 {
-	file.read((char*)&t, sizeof(t));
-}
-template<class T, class ... Args>
-inline void fileRead(ifstream& file, T& t, Args&...args)
-{
-	fileRead(file, t);
-	fileRead(file, args...);
+	stringstream sstr(input);
+	string tok;
+	vector<string> toksList;
+
+	while (getline(sstr, tok, delim))
+	{
+		if (!tok.empty())
+		{
+			toksList.push_back(tok);
+		}
+	}
+
+	return toksList;
 }
 
 
@@ -37,12 +43,8 @@ shared_ptr<BufferReader> RezFile::getBufferReader() const
 string RezFile::getFullPath() const
 {
 	string dirPath;
-	for (RezDirectory* dir = _parent; dir != nullptr; dirPath = dir->_name + DIRECTORY_SEPARATOR + dirPath, dir = dir->_parent);
+	for (RezDirectory* dir = _parent; dir != nullptr; dirPath = dir->_name + '/' + dirPath, dir = dir->_parent);
 	return dirPath.substr(1) + name + '.' + extension; // ignore the first character ('/')
-}
-bool RezFile::isPidFile() const
-{
-	return !memcmp(extension, "PID", 3);
 }
 
 
@@ -57,7 +59,7 @@ const RezFile* RezDirectory::getFile(string filePath) const
 	};
 
 	RezFile* file;
-	size_t fileNamePos = filePath.find_last_of(DIRECTORY_SEPARATOR);
+	size_t fileNamePos = filePath.find_last_of('/');
 	if (fileNamePos == string::npos)
 	{
 		// in case `filePath` is only filename
@@ -78,7 +80,7 @@ const RezFile* RezDirectory::getFile(string filePath) const
 const RezDirectory* RezDirectory::getDirectory(string dirPath) const
 {
 	const RezDirectory* currDir = this;
-	for (const string& dirname : splitStringIntoTokens(dirPath, DIRECTORY_SEPARATOR))
+	for (const string& dirname : splitStringIntoTokens(dirPath, '/'))
 	{
 		if (currDir->_directories.count(dirname))
 		{
@@ -103,7 +105,8 @@ RezArchive::RezArchive(string filename)
 
 	uint32_t offset, size;
 	_rezFileStream.ignore(131); // 127 header + 4 version
-	fileRead(_rezFileStream, offset, size); // read offset of first directory and its size
+	fileRead(offset); // read offset of first directory
+	fileRead(size); // read size of first directory
 
 	// checksum, offset to last archive + its node size should be equal to file size
 	_rezFileStream.seekg(0, ios::end); // get actual size of file we opened
@@ -113,28 +116,12 @@ RezArchive::RezArchive(string filename)
 		readRezDirectory(_root, offset);
 	}
 }
-const RezDirectory* RezArchive::getDirectory(string dirPath) const
-{
-	return _root->getDirectory(dirPath);
-}
-const RezFile* RezArchive::getFile(string filePath) const
-{
-	return _root->getFile(filePath);
-}
-vector<uint8_t> RezArchive::getFileData(string filePath)
-{
-	return getFile(filePath)->getData();
-}
-shared_ptr<BufferReader> RezArchive::getFileBufferReader(string filePath)
-{
-	return getFile(filePath)->getBufferReader();
-}
 
 // change PID filenames to number (e.g. "FRAME000" -> "000")
 string fixFileName(const string& filename)
 {
 	size_t i = 0;
-	while (!isdigit(filename[i]) && i<filename.length()) i += 1;
+	while (!isdigit(filename[i]) && i < filename.length()) i += 1;
 	if (i < filename.length())
 	{
 		int num = stoi(filename.substr(i));
@@ -154,7 +141,9 @@ void RezArchive::readRezDirectory(unique_ptr<RezDirectory>& dir, uint32_t dirOff
 	while (0 < remainingBytes)
 	{
 		_rezFileStream.seekg(currentOffset);
-		fileRead(_rezFileStream, isDirectory, offset, size);
+		fileRead(isDirectory);
+		fileRead(offset);
+		fileRead(size);
 
 		if (isDirectory)
 		{
@@ -166,7 +155,7 @@ void RezArchive::readRezDirectory(unique_ptr<RezDirectory>& dir, uint32_t dirOff
 		else
 		{
 			_rezFileStream.ignore(8); // date and time + 4 file id
-			fileRead(_rezFileStream, ext);
+			fileRead(ext);
 			_strrev(ext);
 			for (_rezFileStream.ignore(4); _rezFileStream.peek() != 0; name += _rezFileStream.get());
 			_rezFileStream.ignore(1); // another null

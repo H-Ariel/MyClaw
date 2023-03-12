@@ -69,10 +69,6 @@ void Crate::Logic(uint32_t elapsedTime)
 
 	removeObject = _ani->isFinishAnimation();
 }
-bool Crate::isBreaking() const
-{
-	return _ani->updateFrames;
-}
 vector<Item*> Crate::getItems()
 {
 	vector<Item*> items;

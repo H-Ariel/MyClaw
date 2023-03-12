@@ -13,6 +13,5 @@ public:
 
 protected:
 	const WwdPlane& _plane;
-
 	const uint32_t maxTileIdxX, maxTileIdxY;
 };

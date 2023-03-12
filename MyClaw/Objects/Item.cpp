@@ -196,12 +196,6 @@ void Item::stopFalling(float collisionSize)
 	_speed.x = 0;
 	position.y -= collisionSize;
 }
-Item::Type Item::getType() const { return _type; }
-int32_t Item::getDuration() const { return _duration; }
-float Item::getSpeedX() const { return _speed.x; }
-float Item::getSpeedY() const { return _speed.y; }
-void Item::setSpeedX(float speedX) { _speed.x = speedX; }
-void Item::setSpeedY(float speedY) { _speed.y = speedY; }
 
 Item* Item::getItem(const WwdObject& obj, Player* player, int8_t type)
 {

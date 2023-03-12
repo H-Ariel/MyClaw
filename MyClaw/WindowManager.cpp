@@ -31,14 +31,6 @@ void WindowManager::Finalize()
 	CoUninitialize();
 };
 
-void WindowManager::setTitle(string title)
-{
-	setTitle(wstring(title.begin(), title.end()));
-}
-void WindowManager::setTitle(wstring title)
-{
-	SetWindowText(_hWnd, title.c_str());
-}
 void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
 {
 	if (_renderTarget)
@@ -62,11 +54,6 @@ void WindowManager::setSize(D2D1_SIZE_F size)
 	RECT rc = {};
 	GetWindowRect(_hWnd, &rc);
 	SetWindowPos(_hWnd, NULL, rc.left, rc.top, (int)size.width, (int)size.height, SWP_NOMOVE);
-}
-
-HWND WindowManager::getHwnd()
-{
-	return _hWnd;
 }
 
 void WindowManager::drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width)
