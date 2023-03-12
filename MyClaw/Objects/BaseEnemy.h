@@ -37,7 +37,7 @@ protected:
 
 	bool isWalkAnimation() const;
 	bool checkForHurt(pair<D2D1_RECT_F, uint8_t> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
-	bool checkForHurts();
+	virtual bool checkForHurts();
 
 	struct StandAniData
 	{
@@ -48,13 +48,14 @@ protected:
 		uint32_t elapsedTime;
 	};
 
-	const string _walkAni, _hit1, _hit2, _fallDead, _strikeAniName, _shootAniName, _shootDuckAniName, _projectileAniDir;
+	const string _walkAniName, _hit1AniName, _hit2AniName, _fallDeadAniName,
+		_strikeAniName, _shootAniName, _shootDuckAniName, _projectileAniDir;
 	vector<int8_t> _itemsTypes;
 	vector<shared_ptr<StandAniData>> _standAni;
 	size_t _standAniIdx;
 	const float _minX, _maxX;
 	int8_t _damage; // the amount of health that enemy took when he hit Claw
-	bool _itemsTaken; // store if the items were taken from this crate. TODO: rename
+	bool _itemsTaken; // store if the items were taken from this crate
 	bool _isStanding;
 	const bool _canStrike, _canShoot, _canShootDuck;
 	const bool _isStaticEnemy; // it always idle
@@ -76,6 +77,10 @@ public:
 	~BaseBoss();
 
 	void Logic(uint32_t elapsedTime) override;
+//	virtual void Logic(uint32_t elapsedTime) override = 0;
+
+protected:
+	bool checkForHurts() override; // We added this function because bosses are not hit by CC projectiles
 
 private:
 	const D2D1_POINT_2L _gemPos;

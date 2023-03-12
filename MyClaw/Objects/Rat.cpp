@@ -4,7 +4,7 @@
 #include "../ActionPlane.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAni)
+#define ANIMATION_WALK		_animations.at(_walkAniName)
 #define ANIMATION_SHOOT		_animations.at(_shootAniName)
 
 

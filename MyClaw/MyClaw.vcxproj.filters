@@ -132,7 +132,7 @@
     <ClCompile Include="Objects\Pegs.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Raux.cpp">
+    <ClCompile Include="Objects\LeRauxe.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Rat.cpp">
@@ -308,7 +308,7 @@
     <ClInclude Include="Objects\SoundTrigger.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Raux.h">
+    <ClInclude Include="Objects\LeRauxe.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Rat.h">

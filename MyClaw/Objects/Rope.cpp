@@ -38,18 +38,11 @@ static D2D1_POINT_2F ropeFrameIndexToRopeHandleOffset[] = {
 Rope::Rope(const WwdObject& obj, Player* player)
 	: BasePlaneObject(obj, player)
 {
-	int32_t speed = obj.speedX;
+	int32_t speed = obj.speedX / 60;
 	if (speed == 0)
-	{
-		speed = 1500;
-	}
-
-	//speed *= 2;
-	speed += speed;
-	speed /= 120;
-
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), speed, false);
-	_ani->position = position;
+		speed = 25;
+	
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), speed, false);
 }
 
 void Rope::Logic(uint32_t elapsedTime)
@@ -61,17 +54,11 @@ void Rope::Logic(uint32_t elapsedTime)
 		_player->rope = this;
 	}
 
-	_ani->Logic(elapsedTime);
-
 	if (_player->rope == this)
 	{
 		_player->position.x = thisRc.left + RECT_OFFSET;
 		_player->position.y = thisRc.top + RECT_OFFSET;
 	}
-}
-void Rope::Draw()
-{
-	_ani->Draw();
 }
 D2D1_RECT_F Rope::GetRect()
 {

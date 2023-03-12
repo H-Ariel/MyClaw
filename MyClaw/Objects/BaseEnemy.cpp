@@ -7,10 +7,10 @@
 #include "../WindowManager.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAni)
+#define ANIMATION_WALK		_animations.at(_walkAniName)
 #define ANIMATION_STRIKE	_animations.at(_strikeAniName)
-#define ANIMATION_HITHIGH	_animations.at(_hit1)
-#define ANIMATION_HITLOW	_animations.at(_hit2)
+#define ANIMATION_HITHIGH	_animations.at(_hit1AniName)
+#define ANIMATION_HITLOW	_animations.at(_hit2AniName)
 #define ANIMATION_SHOOT		_animations.at(_shootAniName)
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
@@ -84,9 +84,9 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	string projectileAniDir, vector<pair<string, uint32_t>> standAnisData, bool noTreasures)
 	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
 	_isStanding(false), _standAniIdx(0), _strikeAniName(strikeAni), _canStrike(!strikeAni.empty()),
-	_walkAni(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni),
-	_canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir), _hit1(hit1), _hit2(hit2),
-	_fallDead(fallDead), _minX((float)obj.minX), _maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1)
+	_walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni),
+	_canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir), _hit1AniName(hit1), _hit2AniName(hit2),
+	_fallDeadAniName(fallDead), _minX((float)obj.minX), _maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
 	_health = health;
@@ -125,7 +125,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	}
 	else
 	{
-		if (!_walkAni.empty())
+		if (!_walkAniName.empty())
 			_ani = ANIMATION_WALK;
 	}
 }
@@ -139,7 +139,7 @@ BaseEnemy::~BaseEnemy()
 		obj.z = ZCoord;
 		obj.speedX = position.x < _player->position.x ? -250 : 250;
 		obj.speedY = -500;
-		ActionPlane::addPlaneObject(DBG_NEW DeadEnemy(obj, _animations[_fallDead]));
+		ActionPlane::addPlaneObject(DBG_NEW DeadEnemy(obj, _animations[_fallDeadAniName]));
 	}
 }
 
@@ -205,11 +205,12 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 }
 void BaseEnemy::makeAttack()
 {
-	const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
 	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
 
 	if (_isStanding || isInRange)
 	{
+		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
+
 		if (deltaX < 96 && deltaY < 16) // CC is close to enemy
 		{
 			if (_canStrike)
@@ -403,4 +404,8 @@ BaseBoss::~BaseBoss()
 void BaseBoss::Logic(uint32_t elapsedTime)
 {
 	BaseEnemy::Logic(elapsedTime);
+}
+bool BaseBoss::checkForHurts()
+{
+	return checkForHurt(_player->GetAttackRect());
 }

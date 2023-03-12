@@ -12,7 +12,7 @@
 #include "Objects/RobberThief.h"
 #include "Objects/CutThroat.h"
 #include "Objects/Seagull.h"
-#include "Objects/Raux.h"
+#include "Objects/LeRauxe.h"
 #include "Objects/Katherine.h"
 #include "Objects/SoundTrigger.h"
 #include "Objects/Pegs.h"
@@ -651,7 +651,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 #endif
 	else if (obj.logic == "Raux")
 	{
-		ADD_ENEMY(DBG_NEW Raux(obj, _player));
+		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));
 	}
 	else if (obj.logic == "Katherine")
 	{
