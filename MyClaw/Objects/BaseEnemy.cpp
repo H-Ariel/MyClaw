@@ -184,6 +184,8 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 		if (position.x < _minX) { stopMovingLeft(_minX - position.x); }
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
+	position.y += _speed.y * elapsedTime;
+	_speed.y += GRAVITY * elapsedTime;
 
 	if (!_isAttack)
 	{
@@ -290,6 +292,12 @@ void BaseEnemy::PostLogic(uint32_t elapsedTime)
 	_ani->mirrored = _forward;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
+}
+
+D2D1_RECT_F BaseEnemy::GetRect()
+{
+	_saveCurrRect = _ani->GetRect();
+	return _saveCurrRect;
 }
 
 bool BaseEnemy::isStanding() const { return _isStanding; }

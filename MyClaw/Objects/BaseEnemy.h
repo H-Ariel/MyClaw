@@ -16,7 +16,8 @@ public:
 
 	~BaseEnemy();
 
-	void Logic(uint32_t elapsedTime) override;
+	virtual void Logic(uint32_t elapsedTime) override;
+	virtual D2D1_RECT_F GetRect() override;
 
 	bool isStanding() const override;
 	bool isDuck() const override;

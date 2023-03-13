@@ -1,4 +1,5 @@
-* complete Raux logic
+* add "int32_t _attackRest;" for all enemies
+* add "ADVANCE.ANI" for enemies (before they attack)
 * play all objects WAV file
 * play 2 WAV in the same time
 * display screens between levels

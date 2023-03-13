@@ -8,11 +8,6 @@ RobberThief::RobberThief(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F RobberThief::GetRect()
-{
-	_saveCurrRect = _ani->GetRect();
-	return _saveCurrRect;
-}
 pair<D2D1_RECT_F, int8_t> RobberThief::GetAttackRect()
 {
 	return {};

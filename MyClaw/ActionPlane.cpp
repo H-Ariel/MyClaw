@@ -14,6 +14,7 @@
 #include "Objects/Seagull.h"
 #include "Objects/LeRauxe.h"
 #include "Objects/Katherine.h"
+#include "Objects/TownGuard.h"
 #include "Objects/SoundTrigger.h"
 #include "Objects/Pegs.h"
 #include "Objects/DoNothing.h"
@@ -655,6 +656,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 		ADD_ENEMY(DBG_NEW Seagull(obj, _player));
 	}
 #endif
+	else if (obj.logic == "TownGuard1" || obj.logic == "TownGuard2")
+	{
+		ADD_ENEMY(DBG_NEW TownGuard(obj, _player));
+	}
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));

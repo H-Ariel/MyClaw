@@ -195,6 +195,9 @@
     <ClCompile Include="BufferWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\TownGuard.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -366,6 +369,9 @@
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Seagull.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\TownGuard.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>

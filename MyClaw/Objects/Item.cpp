@@ -163,10 +163,13 @@ Item::Item(const WwdObject& obj, Player* player, int8_t type)
 }
 void Item::Logic(uint32_t elapsedTime)
 {
-	if (CollisionDistances::isCollision(GetRect(), _player->GetRect()))
+	if (_speed.x == 0 && _speed.y == 0)
 	{
-		// if the player collect the item it will be removed
-		removeObject = _player->collectItem(this);
+		if (CollisionDistances::isCollision(GetRect(), _player->GetRect()))
+		{
+			// if the player collect the item it will be removed
+			removeObject = _player->collectItem(this);
+		}
 	}
 
 	if (_speed.y != 0)

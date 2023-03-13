@@ -96,7 +96,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 }
 D2D1_RECT_F LeRauxe::GetRect()
 {
-	D2D1_RECT_F rc = _ani->GetRect();
+	D2D1_RECT_F rc = {};
 
 	rc.left = -7.f + 15 * (!_forward);
 	rc.right = rc.left + 50;

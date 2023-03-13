@@ -7,12 +7,7 @@ CutThroat::CutThroat(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F CutThroat::GetRect()
-{
-	_saveCurrRect = _ani->GetRect();
-	return _saveCurrRect;
-}
-pair<D2D1_RECT_F, int8_t> CutThroat::GetAttackRect()
+pair<D2D1_RECT_F, int8_t> CutThroat::GetAttackRect() // TODO: improve this function
 {
 	D2D1_RECT_F rc = {};
 

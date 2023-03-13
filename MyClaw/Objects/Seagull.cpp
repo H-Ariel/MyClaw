@@ -72,13 +72,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 
 	PostLogic(elapsedTime);
 
-	_saveCurrRect = _ani->GetRect();
 	_isAttack = _state == States::DiveIn;
-}
-
-D2D1_RECT_F Seagull::GetRect()
-{
-	return _saveCurrRect;
 }
 
 pair<D2D1_RECT_F, int8_t> Seagull::GetAttackRect()

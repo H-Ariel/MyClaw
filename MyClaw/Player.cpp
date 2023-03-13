@@ -764,6 +764,8 @@ void Player::jump()
 }
 bool Player::checkForHurts()
 {
+	return false; // TODO: change this! let CC hurt!
+
 	if (isTakeDamage() || _damageRest > 0) return false;
 
 	pair<D2D1_RECT_F, int8_t> atkRc;

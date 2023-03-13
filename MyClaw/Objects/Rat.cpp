@@ -40,13 +40,6 @@ void Rat::makeAttack()
 	}
 }
 
-D2D1_RECT_F Rat::GetRect()
-{
-	D2D1_RECT_F rc = _ani->GetRect();
-	_saveCurrRect = rc;
-	return rc;
-}
-
 pair<D2D1_RECT_F, int8_t> Rat::GetAttackRect() { return {}; }
 bool Rat::isDuck() const { return true; }
 bool Rat::isTakeDamage() const { return false; }
@@ -98,7 +91,7 @@ void PunkRat::Logic(uint32_t elapsedTime)
 	if (checkForHurts())
 		return;
 
-	shared_ptr<Animation> prevAni = _ani;
+	const shared_ptr<Animation> prevAni = _ani;
 
 	position.x += _speed.x * elapsedTime;
 	if (position.x < _minX) { stopMovingLeft(_minX - position.x); _ani = PUNKRAT_STAND; _speed.x = PUNKRAT_SPEED; }
