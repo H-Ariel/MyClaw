@@ -18,6 +18,7 @@ public:
 	void stopMovingRight(float collisionSize) override;
 
 private:
+	bool PreLogic(uint32_t elapsedTime) override;
 	void makeAttack() override;
 	bool checkForHurts() override;
 

@@ -31,8 +31,8 @@ public:
 protected:
 	virtual void makeAttack();
 
-	bool PreLogic(uint32_t elapsedTime); // called before `Logic`. returns `true` if we need do `Logic`
-	void PostLogic(uint32_t elapsedTime); // called after `Logic`
+	virtual bool PreLogic(uint32_t elapsedTime); // called before `Logic`. returns `true` if we need do `Logic`
+	virtual void PostLogic(uint32_t elapsedTime); // called after `Logic`
 
 
 	bool isWalkAnimation() const;
