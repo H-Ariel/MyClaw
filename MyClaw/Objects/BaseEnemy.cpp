@@ -82,7 +82,7 @@ void BossGem::Logic(uint32_t elapsedTime)
 
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
-	int8_t health, int8_t damage, string walkAni, string hit1, string hit2,
+	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,
 	string fallDead, string strikeAni, string shootAni, string shootDuckAni,
 	string projectileAniDir, vector<pair<string, uint32_t>> standAnisData, bool noTreasures)
 	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
@@ -383,10 +383,10 @@ bool BaseEnemy::checkForHurts()
 }
 
 
-BaseBoss::BaseBoss(const WwdObject& obj, Player* player, int8_t health,
+BaseBoss::BaseBoss(const WwdObject& obj, Player* player,
 	int8_t damage, string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
 	string shootAni, string projectileAniDir, vector<pair<string, uint32_t>> standAnisData)
-	: BaseEnemy(obj, player, health, damage, walkAni, hit1, hit2, fallDead, strikeAni, shootAni,
+	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead, strikeAni, shootAni,
 		"", projectileAniDir, standAnisData, true), _gemPos({ obj.speedX, obj.speedY })
 {
 }
@@ -403,10 +403,6 @@ BaseBoss::~BaseBoss()
 		obj.imageSet = "LEVEL_GEM";
 		ActionPlane::addPlaneObject(DBG_NEW BossGem(obj, _player));
 	}
-}
-void BaseBoss::Logic(uint32_t elapsedTime)
-{
-	BaseEnemy::Logic(elapsedTime);
 }
 bool BaseBoss::checkForHurts()
 {

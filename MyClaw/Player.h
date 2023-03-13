@@ -54,7 +54,7 @@ public:
 	bool isFinishLevel() const { return _finishLevel; }
 
 	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
-	int8_t getHealthAmount() const { return _health; }
+	int16_t getHealthAmount() const { return _health; }
 	int8_t getLivesAmount() const { return _lives; }
 	int8_t getWeaponAmount() const { return _weaponsAmount.at(_currWeapon); }
 	uint32_t getScore() const { return _score; }

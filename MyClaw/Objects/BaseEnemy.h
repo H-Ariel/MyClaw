@@ -8,7 +8,7 @@ class BaseEnemy : public BaseCharacter
 {
 public:
 	BaseEnemy(const WwdObject& obj, Player* player,
-		int8_t health, int8_t damage, string walkAni,
+		int16_t health, int8_t damage, string walkAni,
 		string hit1, string hit2, string fallDead,
 		string strikeAni, string shootAni, string shootDuckAni, string projectileAniDir,
 		vector<pair<string, uint32_t>> standAnisData, bool noTreasures = false);
@@ -69,15 +69,14 @@ class BaseBoss : public BaseEnemy
 public:
 	// same ot BaseEnemy c'tor
 	BaseBoss(const WwdObject& obj, Player* player,
-		int8_t health, int8_t damage, string walkAni,
+		int8_t damage, string walkAni,
 		string hit1, string hit2, string fallDead, string strikeAni,
 		string shootAni, string projectileAniDir,
 		vector<pair<string, uint32_t>> standAnisData);
 	// `standAnis` is list of { ani-name, ani-duration (ms) }
 	~BaseBoss();
 
-	void Logic(uint32_t elapsedTime) override;
-//	virtual void Logic(uint32_t elapsedTime) override = 0;
+	virtual void Logic(uint32_t elapsedTime) override = 0;
 
 protected:
 	bool checkForHurts() override; // We added this function because bosses are not hit by CC projectiles
