@@ -6,33 +6,43 @@
 #define ANIMATION_WALK		_animations.at(_walkAniName)
 #define ANIMATION_STRIKE	_animations.at("STRIKE")
 #define ANIMATION_STAB		_animations.at("STAB")
-#define ANIMATION_HITHIGH	_animations.at(_hit1AniName)
-#define ANIMATION_HITLOW	_animations.at(_hit2AniName)
 #define ANIMATION_BLOCKHIGH	_animations.at("BLOCKHIGH")
 #define ANIMATION_BLOCKLOW	_animations.at("BLOCKLOW")
 #define ANIMATION_JUMP		_animations.at("JUMPBACK")
 
 
-// TODO: same to "Seagull" ...
-inline float calcSpeed(float srcPos, float dstPos, int msTime = 500)
-{
-	return (dstPos - srcPos) / msTime;
-}
-
-
 LeRauxe::LeRauxe(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 100, 10, "ADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "STRIKE", "", "", { { "HOME", 1000 }, { "HOME1", 1000 } }),
-	_attackRest(0), _hitsCuonter(1), _blockClaw(false)
+	_attackRest(0), _hitsCuonter(1), _blockClaw(false), _canJump(true)
 {
 }
+
+// TODO: cancel usage of `_isStanding`
 
 void LeRauxe::Logic(uint32_t elapsedTime)
 {
 	// Pre Logic
+
+	if (_ani == ANIMATION_JUMP)
+	{
+		if (_ani->isFinishAnimation())
+		{
+			stopMovingLeft(0);
+		}
+		else
+		{
+			position.x += _speed.x * elapsedTime;
+			position.y += _speed.y * elapsedTime;
+			_speed.y += GRAVITY * elapsedTime;
+
+			PostLogic(elapsedTime);
+			return;
+		}
+	}
+
 	if (!PreLogic(elapsedTime)) return;
 
-	const shared_ptr<Animation> prevAni = _ani;
 
 	if (_ani == ANIMATION_BLOCKHIGH || _ani == ANIMATION_BLOCKLOW)
 	{
@@ -47,24 +57,35 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		}
 	}
 
+
 	// Real Logic
 	
-	// jump/block every 3 hits
-	_hitsCuonter = _hitsCuonter % 3;
+	const shared_ptr<Animation> prevAni = _ani;
 
-	/*
-	
-	// TODO: sometime LR jump, so we need to continue this case
-	 
-	if (_hitsCuonter == 0)
+
+	if (_hitsCuonter == 0 && _canJump)
 	{
 		_ani = ANIMATION_JUMP;
-		_speed.x = (_player->position.x > position.x) ? -0.35f : 0.35f;
-		_speed.y = -0.4f;
+
+		/*
+		y = 0.5 * a * t^2 + v0 * t + y0
+		  
+		v0 = ?
+		a  = GRAVITY
+		y0 = 0
+		y  = 128
+		t  = 150
+		
+		128 = 0.5 * GRAVITY * 22500 + v0 * 150 + 0
+		...
+		*/
+		_speed.y = -(0.85 - 75 * GRAVITY);
+		_speed.x = (position.x - _minX > _maxX - position.x) ? -0.35f : 0.35f;
+
 		_isStanding = false;
 		_isAttack = false;
+		_canJump = false;
 	}
-	*/
 
 	_blockClaw = (_hitsCuonter == 1 && !_blockClaw);
 
@@ -96,12 +117,13 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 	if (!_isStanding && !_isAttack)
 	{
 		position.x += _speed.x * elapsedTime;
-		position.y += _speed.y * elapsedTime;
-		_speed.y += GRAVITY * elapsedTime;
 
 		if (position.x < _minX) { stopMovingLeft(_minX - position.x); position.y = _player->position.y; }
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); position.y = _player->position.y; }
 	}
+
+	position.y += _speed.y * elapsedTime;
+	_speed.y += GRAVITY * elapsedTime;
 
 	if (_attackRest > 0)
 	{
@@ -121,9 +143,21 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 			_forward = _speed.x > 0;
 		}
 	}
+	
+	if (_ani != ANIMATION_JUMP)
+	{
+		if (abs(_player->position.x - position.x) > 64)
+		{
+			_forward = _player->position.x > position.x;
+			if (_forward) _speed.x = abs(_speed.x);
+			else _speed.x = -abs(_speed.x);
+		}
+	}
 
 	if (_ani != prevAni)
+	{
 		_ani->reset();
+	}
 
 	// Post Logic
 	PostLogic(elapsedTime);
@@ -222,38 +256,57 @@ pair<D2D1_RECT_F, int8_t> LeRauxe::GetAttackRect()
 	return { rc, _damage };
 }
 
+void LeRauxe::stopFalling(float collisionSize)
+{
+	BaseBoss::stopFalling(collisionSize);
+	if (_ani == ANIMATION_JUMP)
+	{
+		_speed.x = 0;
+		_isStanding = true;
+		_canJump = true;
+	}
+}
+void LeRauxe::stopMovingLeft(float collisionSize)
+{
+	BaseBoss::stopMovingLeft(collisionSize);
+	_speed.y = 0;
+}
+void LeRauxe::stopMovingRight(float collisionSize)
+{
+	BaseBoss::stopMovingRight(collisionSize);
+	_speed.y = 0;
+}
+
 bool LeRauxe::checkForHurts()
 {
-	if (_ani != ANIMATION_JUMP)
+	for (Projectile* p : ActionPlane::getProjectiles())
 	{
-		for (Projectile* p : ActionPlane::getProjectiles())
+		if (isClawProjectile(p))
 		{
-			if (isClawProjectile(p))
-			{
-				if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
-				{
-					if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
-					else _ani = ANIMATION_BLOCKHIGH;
-					_ani->reset();
-					return false;
-				}
-			}
-		}
-
-		if (checkForHurt(_player->GetAttackRect()))
-		{
-			if (_blockClaw)
+			if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
 			{
 				if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
 				else _ani = ANIMATION_BLOCKHIGH;
-				_isStanding = false;
+				_ani->reset();
 				return false;
 			}
-			else
-			{
-				_hitsCuonter += 1;
-				return true;
-			}
+		}
+	}
+
+	if (checkForHurt(_player->GetAttackRect()))
+	{
+		if (_blockClaw)
+		{
+			if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+			else _ani = ANIMATION_BLOCKHIGH;
+			_isStanding = false;
+			return false;
+		}
+		else
+		{
+			// jump/block every 3 hits
+			_hitsCuonter = (_hitsCuonter + 1) % 3;
+			return true;
 		}
 	}
 

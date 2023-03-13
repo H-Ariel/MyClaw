@@ -13,6 +13,10 @@ public:
 	D2D1_RECT_F GetRect() override;
 	pair<D2D1_RECT_F, int8_t> GetAttackRect() override;
 
+	void stopFalling(float collisionSize) override;
+	void stopMovingLeft(float collisionSize) override;
+	void stopMovingRight(float collisionSize) override;
+
 private:
 	void makeAttack() override;
 	bool checkForHurts() override;
@@ -20,4 +24,5 @@ private:
 	int32_t _attackRest;
 	int32_t _hitsCuonter; // count the times CC hit LR
 	bool _blockClaw;
+	bool _canJump;
 };

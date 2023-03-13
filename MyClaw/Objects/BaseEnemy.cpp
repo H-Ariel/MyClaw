@@ -60,9 +60,12 @@ BossGem::BossGem(const WwdObject& obj, Player* player)
 }
 void BossGem::Logic(uint32_t elapsedTime)
 {
-	if (CollisionDistances::isCollision(GetRect(), _player->GetRect()))
+	if (_speed.x == 0 && _speed.y == 0)
 	{
-		_player->collectItem(this);
+		if (CollisionDistances::isCollision(GetRect(), _player->GetRect()))
+		{
+			_player->collectItem(this);
+		}
 	}
 
 	if (abs(position.x - _destination.x) <= 5 && abs(position.y - _destination.y) <= 5)
@@ -339,7 +342,7 @@ bool BaseEnemy::checkForHurt(pair<D2D1_RECT_F, uint8_t> hurtData)
 
 	if (hurtData.second > 0)
 	{
-		if (CollisionDistances::isCollision(_saveCurrRect, hurtData.first) && _lastAttackRect != hurtData.first && !isTakeDamage())
+		if (!isTakeDamage() && _lastAttackRect != hurtData.first && CollisionDistances::isCollision(_saveCurrRect, hurtData.first))
 		{
 			_lastAttackRect = hurtData.first;
 			_health -= hurtData.second;
