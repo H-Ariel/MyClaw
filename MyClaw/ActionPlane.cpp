@@ -41,7 +41,7 @@
 
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 
-//#define SAVE_LOGICS
+//#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 
 
 class SimpleObject : public BasePlaneObject
@@ -110,7 +110,7 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
 		}
 	}
 #ifdef SAVE_LOGICS
-	ofstream of("c:/users/ariel/desktop/remain- level4 logics.txt");
+	ofstream of(SAVE_LOGICS);
 	for (auto& i : allLogics) of << i << endl;
 #endif
 
@@ -586,7 +586,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW TogglePeg(obj, _player));
 	}
-	else if (contains(obj.logic, "SteppingStone"))
+	else if (obj.logic == "StartSteppingStone")
+	{
+		_objects.push_back(DBG_NEW StartSteppingStone(obj, _player));
+	}
+	else if (startsWith(obj.logic, "SteppingStone"))
 	{
 		_objects.push_back(DBG_NEW SteppingStone(obj, _player));
 	}

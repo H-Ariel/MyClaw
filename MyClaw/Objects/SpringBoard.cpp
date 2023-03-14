@@ -6,7 +6,11 @@
 SpringBoard::SpringBoard(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
 {
-	const string anisPath = PathManager::getAnimationSetPath(obj.imageSet);
+	string anisPath;
+	if (obj.imageSet == "LEVEL_WATERROCK") // level 7. TODO: something else
+		anisPath = PathManager::getAnimationSetPath("LEVEL_ROCKSPRING");
+	else
+		anisPath = PathManager::getAnimationSetPath(obj.imageSet);
 
 	_idle = AssetsManager::loadAnimation(anisPath + "/IDLE.ANI", obj.imageSet);
 	_idle->updateFrames = false;
@@ -18,8 +22,13 @@ SpringBoard::SpringBoard(const WwdObject& obj, Player* player)
 
 	_ani->updateImageData();
 	D2D1_RECT_F rc = _ani->GetRect();
-	rc.left += 40;
-	rc.right -= 40;
+
+	if (obj.imageSet != "LEVEL_WATERROCK") // level 7. TODO: something else
+	{
+		rc.left += 40;
+		rc.right -= 40;
+	}
+
 	myMemCpy(_objRc, rc);
 }
 
