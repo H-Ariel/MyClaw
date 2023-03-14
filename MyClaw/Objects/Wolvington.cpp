@@ -1,53 +1,43 @@
-#include "LeRauxe.h"
+#include "Wolvington.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
 
 
 #define ANIMATION_WALK		_animations.at(_walkAniName)
-#define ANIMATION_STRIKE	_animations.at("STRIKE")
-#define ANIMATION_STAB		_animations.at("STAB")
-#define ANIMATION_BLOCKHIGH	_animations.at("BLOCKHIGH")
-#define ANIMATION_BLOCKLOW	_animations.at("BLOCKLOW")
-#define ANIMATION_JUMPBACK	_animations.at("JUMPBACK")
+#define ANIMATION_STRIKE1	_animations.at("STRIKE1") // sword down
+#define ANIMATION_STRIKE2	_animations.at("STRIKE2") // hand up (boxings)
+#define ANIMATION_STRIKE3	_animations.at("STRIKE3") // magic up
+#define ANIMATION_STRIKE4	_animations.at("STRIKE4") // magic down
+#define ANIMATION_BLOCK		_animations.at("BLOCK")
+#define ANIMATION_JUMPBACK	_animations.at("JUMP")
 
 
-LeRauxe::LeRauxe(const WwdObject& obj, Player* player)
-	: BaseBoss(obj, player, 10, "ADVANCE", "HITHIGH", "HITLOW",
+Wolvington::Wolvington(const WwdObject& obj, Player* player)
+	: BaseBoss(obj, player, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "", "", "", {}),
-	_attackRest(0), _hitsCuonter(1), _blockClaw(false), _canJump(true)
+	_attackRest(0), _hitsCuonter(1), _canJump(true), _magicAttackCuonter(0)
 {
+	myMemCpy(_minX, position.x - 448);
+	myMemCpy(_maxX, position.x + 448);
 }
 
-void LeRauxe::Logic(uint32_t elapsedTime)
+void Wolvington::Logic(uint32_t elapsedTime)
 {
 	if (!PreLogic(elapsedTime)) return;
 
-
+	
 	const shared_ptr<Animation> prevAni = _ani;
 
 	if (_hitsCuonter == 0 && _canJump)
 	{
 		_ani = ANIMATION_JUMPBACK;
 
-		/*
-		y = 0.5 * a * t^2 + v0 * t + y0
-		  
-		v0 = ?
-		a  = GRAVITY
-		y0 = 0
-		y  = 96
-		t  = 150
-		
-		96 = 0.5 * GRAVITY * 22500 + v0 * 150 + 0
-		...
-		*/
-		_speed.y = -(0.64f - 75 * GRAVITY);
+		_speed.y = -(0.64f - 75 * GRAVITY); // see LeRauex ...
 		_speed.x = (position.x < _player->position.x) ? -0.35f : 0.35f;
 
 		_isAttack = false;
 		_canJump = false;
 	}
-	_blockClaw = (_hitsCuonter == 1 && !_blockClaw);
 
 	if (!_isAttack)
 	{
@@ -74,7 +64,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		_isAttack = false;
 		_forward = _speed.x > 0;
 	}
-	
+
 	if (_ani != ANIMATION_JUMPBACK && abs(_player->position.x - position.x) > 64)
 	{
 		_forward = _player->position.x > position.x;
@@ -90,7 +80,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 	PostLogic(elapsedTime);
 }
-D2D1_RECT_F LeRauxe::GetRect()
+D2D1_RECT_F Wolvington::GetRect()
 {
 	D2D1_RECT_F rc = {};
 
@@ -110,73 +100,64 @@ D2D1_RECT_F LeRauxe::GetRect()
 
 	return rc;
 }
-pair<D2D1_RECT_F, int8_t> LeRauxe::GetAttackRect()
+pair<D2D1_RECT_F, int8_t> Wolvington::GetAttackRect()
 {
 	D2D1_RECT_F rc = {};
 
-	if (_ani == ANIMATION_STRIKE)
+	if (_ani == ANIMATION_STRIKE1 || _ani == ANIMATION_STRIKE2)
 	{
-		rc.top = 60;
-		rc.bottom = 80;
-
 		if (_forward)
 		{
-			rc.left = 50;
-			rc.right = 130;
+			rc.left = 40;
+			rc.right = 70;
 		}
 		else
 		{
-			rc.left = -80;
-			rc.right = 0;
+			rc.left = -40;
+			rc.right = -70;
 		}
-	}
-	else if (_ani == ANIMATION_STAB)
-	{
-		rc.top = 30;
-		rc.bottom = 50;
 
-		if (_forward)
+		rc.top = 40;
+		rc.bottom = 60;
+
+		if (_ani == ANIMATION_STRIKE2)
 		{
-			rc.left = 50;
-			rc.right = 130;
+			rc.top -= 60;
+			rc.bottom -= 60;
 		}
-		else
-		{
-			rc.left = -80;
-			rc.right = 0;
-		}
+
+		// set rectangle by center
+		const float addX = position.x - (rc.right - rc.left) / 2, addY = position.y - (rc.bottom - rc.top) / 2;
+		rc.top += addY;
+		rc.bottom += addY;
+		rc.left += addX;
+		rc.right += addX;
 	}
 
-	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
+	// strikes 3,4 are "magic attack" so they have no rectangle
 
 	return { rc, _damage };
 }
 
-void LeRauxe::stopFalling(float collisionSize)
+void Wolvington::stopFalling(float collisionSize)
 {
 	_speed.y = 0;
 	position.y -= collisionSize;
-	
+
 	if (_ani == ANIMATION_JUMPBACK)
 	{
 		stopMovingLeft(0);
 		_ani = ANIMATION_WALK;
 	}
 }
-void LeRauxe::stopMovingLeft(float collisionSize)
+void Wolvington::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
 	_speed.x = ENEMY_PATROL_SPEED;
 	_speed.y = 0;
 	_forward = true;
 }
-void LeRauxe::stopMovingRight(float collisionSize)
+void Wolvington::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
 	_speed.x = -ENEMY_PATROL_SPEED;
@@ -184,7 +165,7 @@ void LeRauxe::stopMovingRight(float collisionSize)
 	_forward = false;
 }
 
-bool LeRauxe::PreLogic(uint32_t elapsedTime)
+bool Wolvington::PreLogic(uint32_t elapsedTime)
 {
 	if (_attackRest > 0)
 	{
@@ -211,7 +192,7 @@ bool LeRauxe::PreLogic(uint32_t elapsedTime)
 	if (!BaseBoss::PreLogic(elapsedTime))
 		return false;
 
-	if (_ani == ANIMATION_BLOCKHIGH || _ani == ANIMATION_BLOCKLOW)
+	if (_ani == ANIMATION_BLOCK || _isAttack)
 	{
 		if (_ani->isFinishAnimation())
 		{
@@ -227,26 +208,57 @@ bool LeRauxe::PreLogic(uint32_t elapsedTime)
 
 	return true;
 }
-void LeRauxe::makeAttack()
+void Wolvington::makeAttack()
 {
 	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
 
 	if (isInRange)
 	{
-		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
-		if (deltaX < 96 && deltaY < 16) // CC is close to LR
+		const float deltaX = abs(_player->position.x - position.x);
+		if (deltaX < 64) // CC is close to W
 		{
-			if (_player->isDuck()) _ani = ANIMATION_STRIKE;
-			else _ani = ANIMATION_STAB;
+			if (_player->isDuck()) _ani = ANIMATION_STRIKE1;
+			else _ani = ANIMATION_STRIKE2;
 			_ani->reset();
 			_isAttack = true;
 			_forward = _player->position.x > position.x;
 
-			_attackRest = 600;
+			_attackRest = 700;
+
+			_magicAttackCuonter = 0;
+		}
+		else if (deltaX < 256) // CC is far from W
+		{
+			if (_magicAttackCuonter < 3)
+			{
+				WwdObject obj;
+				obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+				obj.y = (int32_t)position.y - 20;
+				obj.z = ZCoord;
+				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+
+				if (_player->isDuck()) {
+					_ani = ANIMATION_STRIKE4;
+					obj.y += 30;
+				}
+				else
+					_ani = ANIMATION_STRIKE3;
+				
+				_ani->reset();
+				_isAttack = true;
+				_forward = _player->position.x > position.x;
+
+				
+				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL6/IMAGES/WOLVINGTONMAGIC", 20));
+
+				_attackRest = 1500;
+
+				_magicAttackCuonter += 1;
+			}
 		}
 	}
 }
-bool LeRauxe::checkForHurts()
+bool Wolvington::checkForHurts()
 {
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
@@ -254,9 +266,9 @@ bool LeRauxe::checkForHurts()
 		{
 			if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
 			{
-				if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
-				else _ani = ANIMATION_BLOCKHIGH;
+				_ani = ANIMATION_BLOCK;
 				_ani->reset();
+				_magicAttackCuonter = 0;
 				return false;
 			}
 		}
@@ -264,19 +276,11 @@ bool LeRauxe::checkForHurts()
 
 	if (checkForHurt(_player->GetAttackRect()))
 	{
-		if (_blockClaw)
-		{
-			if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
-			else _ani = ANIMATION_BLOCKHIGH;
-			return false;
-		}
-		else
-		{
-			// jump/block every 4 hits
-			_hitsCuonter = (_hitsCuonter + 1) % 4;
-			_canJump = true;
-			return true;
-		}
+		// jump every 2 hits
+		_hitsCuonter = (_hitsCuonter + 1) % 2;
+		_canJump = true;
+		_magicAttackCuonter = 0;
+		return true;
 	}
 
 	return false;

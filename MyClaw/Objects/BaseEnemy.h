@@ -4,6 +4,10 @@
 #include "Item.h"
 
 
+#define ENEMY_PATROL_SPEED	0.1f
+#define GEM_SPEED			0.2f
+
+
 class BaseEnemy : public BaseCharacter
 {
 public:
@@ -60,8 +64,6 @@ protected:
 	bool _isStanding;
 	const bool _canStrike, _canShoot, _canShootDuck;
 	const bool _isStaticEnemy; // it always idle
-
-	static const float ENEMY_PATROL_SPEED, GEM_SPEED;
 };
 
 

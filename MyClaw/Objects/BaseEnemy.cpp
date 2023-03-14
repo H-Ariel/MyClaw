@@ -14,8 +14,6 @@
 #define ANIMATION_SHOOT		_animations.at(_shootAniName)
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
-const float BaseEnemy::ENEMY_PATROL_SPEED = 0.1f, GEM_SPEED = 0.2f;
-
 
 BaseEnemy::StandAniData::StandAniData(shared_ptr<Animation> ani, uint32_t duration)
 	: ani(ani), duration(duration), elapsedTime(0) {}

@@ -177,6 +177,7 @@
     <ClCompile Include="Objects\Statue.cpp" />
     <ClCompile Include="Objects\SteppingStone.cpp" />
     <ClCompile Include="Objects\TownGuard.cpp" />
+    <ClCompile Include="Objects\Wolvington.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="PidPalette.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="Objects\Statue.h" />
     <ClInclude Include="Objects\SteppingStone.h" />
     <ClInclude Include="Objects\TownGuard.h" />
+    <ClInclude Include="Objects\Wolvington.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="PidPalette.h" />
     <ClInclude Include="Player.h" />

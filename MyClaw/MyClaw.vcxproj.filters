@@ -204,6 +204,9 @@
     <ClCompile Include="Objects\GooVent.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Wolvington.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -385,6 +388,9 @@
     </ClInclude>
     <ClInclude Include="Objects\GooVent.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Wolvington.h">
+      <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

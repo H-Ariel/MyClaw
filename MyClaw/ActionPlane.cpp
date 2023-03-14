@@ -25,6 +25,7 @@
 #include "Objects/Statue.h"
 #include "Objects/GroundBlower.h"
 #include "Objects/GooVent.h"
+#include "Objects/Wolvington.h"
 
 
 #define EMPTY_TILE -1
@@ -243,6 +244,7 @@ void ActionPlane::Draw()
 	}
 	
 
+//#define DRAW_RECTANGLES
 #ifdef DRAW_RECTANGLES
 	// draw rectangles around tiles limits
 
@@ -680,6 +682,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "Katherine")
 	{
 		ADD_ENEMY(DBG_NEW Katherine(obj, _player));
+	}
+	else if (obj.logic == "Wolvington")
+	{
+		ADD_ENEMY(DBG_NEW Wolvington(obj, _player));
 	}
 
 	//	throw Exception("TODO: logic=" + obj.logic);

@@ -91,6 +91,7 @@ Animation::Animation(RezArchive* rezArchive, string aniPath, string _imageSetPat
 		// TODO: hack - something else
 		if (contains(aniPath, "/ANIS/RAT/THROWSOUTH.ANI") && imageFileId == 0) continue;
 		else if (startsWith(aniPath, "LEVEL2/ANIS/RAUX/BLOCK")) duration /= 2;
+		else if (startsWith(aniPath, "LEVEL6/ANIS/WOLVINGTON/BLOCK")) duration /= 2;
 		else if (aniPath == "LEVEL6/ANIS/GROUNDBLOWER.ANI" && imageFileId == 18)
 		{
 			_images.push_back(DBG_NEW FrameData(

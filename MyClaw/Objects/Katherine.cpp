@@ -16,9 +16,8 @@ Katherine::Katherine(const WwdObject& obj, Player* player)
 		"FALL", "", "", "", {}),
 	_attackRest(0), _hitsCuonter(1), _blockClaw(false), _canJump(true)
 {
-	float tmp;
-	tmp = obj.x - 320.f; myMemCpy(_minX, tmp);
-	tmp = obj.x + 320.f; myMemCpy(_maxX, tmp);
+	myMemCpy(_minX, position.x - 320);
+	myMemCpy(_maxX, position.x + 320);
 }
 
 void Katherine::Logic(uint32_t elapsedTime)
@@ -55,11 +54,7 @@ void Katherine::Logic(uint32_t elapsedTime)
 	position.y += _speed.y * elapsedTime;
 	_speed.y += GRAVITY * elapsedTime;
 
-	if (_attackRest > 0)
-	{
-		_attackRest -= elapsedTime;
-	}
-	else if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_FLIP)
+	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_FLIP)
 	{
 		makeAttack();
 	}
@@ -180,6 +175,11 @@ void Katherine::stopMovingRight(float collisionSize)
 
 bool Katherine::PreLogic(uint32_t elapsedTime)
 {
+	if (_attackRest > 0)
+	{
+		_attackRest -= elapsedTime;
+	}
+
 	if (_ani == ANIMATION_FLIP)
 	{
 		if (_ani->isFinishAnimation())
@@ -223,7 +223,7 @@ void Katherine::makeAttack()
 	if (isInRange)
 	{
 		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
-		if (deltaX < 48 && deltaY < 16) // CC is close to enemy
+		if (deltaX < 48 && deltaY < 16) // CC is close to K
 		{
 			_ani = ANIMATION_STRIKE2;
 			_ani->reset();
@@ -232,7 +232,7 @@ void Katherine::makeAttack()
 
 			_attackRest = 800;
 		}
-		else if (192 < deltaX && deltaX < 208 && deltaY < 24) // CC is far from enemy
+		else if (192 < deltaX && deltaX < 208 && deltaY < 24) // CC is far from K
 		{
 			_ani = ANIMATION_STRIKE1;
 			_ani->reset();

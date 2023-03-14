@@ -35,7 +35,6 @@ bool Projectile::isClawBullet() const
 		return ((ClawProjectile*)this)->type == ClawProjectile::Types::Pistol;
 	return false;
 }
-
 int8_t Projectile::getDamage() const { return _damage; }
 
 ClawProjectile* ClawProjectile::createNew(Types type, const WwdObject& data)
@@ -118,7 +117,8 @@ int8_t ClawDynamite::getDamage() const
 	return 0;
 }
 
-EnemyProjectile::EnemyProjectile(const WwdObject& obj, string projectileAniDir) : Projectile(obj, 10, projectileAniDir) {}
+EnemyProjectile::EnemyProjectile(const WwdObject& obj, string projectileAniDir, int8_t damage)
+	: Projectile(obj, damage, projectileAniDir) {}
 
 class RatBombExplos : public BaseStaticPlaneObject
 {

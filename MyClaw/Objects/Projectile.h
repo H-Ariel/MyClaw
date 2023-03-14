@@ -69,7 +69,7 @@ private:
 class EnemyProjectile : public Projectile
 {
 public:
-	EnemyProjectile(const WwdObject& obj, string projectileAniDir);
+	EnemyProjectile(const WwdObject& obj, string projectileAniDir, int8_t damage = 10);
 };
 
 class RatBomb : public Projectile

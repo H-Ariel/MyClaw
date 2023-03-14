@@ -3,10 +3,10 @@
 #include "BaseEnemy.h"
 
 
-class Katherine : public BaseBoss
+class Wolvington : public BaseBoss
 {
 public:
-	Katherine(const WwdObject& obj, Player* player);
+	Wolvington(const WwdObject& obj, Player* player);
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -23,6 +23,7 @@ private:
 	bool checkForHurts() override;
 
 	int32_t _attackRest;
-	int32_t _hitsCuonter; // count the times CC hit K
-	bool _blockClaw, _canJump;
+	int32_t _hitsCuonter; // count the times CC hit W
+	int32_t _magicAttackCuonter; // count the times W attack CC with magic
+	bool _canJump;
 };
