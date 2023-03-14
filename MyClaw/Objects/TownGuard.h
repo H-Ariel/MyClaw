@@ -10,13 +10,13 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 
+	D2D1_RECT_F GetRect() override;
 	pair<D2D1_RECT_F, int8_t> GetAttackRect() override;
 
 private:
-	enum class Type : int8_t { Guard1, Guard2 };
+	enum class Type : int8_t { Guard1, Guard2 }; // 1-white, 2-brown
 	
 	void makeAttack() override;
 
-	int32_t _attackRest;
 	const Type _type;
 };

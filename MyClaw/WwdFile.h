@@ -151,13 +151,12 @@ struct WwdPlane
 
 	string name;
 	vector<vector<int32_t>> tiles; // tiles[y][x] = id
-	vector<string> imageSets;
 	vector<WwdObject> objects;
 	map<int32_t, shared_ptr<UIBaseImage>> tilesImages; // [id]=image
 	ColorF fillColor;
 	uint32_t tilePixelWidth, tilePixelHeight; // in pixels
 	uint32_t tilesOnAxisX, tilesOnAxisY;
-	float movementPercentX, movementPercentY; // value between 0 to 1
+	float movementPercentX, movementPercentY;
 	int32_t ZCoord;
 	bool isWrappedX, isWrappedY, isMainPlane;
 };
@@ -168,7 +167,6 @@ public:
 	WapWorld(shared_ptr<BufferReader> wwdFileReader);
 
 	string levelName;
-	vector<string> prefix, imageSet;
 	vector<WwdPlane> planes;
 	map<int32_t, WwdTileDescription> tilesDescription; // [id]=description
 	int32_t startX, startY;

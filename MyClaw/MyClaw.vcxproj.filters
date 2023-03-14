@@ -198,6 +198,12 @@
     <ClCompile Include="Objects\TownGuard.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\GroundBlower.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\GooVent.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -373,6 +379,12 @@
     </ClInclude>
     <ClInclude Include="Objects\TownGuard.h">
       <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\GroundBlower.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\GooVent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,16 +3,16 @@
 #include "../ActionPlane.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAniName)
-#define ANIMATION_STRIKE1	_animations.at("STRIKE1")
-#define ANIMATION_STRIKE2	_animations.at("STRIKE2")
-#define ANIMATION_IDLE1		_animations.at("IDLE1")
-#define ANIMATION_IDLE2		_animations.at("IDLE2")
+#define ANIMATION_WALK			_animations.at(_walkAniName)
+#define ANIMATION_STRIKE_LOW	_animations.at("STRIKE1")
+#define ANIMATION_STRIKE_HIGH	_animations.at("STRIKE2")
+#define ANIMATION_IDLE1			_animations.at("IDLE1")
+#define ANIMATION_IDLE2			_animations.at("IDLE2")
 
 
 TownGuard::TownGuard(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "", "", {}),
-	_type((Type)(obj.logic[obj.logic.length() - 1] - '1')), _attackRest(0)
+	_type((Type)(obj.logic[obj.logic.length() - 1] - '1'))
 {
 	_ani = ANIMATION_IDLE1;
 }
@@ -23,13 +23,13 @@ void TownGuard::Logic(uint32_t elapsedTime)
 
 	if (_isStanding)
 	{
-		if (_ani!= ANIMATION_IDLE1&&_ani!= ANIMATION_IDLE2)
+		if (_ani != ANIMATION_IDLE1 && _ani != ANIMATION_IDLE2)
 		{
 			_ani = getRandomInt(0, 1) ? ANIMATION_IDLE1 : ANIMATION_IDLE2;
 			_ani->reset();
 			_ani->loopAni = false;
 		}
-		if (_ani->isFinishAnimation())
+		if (_ani->isFinishAnimation() && !_isStaticEnemy)
 		{
 			_isStanding = false;
 			_ani = ANIMATION_WALK;
@@ -49,11 +49,7 @@ void TownGuard::Logic(uint32_t elapsedTime)
 		_speed.y += GRAVITY * elapsedTime;
 	}
 
-	if (_attackRest > 0)
-	{
-		_attackRest -= elapsedTime;
-	}
-	if (!_isAttack && _attackRest <= 0)
+	if (!_isAttack)
 	{
 		makeAttack();
 	}
@@ -80,15 +76,45 @@ void TownGuard::makeAttack()
 
 		if (deltaX < 96 && deltaY < 16) // CC is close to enemy
 		{
-			if (_player->isDuck()) _ani = ANIMATION_STRIKE1;
-			else _ani = ANIMATION_STRIKE2;
+			if (_player->isDuck()) _ani = ANIMATION_STRIKE_LOW;
+			else _ani = ANIMATION_STRIKE_HIGH;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
 			_forward = _player->position.x > position.x;
-			_attackRest = 750;
 		}
 	}
+}
+D2D1_RECT_F TownGuard::GetRect()
+{
+	D2D1_RECT_F rc = {};
+
+	if (_type == Type::Guard1)
+	{
+		rc.left = position.x - 20;
+		rc.right = position.x + 20;
+		rc.top = position.y - 50;
+		rc.bottom = position.y + 60;
+	}
+	if (_type == Type::Guard2)
+	{
+		rc.top = position.y - 50;
+		rc.bottom = position.y + 70;
+
+		if (_forward)
+		{
+			rc.left = position.x - 30;
+			rc.right = position.x + 10;
+		}
+		else
+		{
+			rc.left = position.x - 10;
+			rc.right = position.x + 30;
+		}
+	}
+
+	_saveCurrRect = rc;
+	return rc;
 }
 pair<D2D1_RECT_F, int8_t> TownGuard::GetAttackRect()
 {
@@ -107,15 +133,31 @@ pair<D2D1_RECT_F, int8_t> TownGuard::GetAttackRect()
 			rc.right = 20;
 		}
 
-		if (_ani == ANIMATION_STRIKE2)
+		if (_ani == ANIMATION_STRIKE_HIGH)
 		{
-			rc.top = 20;
-			rc.bottom = 40;
+			if (_type == Type::Guard1)
+			{
+				rc.top = 20;
+				rc.bottom = 40;
+			}
+			else
+			{
+				rc.top = 30;
+				rc.bottom = 50;
+			}
 		}
 		else
 		{
-			rc.top = 40;
-			rc.bottom = 60;
+			if (_type == Type::Guard1)
+			{
+				rc.top = 50;
+				rc.bottom = 70;
+			}
+			else
+			{
+				rc.top = 80;
+				rc.bottom = 100;
+			}
 		}
 	}
 

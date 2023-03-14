@@ -124,7 +124,8 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	if (_isStaticEnemy)
 	{
 		_isStanding = true;
-		_ani = _standAni[0]->ani;
+		if (_standAni.size() > 0)
+			_ani = _standAni[0]->ani;
 	}
 	else
 	{

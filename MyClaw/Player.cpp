@@ -764,7 +764,7 @@ void Player::jump()
 }
 bool Player::checkForHurts()
 {
-	return false; // TODO: change this! let CC hurt!
+//	return false; // TODO: change this! let CC hurt!
 
 	if (isTakeDamage() || _damageRest > 0) return false;
 
@@ -816,6 +816,16 @@ bool Player::checkForHurts()
 	{
 		if ((damage = s->getDamage()) > 0)
 			if (CollisionDistances::isCollision(_saveCurrRect, s->GetRect()))
+			{
+				_health -= damage;
+				return true;
+			}
+	}
+	
+	for (GooVent* g : ActionPlane::getGooVents())
+	{
+		if ((damage = g->getDamage()) > 0)
+			if (CollisionDistances::isCollision(_saveCurrRect, g->GetRect()))
 			{
 				_health -= damage;
 				return true;

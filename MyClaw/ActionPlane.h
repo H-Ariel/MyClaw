@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Objects/PowderKeg.h"
 #include "Objects/FloorSpike.h"
+#include "Objects/GooVent.h"
 
 
 class BaseEnemy;
@@ -28,6 +29,7 @@ public:
 	static const vector<BaseEnemy*>& getEnemies() { return _enemies; }
 	static const vector<Projectile*>& getProjectiles() { return _projectiles; }
 	static const vector<FloorSpike*>& getFloorSpikes() { return _floorSpikes; }
+	static const vector<GooVent*>& getGooVents() { return _gooVents; }
 
 private:
 	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath);
@@ -39,6 +41,7 @@ private:
 	static vector<BaseEnemy*> _enemies;
 	static vector<Projectile*> _projectiles;
 	static vector<FloorSpike*> _floorSpikes;
+	static vector<GooVent*> _gooVents;
 	static bool _needSort;
 
 	shared_ptr<WapWorld> _wwd;

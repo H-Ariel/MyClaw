@@ -54,7 +54,7 @@ Animation::Animation(RezArchive* rezArchive, string aniPath, string _imageSetPat
 	{
 		imageSetPath = _imageSetPath;
 	}
-	string original = imageSetPath;
+
 	imageSetPath = PathManager::getImageSetPath(imageSetPath);
 
 	if (imageSetPath.empty())

@@ -108,9 +108,10 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 	wwdFileReader->read(mainBlockLength);
 	wwdFileReader->skip(136); // 4 checksum + 4 unk + 128 launch app
 
+	vector<string> prefix, imageSet;
 	for (i = 0; i < 4; i++, imageSet.push_back(replaceString(wwdFileReader->ReadString(128), '\\', '/')));
 	for (i = 0; i < 4; i++, prefix.push_back(replaceString(wwdFileReader->ReadString(32), '\\', '/')));
-
+	// TODO: add `prefix`/`imageSet` to `PathManager`
 
 	if (flags & WwdFlag_Compress)
 	{
@@ -145,6 +146,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 }
 void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath)
 {
+	vector<string> imageSets;
 	int64_t currIdx;
 	uint32_t fillColor, imageSetsCount, objectsCount;
 	uint32_t tilesOffset, imageSetsOffset, objectsOffset;
@@ -192,9 +194,9 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		}
 
 		// read image sets
-		pln.imageSets.resize(imageSetsCount);
+		imageSets.resize(imageSetsCount);
 		reader.setIndex(imageSetsOffset);
-		for (string& s : pln.imageSets) s = reader.ReadNullTerminatedString();
+		for (string& s : imageSets) s = reader.ReadNullTerminatedString();
 
 		// read objects
 		pln.objects.resize(objectsCount);
@@ -207,7 +209,9 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		pln.isWrappedY = flags & WwdPlaneFlags_YWrapping;
 		pln.isMainPlane = flags & WwdPlaneFlags_MainPlane;
 		pln.fillColor = ColorF(colors[fillColor].r / 255.f, colors[fillColor].g / 255.f, colors[fillColor].b / 255.f);
-		pln.tilesImages = AssetsManager::loadPlaneTilesImages(imageDirectoryPath + '/' + pln.imageSets[0]);
+		pln.tilesImages = AssetsManager::loadPlaneTilesImages(imageDirectoryPath + '/' + imageSets[0]);
+		
+		imageSets.clear();
 	}
 }
 void WapWorld::readPlaneObjects(BufferReader& reader, WwdPlane& pln)

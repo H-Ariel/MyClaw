@@ -23,6 +23,8 @@
 #include "Objects/SteppingStone.h"
 #include "Objects/SpringBoard.h"
 #include "Objects/Statue.h"
+#include "Objects/GroundBlower.h"
+#include "Objects/GooVent.h"
 
 
 #define EMPTY_TILE -1
@@ -61,6 +63,7 @@ vector<PowderKeg*> ActionPlane::_powderKegs;
 vector<BaseEnemy*> ActionPlane::_enemies;
 vector<Projectile*> ActionPlane::_projectiles;
 vector<FloorSpike*> ActionPlane::_floorSpikes;
+vector<GooVent*> ActionPlane::_gooVents;
 bool ActionPlane::_needSort;
 
 
@@ -73,6 +76,7 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
 	_enemies.clear();
 	_projectiles.clear();
 	_floorSpikes.clear();
+	_gooVents.clear();
 
 
 	WwdObject playerData;
@@ -617,7 +621,16 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW SpringBoard(obj, _player));
 	}
+	else if (obj.logic == "GroundBlower")
+	{
+		_objects.push_back(DBG_NEW GroundBlower(obj, _player));
+	}
 #if 0
+	else if (obj.logic == "GooVent")
+	{
+		GooVent* g = DBG_NEW GooVent(obj, _player);
+		_objects.push_back(g); _gooVents.push_back(g);
+	}
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
 	{
 		_objects.push_back(DBG_NEW TowerCannon(obj, _player));
@@ -655,11 +668,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW Seagull(obj, _player));
 	}
-#endif
 	else if (obj.logic == "TownGuard1" || obj.logic == "TownGuard2")
 	{
 		ADD_ENEMY(DBG_NEW TownGuard(obj, _player));
 	}
+#endif
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));

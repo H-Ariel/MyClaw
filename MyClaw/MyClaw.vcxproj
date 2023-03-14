@@ -158,6 +158,8 @@
     <ClCompile Include="Objects\DoNothing.cpp" />
     <ClCompile Include="Objects\Elevator.cpp" />
     <ClCompile Include="Objects\FloorSpike.cpp" />
+    <ClCompile Include="Objects\GooVent.cpp" />
+    <ClCompile Include="Objects\GroundBlower.cpp" />
     <ClCompile Include="Objects\Item.cpp" />
     <ClCompile Include="Objects\Katherine.cpp" />
     <ClCompile Include="Objects\Officer.cpp" />
@@ -219,6 +221,8 @@
     <ClInclude Include="Objects\DoNothing.h" />
     <ClInclude Include="Objects\Elevator.h" />
     <ClInclude Include="Objects\FloorSpike.h" />
+    <ClInclude Include="Objects\GooVent.h" />
+    <ClInclude Include="Objects\GroundBlower.h" />
     <ClInclude Include="Objects\Item.h" />
     <ClInclude Include="Objects\Katherine.h" />
     <ClInclude Include="Objects\Officer.h" />
