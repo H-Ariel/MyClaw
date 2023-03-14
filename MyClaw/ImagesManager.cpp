@@ -49,8 +49,13 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(string path)
 		{
 			img = loadPcxImage(path);
 		}
+		else if (path.empty())
+		{
+			img = allocNewSharedPtr<UIBaseImage>(nullptr); // empty image
+		}
 		else
 		{
+			// TODO: insert empty image instead of throw exception ?
 			throw Exception(__FUNCTION__ " - not image. path=" + path);
 		}
 

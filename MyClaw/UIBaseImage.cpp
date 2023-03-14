@@ -3,8 +3,10 @@
 
 
 UIBaseImage::UIBaseImage(ID2D1Bitmap* bitmap, D2D1_POINT_2F offset)
-	: _bitmap(bitmap), offset(offset), size(bitmap->GetSize()), mirrored(false)
+	: _bitmap(bitmap), offset(offset), size({}), mirrored(false)
 {
+	if (_bitmap)
+		size = _bitmap->GetSize();
 }
 
 void UIBaseImage::Draw()
