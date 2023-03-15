@@ -277,7 +277,7 @@ tinfl_status tinfl_decompress(tinfl_decompressor* r, const uint8_t* pIn_buf_next
 					r->m_table_sizes[0] = 288;
 					r->m_table_sizes[1] = 32;
 					memset(r->m_tables[1].m_code_size, 5, 32);
-					for (i = 0; i <= 143; i++, *p++ = 8); // TODO: `memset`
+					for (i = 0; i <= 143; i++, *p++ = 8);
 					for (; i <= 255; i++, *p++ = 9);
 					for (; i <= 279; i++, *p++ = 7);
 					for (; i <= 287; i++, *p++ = 8);

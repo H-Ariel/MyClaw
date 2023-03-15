@@ -146,6 +146,7 @@ pair<D2D1_RECT_F, int8_t> LeRauxe::GetAttackRect()
 			rc.right = 0;
 		}
 	}
+	else return {};
 
 	// set rectangle by center
 	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
@@ -153,7 +154,6 @@ pair<D2D1_RECT_F, int8_t> LeRauxe::GetAttackRect()
 	rc.bottom += addY;
 	rc.left += addX;
 	rc.right += addX;
-
 
 	return { rc, _damage };
 }

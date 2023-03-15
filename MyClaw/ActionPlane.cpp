@@ -402,7 +402,6 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 			{
 				Player* player = (Player*)obj;
 				//TODO: can't climb up at ladder-top
-				//TODO: leave ladder if climb down and touch ground/solid
 
 				player->isCollideWithLadder = true;
 				if (player->isClimbing())
@@ -626,7 +625,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW GroundBlower(obj, _player));
 	}
-#if 0
+#if 01
 	else if (obj.logic == "GooVent")
 	{
 		GooVent* g = DBG_NEW GooVent(obj, _player);

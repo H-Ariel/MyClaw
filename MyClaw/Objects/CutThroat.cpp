@@ -9,25 +9,23 @@ CutThroat::CutThroat(const WwdObject& obj, Player* player)
 
 pair<D2D1_RECT_F, int8_t> CutThroat::GetAttackRect() // TODO: improve this function
 {
+	if (!_isAttack) return {};
+
 	D2D1_RECT_F rc = {};
 
-	if (_isAttack)
+	if (_forward)
 	{
-		if (_forward)
-		{
-			rc.left = 65;
-			rc.right = 95;
-		}
-		else
-		{
-			rc.left = -15;
-			rc.right = 15;
-		}
-
-		rc.top = 30;
-		rc.bottom = 50;
+		rc.left = 65;
+		rc.right = 95;
+	}
+	else
+	{
+		rc.left = -15;
+		rc.right = 15;
 	}
 
+	rc.top = 30;
+	rc.bottom = 50;
 
 	// set rectangle by center
 	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;

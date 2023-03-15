@@ -41,10 +41,13 @@ void MidiPlayer::stop()
 
 void MidiPlayer::playSync(bool infinite)
 {
+	// TODO: sometimes when we play again (after we stop the player) the sound is broken :(
+	
 	if (midiOutOpen(&_midiOut, MIDI_MAPPER, 0, 0, CALLBACK_NULL) != MMSYSERR_NOERROR)
 	{
 		return;
 	}
+
 	for (uint32_t& m : _cmdMsgs)
 	{
 		midiOutShortMsg(_midiOut, m);

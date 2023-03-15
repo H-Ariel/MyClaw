@@ -48,30 +48,23 @@ D2D1_RECT_F Officer::GetRect()
 }
 pair<D2D1_RECT_F, int8_t> Officer::GetAttackRect()
 {
+	if (!_isAttack && _ani->getFrameNumber() < 3) return {};
+
 	D2D1_RECT_F rc = {};
-	
-	if (_isAttack)
+	rc.top = 20;
+	rc.bottom = 40;
+
+	if (_forward)
 	{
-		if (_ani->getFrameNumber() == 3)
-		{
-			if (_forward)
-			{
-				rc.left = 80;
-				rc.right = 160;
-			}
-			else
-			{
-				rc.left = -110;
-				rc.right = -30;
-			}
-
-			rc.top = 20;
-			rc.bottom = 40;
-		}
-		else return {};
+		rc.left = 80;
+		rc.right = 160;
 	}
-
-
+	else
+	{
+		rc.left = -110;
+		rc.right = -30;
+	}
+	
 	// set rectangle by center
 	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
 	rc.top += addY;

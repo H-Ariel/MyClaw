@@ -106,9 +106,8 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 
 	if (obj.minX == 0 && obj.maxX == 0)
 	{
-		decltype(_minX) a = position.x - 32; myMemCpy(_minX, a);
-		decltype(_maxX) b = position.x + 32; myMemCpy(_maxX, b);
-		// TODO: something else
+		myMemCpy(_minX, position.x - 32);
+		myMemCpy(_maxX, position.x + 32);
 	}
 
 	_speed.x = ENEMY_PATROL_SPEED;

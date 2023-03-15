@@ -10,5 +10,5 @@ RobberThief::RobberThief(const WwdObject& obj, Player* player)
 
 pair<D2D1_RECT_F, int8_t> RobberThief::GetAttackRect()
 {
-	return {};
+	return {}; // he shoot arrows, there is no attack we CC is close
 }

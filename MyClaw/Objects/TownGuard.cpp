@@ -118,49 +118,47 @@ D2D1_RECT_F TownGuard::GetRect()
 }
 pair<D2D1_RECT_F, int8_t> TownGuard::GetAttackRect()
 {
+	if (!_isAttack) return {};
+
 	D2D1_RECT_F rc = {};
 
-	if (_isAttack)
+	if (_forward)
 	{
-		if (_forward)
-		{
-			rc.left = 30;
-			rc.right = 110;
-		}
-		else
-		{
-			rc.left = -60;
-			rc.right = 20;
-		}
-
-		if (_ani == ANIMATION_STRIKE_HIGH)
-		{
-			if (_type == Type::Guard1)
-			{
-				rc.top = 20;
-				rc.bottom = 40;
-			}
-			else
-			{
-				rc.top = 30;
-				rc.bottom = 50;
-			}
-		}
-		else
-		{
-			if (_type == Type::Guard1)
-			{
-				rc.top = 50;
-				rc.bottom = 70;
-			}
-			else
-			{
-				rc.top = 80;
-				rc.bottom = 100;
-			}
-		}
+		rc.left = 30;
+		rc.right = 110;
+	}
+	else
+	{
+		rc.left = -60;
+		rc.right = 20;
 	}
 
+	if (_ani == ANIMATION_STRIKE_HIGH)
+	{
+		if (_type == Type::Guard1)
+		{
+			rc.top = 20;
+			rc.bottom = 40;
+		}
+		else
+		{
+			rc.top = 30;
+			rc.bottom = 50;
+		}
+	}
+	else
+	{
+		if (_type == Type::Guard1)
+		{
+			rc.top = 50;
+			rc.bottom = 70;
+		}
+		else
+		{
+			rc.top = 80;
+			rc.bottom = 100;
+		}
+	}
 
 	// set rectangle by center
 	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
@@ -169,5 +167,5 @@ pair<D2D1_RECT_F, int8_t> TownGuard::GetAttackRect()
 	rc.left += addX;
 	rc.right += addX;
 
-	return { rc, _damage*0 };
+	return { rc, _damage };
 }

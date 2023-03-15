@@ -553,7 +553,7 @@ void Player::Draw()
 		s.second.Draw();
 	}
 }
-D2D1_RECT_F Player::GetRect() // TODO: improve this function
+D2D1_RECT_F Player::GetRect()
 {
 	D2D1_RECT_F rc = {};
 
@@ -561,25 +561,9 @@ D2D1_RECT_F Player::GetRect() // TODO: improve this function
 	{
 		rc.left = -7.f + 15 * (!_forward);
 		rc.right = rc.left + 50;
-		rc.top = 20;
+		rc.top = 30;
 		rc.bottom = 90;
 	}
-	/*
-	else if (_aniName == "LOOKUP" || _aniName == "WALK" || _aniName == "KICK" || _aniName == "FALL" ||
-		_aniName == "UPPERCUT" || _aniName == "PUNCH" || _aniName == "SWIPE" ||
-		_aniName == "PREDYNAMITE" || _aniName == "THROW" || startsWith(_aniName, "LIFT") ||
-		_useWeapon || isStanding() || isClimbing() || isFalling() || isJumping() || isTakeDamage())
-	{
-		rc.left = -7.f + 15 * (!_forward);
-		rc.right = rc.left + 50;
-		rc.top = 5;
-		rc.bottom = 115;
-	}
-	else
-	{
-		throw Exception(__FUNCTION__ " - unknown rect. aniName=" + _aniName);
-	}
-	*/
 	else
 	{
 		rc.left = -7.f + 15 * (!_forward);
@@ -600,7 +584,7 @@ D2D1_RECT_F Player::GetRect() // TODO: improve this function
 
 	return rc;
 }
-pair<D2D1_RECT_F, int8_t> Player::GetAttackRect() // TODO: improve this function
+pair<D2D1_RECT_F, int8_t> Player::GetAttackRect()
 {
 	D2D1_RECT_F rc = {};
 	int8_t damage = 0;
@@ -625,8 +609,8 @@ pair<D2D1_RECT_F, int8_t> Player::GetAttackRect() // TODO: improve this function
 	}
 	else if (_aniName == "JUMPSWIPE")
 	{
-		rc.top = 25;
-		rc.bottom = 45;
+		rc.top = 35;
+		rc.bottom = 55;
 
 		if (_forward)
 		{
@@ -729,7 +713,7 @@ pair<D2D1_RECT_F, int8_t> Player::GetAttackRect() // TODO: improve this function
 void Player::stopFalling(float collisionSize)
 {
 	BaseCharacter::stopFalling(collisionSize);
-	if (_speed.x == 0 && _aniName != "STAND" && !_isAttack && !isWeaponAnimation())
+	if (_speed.x == 0 && !isDuck() && _aniName != "STAND" && !_isAttack && !isWeaponAnimation())
 	{
 		// If CC stopped falling (and he is not walking) he should stand
 		_ani = _animations[_aniName = "STAND"];
@@ -738,6 +722,7 @@ void Player::stopFalling(float collisionSize)
 		_ani->position = position;
 		_ani->updateImageData();
 	}
+	_isOnLadder = false;
 }
 void Player::stopMovingLeft(float collisionSize)
 {
@@ -748,6 +733,7 @@ void Player::stopMovingLeft(float collisionSize)
 		position.x += collisionSize;
 		_leftCollision = true;
 	}
+	elevator = nullptr;
 }
 void Player::stopMovingRight(float collisionSize)
 {
@@ -758,6 +744,7 @@ void Player::stopMovingRight(float collisionSize)
 		position.x -= collisionSize;
 		_rightCollision = true;
 	}
+	elevator = nullptr;
 }
 void Player::jump(float force)
 {

@@ -133,6 +133,7 @@ pair<D2D1_RECT_F, int8_t> Wolvington::GetAttackRect()
 		rc.left += addX;
 		rc.right += addX;
 	}
+	else return {};
 
 	// strikes 3,4 are "magic attack" so they have no rectangle
 

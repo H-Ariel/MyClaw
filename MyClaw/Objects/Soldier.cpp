@@ -52,29 +52,22 @@ D2D1_RECT_F Soldier::GetRect()
 }
 pair<D2D1_RECT_F, int8_t> Soldier::GetAttackRect()
 {
+	if (!_isAttack && _ani->getFrameNumber() != 5 && _ani->getFrameNumber() != 4) return {};
+
 	D2D1_RECT_F rc = {};
+	rc.top = 0;
+	rc.bottom = 20;
 
-	if (_isAttack)
+	if (_forward)
 	{
-		if (_ani->getFrameNumber() == 5 || _ani->getFrameNumber() == 4)
-		{
-			if (_forward)
-			{
-				rc.left = 65;
-				rc.right = 95;
-			}
-			else
-			{
-				rc.left = -15;
-				rc.right = 15;
-			}
-
-			rc.top = 0;
-			rc.bottom = 20;
-		}
-		else return {};
+		rc.left = 65;
+		rc.right = 95;
 	}
-
+	else
+	{
+		rc.left = -15;
+		rc.right = 15;
+	}
 
 	// set rectangle by center
 	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
