@@ -184,17 +184,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 		obj->Logic(elapsedTime);
 
-		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<ClawDynamite>(obj) || isinstance<PowderKeg>(obj))
+		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj)
+			|| isinstance<ClawDynamite>(obj) || isinstance<PowderKeg>(obj)
+			|| (isinstance<Item>(obj) && ((BaseDynamicPlaneObject*)obj)->getSpeedY() != 0))
 		{
 			checkCollides((BaseDynamicPlaneObject*)obj, [obj] { obj->removeObject = true; });
-		}
-		else if (isinstance<Item>(obj))
-		{
-			Item* item = (Item*)obj;
-			if (item->getSpeedY() != 0)
-			{
-				checkCollides(item, [obj] { obj->removeObject = true; });
-			}
 		}
 		else if (isinstance<StackedCrates>(obj))
 		{
@@ -243,8 +237,7 @@ void ActionPlane::Draw()
 		i->Draw();
 	}
 	
-
-//#define DRAW_RECTANGLES
+#define DRAW_RECTANGLES
 #ifdef DRAW_RECTANGLES
 	// draw rectangles around tiles limits
 
@@ -339,7 +332,10 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 	const uint32_t MaxYPos = (uint32_t)(obj->position.y / _plane.tilePixelHeight + N);
 
 	D2D1_RECT_F collisions[9] = {}, cumulatedCollision = {}, tileRc = {}, collisionRc = {};
+	D2D1_RECT_F saveTileRc, spaceRc, rc1, rc2;
 	uint32_t i, j, collisionsNumber = 0;
+
+	const bool isPlayer = (obj == _player); //isinstance<Player>(obj);
 
 
 	auto _addCollision = [&]() { // add `collisionRect` to the `cumulatedCollision`
@@ -371,8 +367,6 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 	auto _onLadder = [&]() {
 		if (CollisionDistances::isCollision(objRc, tileRc))
 		{
-			const bool isPlayer = isinstance<Player>(obj);
-
 			bool isOnLadderTop = false;
 
 			// check if object is at the top of the ladder, so it should stay here
@@ -385,14 +379,14 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 
 				if (isPlayer)
 				{
-					isOnLadderTop = !((Player*)obj)->isClimbing() && isOnLadderTop;
+					isOnLadderTop = !_player->isClimbing() && isOnLadderTop;
 				}
 			}
 
 			if (isOnLadderTop)
 			{
 				collisionRc = CollisionDistances::getCollision(objRc, tileRc);
-				if (CollisionDistances::isBottomCollision(collisionRc))
+				if (CollisionDistances::getSmallest(collisionRc).bottom > 0) // is bottom collision
 				{
 					_addCollision();
 				}
@@ -400,16 +394,12 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 
 			if (isPlayer) // let Captain Claw climb
 			{
-				Player* player = (Player*)obj;
-				//TODO: can't climb up at ladder-top
-
-				player->isCollideWithLadder = true;
-				if (player->isClimbing())
+				_player->setLadderFlags(isOnLadderTop);
+				if (_player->isClimbing())
 				{
 					// set the player position on the ladder easily for the user
-					player->position.x = (tileRc.left + tileRc.right) / 2;
+					_player->position.x = (tileRc.left + tileRc.right) / 2;
 				}
-
 			}
 		}
 	};
@@ -452,6 +442,8 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 			}	break;
 
 			case WwdTileDescription::TileType_Double: { // TODO: improve this part
+				saveTileRc = tileRc;
+
 				tileRc.left += tileDesc.rect.left;
 				tileRc.top += tileDesc.rect.top;
 				tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width;
@@ -470,15 +462,12 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 					break;
 				}
 
+				// TODO: next to playerPos={7189,3488}, problem with yellow rect
+
 				if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid) // this case is the yellow rectangles
 				{
-					D2D1_RECT_F spaceRc = tileRc, rc1 = {}, rc2 = {};
-
-					tileRc.left = (float)(j * _plane.tilePixelWidth);
-					tileRc.top = (float)(i * _plane.tilePixelHeight);
-					tileRc.right = tileRc.left + _plane.tilePixelWidth;
-					tileRc.bottom = tileRc.top + _plane.tilePixelHeight;
-
+					spaceRc = tileRc;
+					tileRc = saveTileRc;
 
 					if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.top == 0)
 					{
@@ -574,7 +563,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (endsWith(obj.logic ,"Checkpoint"))
 	{
-		_objects.push_back(Checkpoint::createCheckpoint(obj, _player, contains(obj.logic, "Super")));
+		_objects.push_back(DBG_NEW Checkpoint(obj, _player));
 	}
 	else if (contains(obj.logic, "TogglePeg"))
 	{
@@ -625,7 +614,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW GroundBlower(obj, _player));
 	}
-#if 01
+#if 0
 	else if (obj.logic == "GooVent")
 	{
 		GooVent* g = DBG_NEW GooVent(obj, _player);

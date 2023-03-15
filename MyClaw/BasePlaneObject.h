@@ -49,6 +49,12 @@ class BaseDynamicPlaneObject : public BasePlaneObject
 {
 public:
 	BaseDynamicPlaneObject(const WwdObject& obj, Player* player = nullptr);
+
+	float getSpeedX() const { return _speed.x; }
+	float getSpeedY() const { return _speed.y; }
+	void setSpeedX(float speedX) { _speed.x = speedX; }
+	void setSpeedY(float speedY) { _speed.y = speedY; }
+
 	virtual void stopFalling(float collisionSize);
 	virtual void stopMovingLeft(float collisionSize);
 	virtual void stopMovingRight(float collisionSize);

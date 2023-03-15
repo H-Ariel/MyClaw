@@ -241,10 +241,10 @@ void Player::Logic(uint32_t elapsedTime)
 		_raisedPowderKeg = nullptr;
 	}
 
-	if (isCollideWithLadder)
+	if (_isCollideWithLadder)
 	{
-		isCollideWithLadder = false;
-		climbUp = _upPressed;
+		_isCollideWithLadder = false;
+		climbUp = _upPressed && !_isOnLadderTop;
 		climbDown = _downPressed;
 
 		if (climbUp)
@@ -968,7 +968,8 @@ void Player::backToLife()
 {
 	_leftCollision = false;
 	_rightCollision = false;
-	isCollideWithLadder = false;
+	_isCollideWithLadder = false;
+	_isOnLadderTop = false;
 	_isOnLadder = false;
 	_upPressed = false;
 	_downPressed = false;

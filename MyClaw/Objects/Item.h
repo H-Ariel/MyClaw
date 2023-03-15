@@ -81,11 +81,6 @@ public:
 
 	Type getType() { return _type; }
 	int32_t getDuration() const { return _duration; }
-	float getSpeedX() const { return _speed.x; }
-	float getSpeedY() const { return _speed.y; }
-
-	void setSpeedX(float speedX) { _speed.x = speedX; }
-	void setSpeedY(float speedY) { _speed.y = speedY; }
 
 	static Item* getItem(const WwdObject& obj, Player* player, int8_t type = Type::None);
 	static void resetItemsPaths();

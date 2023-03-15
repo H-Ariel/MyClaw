@@ -3,17 +3,11 @@
 #include "../AssetsManager.h"
 
 
-Checkpoint* Checkpoint::createCheckpoint(const WwdObject& obj, Player* player, bool isSuperCheckpoint)
-{
-	if (isSuperCheckpoint) return DBG_NEW Checkpoint(obj, player, "GAME/IMAGES/SUPERCHECKPOINT/", true);
-	return DBG_NEW Checkpoint(obj, player, "GAME/IMAGES/CHECKPOINTFLAG/", false);
-}
-
-Checkpoint::Checkpoint(const WwdObject& obj, Player* player, string imageSetPath, bool isSuperCheckpoint)
+Checkpoint::Checkpoint(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _state(States::Down),
-	_imageSetPath(imageSetPath), _isSuperCheckpoint(isSuperCheckpoint)
+	_imageSetPath(PathManager::getImageSetPath(obj.imageSet)), _isSuperCheckpoint(contains(obj.logic, "Super"))
 {
-	_ani = AssetsManager::createCopyAnimationFromFromPidImage(_imageSetPath + "001.PID");
+	_ani = AssetsManager::createCopyAnimationFromFromPidImage(_imageSetPath + "/001.PID");
 	setObjectRectangle();
 }
 void Checkpoint::Logic(uint32_t elapsedTime)

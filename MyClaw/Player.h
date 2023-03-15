@@ -52,6 +52,7 @@ public:
 	void backToLife();
 	bool hasLives() const { return _lives > 0; }
 	void loseLife();
+	void setLadderFlags(bool isOnLadderTop) { _isOnLadderTop = isOnLadderTop; _isCollideWithLadder = true; }
 
 	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
 	int16_t getHealthAmount() const { return _health; }
@@ -70,8 +71,7 @@ public:
 	D2D1_POINT_2F startPosition;
 	Elevator* elevator; // stores the elevator it is standing on (if any)
 	Rope* rope;
-	bool isCollideWithLadder;
-
+	
 
 private:
 	void jump();
@@ -96,5 +96,5 @@ private:
 	int8_t _lives;
 	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _spacePressed, _altPressed, _zPressed;
 	bool _leftCollision, _rightCollision, _isOnLadder, _useWeapon;
-	bool _finishLevel;
+	bool _finishLevel, _isCollideWithLadder, _isOnLadderTop;
 };
