@@ -726,6 +726,19 @@ pair<D2D1_RECT_F, int8_t> Player::GetAttackRect() // TODO: improve this function
 	return { rc, _currPowerup == PowerupType::Catnip ? 100 : damage };
 }
 
+void Player::stopFalling(float collisionSize)
+{
+	BaseCharacter::stopFalling(collisionSize);
+	if (_speed.x == 0 && _aniName != "STAND" && !_isAttack && !isWeaponAnimation())
+	{
+		// If CC stopped falling (and he is not walking) he should stand
+		_ani = _animations[_aniName = "STAND"];
+		_ani->reset();
+		_ani->mirrored = !_forward && !_isOnLadder;
+		_ani->position = position;
+		_ani->updateImageData();
+	}
+}
 void Player::stopMovingLeft(float collisionSize)
 {
 	if (isClimbing()) return;

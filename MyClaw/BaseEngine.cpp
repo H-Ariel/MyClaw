@@ -2,8 +2,7 @@
 #include "WindowManager.h"
 
 
-BaseEngine::BaseEngine() : backgroundColor(0), mousePosition({}), StopEngine(false) {}
-BaseEngine::~BaseEngine() {}
+BaseEngine::BaseEngine() : mousePosition({}), StopEngine(false) {}
 
 void BaseEngine::OnKeyUp(int key) {}
 void BaseEngine::OnKeyDown(int key) {}
@@ -18,10 +17,9 @@ void BaseEngine::Logic(uint32_t elapsedTime)
 }
 void BaseEngine::Draw()
 {
-	WindowManager::_renderTarget->BeginDraw();
-	WindowManager::_renderTarget->Clear(backgroundColor);
+	WindowManager::BeginDraw();
 	for (UIBaseElement* e : _elementsList) e->Draw();
-	WindowManager::_renderTarget->EndDraw();
+	WindowManager::EndDraw();
 }
 
 shared_ptr<BaseEngine> BaseEngine::getNextEngine() { StopEngine = false; return _nextEngine; }

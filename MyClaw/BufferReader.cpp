@@ -17,13 +17,6 @@ BufferReader::BufferReader(ifstream* ifs, size_t size)
 	_allocated = true;
 }
 
-uint8_t BufferReader::readByte()
-{
-	uint8_t u;
-	read(u);
-	return u;
-}
-
 string BufferReader::ReadString(size_t len)
 {
 	if (_idx + len > _size)

@@ -331,12 +331,6 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 
 void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath)
 {
-	if (isinstance<LeRauxe>(obj))
-	{
-		int a = 0;
-		int b = a + 4;
-	}
-
 	static const float N = 2.5f; // this number indicate how many tile we will check from every side
 	const D2D1_RECT_F objRc = obj->GetRect();
 	const uint32_t MinXPos = (uint32_t)(obj->position.x / _plane.tilePixelWidth - N);
@@ -366,9 +360,10 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 		collisionRc = CollisionDistances::getCollision(objRc, tileRect);
 		_addCollision();
 	};
-	auto _onGround = [&]() {
+	auto _onGround = [&]() { // same to `BasePlaneObject::tryCatchPlayer`
 		collisionRc = CollisionDistances::getCollision(objRc, tileRc);
-		if (CollisionDistances::isBottomCollision(collisionRc))
+		D2D1_RECT_F smallest = CollisionDistances::getSmallest(collisionRc);
+		if (smallest.bottom > 0 && (collisionRc.right > 0 || collisionRc.left > 0) && _player->isFalling())
 		{
 			_addCollision();
 		}

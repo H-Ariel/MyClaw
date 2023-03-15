@@ -9,7 +9,7 @@ class ClawLevelEngine : public BaseEngine
 {
 public:
 	ClawLevelEngine(int8_t levelNumber);
-	~ClawLevelEngine() override;
+	~ClawLevelEngine();
 
 	void Logic(uint32_t elapsedTime) override;
 

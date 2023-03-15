@@ -32,6 +32,7 @@ public:
 	D2D1_RECT_F GetRect() override;
 	pair<D2D1_RECT_F, int8_t> GetAttackRect() override;
 
+	void stopFalling(float collisionSize);
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
 	void jump(float force); // the force go to `_speed.y`
@@ -41,6 +42,9 @@ public:
 	bool isJumping() const { return _speed.y < 0 && !_isOnLadder; }
 	bool isFalling() const { return _speed.y > 0 && !_isOnLadder; }
 	bool isClimbing() const { return _isOnLadder; }
+	bool isInDeathAnimation() const { return endsWith(_aniName, "DEATH"); }
+	bool isFinishDeathAnimation() const { return isInDeathAnimation() && _ani->isFinishAnimation(); }
+	bool isFinishLevel() const { return _finishLevel; }
 	bool isStanding() const override;
 	bool isDuck() const override;
 	bool isTakeDamage() const override;
@@ -48,10 +52,6 @@ public:
 	void backToLife();
 	bool hasLives() const { return _lives > 0; }
 	void loseLife();
-	bool isInDeathAnimation() const { return endsWith(_aniName, "DEATH"); }
-	bool isFinishDeathAnimation() const { return isInDeathAnimation() && _ani->isFinishAnimation(); }
-
-	bool isFinishLevel() const { return _finishLevel; }
 
 	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
 	int16_t getHealthAmount() const { return _health; }

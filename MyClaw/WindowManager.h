@@ -11,18 +11,27 @@ public:
 
 	static void setTitle(string title) { setTitle(wstring(title.begin(), title.end())); }
 	static void setTitle(wstring title) { SetWindowText(_hWnd, title.c_str()); }
-	static void resizeRenderTarget(D2D1_SIZE_U newSize);
+	static void setSize(D2D1_SIZE_F size);
+	static void setBackgroundColor(ColorF bgColor) { _backgroundColor = bgColor; }
+	static ColorF getBackgroundColor() { return _backgroundColor; }
+	static void setWindowOffset(const D2D1_POINT_2F* offset);
+
 	static D2D1_SIZE_F getSize(); // get screen size and consider PixelSize
 	static D2D1_SIZE_F getRealSize();
-	static void setSize(D2D1_SIZE_F size);
 	static HWND getHwnd() { return _hWnd; }
+
+	static void BeginDraw() { _renderTarget->BeginDraw(); _renderTarget->Clear(_backgroundColor); }
+	static void EndDraw() { _renderTarget->EndDraw(); }
+
+	static void resizeRenderTarget(D2D1_SIZE_U newSize);
 
 	static void drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width = 1);
 	static void drawRect(D2D1_RECT_F dst, ColorF color, float width = 1);
 	static void drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirrored);
 
+	static ID2D1Bitmap* createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height);
+
 	static bool isInScreen(D2D1_RECT_F rc); // return if `rc` is in the window area
-	static void setWindowOffset(const D2D1_POINT_2F* offset);
 
 
 	static float PixelSize;
@@ -36,8 +45,5 @@ private:
 	static ID2D1HwndRenderTarget* _renderTarget;
 	static IWICImagingFactory* _wicImagingFactory;
 	static const D2D1_POINT_2F* _windowOffset;
-
-
-	friend class BaseEngine;
-	friend class ImagesManager;
+	static ColorF _backgroundColor;
 };

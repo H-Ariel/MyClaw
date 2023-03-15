@@ -166,7 +166,6 @@ class WapWorld // in short: WWD
 public:
 	WapWorld(shared_ptr<BufferReader> wwdFileReader);
 
-	string levelName;
 	vector<WwdPlane> planes;
 	map<int32_t, WwdTileDescription> tilesDescription; // [id]=description
 	int32_t startX, startY;

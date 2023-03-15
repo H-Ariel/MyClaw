@@ -147,6 +147,8 @@ StartSteppingStone::StartSteppingStone(const WwdObject& obj, Player* player)
 }
 void StartSteppingStone::Logic(uint32_t elapsedTime)
 {
+	// TODO: I think that some thing wrong in this method... never use copy-paste without understanding the code!
+
 	_totalTime += elapsedTime;
 
 	switch (_state)

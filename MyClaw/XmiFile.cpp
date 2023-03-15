@@ -23,7 +23,7 @@ public:
 		}
 		return val;
 	}
-	unsigned int readBigEndianUInt24() { return (((readByte() << 8) | readByte()) << 8) | readByte(); }
+	unsigned int readBigEndianUInt24() { return (((read<uint8_t>() << 8) | read<uint8_t>()) << 8) | read<uint8_t>(); }
 };
 
 class ExtendedBufferWriter : public BufferWriter

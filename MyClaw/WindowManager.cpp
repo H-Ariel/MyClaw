@@ -9,6 +9,7 @@ ID2D1Factory* WindowManager::_d2dFactory = nullptr;
 ID2D1HwndRenderTarget* WindowManager::_renderTarget = nullptr;
 IWICImagingFactory* WindowManager::_wicImagingFactory = nullptr;
 const D2D1_POINT_2F* WindowManager::_windowOffset = &defaultWindowOffset;
+ColorF WindowManager::_backgroundColor(0);
 
 
 void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
@@ -31,13 +32,21 @@ void WindowManager::Finalize()
 	CoUninitialize();
 };
 
-void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
+void WindowManager::setSize(D2D1_SIZE_F size)
 {
-	if (_renderTarget)
-	{
-		_renderTarget->Resize(newSize);
-	}
+	RECT rc = {};
+	GetWindowRect(_hWnd, &rc);
+	SetWindowPos(_hWnd, NULL, rc.left, rc.top, (int)size.width, (int)size.height, SWP_NOMOVE);
 }
+
+void WindowManager::setWindowOffset(const D2D1_POINT_2F* offset)
+{
+	if (offset)
+		_windowOffset = offset;
+	else
+		_windowOffset = &defaultWindowOffset;
+}
+
 D2D1_SIZE_F WindowManager::getSize()
 {
 	D2D1_SIZE_F size = getRealSize();
@@ -49,11 +58,13 @@ D2D1_SIZE_F WindowManager::getRealSize()
 	GetWindowRect(_hWnd, &rc);
 	return SizeF((float)(rc.right - rc.left), (float)(rc.bottom - rc.top));
 }
-void WindowManager::setSize(D2D1_SIZE_F size)
+
+void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
 {
-	RECT rc = {};
-	GetWindowRect(_hWnd, &rc);
-	SetWindowPos(_hWnd, NULL, rc.left, rc.top, (int)size.width, (int)size.height, SWP_NOMOVE);
+	if (_renderTarget)
+	{
+		_renderTarget->Resize(newSize);
+	}
 }
 
 void WindowManager::drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width)
@@ -107,6 +118,26 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirror
 	}
 }
 
+ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height)
+{
+	ID2D1Bitmap* bitmap = nullptr;
+	IWICBitmap* wicBitmap = nullptr;
+
+	HRESULT_THROW_IF_FAILED(_wicImagingFactory->CreateBitmapFromMemory(
+		width, height,
+		GUID_WICPixelFormat32bppPRGBA,
+		width * 4,
+		width * height * 4,
+		(BYTE*)buffer,
+		&wicBitmap));
+
+	HRESULT_THROW_IF_FAILED(_renderTarget->CreateBitmapFromWicBitmap(wicBitmap, &bitmap));
+
+	SafeRelease(&wicBitmap);
+
+	return bitmap;
+}
+
 bool WindowManager::isInScreen(D2D1_RECT_F rc)
 {
 	return _isInScreen(rc);
@@ -120,11 +151,4 @@ bool WindowManager::_isInScreen(D2D1_RECT_F& rc)
 
 	const D2D1_SIZE_F wndSz = getSize();
 	return (0 <= rc.right && rc.left < wndSz.width && 0 <= rc.bottom && rc.top < wndSz.height);
-}
-void WindowManager::setWindowOffset(const D2D1_POINT_2F* offset)
-{
-	if (offset)
-		_windowOffset = offset;
-	else
-		_windowOffset = &defaultWindowOffset;
 }

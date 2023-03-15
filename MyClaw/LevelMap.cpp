@@ -1,14 +1,11 @@
 #include "LevelMap.h"
-#include "ClawLevelEngine.h"
 #include "AssetsManager.h"
-#include "WindowManager.h"
 
 
-LevelMap::LevelMap(ClawLevelEngine* engine, uint8_t levelNumber)
+LevelMap::LevelMap(int8_t levelNumber)
 	: _actionPlane(nullptr)
 {
 	_wwd = AssetsManager::loadWwdFile("LEVEL" + to_string((int)levelNumber) + "/WORLDS/WORLD.WWD");
-	WindowManager::setTitle(_wwd->levelName);
 	PathManager::setLevelRoot(levelNumber);
 
 	// TODO: move to `WapWorld()`
@@ -18,7 +15,6 @@ LevelMap::LevelMap(ClawLevelEngine* engine, uint8_t levelNumber)
 		_wwd->tilesDescription[509].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 
-	engine->backgroundColor = _wwd->planes[0].fillColor;
 	for (WwdPlane& pln : _wwd->planes)
 	{
 		if (pln.isMainPlane)

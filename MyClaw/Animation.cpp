@@ -32,7 +32,7 @@ Animation::Animation(RezArchive* rezArchive, string aniPath, string _imageSetPat
 
 	/********************** ANI HEADER/PROPERTIES **********************/
 
-	if (aniFileReader->readByte() != 0x20) // file signature
+	if (aniFileReader->read<uint8_t>() != 0x20) // file signature
 	{
 		throw Exception("invalid ANI file. path=" + aniPath);
 	}
@@ -65,7 +65,7 @@ Animation::Animation(RezArchive* rezArchive, string aniPath, string _imageSetPat
 	for (uint32_t i = 0; i < framesCount; i++, soundFilePath = "")
 	{
 		aniFileReader->read(triggeredEventFlag);
-		useSoundFile = aniFileReader->readByte();// != 1; todo: unremark
+		useSoundFile = aniFileReader->read<uint8_t>();// != 1; todo: unremark
 		aniFileReader->skip(5);
 		aniFileReader->read(imageFileId);
 		aniFileReader->read(duration);

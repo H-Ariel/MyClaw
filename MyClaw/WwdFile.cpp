@@ -1,6 +1,7 @@
 #include "WwdFile.h"
 #include "Miniz.h"
 #include "AssetsManager.h"
+#include "WindowManager.h"
 
 
 enum WwdFlags
@@ -72,45 +73,42 @@ WwdObject::WwdObject()
 }
 
 WwdPlane::WwdPlane()
-	:fillColor(0), tilePixelWidth(0), tilePixelHeight(0),
+	: fillColor(0), tilePixelWidth(0), tilePixelHeight(0),
 	tilesOnAxisX(0), tilesOnAxisY(0), movementPercentX(0), movementPercentY(0),
 	ZCoord(0), isWrappedX(false), isWrappedY(false), isMainPlane(false) {}
 
 WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 {
-	uint32_t wwdSignature; // signature holds WWD header size, if size does not match then it is not supported WWD file
-	wwdFileReader->read(wwdSignature);
-	if (wwdSignature != 1524)
+	// signature holds WWD header size, if size does not match then it is not supported WWD file
+	if (wwdFileReader->read<uint32_t>() != 1524)
 	{
 		throw Exception("invlaid WWD file");
 	}
 
-	string imageDirectoryPath;
-	uint32_t numPlanes, mainBlockLength;
+	uint32_t mainBlockLength;
 	uint32_t planesOffset, tileDescriptionsOffset;
 	uint32_t flags; // WwdFlags
-	uint8_t i;
 
 	wwdFileReader->skip(4);
 	wwdFileReader->read(flags);
 	wwdFileReader->skip(4);
-	levelName = wwdFileReader->ReadString(64);
+	WindowManager::setTitle(wwdFileReader->ReadString(64));
 	wwdFileReader->skip(384); // 64 bytes - author, 64 bytes - birth, 256 bytes - rezFile
-	imageDirectoryPath = replaceString(wwdFileReader->ReadString(128), '\\', '/');
+	string imageDirectoryPath = replaceString(wwdFileReader->ReadString(128), '\\', '/');
 	shared_ptr<PidPalette> palette = AssetsManager::loadPidPalette(replaceString(wwdFileReader->ReadString(128), '\\', '/'));
 
 	wwdFileReader->read(startX);
 	wwdFileReader->read(startY);
 	wwdFileReader->skip(4);
-	wwdFileReader->read(numPlanes);
+	planes.resize(wwdFileReader->read<uint32_t>());
 	wwdFileReader->read(planesOffset);
 	wwdFileReader->read(tileDescriptionsOffset);
 	wwdFileReader->read(mainBlockLength);
 	wwdFileReader->skip(136); // 4 checksum + 4 unk + 128 launch app
 
 	vector<string> prefix, imageSet;
-	for (i = 0; i < 4; i++, imageSet.push_back(replaceString(wwdFileReader->ReadString(128), '\\', '/')));
-	for (i = 0; i < 4; i++, prefix.push_back(replaceString(wwdFileReader->ReadString(32), '\\', '/')));
+	for (int8_t i = 0; i < 4; i++, imageSet.push_back(replaceString(wwdFileReader->ReadString(128), '\\', '/')));
+	for (int8_t i = 0; i < 4; i++, prefix.push_back(replaceString(wwdFileReader->ReadString(32), '\\', '/')));
 	// TODO: add `prefix`/`imageSet` to `PathManager`
 
 	if (flags & WwdFlag_Compress)
@@ -123,10 +121,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 		// Inflate compressed WWD file payload
 		mz_uncompress(decompressedMainBlock + planesOffset, mainBlockLength, wwdFileReader->getCData() + planesOffset, (uint32_t)wwdFileReader->getSize() - planesOffset);
 
-
 		BufferReader wwdFileStreamInflated(decompressedMainBlock, decompressedMainBlockLength, false);
-
-		planes.resize(numPlanes);
 		wwdFileStreamInflated.setIndex(planesOffset);
 		readPlanes(wwdFileStreamInflated, palette->colors, imageDirectoryPath);
 		wwdFileStreamInflated.setIndex(tileDescriptionsOffset);
@@ -143,14 +138,15 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 	{
 		sort(planes.begin(), planes.end(), [](const WwdPlane& a, const WwdPlane& b) { return a.ZCoord < b.ZCoord; });
 	}
+	
+	WindowManager::setBackgroundColor(planes[0].fillColor);
 }
 void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath)
 {
 	vector<string> imageSets;
 	int64_t currIdx;
-	uint32_t fillColor, imageSetsCount, objectsCount;
+	uint32_t fillColor;
 	uint32_t tilesOffset, imageSetsOffset, objectsOffset;
-	uint32_t movementPercentX, movementPercentY;
 	uint32_t flags; // WwdPlaneFlags flags
 
 	for (WwdPlane& pln : planes)
@@ -165,18 +161,15 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		reader.read(pln.tilesOnAxisX);
 		reader.read(pln.tilesOnAxisY);
 		reader.skip(8);
-		reader.read(movementPercentX);
-		reader.read(movementPercentY);
+		pln.movementPercentX = reader.read<uint32_t>() / 100.f;
+		pln.movementPercentY = reader.read<uint32_t>() / 100.f;
 		reader.read(fillColor);
-		reader.read(imageSetsCount);
-		reader.read(objectsCount);
+		imageSets.resize(reader.read<uint32_t>());
+		pln.objects.resize(reader.read<uint32_t>());
 		reader.read(tilesOffset);
 		reader.read(imageSetsOffset);
 		reader.read(objectsOffset);
 		reader.read(pln.ZCoord);
-
-		pln.movementPercentX = movementPercentX / 100.f;
-		pln.movementPercentY = movementPercentY / 100.f;
 
 		currIdx = reader.getIndex() + 12; // save the current index and skip 12 bytes
 
@@ -194,12 +187,10 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		}
 
 		// read image sets
-		imageSets.resize(imageSetsCount);
 		reader.setIndex(imageSetsOffset);
 		for (string& s : imageSets) s = reader.ReadNullTerminatedString();
 
 		// read objects
-		pln.objects.resize(objectsCount);
 		reader.setIndex(objectsOffset);
 		readPlaneObjects(reader, pln);
 
@@ -286,13 +277,9 @@ void WapWorld::readPlaneObjects(BufferReader& reader, WwdPlane& pln)
 }
 void WapWorld::readTileDescriptions(BufferReader& reader)
 {
-	uint32_t tilesDescCount;
-
 	reader.skip(8);
-	reader.read(tilesDescCount);
+	vector<WwdTileDescription> tilesDescList(reader.read<uint32_t>());
 	reader.skip(20);
-
-	vector<WwdTileDescription> tilesDescList(tilesDescCount);
 
 	for (WwdTileDescription& tileDesc : tilesDescList)
 	{

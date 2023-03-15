@@ -14,8 +14,9 @@ public:
 
 	template <class T>
 	void read(T& t);
-
-	uint8_t readByte();
+	
+	template <class T>
+	T read();
 
 	string ReadString(size_t len);
 	string ReadNullTerminatedString();
@@ -32,4 +33,11 @@ void BufferReader::read(T& t)
 
 	memcpy(&t, _data + _idx, sizeof(t));
 	_idx += sizeof(t);
+}
+
+template<class T>
+inline T BufferReader::read()
+{
+	T t; read(t);
+	return t;
 }

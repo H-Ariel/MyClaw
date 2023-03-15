@@ -104,40 +104,18 @@ void Elevator::Logic(uint32_t elapsedTime)
 }
 void Elevator::mainLogic(uint32_t elapsedTime)
 {
-	bool directionChanged = false;
-
-	// TODO: improve this part
-	if (_speed.x < 0 && position.x < _minPos.x)
+	if ((_speed.x < 0 && position.x < _minPos.x) || (_speed.x > 0 && position.x > _maxPos.x))
 	{
 		_speed.x = -_speed.x;
-		directionChanged = true;
-	}
-	else if (_speed.x > 0 && position.x > _maxPos.x)
-	{
-		_speed.x = -_speed.x;
-		directionChanged = true;
-	}
-
-	if (directionChanged)
-	{
 		_speed.y = -_speed.y;
-	}
-	else if (_speed.y < 0 && position.y < _minPos.y)
-	{
-		_speed.y = -_speed.y;
-		directionChanged = true;
-	}
-	else if (_speed.y > 0 && position.y > _maxPos.y)
-	{
-		_speed.y = -_speed.y;
-		directionChanged = true;
-	}
-
-	if (directionChanged)
-	{
 		_arrivedToEdge = true;
 	}
-	/////////////////////////
+
+	if ((_speed.y < 0 && position.y < _minPos.y) || (_speed.y > 0 && position.y > _maxPos.y))
+	{
+		_speed.y = -_speed.y;
+		_arrivedToEdge = true;
+	}
 
 	mainMainLogic(elapsedTime);
 }

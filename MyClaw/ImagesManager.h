@@ -10,14 +10,12 @@ public:
 	ImagesManager(RezArchive* rezArchive);
 	~ImagesManager();
 
-	void setPalette(shared_ptr<PidPalette> palette);
+	void setPalette(shared_ptr<PidPalette> palette) { _palette = palette; }
 	shared_ptr<UIBaseImage> loadImage(string path);
 	
 	void clearLevelImages(const string& prefix);
 
 private:
-	static ID2D1Bitmap* createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height); // `buffer` is RGBA array
-
 	shared_ptr<UIBaseImage> loadPidImage(const string& pidPath);
 	shared_ptr<UIBaseImage> loadPcxImage(const string& pcxPath);
 

@@ -32,8 +32,7 @@ void BasePlaneObject::Reset() {}
 bool BasePlaneObject::tryCatchPlayer()
 {
 	const D2D1_RECT_F colRc = CollisionDistances::getCollision(_player->GetRect(), GetRect());
-	D2D1_RECT_F smallest(colRc);
-	CollisionDistances::keepSmallest(smallest);
+	D2D1_RECT_F smallest = CollisionDistances::getSmallest(colRc);
 	if (smallest.bottom > 0 && (colRc.right > 0 || colRc.left > 0) && _player->isFalling())
 	{
 		// if the player fall or go to this object - catch him

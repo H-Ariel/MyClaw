@@ -15,10 +15,7 @@ enum PidFlags
 };
 
 
-ImagesManager::ImagesManager(RezArchive* rezArchive)
-	: _rezArchive(rezArchive)
-{
-}
+ImagesManager::ImagesManager(RezArchive* rezArchive) : _rezArchive(rezArchive) {}
 ImagesManager::~ImagesManager()
 {
 	for (auto& i : _loadedBitmaps)
@@ -27,10 +24,6 @@ ImagesManager::~ImagesManager()
 	}
 }
 
-void ImagesManager::setPalette(shared_ptr<PidPalette> palette)
-{
-	_palette = palette;
-}
 shared_ptr<UIBaseImage> ImagesManager::loadImage(string path)
 {
 	shared_ptr<UIBaseImage> img;
@@ -267,9 +260,8 @@ shared_ptr<UIBaseImage> ImagesManager::loadPidImage(const string& pidPath)
 	}
 
 	return allocNewSharedPtr<UIBaseImage>(
-		createBitmapFromBuffer(pixels.data(), width, height),
-		Point2F((float)offsetX, (float)offsetY)
-		);
+		WindowManager::createBitmapFromBuffer(pixels.data(), width, height),
+		Point2F((float)offsetX, (float)offsetY));
 }
 shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 {
@@ -328,7 +320,7 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 		const int64_t endOfHeader = pcxReader->getIndex();
 		pcxReader->setIndex(pcxReader->getSize() - 769);
 
-		if (pcxReader->readByte() == 0x0c)
+		if (pcxReader->read<uint8_t>() == 0x0c)
 		{
 			// 256 color palette
 			for (uint16_t i = 0; i < 256; i++)
@@ -352,7 +344,7 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 	runCount = 0;
 
 	do {
-		u8 = pcxReader->readByte();
+		u8 = pcxReader->read<uint8_t>();
 
 		if (pcxEnc == 1) // is RLE
 		{
@@ -419,25 +411,5 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 		}
 	} while (y < height);
 
-	return allocNewSharedPtr<UIBaseImage>(createBitmapFromBuffer(pixels.data(), width, height));
-}
-
-ID2D1Bitmap* ImagesManager::createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height)
-{
-	ID2D1Bitmap* bitmap = nullptr;
-	IWICBitmap* wicBitmap = nullptr;
-
-	HRESULT_THROW_IF_FAILED(WindowManager::_wicImagingFactory->CreateBitmapFromMemory(
-		width, height,
-		GUID_WICPixelFormat32bppPRGBA,
-		width * 4,
-		width * height * 4,
-		(BYTE*)buffer,
-		&wicBitmap));
-
-	HRESULT_THROW_IF_FAILED(WindowManager::_renderTarget->CreateBitmapFromWicBitmap(wicBitmap, &bitmap));
-
-	SafeRelease(&wicBitmap);
-
-	return bitmap;
+	return allocNewSharedPtr<UIBaseImage>(WindowManager::createBitmapFromBuffer(pixels.data(), width, height));
 }

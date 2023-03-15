@@ -7,7 +7,6 @@ class BaseEngine
 {
 public:
 	BaseEngine();
-	virtual ~BaseEngine();
 
 	virtual void OnKeyUp(int key);
 	virtual void OnKeyDown(int key);
@@ -22,7 +21,6 @@ public:
 	shared_ptr<BaseEngine> getNextEngine();
 
 
-	ColorF backgroundColor;
 	D2D1_POINT_2U mousePosition;
 	bool StopEngine;
 

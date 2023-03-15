@@ -8,7 +8,7 @@ ClawLevelEngine::ClawLevelEngine(int8_t levelNumber)
 	: _state(State::Play), saveBgColor(0), _levelNumber(levelNumber)
 {
 	_helpImage = DBG_NEW MenuBackgroundImage("STATES/HELP/SCREENS/HELP.PCX");
-	_elementsList.push_back(_levelMap = DBG_NEW LevelMap(this, levelNumber));
+	_elementsList.push_back(_levelMap = DBG_NEW LevelMap(levelNumber));
 	_elementsList.push_back(_hud = DBG_NEW LevelHUD(_player = _levelMap->getPlayer(), *_levelMap->getWindowOffset()));
 	WindowManager::setWindowOffset(_levelMap->getWindowOffset());
 
@@ -75,8 +75,8 @@ void ClawLevelEngine::OnKeyUp(int key)
 		if (key == VK_F1)
 		{
 			_state = State::Help;
-			saveBgColor = backgroundColor;
-			backgroundColor = ColorF::Black;
+			saveBgColor = WindowManager::getBackgroundColor();
+			WindowManager::setBackgroundColor(ColorF::Black);
 			_elementsList.clear();
 			_elementsList.push_back(_helpImage);
 			WindowManager::setWindowOffset(nullptr);
@@ -101,7 +101,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 	else // if (_state == State::Help)
 	{
 		_state = State::Play;
-		backgroundColor = saveBgColor;
+		WindowManager::setBackgroundColor(saveBgColor);
 		_elementsList.clear();
 		_elementsList.push_back(_levelMap);
 		_elementsList.push_back(_hud);
