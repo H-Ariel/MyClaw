@@ -385,11 +385,7 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 
 			if (isOnLadderTop)
 			{
-				collisionRc = CollisionDistances::getCollision(objRc, tileRc);
-				if (CollisionDistances::getSmallest(collisionRc).bottom > 0) // is bottom collision
-				{
-					_addCollision();
-				}
+				_onGround(); // ladder top behaves like ground
 			}
 
 			if (isPlayer) // let Captain Claw climb
@@ -462,8 +458,6 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 					break;
 				}
 
-				// TODO: next to playerPos={7189,3488}, problem with yellow rect
-
 				if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid) // this case is the yellow rectangles
 				{
 					spaceRc = tileRc;
@@ -474,7 +468,7 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 						rc1 = RectF(tileRc.left, tileRc.top, spaceRc.left, tileRc.bottom);
 						rc2 = RectF(spaceRc.left, spaceRc.bottom, spaceRc.right, tileRc.bottom);
 					}
-					else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && tileDesc.rect.right == tileDesc.width - 1)
+					else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0)
 					{
 						rc1 = RectF(spaceRc.right, tileRc.top, tileRc.right, tileRc.bottom);
 						rc2 = RectF(tileRc.left, spaceRc.bottom, tileRc.right, tileRc.bottom);

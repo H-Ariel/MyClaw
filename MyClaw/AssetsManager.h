@@ -21,6 +21,7 @@ public:
 	static shared_ptr<Animation> createCopyAnimationFromFromPidImage(string pidPath);
 	static map<string, shared_ptr<Animation>> loadAnimationsFromDirectory(string dirPath, string imageSetPath = ""); // load all ANI files in `dirPath`
 	static shared_ptr<WapWorld> loadWwdFile(string wwdPath);
+	static shared_ptr<WapWorld> loadLevelWwdFile(int8_t levelNumber);
 	static shared_ptr<PidPalette> loadPidPalette(string palPath);
 	static map<int32_t, shared_ptr<UIBaseImage>> loadPlaneTilesImages(string planeImagesPath);
 

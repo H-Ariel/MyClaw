@@ -88,6 +88,20 @@ shared_ptr<WapWorld> AssetsManager::loadWwdFile(string wwdPath)
 {
 	return allocNewSharedPtr<WapWorld>(_rezArchive->getFileBufferReader(wwdPath));
 }
+shared_ptr<WapWorld> AssetsManager::loadLevelWwdFile(int8_t levelNumber)
+{
+	shared_ptr<WapWorld> wwd = loadWwdFile("LEVEL" + to_string((int)levelNumber) + "/WORLDS/WORLD.WWD");
+
+	PathManager::setLevelRoot(levelNumber);
+	
+	if (levelNumber == 5)
+	{
+		wwd->tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		wwd->tilesDescription[509].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+
+	return wwd;
+}
 shared_ptr<PidPalette> AssetsManager::loadPidPalette(string palPath)
 {
 	shared_ptr<PidPalette> pal = allocNewSharedPtr<PidPalette>(_rezArchive->getFileData(palPath));

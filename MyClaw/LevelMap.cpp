@@ -5,15 +5,7 @@
 LevelMap::LevelMap(int8_t levelNumber)
 	: _actionPlane(nullptr)
 {
-	_wwd = AssetsManager::loadWwdFile("LEVEL" + to_string((int)levelNumber) + "/WORLDS/WORLD.WWD");
-	PathManager::setLevelRoot(levelNumber);
-
-	// TODO: move to `WapWorld()`
-	if (levelNumber == 5)
-	{
-		_wwd->tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		_wwd->tilesDescription[509].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
+	_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
 
 	for (WwdPlane& pln : _wwd->planes)
 	{
