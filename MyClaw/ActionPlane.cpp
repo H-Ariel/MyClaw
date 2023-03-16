@@ -137,10 +137,14 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		const D2D1_RECT_F playerRc = _player->GetRect();
 		position.x = _player->position.x - wndSize.width / 2.0f;
 		position.y = _player->position.y - wndSize.height / 2.0f;
+		
+		/*
+		// TODO: delete this part if we do not need it
 		if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
 		if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;
 		if (position.y < MIN_OFFSET_Y) position.y = MIN_OFFSET_Y;
 		if (position.y > MAX_OFFSET_Y) position.y = MAX_OFFSET_Y;
+		*/
 	};
 
 	if (_CCDead_shouldWait)
@@ -276,35 +280,36 @@ void ActionPlane::Draw()
 	{
 		auto wndSz = WindowManager::getSize();
 
-		D2D1_RECT_F _CCDead_NoBlackScreen = {};
-		_CCDead_NoBlackScreen.left = _player->position.x - _CCDead_NoBlackScreen_Radius - position.x;
-		_CCDead_NoBlackScreen.top = _player->position.y - _CCDead_NoBlackScreen_Radius - position.y;
-		_CCDead_NoBlackScreen.right = _player->position.x + _CCDead_NoBlackScreen_Radius - position.x;
-		_CCDead_NoBlackScreen.bottom = _player->position.y + _CCDead_NoBlackScreen_Radius - position.y;
+		D2D1_RECT_F _CCDead_NoBlackScreen = {
+			_player->position.x - _CCDead_NoBlackScreen_Radius - position.x,
+			_player->position.y - _CCDead_NoBlackScreen_Radius - position.y,
+			_player->position.x + _CCDead_NoBlackScreen_Radius - position.x,
+			_player->position.y + _CCDead_NoBlackScreen_Radius - position.y
+		};
 
-		D2D1_RECT_F rc1 = {
+		D2D1_RECT_F rc1{
 			position.x,
 			position.y,
 			_CCDead_NoBlackScreen.left + position.x,
 			wndSz.height + position.y
 		};
-		D2D1_RECT_F rc2 = {
-			position.x,
+		D2D1_RECT_F rc2{
+			rc1.right,
 			position.y,
 			wndSz.width + position.x,
 			_CCDead_NoBlackScreen.top + position.y
 		};
-		D2D1_RECT_F rc3 = {
-			_CCDead_NoBlackScreen.right + position.x,
-			position.y,
-			wndSz.width + position.x,
-			wndSz.height + position.y
-		};
-		D2D1_RECT_F rc4 = {
-			position.x,
+		D2D1_RECT_F rc3{
+			rc1.right,
 			_CCDead_NoBlackScreen.bottom + position.y,
 			wndSz.width + position.x,
 			wndSz.height + position.y
+		};
+		D2D1_RECT_F rc4{
+			_CCDead_NoBlackScreen.right + position.x,
+			rc2.bottom,
+			wndSz.width + position.x,
+			rc3.top
 		};
 
 		WindowManager::fillRect(rc1, ColorF::Black);
@@ -312,7 +317,8 @@ void ActionPlane::Draw()
 		WindowManager::fillRect(rc3, ColorF::Black);
 		WindowManager::fillRect(rc4, ColorF::Black);
 
-	//	WindowManager::drawCircle(_player->position, _CCDead_NoBlackScreen_Radius, ColorF::Black, 20);
+		// TODO: draw circle, not 4 rectangles
+		//WindowManager::drawCircle(_player->position, _CCDead_NoBlackScreen_Radius, ColorF::Black, 20);
 
 		return;
 	}

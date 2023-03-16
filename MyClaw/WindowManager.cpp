@@ -111,14 +111,13 @@ void WindowManager::fillRect(D2D1_RECT_F dst, ColorF color)
 }
 void WindowManager::drawCircle(D2D1_POINT_2F center, FLOAT radius, ColorF color, float width)
 {
-	D2D1_RECT_F dst = { center.x - radius, center.y - radius, center.x + radius, center.y + radius };
-	if (!_isInScreen(dst)) return;
+	D2D1_ELLIPSE el = { { center.x * PixelSize, center.y * PixelSize }, radius * PixelSize, radius * PixelSize };
+	if (!_isInScreen(el)) return;
 
 	ID2D1SolidColorBrush* brush = nullptr;
 	_renderTarget->CreateSolidColorBrush(color, &brush);
 	if (brush)
 	{
-		D2D1_ELLIPSE el = { { center.x * PixelSize, center.y * PixelSize }, radius * PixelSize, radius * PixelSize };
 		_renderTarget->DrawEllipse(el, brush, width);
 		SafeRelease(&brush);
 	}
@@ -186,4 +185,14 @@ bool WindowManager::_isInScreen(D2D1_RECT_F& rc)
 
 	const D2D1_SIZE_F wndSz = getSize();
 	return (0 <= rc.right && rc.left < wndSz.width && 0 <= rc.bottom && rc.top < wndSz.height);
+}
+
+bool WindowManager::_isInScreen(D2D1_ELLIPSE& el)
+{
+	el.point.x -= _windowOffset->x;
+	el.point.y -= _windowOffset->y;
+
+	const D2D1_SIZE_F wndSz = getSize();
+	return (0 <= el.point.x + el.radiusX && el.point.x - el.radiusX < wndSz.width
+		&& 0 <= el.point.x + el.radiusY && el.point.x - el.radiusY < wndSz.height);
 }

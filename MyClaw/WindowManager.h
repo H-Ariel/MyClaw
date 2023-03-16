@@ -41,6 +41,7 @@ public:
 
 private:
 	static bool _isInScreen(D2D1_RECT_F& rc); // return if `rc` is in the window area and subtracts the window-offset from it
+	static bool _isInScreen(D2D1_ELLIPSE& el); // return if `el` is in the window area and subtracts the window-offset from it
 
 
 	static HWND _hWnd;
