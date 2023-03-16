@@ -30,6 +30,9 @@
 
 #define EMPTY_TILE -1
 
+#define RECT_SPEED			0.5f
+#define CC_FALLDEATH_SPEED	0.7f
+
 #define _checkCollides_define1(x) if (cumulatedCollision.x == 0) cumulatedCollision.x += collisions[collisionsNumber].x;
 #define _checkCollides_define2(x) if (cumulatedCollision.x != 0) for (cumulatedCollision.x = 0, i = 0; i < collisionsNumber; cumulatedCollision.x = fmax(cumulatedCollision.x, collisions[i++].x));
 
@@ -42,6 +45,8 @@
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
+//#define DRAW_RECTANGLES
+#define USE_ENEMIES
 
 
 class SimpleObject : public BasePlaneObject
@@ -69,7 +74,7 @@ bool ActionPlane::_needSort;
 
 
 ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
-	: LevelPlane(plane), _wwd(wwd), _state(States::Play), _CCDead_shouldWait(false),
+	: LevelPlane(plane), _wwd(wwd), _state(States::Play), _deathAniWait(false),
 	_planeSize({ (float)plane.tilePixelWidth * plane.tilesOnAxisX, (float)plane.tilePixelHeight * plane.tilesOnAxisY })
 {
 	_objects.clear(); // because it static member and we don't want recycle objects...
@@ -147,18 +152,15 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		*/
 	};
 
-	if (_CCDead_shouldWait)
+	if (_deathAniWait)
 	{
-		static const float RECT_SPEED = 0.5f;
-		float t = RECT_SPEED * elapsedTime;
-
-		if (_state == States::Rect_Close)
+		switch (_state)
 		{
-			_CCDead_NoBlackScreen_Radius -= t;
-
-			if (_CCDead_NoBlackScreen_Radius <= 0)
+		case States::Close:
+			_holeRadius -= RECT_SPEED * elapsedTime;
+			if (_holeRadius <= 0)
 			{
-				_state = States::Rect_Open;
+				_state = States::Open;
 				_player->backToLife();
 				_update_position();
 
@@ -167,39 +169,53 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 					obj->Reset();
 				}
 			}
-		}
-		else if (_state == States::Rect_Open)
-		{
-			_CCDead_NoBlackScreen_Radius += t;
+			break;
 
-			if (_player->position.x - position.x < _CCDead_NoBlackScreen_Radius)
+		case States::Open:
+			_holeRadius += RECT_SPEED * elapsedTime;
+			if (_player->position.x - position.x < _holeRadius)
 			{
-				_CCDead_shouldWait = false;
+				_deathAniWait = false;
 				_state = States::Play;
 			}
+			break;
+			
+		case States::Fall:
+			_player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
+			_player->Logic(0); // update position of animation
+			if (_player->position.y - position.y > WindowManager::getSize().height)
+			{
+				_player->loseLife();
+				_state = States::Close;
+				_deathAniWait = true;
+				auto wndSz = WindowManager::getSize();
+				_holeRadius = max(wndSz.width, wndSz.height) / 2;
+			}
+			break;
 		}
 		return;
 	}
-
-	bool callPlayerLogic = true;
 
 	if (_player->isFinishDeathAnimation() && _player->hasLives() && _state == States::Play)
 	{
-		_state = States::Rect_Close;
-		_CCDead_shouldWait = true;
-		auto wndSz = WindowManager::getSize();
-		_CCDead_NoBlackScreen_Radius = max(wndSz.width, wndSz.height) / 2;
-		return;
+		if (_player->isSpikeDeath())
+		{
+			_state = States::Close;
+			auto wndSz = WindowManager::getSize();
+			_holeRadius = max(wndSz.width, wndSz.height) / 2;
+		}
+		else //if (_player->isFallDeath())
+		{
+			_state = States::Fall;
+		}
 
-		// TODO: handle the case when enemy makes CC dead
+		_deathAniWait = true;
+		return;
 	}
 
-	if (callPlayerLogic)
+	if (!_player->isInDeathAnimation())
 	{
-		if (!_player->isInDeathAnimation())
-		{
-			checkCollides(_player, [&] { _player->loseLife(); });
-		}
+		checkCollides(_player, [&] { _player->loseLife(); });
 	}
 	
 	_update_position();
@@ -276,41 +292,14 @@ void ActionPlane::Draw()
 		i->Draw();
 	}
 
-	if (_state == States::Rect_Close || _state == States::Rect_Open)
+	if (_state == States::Close || _state == States::Open)
 	{
-		auto wndSz = WindowManager::getSize();
-
-		D2D1_RECT_F _CCDead_NoBlackScreen = {
-			_player->position.x - _CCDead_NoBlackScreen_Radius - position.x,
-			_player->position.y - _CCDead_NoBlackScreen_Radius - position.y,
-			_player->position.x + _CCDead_NoBlackScreen_Radius - position.x,
-			_player->position.y + _CCDead_NoBlackScreen_Radius - position.y
-		};
-
-		D2D1_RECT_F rc1{
-			position.x,
-			position.y,
-			_CCDead_NoBlackScreen.left + position.x,
-			wndSz.height + position.y
-		};
-		D2D1_RECT_F rc2{
-			rc1.right,
-			position.y,
-			wndSz.width + position.x,
-			_CCDead_NoBlackScreen.top + position.y
-		};
-		D2D1_RECT_F rc3{
-			rc1.right,
-			_CCDead_NoBlackScreen.bottom + position.y,
-			wndSz.width + position.x,
-			wndSz.height + position.y
-		};
-		D2D1_RECT_F rc4{
-			_CCDead_NoBlackScreen.right + position.x,
-			rc2.bottom,
-			wndSz.width + position.x,
-			rc3.top
-		};
+		const D2D1_SIZE_F wndSz = WindowManager::getSize();
+		const float wp = wndSz.width + position.x, hp = wndSz.height + position.y;
+		const D2D1_RECT_F rc1{ position.x,position.y,_player->position.x - _holeRadius,hp };
+		const D2D1_RECT_F rc2{ rc1.right,position.y,wp,_player->position.y - _holeRadius };
+		const D2D1_RECT_F rc3{ rc1.right,_player->position.y + _holeRadius,wp,hp };
+		const D2D1_RECT_F rc4{ _player->position.x + _holeRadius,rc2.bottom,wp,rc3.top };
 
 		WindowManager::fillRect(rc1, ColorF::Black);
 		WindowManager::fillRect(rc2, ColorF::Black);
@@ -318,12 +307,9 @@ void ActionPlane::Draw()
 		WindowManager::fillRect(rc4, ColorF::Black);
 
 		// TODO: draw circle, not 4 rectangles
-		//WindowManager::drawCircle(_player->position, _CCDead_NoBlackScreen_Radius, ColorF::Black, 20);
-
-		return;
+		//WindowManager::drawCircle(_player->position, _holeRadius, ColorF::Black, 20);
 	}
 	
-//#define DRAW_RECTANGLES
 #ifdef DRAW_RECTANGLES
 	// draw rectangles around tiles limits
 
@@ -697,7 +683,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW GroundBlower(obj, _player));
 	}
-#if 0
+#ifdef USE_ENEMIES
 	else if (obj.logic == "GooVent")
 	{
 		GooVent* g = DBG_NEW GooVent(obj, _player);

@@ -42,6 +42,8 @@ public:
 	bool isJumping() const { return _speed.y < 0 && !_isOnLadder; }
 	bool isFalling() const { return _speed.y > 0 && !_isOnLadder; }
 	bool isClimbing() const { return _isOnLadder; }
+	bool isSpikeDeath() const { return _aniName == "SPIKEDEATH"; }
+	bool isFallDeath() const { return _aniName == "FALLDEATH"; }
 	bool isInDeathAnimation() const { return endsWith(_aniName, "DEATH"); }
 	bool isFinishDeathAnimation() const { return isInDeathAnimation() && _ani->isFinishAnimation(); }
 	bool isFinishLevel() const { return _finishLevel; }

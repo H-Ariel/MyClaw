@@ -16,7 +16,8 @@ TownGuard::TownGuard(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "", "", {}),
 	_type((Type)(obj.logic[obj.logic.length() - 1] - '1'))
 {
-	_ani = ANIMATION_IDLE1;
+	_ani = ANIMATION_WALK;
+	position.y += 8; // maybe they got their calculations wrong...
 }
 
 void TownGuard::Logic(uint32_t elapsedTime)
@@ -44,11 +45,6 @@ void TownGuard::Logic(uint32_t elapsedTime)
 		position.x += _speed.x * elapsedTime;
 		if (position.x < _minX) { stopMovingLeft(_minX - position.x); }
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
-	}
-	if (!_isAttack)
-	{
-		position.y += _speed.y * elapsedTime;
-		_speed.y += GRAVITY * elapsedTime;
 	}
 
 	if (!_isAttack)
@@ -137,29 +133,13 @@ pair<D2D1_RECT_F, int8_t> TownGuard::GetAttackRect()
 
 	if (_ani == ANIMATION_STRIKE_HIGH)
 	{
-		if (_type == Type::Guard1)
-		{
-			rc.top = 20;
-			rc.bottom = 40;
-		}
-		else
-		{
-			rc.top = 30;
-			rc.bottom = 50;
-		}
+		rc.top = 20;
+		rc.bottom = 40;
 	}
 	else
 	{
-		if (_type == Type::Guard1)
-		{
-			rc.top = 50;
-			rc.bottom = 70;
-		}
-		else
-		{
-			rc.top = 80;
-			rc.bottom = 100;
-		}
+		rc.top = 80;
+		rc.bottom = 100;
 	}
 
 	// set rectangle by center

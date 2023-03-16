@@ -78,6 +78,8 @@ void BossGem::Logic(uint32_t elapsedTime)
 	}
 }
 
+// TODO: fit hithigh and hitlow to CC attack
+// TODO: fix the shhot to CC height
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,
@@ -182,8 +184,6 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 		if (position.x < _minX) { stopMovingLeft(_minX - position.x); }
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
-	position.y += _speed.y * elapsedTime;
-	_speed.y += GRAVITY * elapsedTime;
 
 	if (!_isAttack)
 	{

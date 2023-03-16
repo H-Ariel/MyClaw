@@ -1,3 +1,6 @@
+* fix TownGuard
+* fix Seagull
+* when CC die draw circle (not square)
 * play 2 WAV in the same time
 * display screens between levels
 * add "int32_t _attackRest;" for all enemies (?)

@@ -122,8 +122,9 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_aniName == "LIFT" || _aniName == "THROW" || _aniName == "FALLDEATH" ||
 		_aniName == "EMPTYPOSTDYNAMITE" || _aniName == "DUCKEMPTYPOSTDYNAMITE")
 	{
-		if (!_ani->isFinishAnimation())
+		if (!_ani->isFinishAnimation() || _aniName == "FALLDEATH")
 		{
+			_ani->position = position;
 			_ani->Logic(elapsedTime);
 			return;
 		}
@@ -246,6 +247,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_isCollideWithLadder = false;
 		climbUp = _upPressed && !_isOnLadderTop;
 		climbDown = _downPressed;
+		// TODO: if `_isCollideWithLadder` but has a "bottom collision" (solid/groud) should duck
 
 		if (climbUp)
 		{
@@ -265,7 +267,6 @@ void Player::Logic(uint32_t elapsedTime)
 		}
 		else
 		{
-			_isOnLadder = false;
 			if (elevator == nullptr)
 			{
 				_speed.y += GRAVITY * elapsedTime;
@@ -1003,7 +1004,7 @@ void Player::backToLife()
 }
 void Player::loseLife()
 {
-	if (!isInDeathAnimation())
+	if (!isInDeathAnimation() || isFallDeath())
 	{
 		_lives -= 1;
 		_health = 0;

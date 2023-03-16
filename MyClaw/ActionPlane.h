@@ -46,17 +46,17 @@ private:
 
 	enum class States : int8_t {
 		Play,
-		// the black screen
-		Rect_Close,
-		Rect_Open
+		Fall, // CC falls out the window
+		Close, // close the screen
+		Open // open the screen
 	};
 
 	shared_ptr<WapWorld> _wwd;
 	Player* _player;
 	const D2D1_SIZE_F _planeSize;
 	
-	// the next variables used when `_state` is `CC_Dead`
+	// the next variables used when CC died
+	float _holeRadius; // the radius of the hole that remains until closed
+	bool _deathAniWait; // waiting for disqualification animation to finish
 	States _state;
-	float _CCDead_NoBlackScreen_Radius;
-	bool _CCDead_shouldWait;
 };
