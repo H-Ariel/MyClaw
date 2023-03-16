@@ -145,18 +145,14 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 	if (_CCDead_shouldWait)
 	{
-		static const float RECT_SPEED = 0.3f;
+		static const float RECT_SPEED = 0.5f;
 		float t = RECT_SPEED * elapsedTime;
 
 		if (_state == States::Rect_Close)
 		{
-			_CCDead_NoBlackScreen.left += t;
-			_CCDead_NoBlackScreen.top += t;
-			_CCDead_NoBlackScreen.right -= t;
-			_CCDead_NoBlackScreen.bottom -= t;
+			_CCDead_NoBlackScreen_Radius -= t;
 
-			if (_CCDead_NoBlackScreen.left > _CCDead_NoBlackScreen.right
-				&& _CCDead_NoBlackScreen.top > _CCDead_NoBlackScreen.bottom)
+			if (_CCDead_NoBlackScreen_Radius <= 0)
 			{
 				_state = States::Rect_Open;
 				_player->backToLife();
@@ -170,12 +166,9 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		}
 		else if (_state == States::Rect_Open)
 		{
-			_CCDead_NoBlackScreen.left -= t;
-			_CCDead_NoBlackScreen.top -= t;
-			_CCDead_NoBlackScreen.right += t;
-			_CCDead_NoBlackScreen.bottom += t;
+			_CCDead_NoBlackScreen_Radius += t;
 
-			if (_CCDead_NoBlackScreen.left < 0 && _CCDead_NoBlackScreen.top < 0)
+			if (_player->position.x - position.x < _CCDead_NoBlackScreen_Radius)
 			{
 				_CCDead_shouldWait = false;
 				_state = States::Play;
@@ -191,8 +184,10 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		_state = States::Rect_Close;
 		_CCDead_shouldWait = true;
 		auto wndSz = WindowManager::getSize();
-		_CCDead_NoBlackScreen = { 0, 0, wndSz.width, wndSz.height };
+		_CCDead_NoBlackScreen_Radius = max(wndSz.width, wndSz.height) / 2;
 		return;
+
+		// TODO: handle the case when enemy makes CC dead
 	}
 
 	if (callPlayerLogic)
@@ -281,38 +276,48 @@ void ActionPlane::Draw()
 	{
 		auto wndSz = WindowManager::getSize();
 
-		D2D1_RECT_F rc1 = RectF(0, 0, _CCDead_NoBlackScreen.left, wndSz.height);
-		D2D1_RECT_F rc2 = RectF(0, 0, wndSz.width, _CCDead_NoBlackScreen.top);
-		D2D1_RECT_F rc3 = RectF(_CCDead_NoBlackScreen.right, 0, wndSz.width, wndSz.height);
-		D2D1_RECT_F rc4 = RectF(0, _CCDead_NoBlackScreen.bottom, wndSz.width, wndSz.height);
+		D2D1_RECT_F _CCDead_NoBlackScreen = {};
+		_CCDead_NoBlackScreen.left = _player->position.x - _CCDead_NoBlackScreen_Radius - position.x;
+		_CCDead_NoBlackScreen.top = _player->position.y - _CCDead_NoBlackScreen_Radius - position.y;
+		_CCDead_NoBlackScreen.right = _player->position.x + _CCDead_NoBlackScreen_Radius - position.x;
+		_CCDead_NoBlackScreen.bottom = _player->position.y + _CCDead_NoBlackScreen_Radius - position.y;
 
-		rc1.left += position.x;
-		rc1.right += position.x;
-		rc1.top += position.y;
-		rc1.bottom += position.y;
-		rc2.left += position.x;
-		rc2.right += position.x;
-		rc2.top += position.y;
-		rc2.bottom += position.y;
-		rc3.left += position.x;
-		rc3.right += position.x;
-		rc3.top += position.y;
-		rc3.bottom += position.y;
-		rc4.left += position.x;
-		rc4.right += position.x;
-		rc4.top += position.y;
-		rc4.bottom += position.y;
+		D2D1_RECT_F rc1 = {
+			position.x,
+			position.y,
+			_CCDead_NoBlackScreen.left + position.x,
+			wndSz.height + position.y
+		};
+		D2D1_RECT_F rc2 = {
+			position.x,
+			position.y,
+			wndSz.width + position.x,
+			_CCDead_NoBlackScreen.top + position.y
+		};
+		D2D1_RECT_F rc3 = {
+			_CCDead_NoBlackScreen.right + position.x,
+			position.y,
+			wndSz.width + position.x,
+			wndSz.height + position.y
+		};
+		D2D1_RECT_F rc4 = {
+			position.x,
+			_CCDead_NoBlackScreen.bottom + position.y,
+			wndSz.width + position.x,
+			wndSz.height + position.y
+		};
 
 		WindowManager::fillRect(rc1, ColorF::Black);
 		WindowManager::fillRect(rc2, ColorF::Black);
 		WindowManager::fillRect(rc3, ColorF::Black);
 		WindowManager::fillRect(rc4, ColorF::Black);
 
+	//	WindowManager::drawCircle(_player->position, _CCDead_NoBlackScreen_Radius, ColorF::Black, 20);
+
 		return;
 	}
 	
-#define DRAW_RECTANGLES
-#undef DRAW_RECTANGLES
+//#define DRAW_RECTANGLES
 #ifdef DRAW_RECTANGLES
 	// draw rectangles around tiles limits
 

@@ -57,6 +57,6 @@ private:
 	
 	// the next variables used when `_state` is `CC_Dead`
 	States _state;
+	float _CCDead_NoBlackScreen_Radius;
 	bool _CCDead_shouldWait;
-	D2D1_RECT_F _CCDead_NoBlackScreen;
 };

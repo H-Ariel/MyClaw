@@ -71,15 +71,15 @@ void WindowManager::drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width)
 {
 	if (!_isInScreen(dst)) return;
 
-	dst.top *= PixelSize;
-	dst.bottom *= PixelSize;
-	dst.left *= PixelSize;
-	dst.right *= PixelSize;
-
 	ID2D1SolidColorBrush* brush = nullptr;
 	_renderTarget->CreateSolidColorBrush(color, &brush);
 	if (brush)
 	{
+		dst.top *= PixelSize;
+		dst.bottom *= PixelSize;
+		dst.left *= PixelSize;
+		dst.right *= PixelSize;
+
 		_renderTarget->DrawRectangle(dst, brush, width);
 		SafeRelease(&brush);
 	}
@@ -92,15 +92,15 @@ void WindowManager::fillRect(D2D1_RECT_F dst, D2D1_COLOR_F color)
 {
 	if (!_isInScreen(dst)) return;
 
-	dst.top *= PixelSize;
-	dst.bottom *= PixelSize;
-	dst.left *= PixelSize;
-	dst.right *= PixelSize;
-
 	ID2D1SolidColorBrush* brush = nullptr;
 	_renderTarget->CreateSolidColorBrush(color, &brush);
 	if (brush)
 	{
+		dst.top *= PixelSize;
+		dst.bottom *= PixelSize;
+		dst.left *= PixelSize;
+		dst.right *= PixelSize;
+
 		_renderTarget->FillRectangle(dst, brush);
 		SafeRelease(&brush);
 	}
@@ -108,6 +108,20 @@ void WindowManager::fillRect(D2D1_RECT_F dst, D2D1_COLOR_F color)
 void WindowManager::fillRect(D2D1_RECT_F dst, ColorF color)
 {
 	fillRect(dst, (D2D1_COLOR_F)color);
+}
+void WindowManager::drawCircle(D2D1_POINT_2F center, FLOAT radius, ColorF color, float width)
+{
+	D2D1_RECT_F dst = { center.x - radius, center.y - radius, center.x + radius, center.y + radius };
+	if (!_isInScreen(dst)) return;
+
+	ID2D1SolidColorBrush* brush = nullptr;
+	_renderTarget->CreateSolidColorBrush(color, &brush);
+	if (brush)
+	{
+		D2D1_ELLIPSE el = { { center.x * PixelSize, center.y * PixelSize }, radius * PixelSize, radius * PixelSize };
+		_renderTarget->DrawEllipse(el, brush, width);
+		SafeRelease(&brush);
+	}
 }
 void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirrored)
 {
