@@ -44,7 +44,19 @@ private:
 	static vector<GooVent*> _gooVents;
 	static bool _needSort;
 
+	enum class States : int8_t {
+		Play,
+		// the black screen
+		Rect_Close,
+		Rect_Open
+	};
+
 	shared_ptr<WapWorld> _wwd;
 	Player* _player;
 	const D2D1_SIZE_F _planeSize;
+	
+	// the next variables used when `_state` is `CC_Dead`
+	States _state;
+	bool _CCDead_shouldWait;
+	D2D1_RECT_F _CCDead_NoBlackScreen;
 };

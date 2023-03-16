@@ -535,6 +535,8 @@ void Player::Logic(uint32_t elapsedTime)
 		}
 	}
 
+	if (isInDeathAnimation()) _ani->loopAni = false;
+
 	_ani->mirrored = !_forward && !_isOnLadder;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
@@ -995,21 +997,25 @@ void Player::backToLife()
 	_raisedPowderKeg = nullptr;
 	_lastAttackRect = {};
 	_damageRest = 0;
+	_forward = true;
+
+	Logic(0); // update position and animation
 }
 void Player::loseLife()
 {
-	// TODO: in that case we should show the "black screen"
-
-	_lives -= 1;
-	_health = 0;
-	_damageRest = 0;
-	_aniName = "SPIKEDEATH";
-	_ani = _animations[_aniName];
-	_ani->reset();
-	_powerupLeftTime = 0;
-	_currPowerup = PowerupType::None;
-	_powerupSparkles.clear();
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
+	if (!isInDeathAnimation())
+	{
+		_lives -= 1;
+		_health = 0;
+		_damageRest = 0;
+		_aniName = "SPIKEDEATH";
+		_ani = _animations[_aniName];
+		_ani->reset();
+		_powerupLeftTime = 0;
+		_currPowerup = PowerupType::None;
+		_powerupSparkles.clear();
+		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
+	}
 }
 
 void Player::keyUp(int key)

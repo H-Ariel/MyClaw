@@ -69,7 +69,7 @@ bool ActionPlane::_needSort;
 
 
 ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
-	: LevelPlane(plane), _wwd(wwd),
+	: LevelPlane(plane), _wwd(wwd), _state(States::Play), _CCDead_shouldWait(false),
 	_planeSize({ (float)plane.tilePixelWidth * plane.tilesOnAxisX, (float)plane.tilePixelHeight * plane.tilesOnAxisY })
 {
 	_objects.clear(); // because it static member and we don't want recycle objects...
@@ -131,20 +131,68 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 {
 	if (_player->isFinishLevel()) return;
 
-	bool callPlayerLogic = true;
+	auto _update_position = [&] {
+		// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
+		const D2D1_SIZE_F wndSize = WindowManager::getSize();
+		const D2D1_RECT_F playerRc = _player->GetRect();
+		position.x = _player->position.x - wndSize.width / 2.0f;
+		position.y = _player->position.y - wndSize.height / 2.0f;
+		if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
+		if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;
+		if (position.y < MIN_OFFSET_Y) position.y = MIN_OFFSET_Y;
+		if (position.y > MAX_OFFSET_Y) position.y = MAX_OFFSET_Y;
+	};
 
-	if (_player->isFinishDeathAnimation())
+	if (_CCDead_shouldWait)
 	{
-		if (_player->hasLives())
-		{
-			_player->backToLife();
-			callPlayerLogic = false;
+		static const float RECT_SPEED = 0.3f;
+		float t = RECT_SPEED * elapsedTime;
 
-			for (BasePlaneObject* obj : _objects)
+		if (_state == States::Rect_Close)
+		{
+			_CCDead_NoBlackScreen.left += t;
+			_CCDead_NoBlackScreen.top += t;
+			_CCDead_NoBlackScreen.right -= t;
+			_CCDead_NoBlackScreen.bottom -= t;
+
+			if (_CCDead_NoBlackScreen.left > _CCDead_NoBlackScreen.right
+				&& _CCDead_NoBlackScreen.top > _CCDead_NoBlackScreen.bottom)
 			{
-				obj->Reset();
+				_state = States::Rect_Open;
+				_player->backToLife();
+				_update_position();
+
+				for (BasePlaneObject* obj : _objects)
+				{
+					obj->Reset();
+				}
 			}
 		}
+		else if (_state == States::Rect_Open)
+		{
+			_CCDead_NoBlackScreen.left -= t;
+			_CCDead_NoBlackScreen.top -= t;
+			_CCDead_NoBlackScreen.right += t;
+			_CCDead_NoBlackScreen.bottom += t;
+
+			if (_CCDead_NoBlackScreen.left < 0 && _CCDead_NoBlackScreen.top < 0)
+			{
+				_CCDead_shouldWait = false;
+				_state = States::Play;
+			}
+		}
+		return;
+	}
+
+	bool callPlayerLogic = true;
+
+	if (_player->isFinishDeathAnimation() && _player->hasLives() && _state == States::Play)
+	{
+		_state = States::Rect_Close;
+		_CCDead_shouldWait = true;
+		auto wndSz = WindowManager::getSize();
+		_CCDead_NoBlackScreen = { 0, 0, wndSz.width, wndSz.height };
+		return;
 	}
 
 	if (callPlayerLogic)
@@ -154,16 +202,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			checkCollides(_player, [&] { _player->loseLife(); });
 		}
 	}
-
-	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
-	const D2D1_SIZE_F wndSize = WindowManager::getSize();
-	const D2D1_RECT_F playerRc = _player->GetRect();
-	position.x = _player->position.x - wndSize.width / 2.0f;
-	position.y = _player->position.y - wndSize.height / 2.0f;
-	if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
-	if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;
-	if (position.y < MIN_OFFSET_Y) position.y = MIN_OFFSET_Y;
-	if (position.y > MAX_OFFSET_Y) position.y = MAX_OFFSET_Y;
+	
+	_update_position();
 
 	AssetsManager::callLogics(elapsedTime);
 
@@ -236,8 +276,43 @@ void ActionPlane::Draw()
 	{
 		i->Draw();
 	}
+
+	if (_state == States::Rect_Close || _state == States::Rect_Open)
+	{
+		auto wndSz = WindowManager::getSize();
+
+		D2D1_RECT_F rc1 = RectF(0, 0, _CCDead_NoBlackScreen.left, wndSz.height);
+		D2D1_RECT_F rc2 = RectF(0, 0, wndSz.width, _CCDead_NoBlackScreen.top);
+		D2D1_RECT_F rc3 = RectF(_CCDead_NoBlackScreen.right, 0, wndSz.width, wndSz.height);
+		D2D1_RECT_F rc4 = RectF(0, _CCDead_NoBlackScreen.bottom, wndSz.width, wndSz.height);
+
+		rc1.left += position.x;
+		rc1.right += position.x;
+		rc1.top += position.y;
+		rc1.bottom += position.y;
+		rc2.left += position.x;
+		rc2.right += position.x;
+		rc2.top += position.y;
+		rc2.bottom += position.y;
+		rc3.left += position.x;
+		rc3.right += position.x;
+		rc3.top += position.y;
+		rc3.bottom += position.y;
+		rc4.left += position.x;
+		rc4.right += position.x;
+		rc4.top += position.y;
+		rc4.bottom += position.y;
+
+		WindowManager::fillRect(rc1, ColorF::Black);
+		WindowManager::fillRect(rc2, ColorF::Black);
+		WindowManager::fillRect(rc3, ColorF::Black);
+		WindowManager::fillRect(rc4, ColorF::Black);
+
+		return;
+	}
 	
 #define DRAW_RECTANGLES
+#undef DRAW_RECTANGLES
 #ifdef DRAW_RECTANGLES
 	// draw rectangles around tiles limits
 

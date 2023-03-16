@@ -9,6 +9,8 @@
 #define ANIMATION_IDLE1			_animations.at("IDLE1")
 #define ANIMATION_IDLE2			_animations.at("IDLE2")
 
+// TODO: add ability to block CC attacks
+// TODO: add ability to jump back (escape from CC attacks)
 
 TownGuard::TownGuard(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "", "", {}),

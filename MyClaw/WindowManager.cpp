@@ -88,6 +88,27 @@ void WindowManager::drawRect(D2D1_RECT_F dst, ColorF color, float width)
 {
 	drawRect(dst, (D2D1_COLOR_F)color, width);
 }
+void WindowManager::fillRect(D2D1_RECT_F dst, D2D1_COLOR_F color)
+{
+	if (!_isInScreen(dst)) return;
+
+	dst.top *= PixelSize;
+	dst.bottom *= PixelSize;
+	dst.left *= PixelSize;
+	dst.right *= PixelSize;
+
+	ID2D1SolidColorBrush* brush = nullptr;
+	_renderTarget->CreateSolidColorBrush(color, &brush);
+	if (brush)
+	{
+		_renderTarget->FillRectangle(dst, brush);
+		SafeRelease(&brush);
+	}
+}
+void WindowManager::fillRect(D2D1_RECT_F dst, ColorF color)
+{
+	fillRect(dst, (D2D1_COLOR_F)color);
+}
 void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirrored)
 {
 	if (!_isInScreen(dst) || bitmap == nullptr) return;
