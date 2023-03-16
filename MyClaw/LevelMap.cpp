@@ -5,13 +5,13 @@
 LevelMap::LevelMap(int8_t levelNumber)
 	: _actionPlane(nullptr)
 {
-	_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
+	shared_ptr<WapWorld> wwd = AssetsManager::loadLevelWwdFile(levelNumber);
 
-	for (WwdPlane& pln : _wwd->planes)
+	for (WwdPlane& pln : wwd->planes)
 	{
 		if (pln.isMainPlane)
 		{
-			_actionPlane = DBG_NEW ActionPlane(pln, _wwd);
+			_actionPlane = DBG_NEW ActionPlane(pln, wwd);
 			_planes.push_back(_actionPlane);
 		}
 		else

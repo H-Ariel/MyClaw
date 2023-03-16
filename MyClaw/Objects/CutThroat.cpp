@@ -7,7 +7,7 @@ CutThroat::CutThroat(const WwdObject& obj, Player* player)
 {
 }
 
-pair<D2D1_RECT_F, int8_t> CutThroat::GetAttackRect() // TODO: improve this function
+pair<D2D1_RECT_F, int8_t> CutThroat::GetAttackRect()
 {
 	if (!_isAttack) return {};
 

@@ -18,6 +18,5 @@ public:
 
 private:
 	vector<LevelPlane*> _planes;
-	shared_ptr<WapWorld> _wwd;
 	ActionPlane* _actionPlane;
 };

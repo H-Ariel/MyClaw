@@ -288,6 +288,10 @@ void ActionPlane::Draw()
 					{
 						color = ColorF::Magenta;
 					}
+					else if (tileDesc.insideAttrib == WwdTileDescription::TileAttribute_Death)
+					{
+						color = ColorF::Purple;
+					}
 					else
 					{
 						color.a = 0;
@@ -332,7 +336,7 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 	const uint32_t MaxYPos = (uint32_t)(obj->position.y / _plane.tilePixelHeight + N);
 
 	D2D1_RECT_F collisions[9] = {}, cumulatedCollision = {}, tileRc = {}, collisionRc = {};
-	D2D1_RECT_F saveTileRc, spaceRc, rc1, rc2;
+	D2D1_RECT_F originalTileRc, rc1, rc2;
 	uint32_t i, j, collisionsNumber = 0;
 
 	const bool isPlayer = (obj == _player); //isinstance<Player>(obj);
@@ -430,15 +434,14 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 					_onLadder();
 					break;
 
-				case WwdTileDescription::TileAttribute_Death:
+				case WwdTileDescription::TileAttribute_Death: // this case is the purple rectangles
 					_onDeath();
 					break;
-					// if its an item or an enemy it will removed, but if its a player he will lose life so we don't need continue check
 				}
 			}	break;
 
 			case WwdTileDescription::TileType_Double: { // TODO: improve this part
-				saveTileRc = tileRc;
+				originalTileRc = tileRc;
 
 				tileRc.left += tileDesc.rect.left;
 				tileRc.top += tileDesc.rect.top;
@@ -456,22 +459,22 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 				case WwdTileDescription::TileAttribute_Climb:
 					_onLadder();
 					break;
+				case WwdTileDescription::TileAttribute_Death: // also this case is the purple rectangles
+					_onDeath();
+					break;
 				}
 
 				if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid) // this case is the yellow rectangles
 				{
-					spaceRc = tileRc;
-					tileRc = saveTileRc;
-
 					if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.top == 0)
 					{
-						rc1 = RectF(tileRc.left, tileRc.top, spaceRc.left, tileRc.bottom);
-						rc2 = RectF(spaceRc.left, spaceRc.bottom, spaceRc.right, tileRc.bottom);
+						rc1 = { originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom };
+						rc2 = { tileRc.left, tileRc.bottom, tileRc.right, originalTileRc.bottom };
 					}
 					else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0)
 					{
-						rc1 = RectF(spaceRc.right, tileRc.top, tileRc.right, tileRc.bottom);
-						rc2 = RectF(tileRc.left, spaceRc.bottom, tileRc.right, tileRc.bottom);
+						rc1 = { tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom };
+						rc2 = { originalTileRc.left, tileRc.bottom, originalTileRc.right, originalTileRc.bottom };
 					}
 					else
 					{

@@ -51,9 +51,6 @@
     <ClCompile Include="CollisionDistances.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="framework.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameMainApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

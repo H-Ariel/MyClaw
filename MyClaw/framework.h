@@ -93,21 +93,34 @@ using namespace D2D1;
 
 
 // replace `src` with `dst` in `str`
-string replaceString(string str, char src, char dst);
+inline string replaceString(string str, char src, char dst)
+{
+	replace(str.begin(), str.end(), src, dst);
+	return str;
+}
 
 // check if `str` is starts with `prefix`
-bool startsWith(string str, string prefix);
+inline bool startsWith(const string& str, const string& prefix)
+{
+	return str.length() >= prefix.length() && !strncmp(str.c_str(), prefix.c_str(), prefix.length());
+}
 // check if `str` is ends with `suffix`
-bool endsWith(string str, string suffix);
+inline bool endsWith(const string& str, const string& suffix)
+{
+	const size_t delta_len = str.length() - suffix.length();
+	return delta_len >= 0 && !strcmp(str.c_str() + delta_len, suffix.c_str());
+}
 // check is `str1` contains `str2`
-inline bool contains(string str1, string str2) { return str1.find(str2) != string::npos; }
+inline bool contains(const string& str1, const string& str2) { return str1.find(str2) != string::npos; }
 
 // reterns a random number in range [a,b]
 inline float getRandomFloat(float a, float b) { return (float)rand() / RAND_MAX * (b - a) + a; }
 inline int getRandomInt(int a, int b) { return rand() % (b - a + 1) + a; }
 
-bool operator!=(D2D1_RECT_F a, D2D1_RECT_F b);
-
+inline bool operator!=(const D2D1_RECT_F& a, const D2D1_RECT_F& b)
+{
+	return memcmp(&a, &b, sizeof(D2D1_RECT_F)) != 0;
+}
 
 // check if `arr` contains `val`
 template <class ArrT, class ValT>
@@ -131,29 +144,16 @@ inline void SafeRelease(T** ppT)
 
 // allocate new object as `shared_ptr`
 template <class T, class ... Args>
-inline shared_ptr<T> allocNewSharedPtr(Args... args)
-{
-	return shared_ptr<T>(DBG_NEW T(args...));
-}
+inline shared_ptr<T> allocNewSharedPtr(Args... args) { return shared_ptr<T>(DBG_NEW T(args...)); }
 
 // my shell for `memcpy`. It can also accept `const` values.
 template <class T>
-inline void myMemCpy(const T& dst, const T& src)
-{
-	memcpy((void*)&dst, &src, sizeof(T));
-	// Hmmm... I am a hacker XD
-}
+inline void myMemCpy(const T& dst, const T& src) { memcpy((void*)&dst, &src, sizeof(T)); /* Hmmm... I am a hacker */ }
 
 // check if `p`'s type is `Type`
 template<typename Type, typename V>
-inline bool isinstance(const V* p)
-{
-	return typeid(*p) == typeid(Type);
-}
+inline bool isinstance(const V* p) { return typeid(*p) == typeid(Type); }
 
 // check if `p`'s base type is `Base`
 template<typename Base, typename V>
-inline bool isbaseinstance(const V* p)
-{
-	return dynamic_cast<const Base*>(p) != nullptr;
-}
+inline bool isbaseinstance(const V* p) { return dynamic_cast<const Base*>(p) != nullptr; }

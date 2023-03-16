@@ -140,7 +140,6 @@
     <ClCompile Include="BufferWriter.cpp" />
     <ClCompile Include="ClawLevelEngine.cpp" />
     <ClCompile Include="CollisionDistances.cpp" />
-    <ClCompile Include="framework.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
     <ClCompile Include="ImagesManager.cpp" />
     <ClCompile Include="LevelHUD.cpp" />

@@ -20,7 +20,7 @@ DoNothing::DoNothing(const WwdObject& obj)
 		if (obj.animation.empty())
 		{
 			// TODO: something else
-			if (contains(path, "ARROWSIGN/"))
+			if (contains(path, "SIGN/"))
 				path[path.find_last_of('/')] = '_';
 
 			_ani = AssetsManager::createAnimationFromDirectory(path);

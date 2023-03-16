@@ -229,7 +229,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 
 	if (_leftPressed) _forward = false;
-	else if (_rightPressed) _forward = true;
+	else if (_rightPressed || isClimbing()) _forward = true;
 
 	if (goLeft) _speed.x = -speedX;
 	else if (goRight) _speed.x = speedX;
@@ -557,17 +557,16 @@ D2D1_RECT_F Player::GetRect()
 {
 	D2D1_RECT_F rc = {};
 
+	rc.left = -7.f + 15 * (!_forward);
+	rc.right = rc.left + 44;
+
 	if (isDuck())
 	{
-		rc.left = -7.f + 15 * (!_forward);
-		rc.right = rc.left + 50;
 		rc.top = 30;
 		rc.bottom = 90;
 	}
 	else
 	{
-		rc.left = -7.f + 15 * (!_forward);
-		rc.right = rc.left + 50;
 		rc.top = 5;
 		rc.bottom = 115;
 	}
@@ -579,7 +578,7 @@ D2D1_RECT_F Player::GetRect()
 	rc.bottom += addY;
 	rc.left += addX;
 	rc.right += addX;
-
+	
 	_saveCurrRect = rc;
 
 	return rc;

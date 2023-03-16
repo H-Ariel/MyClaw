@@ -34,22 +34,21 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(string path)
 	}
 	else
 	{
-		if (endsWith(path, ".PID"))
+		try
 		{
-			img = loadPidImage(path);
+			if (endsWith(path, ".PID"))
+			{
+				img = loadPidImage(path);
+			}
+			else if (endsWith(path, ".PCX"))
+			{
+				img = loadPcxImage(path);
+			}
 		}
-		else if (endsWith(path, ".PCX"))
-		{
-			img = loadPcxImage(path);
-		}
-		else if (path.empty())
+		catch (Exception& ex)
 		{
 			img = allocNewSharedPtr<UIBaseImage>(nullptr); // empty image
-		}
-		else
-		{
-			// TODO: insert empty image instead of throw exception ?
-			throw Exception(__FUNCTION__ " - not image. path=" + path);
+			cout << __FUNCTION__ ": WARNING: a blank image has been inserted. image path = \"" << path << '"' << endl;
 		}
 
 		_loadedBitmaps[path] = { img->_bitmap, img->offset };
