@@ -46,7 +46,7 @@
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
-#define DRAW_RECTANGLES
+//#define DRAW_RECTANGLES
 #define USE_ENEMIES
 
 

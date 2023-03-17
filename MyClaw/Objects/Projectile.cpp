@@ -13,7 +13,7 @@ Projectile::Projectile(const WwdObject& obj, int8_t damage, string aniDirPath)
 	}
 	else
 	{
-		_ani = AssetsManager::createAnimationFromDirectory(aniDirPath, 75);
+		_ani = AssetsManager::createAnimationFromDirectory(aniDirPath, 75, false);
 	}
 	_speed.x = obj.speedX / 1000.f;
 	_speed.y = obj.speedY / 1000.f;

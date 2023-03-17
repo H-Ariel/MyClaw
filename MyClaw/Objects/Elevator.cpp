@@ -171,19 +171,19 @@ bool Elevator::tryCatchPlayer()
 PathElevator::PathElevator(const WwdObject& obj, Player* player)
 	: Elevator(obj, player)
 {
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
-	
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
+
 	_totalSpeed = obj.speed / 1000.f;
 	if (_totalSpeed == 0) _totalSpeed = 0.125f;
-	
-	if (obj.moveRect.left		!= 0) _paths.push_back({ obj.moveRect.left		, obj.moveRect.top });
-	if (obj.moveRect.right		!= 0) _paths.push_back({ obj.moveRect.right		, obj.moveRect.bottom });
-	if (obj.hitRect.left		!= 0) _paths.push_back({ obj.hitRect.left		, obj.hitRect.top });
-	if (obj.hitRect.right		!= 0) _paths.push_back({ obj.hitRect.right		, obj.hitRect.bottom });
-	if (obj.attackRect.left		!= 0) _paths.push_back({ obj.attackRect.left	, obj.attackRect.top });
-	if (obj.attackRect.right	!= 0) _paths.push_back({ obj.attackRect.right	, obj.attackRect.bottom });
-	if (obj.clipRect.left		!= 0) _paths.push_back({ obj.clipRect.left		, obj.clipRect.top });
-	if (obj.clipRect.right		!= 0) _paths.push_back({ obj.clipRect.right		, obj.clipRect.bottom });
+
+	if (obj.moveRect.left != 0) _paths.push_back({ obj.moveRect.left, obj.moveRect.top });
+	if (obj.moveRect.right != 0) _paths.push_back({ obj.moveRect.right, obj.moveRect.bottom });
+	if (obj.hitRect.left != 0) _paths.push_back({ obj.hitRect.left, obj.hitRect.top });
+	if (obj.hitRect.right != 0) _paths.push_back({ obj.hitRect.right, obj.hitRect.bottom });
+	if (obj.attackRect.left != 0) _paths.push_back({ obj.attackRect.left, obj.attackRect.top });
+	if (obj.attackRect.right != 0) _paths.push_back({ obj.attackRect.right, obj.attackRect.bottom });
+	if (obj.clipRect.left != 0) _paths.push_back({ obj.clipRect.left, obj.clipRect.top });
+	if (obj.clipRect.right != 0) _paths.push_back({ obj.clipRect.right, obj.clipRect.bottom });
 
 	if (_paths.size() == 0)
 	{

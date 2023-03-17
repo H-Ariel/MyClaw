@@ -23,7 +23,7 @@ DoNothing::DoNothing(const WwdObject& obj)
 			if (contains(path, "SIGN/"))
 				path[path.find_last_of('/')] = '_';
 
-			_ani = AssetsManager::createAnimationFromDirectory(path);
+			_ani = AssetsManager::createAnimationFromDirectory(path, 125, false);
 		}
 		else
 		{

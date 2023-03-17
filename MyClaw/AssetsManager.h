@@ -15,7 +15,8 @@ public:
 	static shared_ptr<UIBaseImage> loadImage(string path);
 	static shared_ptr<Animation> loadAnimation(string aniPath, string imageSetPath = ""); // load from ANI file
 	static shared_ptr<Animation> loadCopyAnimation(string aniPath, string imageSetPath = "");
-	static shared_ptr<Animation> createAnimationFromDirectory(string dirPath, uint32_t duration = 125, bool reversedOrder = false); // create new animation from directory content
+	//static shared_ptr<Animation> createAnimationFromDirectory(string dirPath, uint32_t duration = 125, bool reversedOrder = false); // create new animation from directory content
+	static shared_ptr<Animation> createAnimationFromDirectory(string dirPath, uint32_t duration, bool reversedOrder); // create new animation from directory content
 	static shared_ptr<Animation> createCopyAnimationFromDirectory(string dirPath, uint32_t duration, bool reversedOrder);
 	static shared_ptr<Animation> createAnimationFromFromPidImage(string pidPath); // convert PID image to an animtion
 	static shared_ptr<Animation> createCopyAnimationFromFromPidImage(string pidPath);

@@ -133,7 +133,7 @@ Item::Item(const WwdObject& obj, Player* player, int8_t type)
 	if (_type != Item::Type::BossWarp && _type != Item::Type::Warp && _type != Item::Type::Treasure_Coins)
 	{
 		_useGlitter = true;
-		_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
+		_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER", 125, false);
 	}
 #endif
 
@@ -158,7 +158,7 @@ Item::Item(const WwdObject& obj, Player* player, int8_t type)
 	}
 
 
-	_ani = AssetsManager::createAnimationFromDirectory(getItemPath(_type, obj.imageSet));
+	_ani = AssetsManager::createAnimationFromDirectory(getItemPath(_type, obj.imageSet), 125, false);
 	_ani->updateFrames = FindInArray(UpdateFramesTypes, _type);
 }
 void Item::Logic(uint32_t elapsedTime)

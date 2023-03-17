@@ -8,7 +8,7 @@ SoundObjectBase::SoundObjectBase(const WwdObject& obj, Player* player)
 	_wavPath(PathManager::getSoundFilePath(obj.animation))
 {
 	// These objects are invisible so no need to animate them
-	//_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), pal);
+	//_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
 
 	_volume = obj.damage;
 	if (_volume == 0)
