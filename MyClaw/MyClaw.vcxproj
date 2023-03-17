@@ -152,6 +152,7 @@
     <ClCompile Include="Objects\BaseEnemy.cpp" />
     <ClCompile Include="Objects\Cannon.cpp" />
     <ClCompile Include="Objects\Checkpoint.cpp" />
+    <ClCompile Include="Objects\ConveyorBelt.cpp" />
     <ClCompile Include="Objects\Crate.cpp" />
     <ClCompile Include="Objects\CutThroat.cpp" />
     <ClCompile Include="Objects\DoNothing.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="Objects\BaseEnemy.h" />
     <ClInclude Include="Objects\Cannon.h" />
     <ClInclude Include="Objects\Checkpoint.h" />
+    <ClInclude Include="Objects\ConveyorBelt.h" />
     <ClInclude Include="Objects\Crate.h" />
     <ClInclude Include="Objects\CutThroat.h" />
     <ClInclude Include="Objects\DoNothing.h" />

@@ -26,6 +26,7 @@
 #include "Objects/GroundBlower.h"
 #include "Objects/GooVent.h"
 #include "Objects/Wolvington.h"
+#include "Objects/ConveyorBelt.h"
 
 
 #define EMPTY_TILE -1
@@ -45,7 +46,7 @@
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
-//#define DRAW_RECTANGLES
+#define DRAW_RECTANGLES
 #define USE_ENEMIES
 
 
@@ -682,6 +683,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "GroundBlower")
 	{
 		_objects.push_back(DBG_NEW GroundBlower(obj, _player));
+	}
+	else if (obj.logic == "ConveyorBelt")
+	{
+		_objects.push_back(DBG_NEW ConveyorBelt(obj, _player));
 	}
 #ifdef USE_ENEMIES
 	else if (obj.logic == "GooVent")

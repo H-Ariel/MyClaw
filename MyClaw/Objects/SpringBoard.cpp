@@ -9,6 +9,8 @@ SpringBoard::SpringBoard(const WwdObject& obj, Player* player)
 	string anisPath;
 	if (obj.imageSet == "LEVEL_WATERROCK") // level 7. TODO: something else
 		anisPath = PathManager::getAnimationSetPath("LEVEL_ROCKSPRING");
+	else if (obj.imageSet == "LEVEL_SPRINGBOX1") // level 9. TODO: something else
+		anisPath = PathManager::getAnimationSetPath("LEVEL_SPRINGBOX");
 	else
 		anisPath = PathManager::getAnimationSetPath(obj.imageSet);
 
@@ -23,7 +25,7 @@ SpringBoard::SpringBoard(const WwdObject& obj, Player* player)
 	_ani->updateImageData();
 	D2D1_RECT_F rc = _ani->GetRect();
 
-	if (obj.imageSet != "LEVEL_WATERROCK") // level 7. TODO: something else
+	if (obj.imageSet == "SPRINGYFERN") // level 4. TODO: something else
 	{
 		rc.left += 40;
 		rc.right -= 40;
