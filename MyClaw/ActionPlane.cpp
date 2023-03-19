@@ -584,6 +584,7 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 
 void ActionPlane::addObject(const WwdObject& obj)
 {
+#ifndef LOW_DETAILS
 	if (obj.logic == "FrontCandy" || obj.logic == "BehindCandy" ||
 		obj.logic == "BehindAniCandy" || obj.logic == "FrontAniCandy" ||
 		obj.logic == "DoNothing" || obj.logic == "DoNothingNormal" ||
@@ -591,9 +592,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW DoNothing(obj));
 	}
-	else 
-#ifndef LOW_DETAILS
-		if (obj.logic == "GlobalAmbientSound")
+	else if (obj.logic == "GlobalAmbientSound")
 	{
 		_objects.push_back(DBG_NEW GlobalAmbientSound(obj, _player));
 	}

@@ -82,6 +82,82 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(st
 		}
 	}
 
+	// TODO: something else
+	// maybe i should use all original idle anis as sequence
+	// i.e. idle1->idle2->idle3->...
+	if (endsWith(dirPath, "ANIS/OFFICER"))
+	{
+		string imageSet = PathManager::getImageSetPath("LEVEL_OFFICER");
+		vector<Animation::FrameData*> images = {
+			DBG_NEW Animation::FrameData(imageSet + "/100.PID", 900),
+			DBG_NEW Animation::FrameData(imageSet + "/101.PID", 900),
+			DBG_NEW Animation::FrameData(imageSet + "/102.PID", 900),
+			DBG_NEW Animation::FrameData(imageSet + "/103.PID", 900),
+			DBG_NEW Animation::FrameData(imageSet + "/104.PID", 900)
+		};
+
+		anis["IDLE"] = allocNewSharedPtr<Animation>(images);
+
+		anis.erase("STAND1");
+		anis.erase("STAND2");
+		anis.erase("STAND3");
+		anis.erase("STAND4");
+		anis.erase("STAND5");
+	}
+	else if (endsWith(dirPath, "ANIS/SOLDIER"))
+	{
+		string imageSet = PathManager::getImageSetPath("LEVEL_SOLDIER");
+		vector<Animation::FrameData*> images = {
+			DBG_NEW Animation::FrameData(imageSet + "/100.PID", 750),
+			DBG_NEW Animation::FrameData(imageSet + "/101.PID", 750),
+			DBG_NEW Animation::FrameData(imageSet + "/102.PID", 750)
+		};
+
+		anis["IDLE"] = allocNewSharedPtr<Animation>(images);
+
+		anis.erase("STAND");
+		anis.erase("STAND1");
+		anis.erase("STAND2");
+	}
+	else if (endsWith(dirPath, "ANIS/ROBBERTHIEF"))
+	{
+		string imageSet = PathManager::getImageSetPath("LEVEL_ROBBERTHIEF");
+		vector<Animation::FrameData*> images = {
+			DBG_NEW Animation::FrameData(imageSet + "/100.PID", 200),
+			DBG_NEW Animation::FrameData(imageSet + "/101.PID", 200),
+			DBG_NEW Animation::FrameData(imageSet + "/102.PID", 750),
+			DBG_NEW Animation::FrameData(imageSet + "/103.PID", 750),
+			DBG_NEW Animation::FrameData(imageSet + "/104.PID", 750),
+			DBG_NEW Animation::FrameData(imageSet + "/105.PID", 200),
+			DBG_NEW Animation::FrameData(imageSet + "/106.PID", 200),
+		};
+
+		anis["IDLE"] = allocNewSharedPtr<Animation>(images);
+
+		anis.erase("IDLE1");
+		anis.erase("IDLE2");
+		anis.erase("IDLE3");
+		anis.erase("IDLE4");
+		anis.erase("IDLE5");
+	}
+	else if (endsWith(dirPath, "ANIS/CUTTHROAT"))
+	{
+		string imageSet = PathManager::getImageSetPath("LEVEL_CUTTHROAT");
+		vector<Animation::FrameData*> images = {
+			DBG_NEW Animation::FrameData(imageSet + "/100.PID", 750),
+			DBG_NEW Animation::FrameData(imageSet + "/101.PID", 750),
+			DBG_NEW Animation::FrameData(imageSet + "/102.PID", 750),
+			DBG_NEW Animation::FrameData(imageSet + "/103.PID", 750),
+		};
+
+		anis["IDLE"] = allocNewSharedPtr<Animation>(images);
+
+		anis.erase("STAND1");
+		anis.erase("STAND2");
+		anis.erase("STAND3");
+		anis.erase("STAND4");
+	}
+
 	return anis;
 }
 shared_ptr<WapWorld> AssetsManager::loadWwdFile(string wwdPath)

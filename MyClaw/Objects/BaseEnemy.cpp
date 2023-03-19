@@ -7,6 +7,7 @@
 #include "../WindowManager.h"
 
 
+#define ANIMATION_IDLE			_animations.at(_idleAniName)
 #define ANIMATION_WALK			_animations.at(_walkAniName)
 #define ANIMATION_STRIKE_HIGH	_animations.at(_strikeAniName)
 #define ANIMATION_STRIKE_LOW	_animations.at(_strikeDuckAniName)
@@ -16,8 +17,11 @@
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
 
-BaseEnemy::StandAniData::StandAniData(shared_ptr<Animation> ani, uint32_t duration)
-	: ani(ani), duration(duration), elapsedTime(0) {}
+template <class T>
+inline T getRandomValue(const vector<T>& arr)
+{
+	return arr[getRandomInt(0, arr.size() - 1)];
+}
 
 
 DeadEnemy::DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni)
@@ -86,13 +90,13 @@ void BossGem::Logic(uint32_t elapsedTime)
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,
 	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
-	string projectileAniDir, vector<pair<string, uint32_t>> standAnisData, bool noTreasures)
+	string projectileAniDir, string idleAni, bool noTreasures)
 	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
-	_isStanding(false), _standAniIdx(0), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni),
+	_isStanding(false), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni),
 	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
 	_shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir),
 	_hit1AniName(hit1), _hit2AniName(hit2), _fallDeadAniName(fallDead), _minX((float)obj.minX),
-	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1)
+	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1), _idleAniName(idleAni)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
 	_health = health;
@@ -118,16 +122,11 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	_speed.x = ENEMY_PATROL_SPEED;
 
 
-	for (auto& a : standAnisData)
-	{
-		_standAni.push_back(allocNewSharedPtr<StandAniData>(_animations[a.first], a.second));
-	}
-
 	if (_isStaticEnemy)
 	{
 		_isStanding = true;
-		if (_standAni.size() > 0)
-			_ani = _standAni[0]->ani;
+		if (!_idleAniName.empty())
+			_ani = ANIMATION_IDLE;
 	}
 	else
 	{
@@ -155,53 +154,16 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 
 	if (_isStanding)
 	{
-		/*
-		TODO - idle enemy animation
-		
-		if (is real idle animation)
+		if (_ani != ANIMATION_IDLE)
 		{
-			if (_ani != ANIMATION_IDLE)
-			{
-				_ani = ANIMATION_IDLE;
-				_ani->reset();
-			}
-			else if (_ani->isFinishAnimation())
-			{
-				_isStanding = false;
-				_ani = ANIMATION_WALK;
-				_ani->reset();
-			}
+			_ani = ANIMATION_IDLE;
+			_ani->reset();
 		}
-		else
+		else if (_ani->isFinishAnimation())
 		{
-			make this block
-		}
-
-		*/
-
-		_ani = _standAni[_standAniIdx]->ani;
-
-		if (_standAni[_standAniIdx]->elapsedTime >= _standAni[_standAniIdx]->duration)
-		{
-			_standAni[_standAniIdx]->elapsedTime = 0;
-			_standAni[_standAniIdx]->ani->reset();
-
-			_standAniIdx += 1;
-
-			if (_standAniIdx == _standAni.size())
-			{
-				if (!_isStaticEnemy)
-				{
-					_isStanding = false;
-					_ani = ANIMATION_WALK;
-				}
-				_ani->reset();
-				_standAniIdx = 0;
-			}
-		}
-		else
-		{
-			_standAni[_standAniIdx]->elapsedTime += elapsedTime;
+			_isStanding = false;
+			_ani = ANIMATION_WALK;
+			_ani->reset();
 		}
 	}
 
@@ -306,14 +268,13 @@ bool BaseEnemy::PreLogic(uint32_t elapsedTime)
 
 	if (checkForHurts())
 	{
-		_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
+		_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH; // TODO: getRandomValue
 		_ani->reset();
 		_ani->loopAni = false;
 		_ani->mirrored = _forward;
 		_ani->position = position;
 		_isAttack = false;
 		_isStanding = true;
-		_standAniIdx = 0;
 		_lastAttackRect = {};
 		return false;
 	}
@@ -427,9 +388,9 @@ bool BaseEnemy::checkForHurts()
 // TODO: maybe this c'tor don't need get parameters...
 BaseBoss::BaseBoss(const WwdObject& obj, Player* player,
 	int8_t damage, string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
-	string shootAni, string projectileAniDir, vector<pair<string, uint32_t>> standAnisData)
+	string shootAni, string projectileAniDir, string idleAni)
 	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead, strikeAni, "", shootAni,
-		"", projectileAniDir, standAnisData, true), _gemPos({ obj.speedX, obj.speedY })
+		"", projectileAniDir, idleAni, true), _gemPos({ obj.speedX, obj.speedY })
 {
 }
 BaseBoss::~BaseBoss()

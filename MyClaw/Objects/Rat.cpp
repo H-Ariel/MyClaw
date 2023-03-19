@@ -10,7 +10,7 @@
 
 // the rat has its own Logic so we don't need pass all arguments
 Rat::Rat(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 1, 0, "WALK", "DEAD", "DEAD", "DEAD", "", "", "THROWEASTWEST", "", "", { { "IDLE", 100 } }, true)
+	: BaseEnemy(obj, player, 1, 0, "WALK", "DEAD", "DEAD", "DEAD", "", "", "THROWEASTWEST", "", "", "IDLE", true)
 {
 }
 

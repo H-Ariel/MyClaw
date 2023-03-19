@@ -15,8 +15,7 @@ public:
 		int16_t health, int8_t damage, string walkAni,
 		string hit1, string hit2, string fallDead,
 		string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni, string projectileAniDir,
-		vector<pair<string, uint32_t>> standAnisData, bool noTreasures = false);
-	// `standAnis` is list of { ani-name, ani-duration (ms) }
+		string idleAni, bool noTreasures = false);
 
 	~BaseEnemy();
 
@@ -44,20 +43,11 @@ protected:
 	bool checkForHurt(pair<D2D1_RECT_F, uint8_t> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
 	virtual bool checkForHurts();
 
-	struct StandAniData
-	{
-		StandAniData(shared_ptr<Animation> ani, uint32_t duration);
-
-		const shared_ptr<Animation> ani;
-		const uint32_t duration; // milliseconds
-		uint32_t elapsedTime;
-	};
 
 	const string _walkAniName, _hit1AniName, _hit2AniName, _fallDeadAniName,
-		_strikeAniName, _strikeDuckAniName, _shootAniName, _shootDuckAniName, _projectileAniDir;
+		_strikeAniName, _strikeDuckAniName, _shootAniName, _shootDuckAniName,
+		_projectileAniDir, _idleAniName;
 	vector<int8_t> _itemsTypes;
-	vector<shared_ptr<StandAniData>> _standAni;
-	size_t _standAniIdx;
 	const float _minX, _maxX;
 	int8_t _damage; // the amount of health that enemy took when he hit Claw
 	bool _itemsTaken; // store if the items were taken from this crate
@@ -75,8 +65,7 @@ public:
 		int8_t damage, string walkAni,
 		string hit1, string hit2, string fallDead, string strikeAni,
 		string shootAni, string projectileAniDir,
-		vector<pair<string, uint32_t>> standAnisData);
-	// `standAnis` is list of { ani-name, ani-duration (ms) }
+		string idleAni);
 	~BaseBoss();
 
 	virtual void Logic(uint32_t elapsedTime) override = 0;

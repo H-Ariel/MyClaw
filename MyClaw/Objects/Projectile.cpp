@@ -118,7 +118,7 @@ int8_t ClawDynamite::getDamage() const
 }
 
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, string projectileAniDir, int8_t damage)
-	: Projectile(obj, damage, projectileAniDir) {}
+	: Projectile(obj, damage, projectileAniDir) {} // TODO: use here the `PathManager::getImageSetPath` ...
 
 class RatBombExplos : public BaseStaticPlaneObject
 {
