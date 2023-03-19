@@ -162,17 +162,11 @@ D2D1_RECT_F Animation::GetRect()
 	return _images[_currImgIdx]->image->GetRect();
 }
 
-size_t Animation::getFrameNumber() const
-{
-	return _currImgIdx;
-}
-
 void Animation::updateImageData() const
 {
 	_images[_currImgIdx]->image->position = position;
 	_images[_currImgIdx]->image->mirrored = mirrored;
 }
-
 void Animation::reset()
 {
 	_currImgIdx = 0;
@@ -186,21 +180,18 @@ void Animation::reset()
 		i->soundPlayed = false;
 	}
 }
-bool Animation::isFinishAnimation() const
-{
-	return _isFinishAnimation;
-}
-bool Animation::isPassedHalf() const
-{
-	return _currImgIdx >= _images.size() / 2;
-}
 
-shared_ptr<Animation> Animation::getCopy()
+shared_ptr<Animation> Animation::getCopy() const
+{
+	return allocNewSharedPtr<Animation>(getImagesList());
+}
+vector<Animation::FrameData*> Animation::getImagesList() const
 {
 	vector<FrameData*> newImages;
 	for (FrameData* i : _images)
 	{
 		newImages.push_back(DBG_NEW FrameData(i->image->getCopy(), i->duration, i->soundFilePath));
 	}
-	return allocNewSharedPtr<Animation>(newImages);
+	return newImages;
+	// WARNING: you should release that memory
 }

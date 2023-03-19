@@ -52,7 +52,7 @@ D2D1_RECT_F Soldier::GetRect()
 }
 pair<D2D1_RECT_F, int8_t> Soldier::GetAttackRect()
 {
-	if (!_isAttack && _ani->getFrameNumber() != 5 && _ani->getFrameNumber() != 4) return {};
+	if (_ani->getFrameNumber() != 5 && _ani->getFrameNumber() != 4) return{};
 
 	D2D1_RECT_F rc = {};
 	rc.top = 0;

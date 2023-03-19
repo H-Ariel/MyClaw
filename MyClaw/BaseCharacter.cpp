@@ -14,7 +14,8 @@ void BaseCharacter::Draw()
 #define DRAW_RECTANGLES
 #ifdef DRAW_RECTANGLES
 	WindowManager::drawRect(GetRect(), ColorF::Blue);
-	WindowManager::drawRect(GetAttackRect().first, ColorF::LightSkyBlue);
+	if (isAttack())
+		WindowManager::drawRect(GetAttackRect().first, ColorF::LightSkyBlue);
 #endif
 }
 

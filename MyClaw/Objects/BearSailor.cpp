@@ -113,7 +113,7 @@ D2D1_RECT_F BearSailor::GetRect()
 
 pair<D2D1_RECT_F, int8_t> BearSailor::GetAttackRect()
 {
-	if (!_isAttack) return {};
+	if (_ani->getFrameNumber() != 3) return {};
 
 	D2D1_RECT_F rc = {};
 

@@ -17,13 +17,6 @@
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
 
-template <class T>
-inline T getRandomValue(const vector<T>& arr)
-{
-	return arr[getRandomInt(0, arr.size() - 1)];
-}
-
-
 DeadEnemy::DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni)
 	: BaseDynamicPlaneObject(obj)
 {
@@ -85,7 +78,6 @@ void BossGem::Logic(uint32_t elapsedTime)
 
 // TODO: fit 'hithigh' and 'hitlow' to CC attack
 // TODO: fix the shoot to CC height
-// TODO: if the 'standAnisData' contains a real animation use it regulary
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,

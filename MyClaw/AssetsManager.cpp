@@ -85,18 +85,22 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(st
 	// TODO: something else
 	// maybe i should use all original idle anis as sequence
 	// i.e. idle1->idle2->idle3->...
+	// EDIT: more elegant way, something like:
+	// if (aniname starts with "IDLE"/"STAND")
+	//     combine()
+	// for (all images) if (duration == 0) duration = 750
 	if (endsWith(dirPath, "ANIS/OFFICER"))
 	{
-		string imageSet = PathManager::getImageSetPath("LEVEL_OFFICER");
-		vector<Animation::FrameData*> images = {
-			DBG_NEW Animation::FrameData(imageSet + "/100.PID", 900),
-			DBG_NEW Animation::FrameData(imageSet + "/101.PID", 900),
-			DBG_NEW Animation::FrameData(imageSet + "/102.PID", 900),
-			DBG_NEW Animation::FrameData(imageSet + "/103.PID", 900),
-			DBG_NEW Animation::FrameData(imageSet + "/104.PID", 900)
-		};
-
-		anis["IDLE"] = allocNewSharedPtr<Animation>(images);
+		vector<Animation::FrameData*> imagesList;
+		for (Animation::FrameData* f : anis["STAND1"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND2"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND3"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND4"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND5"]->getImagesList()) imagesList.push_back(f);
+		
+		for (Animation::FrameData* i : imagesList) if (i->duration == 0) myMemCpy(i->duration, 750U);
+		
+		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
 
 		anis.erase("STAND1");
 		anis.erase("STAND2");
@@ -106,14 +110,14 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(st
 	}
 	else if (endsWith(dirPath, "ANIS/SOLDIER"))
 	{
-		string imageSet = PathManager::getImageSetPath("LEVEL_SOLDIER");
-		vector<Animation::FrameData*> images = {
-			DBG_NEW Animation::FrameData(imageSet + "/100.PID", 750),
-			DBG_NEW Animation::FrameData(imageSet + "/101.PID", 750),
-			DBG_NEW Animation::FrameData(imageSet + "/102.PID", 750)
-		};
-
-		anis["IDLE"] = allocNewSharedPtr<Animation>(images);
+		vector<Animation::FrameData*> imagesList;
+		for (Animation::FrameData* f : anis["STAND"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND1"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND2"]->getImagesList()) imagesList.push_back(f);
+		
+		for (Animation::FrameData* i : imagesList) if (i->duration == 0) myMemCpy(i->duration, 750U);
+		
+		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
 
 		anis.erase("STAND");
 		anis.erase("STAND1");
@@ -121,18 +125,17 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(st
 	}
 	else if (endsWith(dirPath, "ANIS/ROBBERTHIEF"))
 	{
-		string imageSet = PathManager::getImageSetPath("LEVEL_ROBBERTHIEF");
-		vector<Animation::FrameData*> images = {
-			DBG_NEW Animation::FrameData(imageSet + "/100.PID", 200),
-			DBG_NEW Animation::FrameData(imageSet + "/101.PID", 200),
-			DBG_NEW Animation::FrameData(imageSet + "/102.PID", 750),
-			DBG_NEW Animation::FrameData(imageSet + "/103.PID", 750),
-			DBG_NEW Animation::FrameData(imageSet + "/104.PID", 750),
-			DBG_NEW Animation::FrameData(imageSet + "/105.PID", 200),
-			DBG_NEW Animation::FrameData(imageSet + "/106.PID", 200),
-		};
+		vector<Animation::FrameData*> imagesList;
 
-		anis["IDLE"] = allocNewSharedPtr<Animation>(images);
+		for (Animation::FrameData* f : anis["IDLE1"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["IDLE2"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["IDLE3"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["IDLE4"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["IDLE5"]->getImagesList()) imagesList.push_back(f);
+		
+		for (Animation::FrameData* i : imagesList) if (i->duration == 0) myMemCpy(i->duration, 750U);
+
+		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
 
 		anis.erase("IDLE1");
 		anis.erase("IDLE2");
@@ -142,16 +145,18 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(st
 	}
 	else if (endsWith(dirPath, "ANIS/CUTTHROAT"))
 	{
-		string imageSet = PathManager::getImageSetPath("LEVEL_CUTTHROAT");
-		vector<Animation::FrameData*> images = {
-			DBG_NEW Animation::FrameData(imageSet + "/100.PID", 750),
-			DBG_NEW Animation::FrameData(imageSet + "/101.PID", 750),
-			DBG_NEW Animation::FrameData(imageSet + "/102.PID", 750),
-			DBG_NEW Animation::FrameData(imageSet + "/103.PID", 750),
-		};
+		vector<Animation::FrameData*> imagesList;
+		
+		for (Animation::FrameData* f : anis["STAND1"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND2"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND3"]->getImagesList()) imagesList.push_back(f);
+		for (Animation::FrameData* f : anis["STAND4"]->getImagesList()) imagesList.push_back(f);
 
-		anis["IDLE"] = allocNewSharedPtr<Animation>(images);
+		for (Animation::FrameData* i : imagesList) if (i->duration == 0) myMemCpy(i->duration, 750U);
 
+		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
+
+		anis.erase("STANCE");
 		anis.erase("STAND1");
 		anis.erase("STAND2");
 		anis.erase("STAND3");

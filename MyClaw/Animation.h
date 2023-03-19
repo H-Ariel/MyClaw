@@ -31,14 +31,15 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 	D2D1_RECT_F GetRect() override;
-	size_t getFrameNumber() const;
 
 	void updateImageData() const; // position, mirrored, etc.
 	void reset(); // reset to the first frame
-	bool isFinishAnimation() const; // return if we finish the animation loop
-	bool isPassedHalf() const;
 
-	shared_ptr<Animation> getCopy();
+	shared_ptr<Animation> getCopy() const;
+	vector<FrameData*> getImagesList() const;
+	size_t getFrameNumber() const { return _currImgIdx; }
+	bool isFinishAnimation() const { return _isFinishAnimation; } // return if we finish the animation loop
+	bool isPassedHalf() const { return _currImgIdx >= _images.size() / 2; }
 
 
 	bool updateFrames;

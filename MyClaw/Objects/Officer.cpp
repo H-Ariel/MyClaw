@@ -47,7 +47,7 @@ D2D1_RECT_F Officer::GetRect()
 }
 pair<D2D1_RECT_F, int8_t> Officer::GetAttackRect()
 {
-	if (!_isAttack && _ani->getFrameNumber() < 3) return {};
+	if (_ani->getFrameNumber() != 3) return {};
 
 	D2D1_RECT_F rc = {};
 	rc.top = 20;
