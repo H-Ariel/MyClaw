@@ -150,6 +150,7 @@
     <ClCompile Include="MidiPlayer.cpp" />
     <ClCompile Include="Miniz.cpp" />
     <ClCompile Include="Objects\BaseEnemy.cpp" />
+    <ClCompile Include="Objects\BearSailor.cpp" />
     <ClCompile Include="Objects\Cannon.cpp" />
     <ClCompile Include="Objects\Checkpoint.cpp" />
     <ClCompile Include="Objects\ConveyorBelt.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="Objects\Projectile.cpp" />
     <ClCompile Include="Objects\Rat.cpp" />
     <ClCompile Include="Objects\LeRauxe.cpp" />
+    <ClCompile Include="Objects\RedTailPirate.cpp" />
     <ClCompile Include="Objects\RobberThief.cpp" />
     <ClCompile Include="Objects\Rope.cpp" />
     <ClCompile Include="Objects\Seagull.cpp" />
@@ -215,6 +217,7 @@
     <ClInclude Include="MidiPlayer.h" />
     <ClInclude Include="Miniz.h" />
     <ClInclude Include="Objects\BaseEnemy.h" />
+    <ClInclude Include="Objects\BearSailor.h" />
     <ClInclude Include="Objects\Cannon.h" />
     <ClInclude Include="Objects\Checkpoint.h" />
     <ClInclude Include="Objects\ConveyorBelt.h" />
@@ -233,6 +236,7 @@
     <ClInclude Include="Objects\Projectile.h" />
     <ClInclude Include="Objects\Rat.h" />
     <ClInclude Include="Objects\LeRauxe.h" />
+    <ClInclude Include="Objects\RedTailPirate.h" />
     <ClInclude Include="Objects\RobberThief.h" />
     <ClInclude Include="Objects\Rope.h" />
     <ClInclude Include="Objects\Seagull.h" />

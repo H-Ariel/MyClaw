@@ -2,7 +2,7 @@
 
 
 Officer::Officer(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL", "STRIKE", "", "", "",
+	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL", "STRIKE", "", "", "", "",
 		{ { "STAND1", 1000 }, { "STAND2", 1000 }, { "STAND3", 1000 }, { "STAND4", 1000 }, { "STAND5", 1000 } })
 {
 }

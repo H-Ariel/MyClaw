@@ -7,6 +7,7 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _speed(obj.speed / 1000.f),
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
+	// TODO: better animationss (as sequence)
 	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 75, obj.speed > 0);
 	setObjectRectangle();
 }

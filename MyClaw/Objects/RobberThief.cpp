@@ -2,7 +2,7 @@
 
 
 RobberThief::RobberThief(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL", "", "STRIKE1", "STRIKE2",
+	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL", "", "", "STRIKE1", "STRIKE2",
 		PathManager::getImageSetPath("LEVEL_ARROW"), 
 		{ { "IDLE1", 1000 }, { "IDLE2", 1000 }, { "IDLE3", 1000 }, { "IDLE4", 1000 } })
 {

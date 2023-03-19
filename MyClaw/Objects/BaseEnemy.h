@@ -14,7 +14,7 @@ public:
 	BaseEnemy(const WwdObject& obj, Player* player,
 		int16_t health, int8_t damage, string walkAni,
 		string hit1, string hit2, string fallDead,
-		string strikeAni, string shootAni, string shootDuckAni, string projectileAniDir,
+		string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni, string projectileAniDir,
 		vector<pair<string, uint32_t>> standAnisData, bool noTreasures = false);
 	// `standAnis` is list of { ani-name, ani-duration (ms) }
 
@@ -54,7 +54,7 @@ protected:
 	};
 
 	const string _walkAniName, _hit1AniName, _hit2AniName, _fallDeadAniName,
-		_strikeAniName, _shootAniName, _shootDuckAniName, _projectileAniDir;
+		_strikeAniName, _strikeDuckAniName, _shootAniName, _shootDuckAniName, _projectileAniDir;
 	vector<int8_t> _itemsTypes;
 	vector<shared_ptr<StandAniData>> _standAni;
 	size_t _standAniIdx;
@@ -62,7 +62,7 @@ protected:
 	int8_t _damage; // the amount of health that enemy took when he hit Claw
 	bool _itemsTaken; // store if the items were taken from this crate
 	bool _isStanding;
-	const bool _canStrike, _canShoot, _canShootDuck;
+	const bool _canStrike, _canStrikeDuck, _canShoot, _canShootDuck;
 	const bool _isStaticEnemy; // it always idle
 };
 

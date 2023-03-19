@@ -7,11 +7,12 @@
 #include "../WindowManager.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAniName)
-#define ANIMATION_STRIKE	_animations.at(_strikeAniName)
-#define ANIMATION_HITHIGH	_animations.at(_hit1AniName)
-#define ANIMATION_HITLOW	_animations.at(_hit2AniName)
-#define ANIMATION_SHOOT		_animations.at(_shootAniName)
+#define ANIMATION_WALK			_animations.at(_walkAniName)
+#define ANIMATION_STRIKE_HIGH	_animations.at(_strikeAniName)
+#define ANIMATION_STRIKE_LOW	_animations.at(_strikeDuckAniName)
+#define ANIMATION_HITHIGH		_animations.at(_hit1AniName)
+#define ANIMATION_HITLOW		_animations.at(_hit2AniName)
+#define ANIMATION_SHOOT			_animations.at(_shootAniName)
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
 
@@ -78,18 +79,20 @@ void BossGem::Logic(uint32_t elapsedTime)
 	}
 }
 
-// TODO: fit hithigh and hitlow to CC attack
-// TODO: fix the shhot to CC height
+// TODO: fit 'hithigh' and 'hitlow' to CC attack
+// TODO: fix the shoot to CC height
+// TODO: if the 'standAnisData' contains a real animation use it regulary
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,
-	string fallDead, string strikeAni, string shootAni, string shootDuckAni,
+	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
 	string projectileAniDir, vector<pair<string, uint32_t>> standAnisData, bool noTreasures)
 	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
-	_isStanding(false), _standAniIdx(0), _strikeAniName(strikeAni), _canStrike(!strikeAni.empty()),
-	_walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni),
-	_canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir), _hit1AniName(hit1), _hit2AniName(hit2),
-	_fallDeadAniName(fallDead), _minX((float)obj.minX), _maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1)
+	_isStanding(false), _standAniIdx(0), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni),
+	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
+	_shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir),
+	_hit1AniName(hit1), _hit2AniName(hit2), _fallDeadAniName(fallDead), _minX((float)obj.minX),
+	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
 	_health = health;
@@ -218,7 +221,15 @@ void BaseEnemy::makeAttack()
 		{
 			if (_canStrike)
 			{
-				_ani = ANIMATION_STRIKE;
+				_ani = ANIMATION_STRIKE_HIGH;
+				_ani->reset();
+				_isStanding = false;
+				_isAttack = true;
+				_forward = _player->position.x > position.x;
+			}
+			if (_canStrikeDuck && _player->isDuck())
+			{
+				_ani = ANIMATION_STRIKE_LOW;
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
@@ -389,10 +400,11 @@ bool BaseEnemy::checkForHurts()
 }
 
 
+// TODO: maybe this c'tor don't need get parameters...
 BaseBoss::BaseBoss(const WwdObject& obj, Player* player,
 	int8_t damage, string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
 	string shootAni, string projectileAniDir, vector<pair<string, uint32_t>> standAnisData)
-	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead, strikeAni, shootAni,
+	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead, strikeAni, "", shootAni,
 		"", projectileAniDir, standAnisData, true), _gemPos({ obj.speedX, obj.speedY })
 {
 }

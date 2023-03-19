@@ -27,6 +27,8 @@
 #include "Objects/GooVent.h"
 #include "Objects/Wolvington.h"
 #include "Objects/ConveyorBelt.h"
+#include "Objects/RedTailPirate.h"
+#include "Objects/BearSailor.h"
 
 
 #define EMPTY_TILE -1
@@ -47,7 +49,7 @@
 
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#define DRAW_RECTANGLES
-#define USE_ENEMIES
+//#define USE_ENEMIES
 
 
 class SimpleObject : public BasePlaneObject
@@ -736,6 +738,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 		ADD_ENEMY(DBG_NEW TownGuard(obj, _player));
 	}
 #endif
+	else if (obj.logic == "RedTailPirate")
+	{
+		ADD_ENEMY(DBG_NEW RedTailPirate(obj, _player));
+	}
+	else if (obj.logic == "BearSailor")
+	{
+		ADD_ENEMY(DBG_NEW BearSailor(obj, _player));
+	}
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));
