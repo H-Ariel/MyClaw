@@ -155,6 +155,30 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 
 	if (_isStanding)
 	{
+		/*
+		TODO - idle enemy animation
+		
+		if (is real idle animation)
+		{
+			if (_ani != ANIMATION_IDLE)
+			{
+				_ani = ANIMATION_IDLE;
+				_ani->reset();
+			}
+			else if (_ani->isFinishAnimation())
+			{
+				_isStanding = false;
+				_ani = ANIMATION_WALK;
+				_ani->reset();
+			}
+		}
+		else
+		{
+			make this block
+		}
+
+		*/
+
 		_ani = _standAni[_standAniIdx]->ani;
 
 		if (_standAni[_standAniIdx]->elapsedTime >= _standAni[_standAniIdx]->duration)

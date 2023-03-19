@@ -169,13 +169,8 @@ bool Elevator::tryCatchPlayer()
 
 
 PathElevator::PathElevator(const WwdObject& obj, Player* player)
-	: Elevator(obj, player)
+	: Elevator(obj, player), _initialSpeed(0)
 {
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
-
-	_totalSpeed = obj.speed / 1000.f;
-	if (_totalSpeed == 0) _totalSpeed = 0.125f;
-
 	if (obj.moveRect.left != 0) _paths.push_back({ obj.moveRect.left, obj.moveRect.top });
 	if (obj.moveRect.right != 0) _paths.push_back({ obj.moveRect.right, obj.moveRect.bottom });
 	if (obj.hitRect.left != 0) _paths.push_back({ obj.hitRect.left, obj.hitRect.top });
@@ -190,8 +185,14 @@ PathElevator::PathElevator(const WwdObject& obj, Player* player)
 		throw Exception(__FUNCTION__ " - no paths");
 	}
 
-	_pathIdx = -1;
-	_timeCounter = 0;
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
+
+	_totalSpeed = obj.speed / 1000.f;
+	if (_totalSpeed == 0) _totalSpeed = 0.125f;
+
+	myMemCpy(_initialSpeed, _totalSpeed);
+
+	Reset();
 }
 void PathElevator::Logic(uint32_t elapsedTime)
 {
@@ -218,4 +219,11 @@ void PathElevator::Logic(uint32_t elapsedTime)
 	}
 
 	mainMainLogic(elapsedTime);
+}
+void PathElevator::Reset()
+{
+	position = _initialPos;
+	_totalSpeed = _initialSpeed;
+	_pathIdx = -1;
+	_timeCounter = 0;
 }

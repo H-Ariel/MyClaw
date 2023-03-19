@@ -14,15 +14,15 @@ void LevelPlane::Draw()
 {
 	shared_ptr<UIBaseImage> img;
 	int32_t tileId, rowTileIndex, colTileIndex;
-	uint32_t row, col;
+	int32_t row, col;
 
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
 	const float parallaxCameraPosX = position.x * _plane.movementPercentX;
 	const float parallaxCameraPosY = position.y * _plane.movementPercentY;
-	const uint32_t startCol = (uint32_t)(parallaxCameraPosX / _plane.tilePixelWidth);
-	const uint32_t startRow = (uint32_t)(parallaxCameraPosY / _plane.tilePixelHeight);
-	const uint32_t endRow = min<uint32_t>(maxTileIdxY, (uint32_t)(wndSz.height / _plane.tilePixelHeight + 2 + startRow));
-	const uint32_t endCol = min<uint32_t>(maxTileIdxX, (uint32_t)(wndSz.width / _plane.tilePixelWidth + 2 + startCol));
+	const int32_t startCol = (int32_t)(parallaxCameraPosX / _plane.tilePixelWidth);
+	const int32_t startRow = (int32_t)(parallaxCameraPosY / _plane.tilePixelHeight);
+	const int32_t endRow = min<int32_t>(maxTileIdxY, (int32_t)(wndSz.height / _plane.tilePixelHeight + 2 + startRow));
+	const int32_t endCol = min<int32_t>(maxTileIdxX, (int32_t)(wndSz.width / _plane.tilePixelWidth + 2 + startCol));
 
 	for (row = startRow; row < endRow; row++)
 	{
