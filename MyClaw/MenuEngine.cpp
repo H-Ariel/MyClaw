@@ -306,13 +306,75 @@ string getBGImgPath2(int l)
 	return path;
 }
 
-LevelEndEngine::LevelEndEngine(int lvlNo)
-	: MenuEngine(false, getBGImgPath1(lvlNo)), _lvlNo(lvlNo), _state(Start)
+shared_ptr<Animation> getSpecialItem(int l)
 {
+	shared_ptr<Animation> ani;
+
+	char imagesPath[38];
+	sprintf(imagesPath, "STATES/BOOTY/IMAGES/MAPPIECE/LEVEL%03d", l);
+
+	switch (l)
+	{
+	case 1:
+	case 3:
+	case 5:
+	case 7:
+	case 9:
+	case 11: {
+		// map
+		ani = AssetsManager::createAnimationFromDirectory(imagesPath, 125, false);
+	}	break;
+
+	case 2:
+	case 4:
+	case 6:
+	case 8:
+	case 10:
+	case 12:
+	case 14:
+		// gem
+		ani = AssetsManager::loadAnimation("STATES/BOOTY/ANIS/GEM" + to_string(l) + ".ANI", imagesPath);
+		break;
+
+	case 13:
+		// has 2 gems...
+		break;
+
+	default:
+		throw Exception("invalid level number");
+	}
+
+	return ani;
+}
+D2D1_POINT_2F getItemEndPosition(int l)
+{
+	switch (l)
+	{
+	case 1: return { 0.38, 0.32 };
+
+	default: throw Exception("invalid level number");
+	}
+	return {};
+}
+
+
+
+
+LevelEndEngine::LevelEndEngine(int lvlNum)
+	: MenuEngine(false, getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start), _levelSpecialItem(getSpecialItem(lvlNum))
+{
+	// TODO: set the palette
+
+	WindowManager::setBackgroundColor(ColorF::Black);
+
+	_itemEndPos = getItemEndPosition(lvlNum);
 }
 void LevelEndEngine::Logic(uint32_t elapsedTime)
 {
 	MenuEngine::Logic(elapsedTime);
+
+	_levelSpecialItem->position.x = _bgImg->position.x + _itemEndPos.x * _bgImg->size.width;
+	_levelSpecialItem->position.y = _bgImg->position.y + _itemEndPos.y * _bgImg->size.height;
 
 	switch (_state)
 	{
@@ -321,6 +383,8 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 	case InsertMap:
 		// TODO: cool animation of map piece
+	//	_elementsList.push_back(_levelSpecialItem.get());
+		_state = DrawDots;
 		break;
 
 	case DrawDots:
@@ -334,7 +398,7 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 	case DrawScore:
 		delete _bgImg;
 		_elementsList.clear();
-		_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(getBGImgPath2(_lvlNo)));
+		_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(getBGImgPath2(_lvlNum)));
 		_state += 1;
 		break;
 
@@ -354,9 +418,9 @@ void LevelEndEngine::OnKeyUp(int key) { _state += 1; }
 void LevelEndEngine::OnMouseButtonUp(MouseButtons btn) { _state += 1; }
 void LevelEndEngine::playNextLevel()
 {
-	if (_lvlNo == 14) // last level
-		changeEngine<MenuEngine>();
+	if (_lvlNum == 14) // last level
+		changeEngine<MenuEngine>(); // TODO: go to credits
 	else
-		changeEngine<LevelLoadingEngine>(_lvlNo + 1);
+		changeEngine<LevelLoadingEngine>(_lvlNum + 1);
 }
 // TODO: continue

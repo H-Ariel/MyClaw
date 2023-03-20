@@ -51,7 +51,7 @@ private:
 class LevelEndEngine : public MenuEngine
 {
 public:
-	LevelEndEngine(int lvlNo);
+	LevelEndEngine(int lvlNum);
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -70,6 +70,9 @@ private:
 		End
 	};
 
-	const int8_t _lvlNo;
+	const int8_t _lvlNum;
 	int8_t _state;
+
+	shared_ptr<Animation> _levelSpecialItem; // map-piece or gem
+	D2D1_POINT_2F _itemEndPos;
 };

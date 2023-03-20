@@ -78,6 +78,7 @@ void BossGem::Logic(uint32_t elapsedTime)
 
 // TODO: fit 'hithigh' and 'hitlow' to CC attack
 // TODO: fix the shoot to CC height
+// TODO: add gravity to enemies and make sure it does not cause problems
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,

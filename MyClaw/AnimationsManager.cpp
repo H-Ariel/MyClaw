@@ -55,6 +55,9 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const stri
 
 		_loadedAnimations[k] = allocNewSharedPtr<Animation>(images);
 	}
+
+	// TODO: if ani.images.size=0: ani.update=false
+
 	return _loadedAnimations[k];
 }
 shared_ptr<Animation> AnimationsManager::createAnimationFromFromPidImage(const string& pidPath)

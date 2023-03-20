@@ -51,8 +51,8 @@ void Wolvington::Logic(uint32_t elapsedTime)
 			stopMovingRight(position.x - _maxX);
 		}
 	}
-	position.y += _speed.y * elapsedTime;
 	_speed.y += GRAVITY * elapsedTime;
+	position.y += _speed.y * elapsedTime;
 
 	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_JUMPBACK)
 	{
