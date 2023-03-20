@@ -146,13 +146,13 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		position.x = _player->position.x - wndSize.width / 2.0f;
 		position.y = _player->position.y - wndSize.height / 2.0f;
 		
-		/*
+		/**/
 		// TODO: delete this part if we do not need it
 		if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
 		if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;
 		if (position.y < MIN_OFFSET_Y) position.y = MIN_OFFSET_Y;
 		if (position.y > MAX_OFFSET_Y) position.y = MAX_OFFSET_Y;
-		*/
+		/**/
 	};
 
 	if (_deathAniWait)

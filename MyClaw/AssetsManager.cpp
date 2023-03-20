@@ -11,6 +11,21 @@ static bool isNumber(string str)
 	return true;
 }
 
+static inline bool isEnemyAniations(string dirPath)
+{
+	return contains(dirPath, "ANIS/") && (
+		endsWith(dirPath, "OFFICER") ||
+		endsWith(dirPath, "SOLDIER") ||
+		endsWith(dirPath, "ROBBERTHIEF") ||
+		endsWith(dirPath, "CUTTHROAT") ||
+		endsWith(dirPath, "TOWNGUARD1") ||
+		endsWith(dirPath, "TOWNGUARD2") ||
+		endsWith(dirPath, "BEARSAILOR") ||
+		endsWith(dirPath, "REDTAILPIRATE")
+		);
+	// TODO: add all of them
+}
+
 
 RezArchive* AssetsManager::_rezArchive = nullptr;
 ImagesManager* AssetsManager::_imagesManager = nullptr;
@@ -82,85 +97,31 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(st
 		}
 	}
 
-	// TODO: something else
-	// maybe i should use all original idle anis as sequence
-	// i.e. idle1->idle2->idle3->...
-	// EDIT: more elegant way, something like:
-	// if (aniname starts with "IDLE"/"STAND")
-	//     combine()
-	// for (all images) if (duration == 0) duration = 750
-	if (endsWith(dirPath, "ANIS/OFFICER"))
+	// TODO: move to AnimationsManager and use Animation::getCopy()
+	if (isEnemyAniations(dirPath))
 	{
 		vector<Animation::FrameData*> imagesList;
-		for (Animation::FrameData* f : anis["STAND1"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND2"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND3"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND4"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND5"]->getImagesList()) imagesList.push_back(f);
-		
-		for (Animation::FrameData* i : imagesList) if (i->duration == 0) myMemCpy(i->duration, 750U);
-		
-		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
+		vector<string> anisNames;
+		for (auto& i : anis)
+		{
+			if (startsWith(i.first, "STAND") || startsWith(i.first, "IDLE"))
+			{
+				anisNames.push_back(i.first);
+				for (Animation::FrameData* f : i.second->getImagesList())
+				{
+					if (f->duration == 0)
+						myMemCpy(f->duration, 500U);
+					imagesList.push_back(f);
+				}
+			}
+		}
 
-		anis.erase("STAND1");
-		anis.erase("STAND2");
-		anis.erase("STAND3");
-		anis.erase("STAND4");
-		anis.erase("STAND5");
-	}
-	else if (endsWith(dirPath, "ANIS/SOLDIER"))
-	{
-		vector<Animation::FrameData*> imagesList;
-		for (Animation::FrameData* f : anis["STAND"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND1"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND2"]->getImagesList()) imagesList.push_back(f);
-		
-		for (Animation::FrameData* i : imagesList) if (i->duration == 0) myMemCpy(i->duration, 750U);
-		
-		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
-
-		anis.erase("STAND");
-		anis.erase("STAND1");
-		anis.erase("STAND2");
-	}
-	else if (endsWith(dirPath, "ANIS/ROBBERTHIEF"))
-	{
-		vector<Animation::FrameData*> imagesList;
-
-		for (Animation::FrameData* f : anis["IDLE1"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["IDLE2"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["IDLE3"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["IDLE4"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["IDLE5"]->getImagesList()) imagesList.push_back(f);
-		
-		for (Animation::FrameData* i : imagesList) if (i->duration == 0) myMemCpy(i->duration, 750U);
+		for (auto& i : anisNames)
+		{
+			anis.erase(i);
+		}
 
 		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
-
-		anis.erase("IDLE1");
-		anis.erase("IDLE2");
-		anis.erase("IDLE3");
-		anis.erase("IDLE4");
-		anis.erase("IDLE5");
-	}
-	else if (endsWith(dirPath, "ANIS/CUTTHROAT"))
-	{
-		vector<Animation::FrameData*> imagesList;
-		
-		for (Animation::FrameData* f : anis["STAND1"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND2"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND3"]->getImagesList()) imagesList.push_back(f);
-		for (Animation::FrameData* f : anis["STAND4"]->getImagesList()) imagesList.push_back(f);
-
-		for (Animation::FrameData* i : imagesList) if (i->duration == 0) myMemCpy(i->duration, 750U);
-
-		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
-
-		anis.erase("STANCE");
-		anis.erase("STAND1");
-		anis.erase("STAND2");
-		anis.erase("STAND3");
-		anis.erase("STAND4");
 	}
 
 	return anis;
