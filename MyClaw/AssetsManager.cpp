@@ -21,7 +21,8 @@ static inline bool isEnemyAniations(string dirPath)
 		endsWith(dirPath, "TOWNGUARD1") ||
 		endsWith(dirPath, "TOWNGUARD2") ||
 		endsWith(dirPath, "BEARSAILOR") ||
-		endsWith(dirPath, "REDTAILPIRATE")
+		endsWith(dirPath, "REDTAILPIRATE") ||
+		endsWith(dirPath, "CRAZYHOOK")
 		);
 	// TODO: add all of them
 }

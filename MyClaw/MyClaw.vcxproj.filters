@@ -213,6 +213,9 @@
     <ClCompile Include="Objects\BearSailor.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\CrazyHook.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -405,6 +408,9 @@
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\BearSailor.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\CrazyHook.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>

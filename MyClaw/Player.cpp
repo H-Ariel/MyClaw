@@ -526,7 +526,7 @@ void Player::Logic(uint32_t elapsedTime)
 				{
 					WwdObject obj;
 					D2D1_RECT_F atkRc = GetAttackRect().first;
-					obj.x = int32_t(_forward ? atkRc.left : atkRc.right);
+					obj.x = position.x;
 					obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
 					obj.z = ZCoord;
 					obj.speedX = (_forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED);

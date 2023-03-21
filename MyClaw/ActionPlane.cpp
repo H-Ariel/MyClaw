@@ -29,6 +29,7 @@
 #include "Objects/ConveyorBelt.h"
 #include "Objects/RedTailPirate.h"
 #include "Objects/BearSailor.h"
+#include "Objects/CrazyHook.h"
 
 
 #define EMPTY_TILE -1
@@ -749,6 +750,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "BearSailor")
 	{
 		ADD_ENEMY(DBG_NEW BearSailor(obj, _player));
+	}
+	else if (obj.logic == "CrazyHook")
+	{
+		ADD_ENEMY(DBG_NEW CrazyHook(obj, _player));
 	}
 	else if (obj.logic == "Raux")
 	{
