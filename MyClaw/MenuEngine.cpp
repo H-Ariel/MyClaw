@@ -367,7 +367,8 @@ LevelEndEngine::LevelEndEngine(int lvlNum)
 
 	WindowManager::setBackgroundColor(ColorF::Black);
 
-	_itemEndPos = getItemEndPosition(lvlNum);
+//	_itemEndPos = getItemEndPosition(lvlNum);
+	_itemEndPos = {};
 }
 void LevelEndEngine::Logic(uint32_t elapsedTime)
 {

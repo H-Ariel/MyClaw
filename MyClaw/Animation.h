@@ -35,7 +35,7 @@ public:
 	void updateImageData() const; // position, mirrored, etc.
 	void reset(); // reset to the first frame
 
-	shared_ptr<Animation> getCopy() const;
+	shared_ptr<Animation> getCopy() const { return allocNewSharedPtr<Animation>(getImagesList()); }
 	vector<FrameData*> getImagesList() const;
 	size_t getFrameNumber() const { return _currImgIdx; }
 	bool isFinishAnimation() const { return _isFinishAnimation; } // return if we finish the animation loop

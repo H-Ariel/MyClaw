@@ -1,6 +1,12 @@
 #include "AudioManager.h"
 
 
+// TODO: do not use this mutex
+// TODO: if used: move to `AudioManager` (without `static` keyword)
+static mutex mtx;
+
+// TODO: `_wavPlayers` store only the player (without path) So that we can play the same file several times at the same time (like MagicClaw)
+
 AudioManager::AudioManager(RezArchive* rezArchive)
 	: _rezArchive(rezArchive), _currBgMusicType(BackgroundMusicType::None)
 {
@@ -26,28 +32,38 @@ shared_ptr<WavPlayer> AudioManager::getWavPlayer(string wavFilePath)
 void AudioManager::playWavFile(string wavFilePath, bool infinite)
 {
 	if (wavFilePath.empty()) return;
+	mtx.lock();
 	getWavPlayer(wavFilePath)->play(infinite);
+	mtx.unlock();
 }
 void AudioManager::stopWavFile(string wavFilePath)
 {
 	if (wavFilePath.empty()) return;
+	mtx.lock();
 	getWavPlayer(wavFilePath)->stop();
+	mtx.unlock();
 }
 
 uint32_t AudioManager::getWavFileDuration(string wavFilePath)
 {
 	if (wavFilePath.empty()) return 0;
-	return getWavPlayer(wavFilePath)->getDuration();
+	mtx.lock();
+	uint32_t d = getWavPlayer(wavFilePath)->getDuration();
+	mtx.unlock();
+	return d;
 }
 
 void AudioManager::setVolume(string wavFilePath, int32_t volume)
 {
 	if (wavFilePath.empty()) return;
+	mtx.lock();
 	getWavPlayer(wavFilePath)->setVolume(volume);
+	mtx.unlock();
 }
 
 void AudioManager::clearLevelSounds(string prefix)
 {
+	mtx.lock();
 	vector<string> keysToRemove;
 	for (auto& a : _wavPlayers)
 	{
@@ -64,6 +80,7 @@ void AudioManager::clearLevelSounds(string prefix)
 	_midiPlayers.clear();
 	_currBgMusic = nullptr;
 	_currBgMusicType = BackgroundMusicType::None;
+	mtx.unlock();
 }
 
 void AudioManager::checkForRestart()
@@ -71,10 +88,12 @@ void AudioManager::checkForRestart()
 	vector<string> keysToReplay;
 	for (auto& w : _wavPlayers)
 	{
+		mtx.lock();
 		if (w.second->shouldPlay())
 		{
 			keysToReplay.push_back(w.first);
 		}
+		mtx.unlock();
 	}
 	for (const string& k : keysToReplay)
 	{

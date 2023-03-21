@@ -24,12 +24,6 @@ Animation::Animation(RezArchive* rezArchive, string aniPath, string _imageSetPat
 	uint16_t triggeredEventFlag, imageFileId, duration;
 	bool useSoundFile;
 
-	// no sound for enemies animations
-	const bool UseSoundForThisAnim =
-		!contains(aniPath, "RAT") &&
-		!contains(aniPath, "SOLDIER") &&
-		!contains(aniPath, "OFFICER");
-
 	/********************** ANI HEADER/PROPERTIES **********************/
 
 	if (aniFileReader->read<uint8_t>() != 0x20) // file signature
@@ -75,18 +69,20 @@ Animation::Animation(RezArchive* rezArchive, string aniPath, string _imageSetPat
 		{
 			soundFilePath = aniFileReader->ReadNullTerminatedString();
 
-			if (!soundFilePath.empty() && useSoundFile)
+			if (endsWith(soundFilePath, "MLF") || endsWith(soundFilePath, "MRF"))
+			{ // the rat use this sounds, and i hate it
+				soundFilePath = "";
+			}
+			else
 			{
-				soundFilePath = replaceString(soundFilePath, '_', '/');
-				soundFilePath = PathManager::getSoundFilePath(soundFilePath);
+				if (!soundFilePath.empty() && useSoundFile)
+				{
+					soundFilePath = replaceString(soundFilePath, '_', '/');
+					soundFilePath = PathManager::getSoundFilePath(soundFilePath);
+				}
 			}
 		}
 
-		// TODO: delete this condition and it's block
-		if (!UseSoundForThisAnim)
-		{
-			soundFilePath = "";
-		}
 
 		// TODO: hack - something else
 		if (startsWith(aniPath, "LEVEL2/ANIS/RAUX/BLOCK")) duration /= 2;
@@ -181,10 +177,6 @@ void Animation::reset()
 	}
 }
 
-shared_ptr<Animation> Animation::getCopy() const
-{
-	return allocNewSharedPtr<Animation>(getImagesList());
-}
 vector<Animation::FrameData*> Animation::getImagesList() const
 {
 	vector<FrameData*> newImages;
