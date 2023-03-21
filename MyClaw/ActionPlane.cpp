@@ -504,6 +504,10 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 				case WwdTileDescription::TileAttribute_Solid:
 					_onSolid(tileRc);
 					break;
+					
+				case WwdTileDescription::TileAttribute_Ground:
+					_onGround();
+					break;
 
 				case WwdTileDescription::TileAttribute_Climb:
 					_onLadder();
