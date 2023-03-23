@@ -5,7 +5,7 @@
 
 SoundObjectBase::SoundObjectBase(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player),
-	_wavPath(PathManager::getSoundFilePath(obj.animation))
+	_wavPath(PathManager::getSoundFilePath(obj.animation)), _wavPlayerId(-1)
 {
 	// These objects are invisible so no need to animate them
 	//_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
@@ -15,7 +15,6 @@ SoundObjectBase::SoundObjectBase(const WwdObject& obj, Player* player)
 	{
 		_volume = 100;
 	}
-	AssetsManager::setWavFileVolume(_wavPath, _volume);
 
 	D2D1_RECT_F newRc = {};
 
@@ -99,8 +98,7 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 			_isInCollision = true;
 			if (_timesCounter == -1 || _timesCounter > 0)
 			{
-				// TODO: use `_volume`
-				AssetsManager::playWavFile(_wavPath);
+				_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume);
 
 				if (_timesCounter != -1)
 				{
@@ -109,7 +107,7 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 
 				if (_isClawDialog)
 				{
-					_player->activateDialog(AssetsManager::getWavFileDuration(_wavPath));
+					_player->activateDialog(AssetsManager::getWavFileDuration(_wavPlayerId));
 				}
 			}
 		}
@@ -135,7 +133,7 @@ void AmbientSound::Logic(uint32_t elapsedTime)
 	{
 		if (!_isPlaying)
 		{
-			AssetsManager::playWavFile(_wavPath);
+			_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume);
 			_isPlaying = true;
 		}
 	}
@@ -143,7 +141,8 @@ void AmbientSound::Logic(uint32_t elapsedTime)
 	{
 		if (_isPlaying)
 		{
-			AssetsManager::stopWavFile(_wavPath);
+			AssetsManager::stopWavFile(_wavPlayerId);
+			_wavPlayerId = -1;
 			_isPlaying = false;
 		}
 	}
@@ -159,11 +158,11 @@ GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj, Player* player)
 	_currentTime(0)
 {
 	_timeOff = getRandomInt(_minTimeOff, _maxTimeOff);
-	_soundDurationMs = AssetsManager::getWavFileDuration(_wavPath);
 
 	if (_isLooping)
 	{
-		AssetsManager::playWavFile(_wavPath, true);
+		_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume, true);
+		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPlayerId);
 	}
 }
 void GlobalAmbientSound::Logic(uint32_t elapsedTime)
@@ -179,7 +178,8 @@ void GlobalAmbientSound::Logic(uint32_t elapsedTime)
 		int timeOn = getRandomInt(_minTimeOn, _maxTimeOn);
 		int soundLoops = timeOn / _soundDurationMs;
 
-		AssetsManager::playWavFile(_wavPath);
+		_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume);
+		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPlayerId);
 
 		_timeOff = getRandomInt(_minTimeOff, _maxTimeOff) + soundLoops * _soundDurationMs;
 

@@ -60,13 +60,18 @@ void WavPlayer::play(bool infinite)
 
 void WavPlayer::stop()
 {
-	if (_wav)
+	try
 	{
-		WAV_CALL(waveOutReset(_wav));
-		WAV_CALL(waveOutUnprepareHeader(_wav, &_hdr, sizeof(_hdr)));
-		WAV_CALL(waveOutClose(_wav));
-		_wav = nullptr;
+		if (_wav)
+		{
+			WAV_CALL(waveOutReset(_wav));
+			WAV_CALL(waveOutUnprepareHeader(_wav, &_hdr, sizeof(_hdr)));
+			WAV_CALL(waveOutClose(_wav));
+		}
 	}
+	catch (...) {}
+
+	_wav = nullptr;
 	_hdr = {};
 	_isPlaying = false;
 }

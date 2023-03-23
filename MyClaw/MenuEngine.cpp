@@ -350,7 +350,7 @@ D2D1_POINT_2F getItemEndPosition(int l)
 {
 	switch (l)
 	{
-	case 1: return { 0.38, 0.32 };
+	case 1: return { 0.38f, 0.32f };
 
 	default: throw Exception("invalid level number");
 	}

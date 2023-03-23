@@ -10,12 +10,10 @@ public:
 	AudioManager(RezArchive* rezArchive);
 	~AudioManager();
 
-	void playWavFile(string wavFilePath, bool infinite);
-	void stopWavFile(string wavFilePath);
-	uint32_t getWavFileDuration(string wavFilePath);
-
-	// set the volume. value range is [0,100]
-	void setVolume(string wavFilePath, int32_t volume);
+	uint32_t playWavFile(string wavFilePath, bool infinite); // create wav player and returns its ID
+	void stopWavFile(uint32_t wavFileId);
+	uint32_t getWavFileDuration(uint32_t wavFileId);
+	void setVolume(uint32_t wavFileId, int32_t volume); // set the volume. value range is [0,100]
 
 	void clearLevelSounds(string prefix);
 
@@ -32,9 +30,9 @@ public:
 
 
 private:
-	shared_ptr<WavPlayer> getWavPlayer(string wavFilePath);
+	uint32_t getNewId();
 
-	map<string, shared_ptr<WavPlayer>> _wavPlayers; // [path]=player
+	map<uint32_t, shared_ptr<WavPlayer>> _wavPlayers; // [id]=player
 	map<BackgroundMusicType, shared_ptr<MidiPlayer>> _midiPlayers; // [type]=player
 	shared_ptr<MidiPlayer> _currBgMusic;
 	BackgroundMusicType _currBgMusicType;

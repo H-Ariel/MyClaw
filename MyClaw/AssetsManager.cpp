@@ -442,30 +442,28 @@ shared_ptr<MidiPlayer> AssetsManager::getMidiPlayer(string xmiFilePath)
 
 // if debug - no sound
 #ifndef _DEBUG
-void AssetsManager::playWavFile(string wavFilePath, bool infinite)
+uint32_t AssetsManager::playWavFile(string wavFilePath, int32_t volume, bool infinite)
 {
-	thread(&AudioManager::playWavFile, _audioManager, wavFilePath, infinite).detach();
+	uint32_t id =_audioManager->playWavFile(wavFilePath, infinite);
+	_audioManager->setVolume(id, volume);
+	return id;
 }
-void AssetsManager::stopWavFile(string wavFilePath)
+void AssetsManager::stopWavFile(uint32_t wavFileId)
 {
-	thread(&AudioManager::stopWavFile, _audioManager, wavFilePath).detach();
+	_audioManager->stopWavFile(wavFileId);
 }
 void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type, bool reset)
 {
 	thread(&AudioManager::setBackgroundMusic, _audioManager, type, reset).detach();
 }
 #else
-void AssetsManager::playWavFile(string wavFilePath, bool infinite) {}
-void AssetsManager::stopWavFile(string wavFilePath) {}
+uint32_t AssetsManager::playWavFile(string wavFilePath, int32_t volume, bool infinite) { return -1; }
+void AssetsManager::stopWavFile(uint32_t wavFileId) {}
 void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type, bool reset) {}
 #endif
-uint32_t AssetsManager::getWavFileDuration(string wavFilePath)
+uint32_t AssetsManager::getWavFileDuration(uint32_t wavFileId)
 {
-	return _audioManager->getWavFileDuration(wavFilePath);
-}
-void AssetsManager::setWavFileVolume(string wavFilePath, int32_t volume)
-{
-	_audioManager->setVolume(wavFilePath, volume);
+	return _audioManager->getWavFileDuration(wavFileId);
 }
 
 void AssetsManager::callLogics(uint32_t elapsedTime)
