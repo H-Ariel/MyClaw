@@ -11,7 +11,7 @@ class ClawDynamite;
 class Projectile : public BaseDynamicPlaneObject
 {
 public:
-	Projectile(const WwdObject& obj, int8_t damage, string aniDirPath);
+	Projectile(const WwdObject& obj, int8_t damage, string aniDirPath, string imageSet = "");
 	void Logic(uint32_t elapsedTime) override;
 
 	void bounceTop() override;
@@ -77,6 +77,13 @@ class RatBomb : public Projectile
 public:
 	RatBomb(const WwdObject& obj);
 	~RatBomb();
+};
+
+class CrabBomb : public Projectile // TODO: combine with `RatBomb`
+{
+public:
+	CrabBomb(const WwdObject& obj);
+	~CrabBomb();
 };
 
 class CannonBall : public Projectile

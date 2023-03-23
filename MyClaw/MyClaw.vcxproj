@@ -162,6 +162,7 @@
     <ClCompile Include="Objects\FloorSpike.cpp" />
     <ClCompile Include="Objects\GooVent.cpp" />
     <ClCompile Include="Objects\GroundBlower.cpp" />
+    <ClCompile Include="Objects\HermitCrab.cpp" />
     <ClCompile Include="Objects\Item.cpp" />
     <ClCompile Include="Objects\Katherine.cpp" />
     <ClCompile Include="Objects\Officer.cpp" />
@@ -230,6 +231,7 @@
     <ClInclude Include="Objects\FloorSpike.h" />
     <ClInclude Include="Objects\GooVent.h" />
     <ClInclude Include="Objects\GroundBlower.h" />
+    <ClInclude Include="Objects\HermitCrab.h" />
     <ClInclude Include="Objects\Item.h" />
     <ClInclude Include="Objects\Katherine.h" />
     <ClInclude Include="Objects\Officer.h" />

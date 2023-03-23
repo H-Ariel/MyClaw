@@ -216,6 +216,9 @@
     <ClCompile Include="Objects\ConveyorBelt.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\HermitCrab.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -412,6 +415,9 @@
     </ClInclude>
     <ClInclude Include="Objects\ConveyorBelt.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\HermitCrab.h">
+      <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

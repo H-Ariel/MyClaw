@@ -4,12 +4,12 @@
 #include "../ActionPlane.h"
 
 
-Projectile::Projectile(const WwdObject& obj, int8_t damage, string aniDirPath)
+Projectile::Projectile(const WwdObject& obj, int8_t damage, string aniDirPath, string imageSet)
 	: BaseDynamicPlaneObject(obj), _damage(damage)
 {
 	if (endsWith(aniDirPath, ".ANI"))
 	{
-		_ani = AssetsManager::loadCopyAnimation(aniDirPath);
+		_ani = AssetsManager::loadCopyAnimation(aniDirPath, imageSet);
 	}
 	else
 	{
@@ -123,10 +123,11 @@ EnemyProjectile::EnemyProjectile(const WwdObject& obj, string projectileAniDir, 
 class RatBombExplos : public BaseStaticPlaneObject
 {
 public:
-	RatBombExplos(const WwdObject& obj)
+	RatBombExplos(const WwdObject& obj, string aniSet, string imageSet = "")
 		: BaseStaticPlaneObject(obj)
 	{
-		_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_RATBOMB_EXPLODE"));
+		_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath(aniSet),
+			imageSet.empty() ? "" : PathManager::getImageSetPath(imageSet));
 		_ani->loopAni = false;
 	}
 	void Logic(uint32_t elapsedTime) override
@@ -148,9 +149,27 @@ RatBomb::~RatBomb()
 		obj.x = (int32_t)position.x;
 		obj.y = (int32_t)position.y;
 		obj.z = ZCoord;
-		ActionPlane::addPlaneObject(DBG_NEW RatBombExplos(obj));
+		ActionPlane::addPlaneObject(DBG_NEW RatBombExplos(obj, "LEVEL_RATBOMB_EXPLODE"));
 	}
 }
+
+CrabBomb::CrabBomb(const WwdObject& obj)
+	: Projectile(obj, 10, PathManager::getAnimationPath("LEVEL_CRABBOMB_FALL"),
+		PathManager::getImageSetPath("LEVEL_CRABBOMB"))
+{
+}
+CrabBomb::~CrabBomb()
+{
+	if (removeObject)
+	{
+		WwdObject obj;
+		obj.x = (int32_t)position.x;
+		obj.y = (int32_t)position.y;
+		obj.z = ZCoord;
+		ActionPlane::addPlaneObject(DBG_NEW RatBombExplos(obj, "LEVEL_CRABBOMB_EXPLODE", "LEVEL_CRABBOMB"));
+	}
+}
+
 
 CannonBall::CannonBall(const WwdObject& obj) : Projectile(obj, 15, PathManager::getImageSetPath("LEVEL_CANNONBALL")) {}
 
@@ -168,6 +187,7 @@ bool isEnemyProjectile(BasePlaneObject* obj)
 	static initializer_list<size_t> EnemiesProjectilesTypes = {
 		typeid(EnemyProjectile).hash_code(),
 		typeid(RatBomb).hash_code(),
+		typeid(CrabBomb).hash_code(),
 		typeid(CannonBall).hash_code()
 	};
 	return FindInArray(EnemiesProjectilesTypes, typeid(*obj).hash_code());

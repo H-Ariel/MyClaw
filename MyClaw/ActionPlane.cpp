@@ -30,6 +30,7 @@
 #include "Objects/RedTailPirate.h"
 #include "Objects/BearSailor.h"
 #include "Objects/CrazyHook.h"
+#include "Objects/HermitCrab.h"
 
 
 #define EMPTY_TILE -1
@@ -50,7 +51,7 @@
 
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#define DRAW_RECTANGLES
-#define USE_ENEMIES
+//#define USE_ENEMIES
 
 
 class SimpleObject : public BasePlaneObject
@@ -224,8 +225,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	
 	_update_position();
 
-	AssetsManager::callLogics(elapsedTime);
-
 	if (_needSort)
 	{
 		sort(_objects.begin(), _objects.end(), [](BasePlaneObject* a, BasePlaneObject* b) { return a->ZCoord < b->ZCoord; });
@@ -286,6 +285,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			i--; // cancel `i++`
 		}
 	}
+
+	AssetsManager::callLogics(elapsedTime);
 }
 void ActionPlane::Draw()
 {
@@ -742,7 +743,6 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW TownGuard(obj, _player));
 	}
-#endif
 	else if (obj.logic == "RedTailPirate")
 	{
 		ADD_ENEMY(DBG_NEW RedTailPirate(obj, _player));
@@ -754,6 +754,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "CrazyHook")
 	{
 		ADD_ENEMY(DBG_NEW CrazyHook(obj, _player));
+	}
+#endif
+	else if (obj.logic == "HermitCrab")
+	{
+		ADD_ENEMY(DBG_NEW HermitCrab(obj, _player));
 	}
 	else if (obj.logic == "Raux")
 	{

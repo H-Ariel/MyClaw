@@ -28,7 +28,7 @@ ClawLevelEngine::ClawLevelEngine(int8_t levelNumber)
 //	if (levelNumber == 2) _player->position = { 4596, 3958 };
 	if (levelNumber == 2) _player->position = { 20070, 2092 }; // END OF LEVEL
 //	if (levelNumber == 3) _player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
-//	if (levelNumber == 3) _player->position = { 6080, 6224 };
+	if (levelNumber == 3) _player->position = { 6080, 6224 };
 //	if (levelNumber == 3) _player->position = { 11054, 8720 };
 	if (levelNumber == 4) _player->position = { 16010, 1464 }; // END OF LEVEL
 //	if (levelNumber == 4) _player->position = { 3909, 4832 };
@@ -38,7 +38,8 @@ ClawLevelEngine::ClawLevelEngine(int8_t levelNumber)
 //	if (levelNumber == 6) _player->position = { 2676, 5878 };
 //	if (levelNumber == 6) _player->position = { 2036, 5878 };
 	if (levelNumber == 6) _player->position = { 30685, 4179 }; // END OF LEVEL
-	if (levelNumber == 7) _player->position = { 3428, 7254 };
+//	if (levelNumber == 7) _player->position = { 3428, 7254 };
+	if (levelNumber == 7) _player->position = { 10203, 7388 };
 //	if (levelNumber == 7) _player->position = { 25210, 7196 };
 	if (levelNumber == 8) _player->position = { 4466, 5039 };
 //	if (levelNumber == 9) _player->position = { 5210, 7776 };
