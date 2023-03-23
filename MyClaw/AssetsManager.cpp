@@ -83,6 +83,8 @@ shared_ptr<Animation> AssetsManager::createCopyAnimationFromFromPidImage(string 
 }
 map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(string dirPath, string imageSetPath)
 {
+	// TODO: move this function to AnimationsManager and use Animation::getCopy()
+
 	map<string, shared_ptr<Animation>> anis;
 
 	const RezDirectory* dir = _rezArchive->getDirectory(dirPath);
@@ -98,7 +100,6 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(st
 		}
 	}
 
-	// TODO: move to AnimationsManager and use Animation::getCopy()
 	if (isEnemyAniations(dirPath))
 	{
 		vector<Animation::FrameData*> imagesList;

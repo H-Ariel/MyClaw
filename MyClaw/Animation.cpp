@@ -3,7 +3,6 @@
 #include "PidPalette.h"
 
 
-// TODO: save `WavPlayer` instead `soundFilePath` ?
 Animation::FrameData::FrameData(string pidPath, uint32_t duration, string soundFilePath)
 	: image(AssetsManager::loadImage(pidPath)), duration(duration), soundFilePath(soundFilePath), elapsedTime(0), soundPlayed(false)
 {

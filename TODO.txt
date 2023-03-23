@@ -1,7 +1,6 @@
 * fix Seagull
 * catch and throw enemies (like a powder-keg)
 * when CC die draw circle (not square)
-* play 2 WAV in the same time
 * display screens between levels
 * add "ADVANCE.ANI" for enemies (before they attack)
 * play all objects WAV file
