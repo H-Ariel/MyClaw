@@ -20,7 +20,7 @@ vector<Item*> Statue::getItems()
 
 	for (Item* i : items)
 	{
-		i->setSpeedX(getRandomFloat(-0.25f, 0.25f) * (getRandomInt(0, 1) == 1 ? 1 : -1));
+		i->setSpeedX(getRandomFloat(-0.25f, 0.25f));
 	}
 
 	return items;

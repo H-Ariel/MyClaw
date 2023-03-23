@@ -13,8 +13,7 @@
 
 Katherine::Katherine(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 10, "WALK", "HITHIGH", "HITLOW",
-		"FALL", "", "", "", {}),
-	_attackRest(0), _hitsCuonter(1), _blockClaw(false), _canJump(true)
+		"FALL", "", "", "", {})
 {
 	myMemCpy(_minX, position.x - 320);
 	myMemCpy(_maxX, position.x + 320);

@@ -97,6 +97,10 @@ void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 	{
 		offsetY += 2;
 	}
+	else if (pidPath == "/LEVEL7/IMAGES/SANDHOLE/005.PID")
+	{
+		offsetX -= 2;
+	}
 	// Claw magic
 	else if (pidPath == "/CLAW/IMAGES/165.PID")
 	{

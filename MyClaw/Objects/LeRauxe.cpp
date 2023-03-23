@@ -13,8 +13,7 @@
 
 LeRauxe::LeRauxe(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 10, "ADVANCE", "HITHIGH", "HITLOW",
-		"KILLFALL", "", "", "", {}),
-	_attackRest(0), _hitsCuonter(1), _blockClaw(false), _canJump(true)
+		"KILLFALL", "", "", "", {})
 {
 }
 

@@ -6,16 +6,16 @@
 class HermitCrab : public BaseEnemy
 {
 public:
-	HermitCrab(const WwdObject& obj, Player* player);
+	HermitCrab(const WwdObject& obj, Player* player, bool isFromNest = false);
 
 	void Logic(uint32_t elapsedTime) override;
+	void stopFalling(float collisionSize) override;
 	pair<D2D1_RECT_F, int8_t> GetAttackRect() override;
-
 	bool isDuck() const override;
 	bool isTakeDamage() const override;
 
 private:
 	void makeAttack() override;
 
-	int32_t _attackRest; // rest time between attack
+	bool _isFromNest;
 };

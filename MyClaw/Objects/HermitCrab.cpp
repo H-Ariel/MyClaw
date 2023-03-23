@@ -8,64 +8,31 @@
 #define ANIMATION_IDLE		_animations.at(_idleAniName)
 
 
-HermitCrab::HermitCrab(const WwdObject& obj, Player* player)
+HermitCrab::HermitCrab(const WwdObject& obj, Player* player, bool isFromNest)
 	: BaseEnemy(obj, player, 1, 10, "FASTADVANCE", "HIT", "HIT", "KILLFALL",
-		"STRIKE1", "", "STRIKE1", "", "", "IDLE"), _attackRest(0)
+		"STRIKE1", "", "STRIKE1", "", "", "IDLE"), _isFromNest(isFromNest)
 {
+	if (isFromNest)
+	{
+		_speed.x = obj.speedX / 1000.f;
+		_speed.y = obj.speedY / 1000.f;
+		_isMirrored = obj.speedX > 0;
+	}
 }
 
-// this methods looks same to `BaseEnemy::Logic` ...
 void HermitCrab::Logic(uint32_t elapsedTime)
 {
-	if (!PreLogic(elapsedTime)) return;
-
-	if (_isStanding)
+	if (_isFromNest)
 	{
-		if (_ani != ANIMATION_IDLE)
-		{
-			_ani = ANIMATION_IDLE;
-			_ani->reset();
-		}
-		else if (_ani->isFinishAnimation())
-		{
-			_isStanding = false;
-			_ani = ANIMATION_WALK;
-			_ani->reset();
-		}
-	}
-
-	if (!_isStanding && !_isAttack && !_isStaticEnemy)
-	{
+		_speed.y += GRAVITY * elapsedTime;
+		position.y += _speed.y * elapsedTime;
 		position.x += _speed.x * elapsedTime;
-		if (position.x < _minX) { stopMovingLeft(_minX - position.x); }
-		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
-	}
-
-	if (_attackRest > 0)
-		_attackRest -= elapsedTime;
-
-	if (!_isAttack)
-	{
-		if (_isStaticEnemy)
-		{
-			_isStanding = true;
-		}
-
-		if (_attackRest <= 0)
-			makeAttack();
+		PostLogic(elapsedTime);
 	}
 	else
 	{
-		if (_ani->isFinishAnimation())
-		{
-			_ani = ANIMATION_WALK;
-			_ani->reset();
-			_isAttack = false;
-			_forward = _speed.x > 0;
-		}
+		BaseEnemy::Logic(elapsedTime);
 	}
-
-	PostLogic(elapsedTime);
 }
 
 void HermitCrab::makeAttack()
@@ -95,6 +62,18 @@ void HermitCrab::makeAttack()
 			_attackRest = 1200;
 		}
 	}
+}
+
+void HermitCrab::stopFalling(float collisionSize)
+{
+	_speed = {};
+	position.y -= collisionSize;
+	_isFromNest = false;
+	_speed.x = ENEMY_PATROL_SPEED;
+
+	// TODO: fix movement range (for all enemies and especially for the carbs)
+	myMemCpy(_minX, position.x - 32);
+	myMemCpy(_maxX, position.x + 32);
 }
 
 pair<D2D1_RECT_F, int8_t> HermitCrab::GetAttackRect() { return {}; }

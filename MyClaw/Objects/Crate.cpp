@@ -159,7 +159,7 @@ vector<Item*> StackedCrates::getItems()
 
 			for (Item* i : tmp)
 			{
-				i->setSpeedX(getRandomFloat(-0.25f, 0.25f) * (getRandomInt(0, 1) == 1 ? 1 : -1));
+				i->setSpeedX(getRandomFloat(-0.25f, 0.25f));
 			}
 
 			allItems.insert(allItems.end(), tmp.begin(), tmp.end());

@@ -154,6 +154,7 @@
     <ClCompile Include="Objects\Cannon.cpp" />
     <ClCompile Include="Objects\Checkpoint.cpp" />
     <ClCompile Include="Objects\ConveyorBelt.cpp" />
+    <ClCompile Include="Objects\CrabNest.cpp" />
     <ClCompile Include="Objects\Crate.cpp" />
     <ClCompile Include="Objects\CrazyHook.cpp" />
     <ClCompile Include="Objects\CutThroat.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Objects\Cannon.h" />
     <ClInclude Include="Objects\Checkpoint.h" />
     <ClInclude Include="Objects\ConveyorBelt.h" />
+    <ClInclude Include="Objects\CrabNest.h" />
     <ClInclude Include="Objects\Crate.h" />
     <ClInclude Include="Objects\CrazyHook.h" />
     <ClInclude Include="Objects\CutThroat.h" />

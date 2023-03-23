@@ -22,8 +22,5 @@ private:
 	void makeAttack() override;
 	bool checkForHurts() override;
 
-	int32_t _attackRest;
-	int32_t _hitsCuonter; // count the times CC hit W
 	int32_t _magicAttackCuonter; // count the times W attack CC with magic
-	bool _canJump;
 };

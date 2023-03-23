@@ -21,8 +21,4 @@ private:
 	bool PreLogic(uint32_t elapsedTime) override;
 	void makeAttack() override;
 	bool checkForHurts() override;
-
-	int32_t _attackRest;
-	int32_t _hitsCuonter; // count the times CC hit LR
-	bool _blockClaw, _canJump;
 };

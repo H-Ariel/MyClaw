@@ -558,6 +558,12 @@ void Player::Draw()
 }
 D2D1_RECT_F Player::GetRect()
 {
+	/*
+	TODO: special idea: create more method to calculate the
+	      rect (call it from ActionPlane::Logic), and here
+		  put just `return _saveCurrRect;`
+	*/
+
 	D2D1_RECT_F rc = {};
 
 	rc.left = -7.f + 15 * (!_forward);
@@ -766,7 +772,7 @@ void Player::jump()
 }
 bool Player::checkForHurts()
 {
-//	return false; // TODO: change this! let CC hurt!
+	return false; // TODO: change this! let CC hurt!
 
 	if (isTakeDamage() || _damageRest > 0) return false;
 

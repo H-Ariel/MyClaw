@@ -89,7 +89,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
 	_shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir),
 	_hit1AniName(hit1), _hit2AniName(hit2), _fallDeadAniName(fallDead), _minX((float)obj.minX),
-	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1), _idleAniName(idleAni)
+	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1), _idleAniName(idleAni), _attackRest(0)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
 	_health = health;
@@ -167,13 +167,17 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
 
+	if (_attackRest > 0)
+		_attackRest -= elapsedTime;
+
 	if (!_isAttack)
 	{
 		if (_isStaticEnemy)
 		{
 			_isStanding = true;
 		}
-		makeAttack();
+		if (_attackRest <= 0)
+			makeAttack();
 	}
 	else
 	{
@@ -306,7 +310,7 @@ vector<Item*> BaseEnemy::getItems()
 		{
 			Item* i = Item::getItem(newObj, _player, t);
 			i->setSpeedY(-0.6f);
-			i->setSpeedX(getRandomFloat(-0.25f, 0.25f) * (getRandomInt(0, 1) == 1 ? 1 : -1));
+			i->setSpeedX(getRandomFloat(-0.25f, 0.25f));
 			items.push_back(i);
 		}
 		_itemsTaken = true;
@@ -380,10 +384,11 @@ bool BaseEnemy::checkForHurts()
 
 // TODO: maybe this c'tor don't need get parameters...
 BaseBoss::BaseBoss(const WwdObject& obj, Player* player,
-	int8_t damage, string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
-	string shootAni, string projectileAniDir, string idleAni)
-	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead, strikeAni, "", shootAni,
-		"", projectileAniDir, idleAni, true), _gemPos({ obj.speedX, obj.speedY })
+	int8_t damage, string walkAni, string hit1, string hit2, string fallDead,
+	string strikeAni, string shootAni, string projectileAniDir, string idleAni)
+	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead,
+		strikeAni, "", shootAni, "", projectileAniDir, idleAni, true),
+	_hitsCuonter(1), _blockClaw(false), _canJump(true), _gemPos({ obj.speedX, obj.speedY })
 {
 }
 BaseBoss::~BaseBoss()

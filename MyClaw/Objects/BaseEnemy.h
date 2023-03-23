@@ -49,6 +49,7 @@ protected:
 		_projectileAniDir, _idleAniName;
 	vector<int8_t> _itemsTypes;
 	const float _minX, _maxX;
+	int32_t _attackRest; // rest time between attack. NOTE: not all enemies used that
 	int8_t _damage; // the amount of health that enemy took when he hit Claw
 	bool _itemsTaken; // store if the items were taken from this crate
 	bool _isStanding;
@@ -72,6 +73,9 @@ public:
 
 protected:
 	bool checkForHurts() override; // We added this function because bosses are not hit by CC projectiles
+
+	int32_t _hitsCuonter; // count the times CC hit the boss
+	bool _blockClaw, _canJump;
 
 private:
 	const D2D1_POINT_2L _gemPos;

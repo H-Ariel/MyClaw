@@ -31,6 +31,7 @@
 #include "Objects/BearSailor.h"
 #include "Objects/CrazyHook.h"
 #include "Objects/HermitCrab.h"
+#include "Objects/CrabNest.h"
 
 
 #define EMPTY_TILE -1
@@ -401,6 +402,7 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 	_objects.push_back(obj);
 	_needSort = true;
 	if (isProjectile(obj)) _projectiles.push_back((Projectile*)obj);
+	else if (isbaseinstance<BaseEnemy>(obj)) _enemies.push_back((BaseEnemy*)obj);
 }
 
 void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath)
@@ -755,10 +757,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW CrazyHook(obj, _player));
 	}
-#endif
 	else if (obj.logic == "HermitCrab")
 	{
 		ADD_ENEMY(DBG_NEW HermitCrab(obj, _player));
+	}
+#endif
+	else if (obj.logic == "CrabNest")
+	{
+		_objects.push_back(DBG_NEW CrabNest(obj, _player));
 	}
 	else if (obj.logic == "Raux")
 	{
