@@ -19,13 +19,14 @@ CrabNest::CrabNest(const WwdObject& obj, Player* player)
 	crabObj.y = obj.y;
 	crabObj.z = obj.z;
 	crabObj.speedY = -600;
-	crabObj.imageSet = "LEVEL_HERMITCRAB"; // TODO: add alse the black-crabs
+	crabObj.imageSet = "LEVEL_HERMITCRAB"; // TODO: add also the black-crabs
 
 	for (int32_t i = 0; i < obj.userValue1; i++)
 	{
 		crabObj.speedX = getRandomInt(-250, 250);
 		_crabs.push_back(DBG_NEW HermitCrab(crabObj, _player, true));
 	}
+	// TODO: add treasures (userrect[1/2])
 }
 CrabNest::~CrabNest()
 {
