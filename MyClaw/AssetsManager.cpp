@@ -445,8 +445,16 @@ shared_ptr<MidiPlayer> AssetsManager::getMidiPlayer(string xmiFilePath)
 #ifndef _DEBUG
 uint32_t AssetsManager::playWavFile(string wavFilePath, int32_t volume, bool infinite)
 {
-	uint32_t id =_audioManager->playWavFile(wavFilePath, infinite);
-	_audioManager->setVolume(id, volume);
+	uint32_t id = -1;
+	try
+	{
+		id = _audioManager->playWavFile(wavFilePath, infinite);
+		_audioManager->setVolume(id, volume);
+	}
+	catch (Exception& ex)
+	{
+		cout << __FUNCTION__ " - Error for wavFilePath=\"" << wavFilePath << "\": " << ex.what() << endl;
+	}
 	return id;
 }
 void AssetsManager::stopWavFile(uint32_t wavFileId)

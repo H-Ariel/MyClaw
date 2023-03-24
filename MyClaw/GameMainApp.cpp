@@ -32,7 +32,7 @@ void GameMainApp::run()
 {
 	runApp = true;
 	//_pEngine = allocNewSharedPtr<MenuEngine>();
-	_pEngine = allocNewSharedPtr<ClawLevelEngine>(7);
+	_pEngine = allocNewSharedPtr<ClawLevelEngine>(9);
 	runEngine();
 }
 
@@ -42,7 +42,7 @@ void GameMainApp::runEngine()
 	chrono::steady_clock::time_point begin, end;
 	uint32_t elapsedTime; // in milliseconds
 
-#ifdef COUNT_FPS
+#ifdef _DEBUG
 	// for FPS
 	WCHAR fpsText[14] = {};
 	uint32_t framesTime = 0, frames = 0;
@@ -54,7 +54,7 @@ void GameMainApp::runEngine()
 		elapsedTime = (uint32_t)chrono::duration_cast<chrono::milliseconds>(end - begin).count();
 		begin = end;
 
-#ifdef COUNT_FPS
+#ifdef _DEBUG
 		framesTime += elapsedTime;
 		frames++;
 		if (framesTime > 1000)

@@ -20,21 +20,14 @@ FloorSpike::FloorSpike(const WwdObject& obj, Player* player)
 	{
 		_startTimeDelay = obj.speed;
 	}
-	else if (obj.logic == "FloorSpike")
+	else
 	{
-		_startTimeDelay = 0;
-	}
-	else if (obj.logic == "FloorSpike2")
-	{
-		_startTimeDelay = 750;
-	}
-	else if (obj.logic == "FloorSpike3")
-	{
-		_startTimeDelay = 1500;
-	}
-	else if (obj.logic == "FloorSpike4")
-	{
-		_startTimeDelay = 2250;
+		switch (obj.logic[obj.logic.length() - 1])
+		{
+		case '2': _startTimeDelay = 750; break;
+		case '3': _startTimeDelay = 1500; break;
+		case '4': _startTimeDelay = 2250; break;
+		}
 	}
 
 	if (obj.speedX > 0)
@@ -83,7 +76,6 @@ void FloorSpike::Logic(uint32_t elapsedTime)
 		{
 			_state = States::Disappear;
 			_ani = _aniDisappear;
-			setObjectRectangle();
 			_ani->reset();
 			_ani->loopAni = false;
 		}
@@ -103,7 +95,6 @@ void FloorSpike::Logic(uint32_t elapsedTime)
 		{
 			_state = States::Appear;
 			_ani = _aniAppear;
-			setObjectRectangle();
 			_ani->reset();
 			_ani->loopAni = false;
 		}
@@ -119,4 +110,23 @@ int8_t FloorSpike::getDamage() const
 		(_state == States::Appear && _ani->isPassedHalf()) ||
 		_state == States::WaitAppear) return 10;
 	return 0;
+}
+
+
+SawBlade::SawBlade(const WwdObject& obj, Player* player)
+	: FloorSpike(obj, player)
+{
+	_aniAppear = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_UP"));
+	_aniDisappear = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_DOWN"));
+	_aniWait = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_SPIN"));
+	_ani = _aniDisappear;
+	_ani->updateFrames = false;
+}
+
+void SawBlade::Logic(uint32_t elapsedTime)
+{
+	if (_state == States::WaitAppear)
+		_ani = _aniWait;
+
+	FloorSpike::Logic(elapsedTime);
 }

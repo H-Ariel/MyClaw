@@ -21,7 +21,7 @@ uint32_t AudioManager::getNewId()
 		if (_wavPlayers.count(i) == 0)
 			return i;
 	}
-	return _wavPlayers.size();
+	return (uint32_t)_wavPlayers.size();
 }
 
 

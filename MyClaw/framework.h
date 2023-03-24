@@ -11,10 +11,8 @@
 	#include <stdlib.h>
 	#include <crtdbg.h>
 	#define DBG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-	#define CHECK_FOR_MEMORY_LEAKS
 
 //	#define DRAW_RECTANGLES	// draw rectangles around tiles, objects, characters, etc.
-	#define COUNT_FPS		// show FPS as window title
 	#define LOW_DETAILS		// cancel the `...Candy` objects, treasures glitter, front plane, sounds, etc.
 #else
 	#define DBG_NEW new // do not check for memory leaks

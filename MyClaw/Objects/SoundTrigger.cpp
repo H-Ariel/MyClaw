@@ -175,11 +175,11 @@ void GlobalAmbientSound::Logic(uint32_t elapsedTime)
 	_currentTime += elapsedTime;
 	if (_currentTime >= _timeOff)
 	{
-		int timeOn = getRandomInt(_minTimeOn, _maxTimeOn);
-		int soundLoops = timeOn / _soundDurationMs;
-
 		_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume);
 		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPlayerId);
+
+		int timeOn = getRandomInt(_minTimeOn, _maxTimeOn);
+		int soundLoops = timeOn / _soundDurationMs;
 
 		_timeOff = getRandomInt(_minTimeOff, _maxTimeOff) + soundLoops * _soundDurationMs;
 

@@ -632,7 +632,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else
 #endif
 	if (obj.logic == "Elevator"
-		|| obj.logic == "TriggerElevator"|| obj.logic == "OneWayTriggerElevator"
+		|| obj.logic == "TriggerElevator" || obj.logic == "OneWayTriggerElevator"
 		|| obj.logic == "StartElevator" || obj.logic == "OneWayStartElevator")
 	{
 		_objects.push_back(DBG_NEW Elevator(obj, _player));
@@ -641,11 +641,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW PathElevator(obj, _player));
 	}
-	else if (endsWith(obj.logic ,"Checkpoint"))
+	else if (endsWith(obj.logic, "Checkpoint"))
 	{
 		_objects.push_back(DBG_NEW Checkpoint(obj, _player));
 	}
-	else if (contains(obj.logic, "TogglePeg"))
+	else if (startsWith(obj.logic, "TogglePeg"))
 	{
 		_objects.push_back(DBG_NEW TogglePeg(obj, _player));
 	}
@@ -662,26 +662,26 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_objects.push_back(DBG_NEW CrumblingPeg(obj, _player));
 	}
 	else if (obj.logic == "BreakPlank")
-	{
-		// TODO: if (levelNumber == 5) rc=_wwd->tilesDescription[509]
-
-		int32_t tmp = obj.x;
-		for (int32_t i = 0; i < obj.width; i++)
 		{
-			_objects.push_back(DBG_NEW BreakPlank(obj, _player, _wwd->tilesDescription[509].rect));
-			//obj.x += 64;
-			tmp += 64;
-			myMemCpy(obj.x, tmp);
+			// TODO: if (levelNumber == 5) rc=_wwd->tilesDescription[509]
+
+			int32_t tmp = obj.x;
+			for (int32_t i = 0; i < obj.width; i++)
+			{
+				_objects.push_back(DBG_NEW BreakPlank(obj, _player, _wwd->tilesDescription[509].rect));
+				//obj.x += 64;
+				tmp += 64;
+				myMemCpy(obj.x, tmp);
+			}
 		}
-	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
 		|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"
-		|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup" 
+		|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup"
 		|| obj.logic == "EndOfLevelPowerup" || obj.logic == "MagicPowerup"
 		/*|| obj.logic == "CursePowerup"*/)
-	{
-		_objects.push_back(Item::getItem(obj, _player));
-	}
+		{
+			_objects.push_back(Item::getItem(obj, _player));
+		}
 	else if (obj.logic == "AniRope")
 	{
 		_objects.push_back(DBG_NEW Rope(obj, _player));
@@ -732,7 +732,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW CutThroat(obj, _player));
 	}
-	else if (obj.logic == "FloorSpike" || obj.logic == "FloorSpike2" || obj.logic == "FloorSpike3" || obj.logic == "FloorSpike4")
+	else if (startsWith(obj.logic, "FloorSpike"))
 	{
 		FloorSpike* s = DBG_NEW FloorSpike(obj, _player);
 		_objects.push_back(s); _floorSpikes.push_back(s);
@@ -761,11 +761,16 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW HermitCrab(obj, _player));
 	}
-#endif
 	else if (obj.logic == "CrabNest")
 	{
 		_objects.push_back(DBG_NEW CrabNest(obj, _player));
 	}
+	else if (startsWith(obj.logic, "SawBlade"))
+	{
+		SawBlade* s = DBG_NEW SawBlade(obj, _player);
+		_objects.push_back(s); _floorSpikes.push_back(s);
+	}
+#endif
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));
