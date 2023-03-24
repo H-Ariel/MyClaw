@@ -32,6 +32,7 @@
 #include "Objects/CrazyHook.h"
 #include "Objects/HermitCrab.h"
 #include "Objects/CrabNest.h"
+#include "Objects/TProjectilesShooter.h"
 
 
 #define EMPTY_TILE -1
@@ -769,6 +770,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		SawBlade* s = DBG_NEW SawBlade(obj, _player);
 		_objects.push_back(s); _floorSpikes.push_back(s);
+	}
+	else if (obj.logic == "TProjectile")
+	{
+		_objects.push_back(DBG_NEW TProjectilesShooter(obj, _player));
 	}
 #endif
 	else if (obj.logic == "Raux")

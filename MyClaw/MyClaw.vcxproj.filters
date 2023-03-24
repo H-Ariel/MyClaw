@@ -222,6 +222,9 @@
     <ClCompile Include="Objects\CrabNest.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\TProjectilesShooter.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -423,6 +426,9 @@
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\CrabNest.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\TProjectilesShooter.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,6 +4,7 @@
 #include "../ActionPlane.h"
 
 
+// TODO: pass `damage` in `obj`
 Projectile::Projectile(const WwdObject& obj, int8_t damage, string aniDirPath, string imageSet)
 	: BaseDynamicPlaneObject(obj), _damage(damage)
 {
@@ -19,11 +20,19 @@ Projectile::Projectile(const WwdObject& obj, int8_t damage, string aniDirPath, s
 	_speed.y = obj.speedY / 1000.f;
 	_isMirrored = _speed.x < 0;
 }
+Projectile::Projectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+	: BaseDynamicPlaneObject({}), _damage(damage)
+{
+	_ani = ani;
+	_speed = speed;
+	position = initialPosition;
+}
 void Projectile::Logic(uint32_t elapsedTime)
 {
 	if (!removeObject)
 	{
 		position.x += _speed.x * elapsedTime;
+		position.y += _speed.y * elapsedTime;
 		removeObject = _speed.x == 0 && _speed.y == 0;
 	}
 }
@@ -171,8 +180,11 @@ CrabBomb::~CrabBomb()
 }
 
 
-CannonBall::CannonBall(const WwdObject& obj) : Projectile(obj, 15, PathManager::getImageSetPath("LEVEL_CANNONBALL")) {}
+CannonBall::CannonBall(const WwdObject& obj)
+	: Projectile(obj, 15, PathManager::getImageSetPath("LEVEL_CANNONBALL")) {}
 
+TProjectile::TProjectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+	: Projectile(ani, damage, speed, initialPosition) {}
 
 bool isProjectile(BasePlaneObject* obj)
 {
@@ -188,7 +200,8 @@ bool isEnemyProjectile(BasePlaneObject* obj)
 		typeid(EnemyProjectile).hash_code(),
 		typeid(RatBomb).hash_code(),
 		typeid(CrabBomb).hash_code(),
-		typeid(CannonBall).hash_code()
+		typeid(CannonBall).hash_code(),
+		typeid(TProjectile).hash_code() // this is not from enemy, but they have same logic
 	};
 	return FindInArray(EnemiesProjectilesTypes, typeid(*obj).hash_code());
 }

@@ -22,6 +22,9 @@ public:
 
 	virtual int8_t getDamage() const;
 
+protected:
+	Projectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
+
 private:
 	const int8_t _damage;
 };
@@ -90,6 +93,12 @@ class CannonBall : public Projectile
 {
 public:
 	CannonBall(const WwdObject& obj);
+};
+
+class TProjectile : public Projectile
+{
+public:
+	TProjectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 };
 
 
