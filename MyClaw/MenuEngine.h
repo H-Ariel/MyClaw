@@ -22,8 +22,8 @@ private:
 class MenuEngine : public BaseEngine
 {
 public:
-	MenuEngine(bool allocChildren = true, string bgPcxPath = "");
-	MenuEngine(D2D1_POINT_2U mousePosition, shared_ptr<Animation> cursor, bool allocChildren = true, string bgPcxPath = "");
+	MenuEngine(bool allocChildren = true, const string& bgPcxPath = "");
+	MenuEngine(D2D1_POINT_2U mousePosition, shared_ptr<Animation> cursor, bool allocChildren = true, const string& bgPcxPath = "");
 	~MenuEngine();
 
 	void Logic(uint32_t elapsedTime) override;

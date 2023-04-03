@@ -13,8 +13,8 @@ public:
 	class FrameData
 	{
 	public:
-		FrameData(string pidPath, uint32_t duration = 125, string soundFilePath = "");
-		FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, string soundFilePath);
+		FrameData(const string& pidPath, uint32_t duration = 125, const string& soundFilePath = "");
+		FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, const string& soundFilePath);
 
 		const string soundFilePath;
 		const shared_ptr<UIBaseImage> image;
@@ -24,7 +24,7 @@ public:
 	};
 
 
-	Animation(RezArchive* rezArchive, string aniPath, string imageSetPath);
+	Animation(RezArchive* rezArchive, const string& aniPath, const string& imageSetPath);
 	Animation(vector<FrameData*> images);
 	~Animation() override;
 

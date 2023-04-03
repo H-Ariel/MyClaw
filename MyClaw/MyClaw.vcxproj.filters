@@ -225,6 +225,9 @@
     <ClCompile Include="Objects\TProjectilesShooter.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\PegLeg.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -430,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="Objects\TProjectilesShooter.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\PegLeg.h">
+      <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

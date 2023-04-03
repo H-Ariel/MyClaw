@@ -53,35 +53,35 @@ void AssetsManager::Finalize()
 	delete _rezArchive;
 }
 
-shared_ptr<UIBaseImage> AssetsManager::loadImage(string path)
+shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 {
 	return _imagesManager->loadImage(path);
 }
-shared_ptr<Animation> AssetsManager::loadAnimation(string aniPath, string imageSetPath)
+shared_ptr<Animation> AssetsManager::loadAnimation(const string& aniPath, const string& imageSetPath)
 {
 	return _animationsManager->loadAnimation(aniPath, imageSetPath);
 }
-shared_ptr<Animation> AssetsManager::loadCopyAnimation(string aniPath, string imageSetPath)
+shared_ptr<Animation> AssetsManager::loadCopyAnimation(const string& aniPath, const string& imageSetPath)
 {
 	return _animationsManager->loadAnimation(aniPath, imageSetPath, false);
 }
-shared_ptr<Animation> AssetsManager::createAnimationFromDirectory(string dirPath, uint32_t duration, bool reversedOrder)
+shared_ptr<Animation> AssetsManager::createAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder)
 {
 	return _animationsManager->createAnimationFromDirectory(dirPath, duration, reversedOrder);
 }
-shared_ptr<Animation> AssetsManager::createCopyAnimationFromDirectory(string dirPath, uint32_t duration, bool reversedOrder)
+shared_ptr<Animation> AssetsManager::createCopyAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder)
 {
 	return _animationsManager->createAnimationFromDirectory(dirPath, duration, reversedOrder)->getCopy();
 }
-shared_ptr<Animation> AssetsManager::createAnimationFromFromPidImage(string pidPath)
+shared_ptr<Animation> AssetsManager::createAnimationFromFromPidImage(const string& pidPath)
 {
 	return _animationsManager->createAnimationFromFromPidImage(pidPath);
 }
-shared_ptr<Animation> AssetsManager::createCopyAnimationFromFromPidImage(string pidPath)
+shared_ptr<Animation> AssetsManager::createCopyAnimationFromFromPidImage(const string& pidPath)
 {
 	return _animationsManager->createAnimationFromFromPidImage(pidPath)->getCopy();
 }
-map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(string dirPath, string imageSetPath)
+map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath)
 {
 	// TODO: move this function to AnimationsManager and use Animation::getCopy()
 
@@ -128,7 +128,7 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(st
 
 	return anis;
 }
-shared_ptr<WapWorld> AssetsManager::loadWwdFile(string wwdPath)
+shared_ptr<WapWorld> AssetsManager::loadWwdFile(const string& wwdPath)
 {
 	return allocNewSharedPtr<WapWorld>(_rezArchive->getFileBufferReader(wwdPath));
 }
@@ -146,7 +146,7 @@ shared_ptr<WapWorld> AssetsManager::loadLevelWwdFile(int8_t levelNumber)
 
 	return wwd;
 }
-shared_ptr<PidPalette> AssetsManager::loadPidPalette(string palPath)
+shared_ptr<PidPalette> AssetsManager::loadPidPalette(const string& palPath)
 {
 	shared_ptr<PidPalette> pal = allocNewSharedPtr<PidPalette>(_rezArchive->getFileData(palPath));
 	_imagesManager->setPalette(pal);
@@ -416,7 +416,7 @@ void AssetsManager::setScoreScreenPalette()
 
 	_imagesManager->setPalette(allocNewSharedPtr<PidPalette>(g_ScoreScreenPalette));
 }
-map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(string planeImagesPath)
+map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const string& planeImagesPath)
 {
 	map<int32_t, shared_ptr<UIBaseImage>> images;
 
@@ -436,14 +436,14 @@ map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(string
 	return images;
 }
 
-shared_ptr<MidiPlayer> AssetsManager::getMidiPlayer(string xmiFilePath)
+shared_ptr<MidiPlayer> AssetsManager::getMidiPlayer(const string& xmiFilePath)
 {
 	return allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(xmiFilePath));
 }
 
 // if debug - no sound
 #ifndef _DEBUG
-uint32_t AssetsManager::playWavFile(string wavFilePath, int32_t volume, bool infinite)
+uint32_t AssetsManager::playWavFile(const string& wavFilePath, int32_t volume, bool infinite)
 {
 	uint32_t id = -1;
 	try
@@ -466,7 +466,7 @@ void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type, b
 	thread(&AudioManager::setBackgroundMusic, _audioManager, type, reset).detach();
 }
 #else
-uint32_t AssetsManager::playWavFile(string wavFilePath, int32_t volume, bool infinite) { return -1; }
+uint32_t AssetsManager::playWavFile(const string& wavFilePath, int32_t volume, bool infinite) { return -1; }
 void AssetsManager::stopWavFile(uint32_t wavFileId) {}
 void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type, bool reset) {}
 #endif

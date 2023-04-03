@@ -29,3 +29,10 @@ class TowerCannon : public Cannon
 public:
 	TowerCannon(const WwdObject& obj, Player* player);
 };
+
+
+class SkullCannon : public Cannon
+{
+public:
+	SkullCannon(const WwdObject& obj, Player* player);
+};

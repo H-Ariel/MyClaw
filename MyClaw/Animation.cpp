@@ -3,17 +3,17 @@
 #include "PidPalette.h"
 
 
-Animation::FrameData::FrameData(string pidPath, uint32_t duration, string soundFilePath)
+Animation::FrameData::FrameData(const string& pidPath, uint32_t duration, const string& soundFilePath)
 	: image(AssetsManager::loadImage(pidPath)), duration(duration), soundFilePath(soundFilePath), elapsedTime(0), soundPlayed(false)
 {
 }
-Animation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, string soundFilePath)
+Animation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, const string& soundFilePath)
 	: image(image), duration(duration), soundFilePath(soundFilePath), elapsedTime(0), soundPlayed(false)
 {
 }
 
 
-Animation::Animation(RezArchive* rezArchive, string aniPath, string _imageSetPath)
+Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string& _imageSetPath)
 {
 	shared_ptr<BufferReader> aniFileReader = rezArchive->getFileBufferReader(aniPath);
 	string imageSetPath;

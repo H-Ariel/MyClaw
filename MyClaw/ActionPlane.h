@@ -19,9 +19,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 
-	Player* getPlayer() const {
-		return _player;
-	}
+	Player* getPlayer() const { return _player; }
 
 	// TODO: make non-static
 	static void addPlaneObject(BasePlaneObject* obj);

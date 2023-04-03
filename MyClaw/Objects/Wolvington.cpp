@@ -236,6 +236,7 @@ void Wolvington::makeAttack()
 				obj.y = (int32_t)position.y - 20;
 				obj.z = ZCoord;
 				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+				obj.damage = 20;
 
 				if (_player->isDuck()) {
 					_ani = ANIMATION_STRIKE4;
@@ -248,8 +249,7 @@ void Wolvington::makeAttack()
 				_isAttack = true;
 				_forward = _player->position.x > position.x;
 
-				
-				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL6/IMAGES/WOLVINGTONMAGIC", 20));
+				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL6/IMAGES/WOLVINGTONMAGIC"));
 
 				_attackRest = 1500;
 

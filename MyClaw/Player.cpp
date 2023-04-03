@@ -389,10 +389,12 @@ void Player::Logic(uint32_t elapsedTime)
 					if (_currWeapon == ClawProjectile::Types::Pistol)
 					{
 						obj.y = (int32_t)(position.y - (duck ? -8 : 16));
+						obj.damage = 8;
 					}
 					else if (_currWeapon == ClawProjectile::Types::Magic)
 					{
 						obj.y = (int32_t)(position.y + (duck ? 18 : -6));
+						obj.damage = 25;
 					}
 					else if (_currWeapon == ClawProjectile::Types::Dynamite)
 					{
@@ -402,6 +404,7 @@ void Player::Logic(uint32_t elapsedTime)
 						obj.x = (int32_t)position.x;
 						obj.y = (int32_t)position.y;
 						obj.speedY = -DEFAULT_PROJECTILE_SPEED;
+						obj.damage = 15;
 
 						if (inAir)
 						{
@@ -530,6 +533,7 @@ void Player::Logic(uint32_t elapsedTime)
 					obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
 					obj.z = ZCoord;
 					obj.speedX = (_forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED);
+					obj.damage = 25;
 					ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
 				}
 			}

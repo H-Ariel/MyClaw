@@ -168,8 +168,8 @@ HierarchicalMenu HierarchicalMenu::MainMenu("", MenuIn, 0, 0, {
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
-MenuEngine::MenuEngine(bool allocChildren, string bgPcxPath) : MenuEngine({}, nullptr, allocChildren, bgPcxPath) {}
-MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool allocChildren, string bgPcxPath)
+MenuEngine::MenuEngine(bool allocChildren, const string& bgPcxPath) : MenuEngine({}, nullptr, allocChildren, bgPcxPath) {}
+MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool allocChildren, const string& bgPcxPath)
 {
 	_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(bgPcxPath.empty() ? DEFAULT_BG_IMAGE : bgPcxPath));
 

@@ -86,7 +86,7 @@ static const map<string, Item::Type> ItemsMap = {
 };
 static map<string, string> ItemsPaths;
 
-string getItemPath(Item::Type type, string imageSet)
+string getItemPath(Item::Type type, const string& imageSet)
 {
 	if (type == Item::Type::Warp)
 	{

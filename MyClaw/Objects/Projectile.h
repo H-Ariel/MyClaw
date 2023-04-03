@@ -11,7 +11,7 @@ class ClawDynamite;
 class Projectile : public BaseDynamicPlaneObject
 {
 public:
-	Projectile(const WwdObject& obj, int8_t damage, string aniDirPath, string imageSet = "");
+	Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet = "");
 	void Logic(uint32_t elapsedTime) override;
 
 	void bounceTop() override;
@@ -26,6 +26,7 @@ protected:
 	Projectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 
 private:
+	int32_t _timeLeft; // time left before projectile disappears
 	const int8_t _damage;
 };
 
@@ -48,7 +49,7 @@ public:
 	const Types type;
 
 protected:
-	ClawProjectile(const WwdObject& obj, int8_t damage, string aniDirPath, Types type);
+	ClawProjectile(const WwdObject& obj, const string& aniDirPath, Types type);
 };
 
 class ClawDynamite : public ClawProjectile
@@ -72,7 +73,7 @@ private:
 class EnemyProjectile : public Projectile
 {
 public:
-	EnemyProjectile(const WwdObject& obj, string projectileAniDir, int8_t damage = 10);
+	EnemyProjectile(const WwdObject& obj, const string& projectileAniDir);
 };
 
 class RatBomb : public Projectile

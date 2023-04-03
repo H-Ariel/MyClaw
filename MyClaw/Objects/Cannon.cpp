@@ -40,6 +40,7 @@ void Cannon::Logic(uint32_t elapsedTime)
 		obj.y = (int32_t)position.y + _ballOffset;
 		obj.z = ZCoord;
 		obj.speedX = _shootDirection == ToRight ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+		obj.damage = 15;
 		ActionPlane::addPlaneObject(DBG_NEW CannonBall(obj));
 	}
 
@@ -55,9 +56,17 @@ void Cannon::Logic(uint32_t elapsedTime)
 TowerCannon::TowerCannon(const WwdObject& obj, Player* player)
 	: Cannon(obj, player)
 {
-	if (obj.logic == "TowerCannonLeft") _shootDirection = ToLeft;
-	else if (obj.logic == "TowerCannonRight") _shootDirection = ToRight;
+	if (endsWith(obj.logic, "Left")) _shootDirection = ToLeft;
+	else if (endsWith(obj.logic, "Right")) _shootDirection = ToRight;
 	else throw Exception(__FUNCTION__ ": not Cannon");
+	_ballOffset = 8;
+}
 
+
+SkullCannon::SkullCannon(const WwdObject& obj, Player* player)
+	: Cannon(obj, player)
+{
+	if (_isMirrored) _shootDirection = ToLeft;
+	else _shootDirection = ToRight;
 	_ballOffset = 8;
 }

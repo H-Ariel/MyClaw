@@ -33,6 +33,7 @@
 #include "Objects/HermitCrab.h"
 #include "Objects/CrabNest.h"
 #include "Objects/TProjectilesShooter.h"
+#include "Objects/PegLeg.h"
 
 
 #define EMPTY_TILE -1
@@ -149,14 +150,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		const D2D1_RECT_F playerRc = _player->GetRect();
 		position.x = _player->position.x - wndSize.width / 2.0f;
 		position.y = _player->position.y - wndSize.height / 2.0f;
-		
-		/**/
-		// TODO: delete this part if we do not need it
+
 		if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
 		if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;
 		if (position.y < MIN_OFFSET_Y) position.y = MIN_OFFSET_Y;
 		if (position.y > MAX_OFFSET_Y) position.y = MAX_OFFSET_Y;
-		/**/
 	};
 
 	if (_deathAniWait)
@@ -776,6 +774,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_objects.push_back(DBG_NEW TProjectilesShooter(obj, _player));
 	}
 #endif
+	else if (obj.logic == "SkullCannon")
+	{
+		_objects.push_back(DBG_NEW SkullCannon(obj, _player));
+	}
+	else if (obj.logic == "PegLeg")
+	{
+		ADD_ENEMY(DBG_NEW PegLeg(obj, _player));
+	}
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));

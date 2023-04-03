@@ -35,6 +35,7 @@ void Rat::makeAttack()
 			obj.y = (int32_t)position.y - 24;
 			obj.z = ZCoord;
 			obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+			obj.damage = 15;
 			ActionPlane::addPlaneObject(DBG_NEW RatBomb(obj));
 		}
 	}

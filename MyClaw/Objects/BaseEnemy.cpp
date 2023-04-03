@@ -234,6 +234,7 @@ void BaseEnemy::makeAttack()
 				obj.y = (int32_t)position.y - 20;
 				obj.z = ZCoord;
 				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+				obj.damage = 10;
 				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 			}
 			else if (_canShootDuck && deltaY < 128 && _player->isDuck())
@@ -249,6 +250,7 @@ void BaseEnemy::makeAttack()
 				obj.y = (int32_t)position.y + 10;
 				obj.z = ZCoord;
 				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+				obj.damage = 10;
 				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 			}
 		}

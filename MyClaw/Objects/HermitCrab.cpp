@@ -57,6 +57,7 @@ void HermitCrab::makeAttack()
 			obj.y = (int32_t)position.y - 24;
 			obj.z = ZCoord;
 			obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+			obj.damage = 10;
 			ActionPlane::addPlaneObject(DBG_NEW CrabBomb(obj));
 
 			_attackRest = 1200;
