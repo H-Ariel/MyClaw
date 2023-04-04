@@ -13,8 +13,8 @@
 
 
 Wolvington::Wolvington(const WwdObject& obj, Player* player)
-	: BaseBoss(obj, player, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
-		"KILLFALL", "", "", "", {}), _magicAttackCuonter(0)
+	: BaseBoss(obj, player, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", ""),
+	_magicAttackCuonter(0)
 {
 	myMemCpy(_minX, position.x - 448);
 	myMemCpy(_maxX, position.x + 448);

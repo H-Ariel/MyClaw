@@ -71,8 +71,8 @@ public:
 
 
 	D2D1_POINT_2F startPosition;
-	Elevator* elevator; // stores the elevator it is standing on (if any)
-	Rope* rope;
+	Elevator* elevator; // stores the elevator he is standing on (if any)
+	Rope* rope; // stores the rope he is holding (if any)
 	
 
 private:

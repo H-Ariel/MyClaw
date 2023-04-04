@@ -4,19 +4,18 @@
 #include "Item.h"
 
 
-#define ENEMY_PATROL_SPEED	0.1f
+#define ENEMY_PATROL_SPEED	0.1f // TODO: make it a parameter in ctor (each enemy has its own speed)
 #define GEM_SPEED			0.2f
 
 
 class BaseEnemy : public BaseCharacter
 {
 public:
-	BaseEnemy(const WwdObject& obj, Player* player,
-		int16_t health, int8_t damage, string walkAni,
-		string hit1, string hit2, string fallDead,
-		string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni, string projectileAniDir,
-		string idleAni, bool noTreasures = false);
-
+	BaseEnemy(const WwdObject& obj, Player* player, int16_t health,
+		int8_t damage, string walkAni, string hit1, string hit2,
+		string fallDead, string strikeAni, string strikeDuckAni,
+		string shootAni, string shootDuckAni, string projectileAniDir,
+		bool noTreasures = false);
 	~BaseEnemy();
 
 	virtual void Logic(uint32_t elapsedTime) override;
@@ -44,9 +43,9 @@ protected:
 	virtual bool checkForHurts();
 
 
-	const string _walkAniName, _hit1AniName, _hit2AniName, _fallDeadAniName,
-		_strikeAniName, _strikeDuckAniName, _shootAniName, _shootDuckAniName,
-		_projectileAniDir, _idleAniName;
+	const string _walkAniName, _hit1AniName, _hit2AniName,
+		_fallDeadAniName, _strikeAniName, _strikeDuckAniName,
+		_shootAniName, _shootDuckAniName, _projectileAniDir, _idleAniName;
 	vector<int8_t> _itemsTypes;
 	const float _minX, _maxX;
 	int32_t _attackRest; // rest time between attack. NOTE: not all enemies used that
@@ -63,10 +62,9 @@ class BaseBoss : public BaseEnemy
 public:
 	// same ot BaseEnemy c'tor
 	BaseBoss(const WwdObject& obj, Player* player,
-		int8_t damage, string walkAni,
-		string hit1, string hit2, string fallDead, string strikeAni,
-		string shootAni, string projectileAniDir,
-		string idleAni);
+		int8_t damage, string walkAni, string hit1,
+		string hit2, string fallDead, string strikeAni,
+		string shootAni, string projectileAniDir);
 	~BaseBoss();
 
 	virtual void Logic(uint32_t elapsedTime) override = 0;

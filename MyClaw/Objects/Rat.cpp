@@ -10,7 +10,8 @@
 
 // the rat has its own Logic so we don't need pass all arguments
 Rat::Rat(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 1, 0, "WALK", "DEAD", "DEAD", "DEAD", "", "", "THROWEASTWEST", "", "", "IDLE", true)
+	: BaseEnemy(obj, player, 1, 0, "WALK", "DEAD", "DEAD",
+		"DEAD", "", "", "THROWEASTWEST", "", "", true)
 {
 }
 
@@ -57,7 +58,8 @@ bool Rat::isTakeDamage() const { return false; }
 
 //TODO: use all animation
 PunkRat::PunkRat(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 1, 0, "WALK", "IDLE", "IDLE", "IDLE", "", "", "", "", "", {}, true)
+	: BaseEnemy(obj, player, 1, 0, "WALK", "IDLE",
+		"IDLE", "IDLE", "", "", "", "", "", true)
 {
 	WwdObject cannonData(obj);
 	cannonData.imageSet = "LEVEL_CANNON";

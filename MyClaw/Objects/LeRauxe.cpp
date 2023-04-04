@@ -12,8 +12,7 @@
 
 
 LeRauxe::LeRauxe(const WwdObject& obj, Player* player)
-	: BaseBoss(obj, player, 10, "ADVANCE", "HITHIGH", "HITLOW",
-		"KILLFALL", "", "", "", {})
+	: BaseBoss(obj, player, 10, "ADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "")
 {
 }
 

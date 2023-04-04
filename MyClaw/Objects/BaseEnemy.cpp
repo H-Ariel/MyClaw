@@ -83,13 +83,13 @@ void BossGem::Logic(uint32_t elapsedTime)
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,
 	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
-	string projectileAniDir, string idleAni, bool noTreasures)
+	string projectileAniDir, bool noTreasures)
 	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
 	_isStanding(false), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni),
 	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
 	_shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir),
 	_hit1AniName(hit1), _hit2AniName(hit2), _fallDeadAniName(fallDead), _minX((float)obj.minX),
-	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1), _idleAniName(idleAni), _attackRest(0)
+	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
 	_health = health;
@@ -387,9 +387,9 @@ bool BaseEnemy::checkForHurts()
 // TODO: maybe this c'tor don't need get parameters...
 BaseBoss::BaseBoss(const WwdObject& obj, Player* player,
 	int8_t damage, string walkAni, string hit1, string hit2, string fallDead,
-	string strikeAni, string shootAni, string projectileAniDir, string idleAni)
+	string strikeAni, string shootAni, string projectileAniDir)
 	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead,
-		strikeAni, "", shootAni, "", projectileAniDir, idleAni, true),
+		strikeAni, "", shootAni, "", projectileAniDir, true),
 	_hitsCuonter(1), _blockClaw(false), _canJump(true), _gemPos({ obj.speedX, obj.speedY })
 {
 }

@@ -2,8 +2,8 @@
 
 
 CutThroat::CutThroat(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL", "STRIKE1", "", "STRIKE3", "STRIKE2",
-		PathManager::getImageSetPath("LEVEL_KNIFE"), "IDLE")
+	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL",
+		"STRIKE1", "", "STRIKE3", "STRIKE2", PathManager::getImageSetPath("LEVEL_KNIFE"))
 {
 }
 

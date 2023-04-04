@@ -11,22 +11,6 @@ static bool isNumber(string str)
 	return true;
 }
 
-static inline bool isEnemyAniations(string dirPath)
-{
-	return contains(dirPath, "ANIS/") && (
-		endsWith(dirPath, "OFFICER") ||
-		endsWith(dirPath, "SOLDIER") ||
-		endsWith(dirPath, "ROBBERTHIEF") ||
-		endsWith(dirPath, "CUTTHROAT") ||
-		endsWith(dirPath, "TOWNGUARD1") ||
-		endsWith(dirPath, "TOWNGUARD2") ||
-		endsWith(dirPath, "BEARSAILOR") ||
-		endsWith(dirPath, "REDTAILPIRATE") ||
-		endsWith(dirPath, "CRAZYHOOK")
-		);
-	// TODO: add all of them
-}
-
 
 RezArchive* AssetsManager::_rezArchive = nullptr;
 ImagesManager* AssetsManager::_imagesManager = nullptr;
@@ -83,50 +67,7 @@ shared_ptr<Animation> AssetsManager::createCopyAnimationFromFromPidImage(const s
 }
 map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath)
 {
-	// TODO: move this function to AnimationsManager and use Animation::getCopy()
-
-	map<string, shared_ptr<Animation>> anis;
-
-	const RezDirectory* dir = _rezArchive->getDirectory(dirPath);
-	if (dir)
-	{
-		for (auto& i : dir->_files)
-		{
-			string path = i.second->getFullPath();
-			if (endsWith(path, ".ANI"))
-			{
-				anis[i.second->name] = _animationsManager->loadAnimation(path, imageSetPath, false);
-			}
-		}
-	}
-
-	if (isEnemyAniations(dirPath))
-	{
-		vector<Animation::FrameData*> imagesList;
-		vector<string> anisNames;
-		for (auto& i : anis)
-		{
-			if (startsWith(i.first, "STAND") || startsWith(i.first, "IDLE"))
-			{
-				anisNames.push_back(i.first);
-				for (Animation::FrameData* f : i.second->getImagesList())
-				{
-					if (f->duration == 0)
-						myMemCpy(f->duration, 500U);
-					imagesList.push_back(f);
-				}
-			}
-		}
-
-		for (auto& i : anisNames)
-		{
-			anis.erase(i);
-		}
-
-		anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
-	}
-
-	return anis;
+	return _animationsManager->loadAnimationsFromDirectory(dirPath, imageSetPath);
 }
 shared_ptr<WapWorld> AssetsManager::loadWwdFile(const string& wwdPath)
 {
@@ -142,6 +83,11 @@ shared_ptr<WapWorld> AssetsManager::loadLevelWwdFile(int8_t levelNumber)
 	{
 		wwd->tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		wwd->tilesDescription[509].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+	else if (levelNumber == 11)
+	{
+		wwd->tilesDescription[39].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		wwd->tilesDescription[39].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 
 	return wwd;

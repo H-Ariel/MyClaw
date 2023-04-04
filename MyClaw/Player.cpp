@@ -50,17 +50,21 @@ static int32_t MAX_DYNAMITE_SPEED = DEFAULT_PROJECTILE_SPEED * 8 / 7;
 
 class PowerupSparkle
 {
+private:
+	shared_ptr<Animation> _ani;
 public:
+	static D2D1_RECT_F* playerRc;
+
 	PowerupSparkle()
 	{
 		_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/GLITTER1.ANI");
-		removeObject = true; // force Player to call "init()"
+		init();
 	}
 
-	void init(D2D1_RECT_F playerRc)
+	void init()
 	{
-		const float a = (playerRc.right - playerRc.left) / 2; // vertical radius
-		const float b = (playerRc.bottom - playerRc.top) / 2; // horizontal radius
+		const float a = (playerRc->right - playerRc->left) / 2; // vertical radius
+		const float b = (playerRc->bottom - playerRc->top) / 2; // horizontal radius
 		float x, y;
 		int i, n = getRandomInt(0, 3);
 
@@ -72,35 +76,32 @@ public:
 
 		for (i = 0; i < n; i++) _ani->Logic(50);
 
-		_ani->position.x = x + (playerRc.right + playerRc.left) / 2;
-		_ani->position.y = y + (playerRc.bottom + playerRc.top) / 2;
+		_ani->position.x = x + (playerRc->right + playerRc->left) / 2;
+		_ani->position.y = y + (playerRc->bottom + playerRc->top) / 2;
 	}
 
 	void Logic(uint32_t elapsedTime)
 	{
+		if (_ani->isFinishAnimation())
+			init();
 		_ani->Logic(elapsedTime);
-		removeObject = _ani->isFinishAnimation();
 	}
 	void Draw() { _ani->Draw(); }
-
-	bool removeObject;
-
-private:
-	shared_ptr<Animation> _ani;
 };
+D2D1_RECT_F* PowerupSparkle::playerRc = nullptr;
 
 
 Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	: BaseCharacter(obj), _planeSize(planeSize), _currWeapon(ClawProjectile::Types::Pistol), _finishLevel(false)
 {
-	startPosition = position;
-
-	_lives = 6;
+	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_weaponsAmount[ClawProjectile::Types::Pistol] = 10;
 	_weaponsAmount[ClawProjectile::Types::Magic] = 5;
 	_weaponsAmount[ClawProjectile::Types::Dynamite] = 3;
+	startPosition = position;
+	_lives = 6;
 	_score = 0;
-	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
+
 	backToLife();
 
 	// change keys for easy codeing
@@ -115,6 +116,8 @@ Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH" };
 
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 125, false);
+
+	PowerupSparkle::playerRc = &_saveCurrRect;
 }
 
 void Player::Logic(uint32_t elapsedTime)
@@ -158,13 +161,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 	if (_currPowerup == PowerupType::Catnip)
 	{
-		for (size_t i = 0; i < 30; i++)
-		{
-			if (_powerupSparkles[i].removeObject)
-				_powerupSparkles[i].init(_saveCurrRect);
-			_powerupSparkles[i].Logic(elapsedTime);
-		}
-
+		for (size_t i = 0; i < 30; _powerupSparkles[i++].Logic(elapsedTime));
 		speedX = SpeedX_SuperSpeed;
 		speedYClimb = SpeedY_SuperClimb;
 	}

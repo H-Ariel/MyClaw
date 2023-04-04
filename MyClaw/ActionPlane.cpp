@@ -52,6 +52,7 @@
 
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 
+// TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#define DRAW_RECTANGLES
 //#define USE_ENEMIES
@@ -773,7 +774,6 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW TProjectilesShooter(obj, _player));
 	}
-#endif
 	else if (obj.logic == "SkullCannon")
 	{
 		_objects.push_back(DBG_NEW SkullCannon(obj, _player));
@@ -782,6 +782,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(DBG_NEW PegLeg(obj, _player));
 	}
+#endif
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));
