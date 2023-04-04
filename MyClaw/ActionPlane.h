@@ -5,6 +5,7 @@
 #include "Objects/PowderKeg.h"
 #include "Objects/FloorSpike.h"
 #include "Objects/GooVent.h"
+#include "Objects/Laser.h"
 
 
 class BaseEnemy;
@@ -13,7 +14,7 @@ class BaseEnemy;
 class ActionPlane : public LevelPlane
 {
 public:
-	ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd);
+	ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int8_t levelNumber);
 	~ActionPlane();
 
 	void Logic(uint32_t elapsedTime) override;
@@ -28,10 +29,11 @@ public:
 	static const vector<Projectile*>& getProjectiles() { return _projectiles; }
 	static const vector<FloorSpike*>& getFloorSpikes() { return _floorSpikes; }
 	static const vector<GooVent*>& getGooVents() { return _gooVents; }
+	static const vector<Laser*>& getLasers() { return _lasers; }
 
 private:
 	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath);
-	void addObject(const WwdObject& obj);
+	void addObject(const WwdObject& obj, int8_t levelNumber);
 
 	// TODO: make non-static
 	static vector<BasePlaneObject*> _objects;
@@ -40,6 +42,7 @@ private:
 	static vector<Projectile*> _projectiles;
 	static vector<FloorSpike*> _floorSpikes;
 	static vector<GooVent*> _gooVents;
+	static vector<Laser*> _lasers;
 	static bool _needSort;
 
 	enum class States : int8_t {

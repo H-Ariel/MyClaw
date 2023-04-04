@@ -79,10 +79,11 @@ vector<BaseEnemy*> ActionPlane::_enemies;
 vector<Projectile*> ActionPlane::_projectiles;
 vector<FloorSpike*> ActionPlane::_floorSpikes;
 vector<GooVent*> ActionPlane::_gooVents;
+vector<Laser*> ActionPlane::_lasers;
 bool ActionPlane::_needSort;
 
 
-ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
+ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int8_t levelNumber)
 	: LevelPlane(plane), _wwd(wwd), _state(States::Play), _deathAniWait(false),
 	_planeSize({ (float)plane.tilePixelWidth * plane.tilesOnAxisX, (float)plane.tilePixelHeight * plane.tilesOnAxisY })
 {
@@ -92,6 +93,7 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
 	_projectiles.clear();
 	_floorSpikes.clear();
 	_gooVents.clear();
+	_lasers.clear();
 
 
 	WwdObject playerData;
@@ -112,7 +114,7 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd)
 
 		try
 		{
-			addObject(obj);
+			addObject(obj, levelNumber);
 		}
 		catch (Exception& ex)
 		{
@@ -590,7 +592,7 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 
 #define ADD_ENEMY(p) { BaseEnemy* enemy=p; _objects.push_back(enemy); _enemies.push_back(enemy); }
 
-void ActionPlane::addObject(const WwdObject& obj)
+void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 {
 #ifndef LOW_DETAILS
 	if (obj.logic == "FrontCandy" || obj.logic == "BehindCandy" ||
@@ -662,26 +664,26 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_objects.push_back(DBG_NEW CrumblingPeg(obj, _player));
 	}
 	else if (obj.logic == "BreakPlank")
-		{
-			// TODO: if (levelNumber == 5) rc=_wwd->tilesDescription[509]
+	{
+		WwdRect rc = {};
+		if (levelNumber == 5) rc = _wwd->tilesDescription[509].rect;
+		else if (levelNumber == 11) rc = _wwd->tilesDescription[39].rect;
 
-			int32_t tmp = obj.x;
-			for (int32_t i = 0; i < obj.width; i++)
-			{
-				_objects.push_back(DBG_NEW BreakPlank(obj, _player, _wwd->tilesDescription[509].rect));
-				//obj.x += 64;
-				tmp += 64;
-				myMemCpy(obj.x, tmp);
-			}
+		for (int32_t i = 0; i < obj.width; i++)
+		{
+			_objects.push_back(DBG_NEW BreakPlank(obj, _player, rc));
+			//obj.x += 64;
+			myMemCpy(obj.x, obj.x + 64);
 		}
+	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
 		|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"
 		|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup"
 		|| obj.logic == "EndOfLevelPowerup" || obj.logic == "MagicPowerup"
 		/*|| obj.logic == "CursePowerup"*/)
-		{
-			_objects.push_back(Item::getItem(obj, _player));
-		}
+	{
+		_objects.push_back(Item::getItem(obj, _player));
+	}
 	else if (obj.logic == "AniRope")
 	{
 		_objects.push_back(DBG_NEW Rope(obj, _player));
@@ -699,6 +701,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_objects.push_back(DBG_NEW ConveyorBelt(obj, _player));
 	}
 #ifdef USE_ENEMIES
+	else if (obj.logic == "Laser")
+	{
+		Laser* l = DBG_NEW Laser(obj, _player);
+		_lasers.push_back(l); _objects.push_back(l);
+	}
 	else if (obj.logic == "GooVent")
 	{
 		GooVent* g = DBG_NEW GooVent(obj, _player);

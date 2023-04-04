@@ -166,6 +166,7 @@
     <ClCompile Include="Objects\HermitCrab.cpp" />
     <ClCompile Include="Objects\Item.cpp" />
     <ClCompile Include="Objects\Katherine.cpp" />
+    <ClCompile Include="Objects\Laser.cpp" />
     <ClCompile Include="Objects\Officer.cpp" />
     <ClCompile Include="Objects\PegLeg.cpp" />
     <ClCompile Include="Objects\Pegs.cpp" />
@@ -238,6 +239,7 @@
     <ClInclude Include="Objects\HermitCrab.h" />
     <ClInclude Include="Objects\Item.h" />
     <ClInclude Include="Objects\Katherine.h" />
+    <ClInclude Include="Objects\Laser.h" />
     <ClInclude Include="Objects\Officer.h" />
     <ClInclude Include="Objects\PegLeg.h" />
     <ClInclude Include="Objects\Pegs.h" />

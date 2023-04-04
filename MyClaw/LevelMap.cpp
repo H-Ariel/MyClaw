@@ -11,7 +11,7 @@ LevelMap::LevelMap(int8_t levelNumber)
 	{
 		if (pln.isMainPlane)
 		{
-			_actionPlane = DBG_NEW ActionPlane(pln, wwd);
+			_actionPlane = DBG_NEW ActionPlane(pln, wwd, levelNumber);
 			_planes.push_back(_actionPlane);
 		}
 		else

@@ -60,7 +60,6 @@ public:
 		_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/GLITTER1.ANI");
 		init();
 	}
-
 	void init()
 	{
 		const float a = (playerRc->right - playerRc->left) / 2; // vertical radius
@@ -79,7 +78,6 @@ public:
 		_ani->position.x = x + (playerRc->right + playerRc->left) / 2;
 		_ani->position.y = y + (playerRc->bottom + playerRc->top) / 2;
 	}
-
 	void Logic(uint32_t elapsedTime)
 	{
 		if (_ani->isFinishAnimation())
@@ -772,6 +770,12 @@ void Player::jump()
 	else
 		jump(SpeedY_RegularJump);
 }
+
+/*
+TODO: add new method: `Player::takeDamage(int8_t damage)`
+and use it instead of this method or use both
+*/
+
 bool Player::checkForHurts()
 {
 	return false; // TODO: change this! let CC hurt!
@@ -836,6 +840,16 @@ bool Player::checkForHurts()
 	{
 		if ((damage = g->getDamage()) > 0)
 			if (CollisionDistances::isCollision(_saveCurrRect, g->GetRect()))
+			{
+				_health -= damage;
+				return true;
+			}
+	}
+	
+	for (Laser* l : ActionPlane::getLasers())
+	{
+		if ((damage = l->getDamage()) > 0)
+			if (CollisionDistances::isCollision(_saveCurrRect, l->GetRect()))
 			{
 				_health -= damage;
 				return true;

@@ -1,3 +1,4 @@
+* do not use `int8_t`. maybe `int32_t` or regular `int`
 * fix Seagull
 * catch and throw enemies (like a powder-keg)
 * when CC die draw circle (not square)
