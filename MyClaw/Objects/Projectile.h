@@ -96,6 +96,20 @@ public:
 	CannonBall(const WwdObject& obj);
 };
 
+class MercatTrident : public EnemyProjectile
+{
+public:
+	MercatTrident(const WwdObject& obj);
+	~MercatTrident();
+};
+
+class SirenProjectile : public EnemyProjectile
+{
+public:
+	SirenProjectile(const WwdObject& obj);
+	void Logic(uint32_t elapsedTime) override;
+};
+
 class TProjectile : public Projectile
 {
 public:

@@ -9,6 +9,8 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 {
 	if (endsWith(aniDirPath, ".ANI"))
 		_ani = AssetsManager::loadCopyAnimation(aniDirPath, imageSet);
+	else if (contains(aniDirPath, "SIREN"))
+		_ani = AssetsManager::createCopyAnimationFromDirectory(aniDirPath, 125, false);
 	else
 		_ani = AssetsManager::createAnimationFromDirectory(aniDirPath, 75, false);
 	_speed.x = obj.speedX / 1000.f;
@@ -184,6 +186,36 @@ CrabBomb::~CrabBomb()
 CannonBall::CannonBall(const WwdObject& obj)
 	: Projectile(obj, PathManager::getImageSetPath("LEVEL_CANNONBALL")) {}
 
+MercatTrident::MercatTrident(const WwdObject& obj)
+	: EnemyProjectile(obj, PathManager::getImageSetPath("LEVEL_TRIDENT_TRIDENTPROJECTILE"))
+{
+	_isMirrored = !_isMirrored; // the mercat-trident is already mirrored
+}
+MercatTrident::~MercatTrident()
+{
+	if (removeObject)
+	{
+		WwdObject obj;
+		obj.x = (int32_t)position.x;
+		obj.y = (int32_t)position.y;
+		obj.z = ZCoord;
+		ActionPlane::addPlaneObject(DBG_NEW RatBombExplos(obj,
+			"LEVEL_TRIDENTEXPLOSION", "LEVEL_TRIDENT_TRIDENTEXPLOSION"));
+	}
+}
+
+SirenProjectile::SirenProjectile(const WwdObject& obj)
+	: EnemyProjectile(obj, PathManager::getImageSetPath("LEVEL_SIRENPROJECTILE"))
+{
+	_isMirrored = !_isMirrored; // the siren-projectile is already mirrored
+	// TODO: fix animation
+}
+void SirenProjectile::Logic(uint32_t elapsedTime)
+{
+	EnemyProjectile::Logic(elapsedTime);
+	removeObject = removeObject || _ani->isFinishAnimation();
+}
+
 TProjectile::TProjectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
 	: Projectile(ani, damage, speed, initialPosition) {}
 
@@ -202,6 +234,8 @@ bool isEnemyProjectile(BasePlaneObject* obj)
 		typeid(RatBomb).hash_code(),
 		typeid(CrabBomb).hash_code(),
 		typeid(CannonBall).hash_code(),
+		typeid(MercatTrident).hash_code(),
+		typeid(SirenProjectile).hash_code(),
 		typeid(TProjectile).hash_code() // this is not from enemy, but they have same logic
 	};
 	return FindInArray(EnemiesProjectilesTypes, typeid(*obj).hash_code());

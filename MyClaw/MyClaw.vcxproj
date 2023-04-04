@@ -167,6 +167,7 @@
     <ClCompile Include="Objects\Item.cpp" />
     <ClCompile Include="Objects\Katherine.cpp" />
     <ClCompile Include="Objects\Laser.cpp" />
+    <ClCompile Include="Objects\Mercat.cpp" />
     <ClCompile Include="Objects\Officer.cpp" />
     <ClCompile Include="Objects\PegLeg.cpp" />
     <ClCompile Include="Objects\Pegs.cpp" />
@@ -178,6 +179,7 @@
     <ClCompile Include="Objects\RobberThief.cpp" />
     <ClCompile Include="Objects\Rope.cpp" />
     <ClCompile Include="Objects\Seagull.cpp" />
+    <ClCompile Include="Objects\Siren.cpp" />
     <ClCompile Include="Objects\Soldier.cpp" />
     <ClCompile Include="Objects\SoundTrigger.cpp" />
     <ClCompile Include="Objects\SpringBoard.cpp" />
@@ -240,6 +242,7 @@
     <ClInclude Include="Objects\Item.h" />
     <ClInclude Include="Objects\Katherine.h" />
     <ClInclude Include="Objects\Laser.h" />
+    <ClInclude Include="Objects\Mercat.h" />
     <ClInclude Include="Objects\Officer.h" />
     <ClInclude Include="Objects\PegLeg.h" />
     <ClInclude Include="Objects\Pegs.h" />
@@ -251,6 +254,7 @@
     <ClInclude Include="Objects\RobberThief.h" />
     <ClInclude Include="Objects\Rope.h" />
     <ClInclude Include="Objects\Seagull.h" />
+    <ClInclude Include="Objects\Siren.h" />
     <ClInclude Include="Objects\Soldier.h" />
     <ClInclude Include="Objects\SoundTrigger.h" />
     <ClInclude Include="Objects\SpringBoard.h" />

@@ -800,6 +800,12 @@ bool Player::checkForHurts()
 
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
+		if (isinstance<SirenProjectile>(p))
+		{
+			// TODO: freeze CC for 3 second
+			// TODO: add new method: `Player::freeze(int8_t seconds)`
+			return true;
+		}
 		if (isEnemyProjectile(p))
 		{
 			if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
