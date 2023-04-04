@@ -85,6 +85,8 @@ void Mercat::makeAttack()
 				_isStanding = false;
 				_isAttack = true;
 				_forward = _player->position.x > position.x;
+
+				_attackRest = 250;
 			}
 		}
 	}

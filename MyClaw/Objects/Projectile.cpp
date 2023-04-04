@@ -10,7 +10,7 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 	if (endsWith(aniDirPath, ".ANI"))
 		_ani = AssetsManager::loadCopyAnimation(aniDirPath, imageSet);
 	else if (contains(aniDirPath, "SIREN"))
-		_ani = AssetsManager::createCopyAnimationFromDirectory(aniDirPath, 125, false);
+		_ani = AssetsManager::createCopyAnimationFromDirectory(aniDirPath, 100, false);
 	else
 		_ani = AssetsManager::createAnimationFromDirectory(aniDirPath, 75, false);
 	_speed.x = obj.speedX / 1000.f;
@@ -204,16 +204,28 @@ MercatTrident::~MercatTrident()
 	}
 }
 
-SirenProjectile::SirenProjectile(const WwdObject& obj)
-	: EnemyProjectile(obj, PathManager::getImageSetPath("LEVEL_SIRENPROJECTILE"))
+SirenProjectile::SirenProjectile(const WwdObject& obj, int32_t delay)
+	: EnemyProjectile(obj, PathManager::getImageSetPath("LEVEL_SIRENPROJECTILE")), _delay(delay)
 {
 	_isMirrored = !_isMirrored; // the siren-projectile is already mirrored
-	// TODO: fix animation
 }
 void SirenProjectile::Logic(uint32_t elapsedTime)
 {
-	EnemyProjectile::Logic(elapsedTime);
-	removeObject = removeObject || _ani->isFinishAnimation();
+	if (_delay > 0)
+	{
+		_delay -= elapsedTime;
+	}
+	else
+	{
+		EnemyProjectile::Logic(elapsedTime);
+		_ani->Logic(elapsedTime);
+		removeObject = _ani->isFinishAnimation();
+	}
+}
+void SirenProjectile::Draw()
+{
+	if (_delay <= 0)
+		_ani->Draw();
 }
 
 TProjectile::TProjectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)

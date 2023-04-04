@@ -114,6 +114,7 @@ Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH" };
 
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 125, false);
+	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromFromPidImage("CLAW/IMAGES/100.PID");
 
 	PowerupSparkle::playerRc = &_saveCurrRect;
 }
@@ -142,6 +143,18 @@ void Player::Logic(uint32_t elapsedTime)
 	{
 		_leftCollision = false;
 		_rightCollision = false;
+	}
+
+	if (_freezeTime > 0)
+	{
+		_freezeTime -= elapsedTime;
+		_leftPressed = false;
+		_rightPressed = false;
+		_downPressed = false;
+		_upPressed = false;
+		_spacePressed = false;
+		_altPressed = false;
+		_zPressed = false;
 	}
 
 	if (_holdAltTime < 1050) _holdAltTime += elapsedTime; // the max time for holding is 1050 milliseconds
@@ -173,9 +186,8 @@ void Player::Logic(uint32_t elapsedTime)
 		if (_health <= 0)
 		{
 			_aniName = "FALLDEATH";
-			// TODO: in that case CC should fall down (out of window) and show the "black screen"
 		}
-		else
+		else if (!isFreeze()) // when CC is freeze, he can't show take damage
 		{
 			_aniName = "DAMAGE" + to_string(getRandomInt(1, 2));
 		}
@@ -298,7 +310,11 @@ void Player::Logic(uint32_t elapsedTime)
 
 		const string prevAniName = _aniName;
 
-		if (climbDown)
+		if (_freezeTime > 0)
+		{
+			_aniName = "SIREN-FREEZE";
+		}
+		else if (climbDown)
 		{
 			_aniName = "CLIMBDOWN";
 		}
@@ -771,11 +787,6 @@ void Player::jump()
 		jump(SpeedY_RegularJump);
 }
 
-/*
-TODO: add new method: `Player::takeDamage(int8_t damage)`
-and use it instead of this method or use both
-*/
-
 bool Player::checkForHurts()
 {
 	return false; // TODO: change this! let CC hurt!
@@ -802,9 +813,8 @@ bool Player::checkForHurts()
 	{
 		if (isinstance<SirenProjectile>(p))
 		{
-			// TODO: freeze CC for 3 second
-			// TODO: add new method: `Player::freeze(int8_t seconds)`
-			return true;
+			_freezeTime = 3000; // freeze CC for 3 seconds
+			return false;
 		}
 		if (isEnemyProjectile(p))
 		{
@@ -1027,6 +1037,7 @@ void Player::backToLife()
 	_lastAttackRect = {};
 	_damageRest = 0;
 	_forward = true;
+	_freezeTime = 0;
 
 	Logic(0); // update position and animation
 }
@@ -1049,7 +1060,7 @@ void Player::loseLife()
 
 void Player::keyUp(int key)
 {
-	if (isInDeathAnimation()) return;
+	if (isInDeathAnimation() || _freezeTime > 0) return;
 
 	switch (key)
 	{
@@ -1071,7 +1082,7 @@ void Player::keyUp(int key)
 }
 void Player::keyDown(int key)
 {
-	if (isInDeathAnimation() || _useWeapon) return;
+	if (isInDeathAnimation() || _useWeapon || _freezeTime > 0) return;
 
 	switch (key)
 	{

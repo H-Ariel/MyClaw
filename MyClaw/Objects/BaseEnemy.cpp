@@ -167,11 +167,13 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
 
-	if (_attackRest > 0)
-		_attackRest -= elapsedTime;
+	
 
 	if (!_isAttack)
 	{
+		if (_attackRest > 0)
+			_attackRest -= elapsedTime;
+
 		if (_isStaticEnemy)
 		{
 			_isStanding = true;

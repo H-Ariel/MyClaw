@@ -56,7 +56,7 @@
 
 // TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
-#define DRAW_RECTANGLES
+//#define DRAW_RECTANGLES
 //#define USE_ENEMIES
 
 
@@ -795,11 +795,11 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	{
 		ADD_ENEMY(DBG_NEW Mercat(obj, _player));
 	}
-#endif
 	else if (obj.logic == "Siren")
 	{
 		ADD_ENEMY(DBG_NEW Siren(obj, _player));
 	}
+#endif
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));

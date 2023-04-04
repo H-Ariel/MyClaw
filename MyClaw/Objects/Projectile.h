@@ -106,8 +106,12 @@ public:
 class SirenProjectile : public EnemyProjectile
 {
 public:
-	SirenProjectile(const WwdObject& obj);
+	SirenProjectile(const WwdObject& obj, int32_t delay);
 	void Logic(uint32_t elapsedTime) override;
+	void Draw() override;
+
+private:
+	int32_t _delay; // in milliseconds
 };
 
 class TProjectile : public Projectile

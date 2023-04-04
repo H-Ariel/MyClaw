@@ -47,6 +47,7 @@ public:
 	bool isInDeathAnimation() const { return endsWith(_aniName, "DEATH"); }
 	bool isFinishDeathAnimation() const { return isInDeathAnimation() && _ani->isFinishAnimation(); }
 	bool isFinishLevel() const { return _finishLevel; }
+	bool isFreeze() const { return _freezeTime > 0; }
 	bool isStanding() const override;
 	bool isDuck() const override;
 	bool isTakeDamage() const override;
@@ -93,6 +94,7 @@ private:
 	int32_t _dialogLeftTime, _powerupLeftTime; // in milliseconds
 	int32_t _holdAltTime; // in milliseconds. it used for pre-dynamite
 	int32_t _damageRest; // rest time between enemies attacks
+	int32_t _freezeTime; // in milliseconds. it used for freeze from siren.
 	ClawProjectile::Types _currWeapon;
 	PowerupType _currPowerup;
 	int8_t _lives;
