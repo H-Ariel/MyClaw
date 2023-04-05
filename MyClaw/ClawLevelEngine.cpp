@@ -12,11 +12,11 @@ ClawLevelEngine::ClawLevelEngine(int8_t levelNumber)
 	_elementsList.push_back(_hud = DBG_NEW LevelHUD(_player = _levelMap->getPlayer(), *_levelMap->getWindowOffset()));
 	WindowManager::setWindowOffset(_levelMap->getWindowOffset());
 
-	//if (levelNumber == 1) _player->position = { 17485, 1500 }; // END OF LEVEL
+	if (levelNumber == 1) _player->position = { 17485, 1500 }; // END OF LEVEL
 //	if (levelNumber == 1) _player->position = { 5775, 4347 };
 //	if (levelNumber == 1) _player->position = { 9696, 772 };
 //	if (levelNumber == 1) _player->position = { 5226, 4035 };
-	if (levelNumber == 1) _player->position = { 2596,4155 };
+//	if (levelNumber == 1) _player->position = { 2596,4155 };
 //	if (levelNumber == 1) _player->position = { 4400, 4347 };
 //	if (levelNumber == 1) _player->position = { 11039, 1851 };
 //	if (levelNumber == 1) _player->position = { 2567, 4388 };

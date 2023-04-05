@@ -49,7 +49,7 @@ uint32_t AudioManager::getWavFileDuration(uint32_t wavFileId)
 	if (_wavPlayers.count(wavFileId) != 0)
 		d = _wavPlayers[wavFileId]->getDuration();
 	
-	return d;
+	return d ? d : 1;
 }
 
 void AudioManager::setVolume(uint32_t wavFileId, int32_t volume)

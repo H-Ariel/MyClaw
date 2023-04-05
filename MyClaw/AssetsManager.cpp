@@ -436,5 +436,6 @@ void AssetsManager::clearLevelAssets(int lvl)
 		_animationsManager->clearLevelAnimations(prefix);
 		_audioManager->clearLevelSounds(prefix);
 		Item::resetItemsPaths();
+		PathManager::resetPaths();
 	}
 }
