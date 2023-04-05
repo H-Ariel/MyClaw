@@ -237,6 +237,9 @@
     <ClCompile Include="Objects\Siren.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Fish.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -453,6 +456,9 @@
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Siren.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Fish.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>

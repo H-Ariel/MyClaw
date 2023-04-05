@@ -51,7 +51,8 @@ ClawLevelEngine::ClawLevelEngine(int8_t levelNumber)
 //	if (levelNumber == 11) _player->position = { 5116, 1360 };
 //	if (levelNumber == 11) _player->position = { 3616, 1486 };
 //	if (levelNumber == 11) _player->position = { 13350, 1119 };
-	if (levelNumber == 11) _player->position = { 6837, 1360 };
+//	if (levelNumber == 11) _player->position = { 6837, 1360 };
+	if (levelNumber == 11) _player->position = { 6067, 1452 };
 }
 ClawLevelEngine::~ClawLevelEngine()
 {

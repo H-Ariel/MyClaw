@@ -3,6 +3,8 @@
 
 static inline bool isEnemyAniations(string dirPath)
 {
+	// TODO: endsWith(dirPath, "/ANIS/OFFICER") etc.
+
 	return contains(dirPath, "/ANIS/") && (
 		endsWith(dirPath, "OFFICER") ||
 		endsWith(dirPath, "SOLDIER") ||
@@ -14,7 +16,8 @@ static inline bool isEnemyAniations(string dirPath)
 		endsWith(dirPath, "REDTAILPIRATE") ||
 		endsWith(dirPath, "CRAZYHOOK") ||
 		endsWith(dirPath, "PEGLEG") ||
-		endsWith(dirPath, "MERCAT")
+		endsWith(dirPath, "MERCAT") ||
+		endsWith(dirPath, "FISH")
 		);
 	// TODO: add all of them
 }

@@ -36,6 +36,7 @@
 #include "Objects/PegLeg.h"
 #include "Objects/Mercat.h"
 #include "Objects/Siren.h"
+#include "Objects/Fish.h"
 
 
 #define EMPTY_TILE -1
@@ -798,6 +799,10 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	else if (obj.logic == "Siren")
 	{
 		ADD_ENEMY(DBG_NEW Siren(obj, _player));
+	}
+	else if (obj.logic == "Fish")
+	{
+		ADD_ENEMY(DBG_NEW Fish(obj, _player));
 	}
 #endif
 	else if (obj.logic == "Raux")
