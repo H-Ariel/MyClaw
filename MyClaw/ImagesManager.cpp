@@ -137,6 +137,11 @@ void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 	{
 		offsetX += 2;
 	}
+	else if (pidPath == "/LEVEL8/IMAGES/CANNONSWITCH/002.PID")
+	{
+		offsetX -= 2;
+		offsetY -= 1;
+	}
 }
 shared_ptr<UIBaseImage> ImagesManager::loadPidImage(const string& pidPath)
 {

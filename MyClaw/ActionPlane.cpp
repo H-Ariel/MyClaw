@@ -828,6 +828,14 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	{
 		_objects.push_back(DBG_NEW GabrielCannon(obj, _player));
 	}
+	else if (obj.logic == "CannonSwitch")
+	{
+		_objects.push_back(DBG_NEW CannonSwitch(obj, _player));
+	}
+	else if (obj.logic == "CannonButton")
+	{
+		_objects.push_back(DBG_NEW CannonButton(obj, _player));
+	}
 
 	//	throw Exception("TODO: logic=" + obj.logic);
 }
