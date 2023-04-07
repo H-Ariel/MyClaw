@@ -29,7 +29,7 @@ public:
 	static void drawRect(D2D1_RECT_F dst, ColorF color, float width = 1);
 	static void fillRect(D2D1_RECT_F dst, D2D1_COLOR_F color);
 	static void fillRect(D2D1_RECT_F dst, ColorF color);
-	static void drawCircle(D2D1_POINT_2F center, FLOAT radius, ColorF color, float width = 1);
+	static void drawCircle(D2D1_POINT_2F center, float radius, ColorF color, float width = 1);
 	static void drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirrored);
 
 	static ID2D1Bitmap* createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height);

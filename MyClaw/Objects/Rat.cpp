@@ -42,7 +42,7 @@ void Rat::makeAttack()
 	}
 }
 
-pair<D2D1_RECT_F, int8_t> Rat::GetAttackRect() { return {}; }
+pair<Rectangle2D, int8_t> Rat::GetAttackRect() { return {}; }
 bool Rat::isDuck() const { return true; }
 bool Rat::isTakeDamage() const { return false; }
 
@@ -69,7 +69,7 @@ PunkRat::PunkRat(const WwdObject& obj, Player* player)
 	if (_isMirrored) _cannon->_shootDirection = Cannon::ToLeft;
 	else _cannon->_shootDirection = Cannon::ToRight;
 
-	D2D1_RECT_F cRc = _cannon->GetRect();
+	Rectangle2D cRc = _cannon->GetRect();
 	myMemCpy(_minX, cRc.left);
 	myMemCpy(_maxX, cRc.right);
 
@@ -119,9 +119,9 @@ void PunkRat::Draw()
 	_cannon->Draw();
 	BaseCharacter::Draw();
 }
-D2D1_RECT_F PunkRat::GetRect()
+Rectangle2D PunkRat::GetRect()
 {
 //	return _ani->GetRect();
 	return BasePlaneObject::GetRect();
 }
-pair<D2D1_RECT_F, int8_t> PunkRat::GetAttackRect() { return{}; }
+pair<Rectangle2D, int8_t> PunkRat::GetAttackRect() { return{}; }

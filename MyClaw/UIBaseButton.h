@@ -13,7 +13,7 @@ public:
 	~UIBaseButton();
 
 	void Logic(uint32_t elapsedTime) override;
-	D2D1_RECT_F GetRect() override;
+	Rectangle2D GetRect() override;
 
 	function<void(MouseButtons)> onClick;
 	D2D1_SIZE_F size;

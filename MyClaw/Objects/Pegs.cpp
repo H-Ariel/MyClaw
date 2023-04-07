@@ -170,7 +170,7 @@ void CrumblingPeg::Reset()
 BreakPlank::BreakPlank(const WwdObject& obj, Player* player, WwdRect tileRc)
 	: CrumblingPeg(obj, player)
 {
-	D2D1_RECT_F rc = _objRc;
+	Rectangle2D rc(_objRc);
 	rc.top += tileRc.top;
 	myMemCpy(_objRc, rc);
 }

@@ -19,7 +19,7 @@ void BasePlaneObject::Draw()
 		_ani->Draw();
 	}
 }
-D2D1_RECT_F BasePlaneObject::GetRect()
+Rectangle2D BasePlaneObject::GetRect()
 {
 	// TODO: some object need only `_ani->GetRect();`, so we need create 2 functions...
 
@@ -31,9 +31,8 @@ D2D1_RECT_F BasePlaneObject::GetRect()
 void BasePlaneObject::Reset() {}
 bool BasePlaneObject::tryCatchPlayer()
 {
-	const D2D1_RECT_F colRc = CollisionDistances::getCollision(_player->GetRect(), GetRect());
-	D2D1_RECT_F smallest = CollisionDistances::getSmallest(colRc);
-	if (smallest.bottom > 0 && (colRc.right > 0 || colRc.left > 0) && _player->isFalling())
+	Rectangle2D colRc = _player->GetRect().getCollision(GetRect());
+	if (colRc.getSmallest().bottom > 0 && (colRc.right > 0 || colRc.left > 0) && _player->isFalling())
 	{
 		// if the player fall or go to this object - catch him
 		_player->stopFalling(colRc.bottom);
@@ -43,9 +42,9 @@ bool BasePlaneObject::tryCatchPlayer()
 }
 
 BaseStaticPlaneObject::BaseStaticPlaneObject(const WwdObject& obj, Player* player)
-	: BasePlaneObject(obj, player), _objRc({}) {}
+	: BasePlaneObject(obj, player) {}
 void BaseStaticPlaneObject::Logic(uint32_t elapsedTime) {}
-D2D1_RECT_F BaseStaticPlaneObject::GetRect() { return _objRc; }
+Rectangle2D BaseStaticPlaneObject::GetRect() { return _objRc; }
 void BaseStaticPlaneObject::setObjectRectangle() { myMemCpy(_objRc, BasePlaneObject::GetRect()); }
 
 BaseDynamicPlaneObject::BaseDynamicPlaneObject(const WwdObject& obj, Player* player)

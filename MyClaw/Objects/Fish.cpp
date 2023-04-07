@@ -9,7 +9,7 @@
 
 Fish::Fish(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 1, 10, "SWIM", "HIT", "HIT",
-		"KILLFALL", "", "", "", "", "", true), _yPos(obj.y)
+		"KILLFALL", "", "", "", "", "", true), _yPos((float)obj.y)
 {
 }
 
@@ -54,7 +54,7 @@ void Fish::Logic(uint32_t elapsedTime)
 	PostLogic(elapsedTime);
 }
 
-pair<D2D1_RECT_F, int8_t> Fish::GetAttackRect()
+pair<Rectangle2D, int8_t> Fish::GetAttackRect()
 {
 	return { _saveCurrRect, _damage };
 }

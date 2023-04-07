@@ -12,7 +12,7 @@ public:
 	virtual void Logic(uint32_t elapsedTime); // in milliseconds
 	virtual void Draw();
 
-	virtual D2D1_RECT_F GetRect();
+	virtual Rectangle2D GetRect();
 
 
 	D2D1_POINT_2F position;

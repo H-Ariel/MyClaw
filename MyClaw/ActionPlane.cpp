@@ -37,6 +37,7 @@
 #include "Objects/Mercat.h"
 #include "Objects/Siren.h"
 #include "Objects/Fish.h"
+#include "Objects/Gabriel.h"
 
 
 #define EMPTY_TILE -1
@@ -71,9 +72,9 @@ public:
 	}
 	void Logic(uint32_t elapsedTime) override {}
 	void Draw() override {
-		WindowManager::drawRect(RectF(position.x - 32, position.y - 32, position.x + 32, position.y + 32), ColorF::Green);
+		WindowManager::drawRect(Rectangle2D(position.x - 32, position.y - 32, position.x + 32, position.y + 32), ColorF::Green);
 	}
-	D2D1_RECT_F GetRect() override { return RectF(); }
+	Rectangle2D GetRect() override { return Rectangle2D(); }
 };
 
 
@@ -154,7 +155,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	auto _update_position = [&] {
 		// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
 		const D2D1_SIZE_F wndSize = WindowManager::getSize();
-		const D2D1_RECT_F playerRc = _player->GetRect();
 		position.x = _player->position.x - wndSize.width / 2.0f;
 		position.y = _player->position.y - wndSize.height / 2.0f;
 
@@ -308,10 +308,10 @@ void ActionPlane::Draw()
 	{
 		const D2D1_SIZE_F wndSz = WindowManager::getSize();
 		const float wp = wndSz.width + position.x, hp = wndSz.height + position.y;
-		const D2D1_RECT_F rc1{ position.x,position.y,_player->position.x - _holeRadius,hp };
-		const D2D1_RECT_F rc2{ rc1.right,position.y,wp,_player->position.y - _holeRadius };
-		const D2D1_RECT_F rc3{ rc1.right,_player->position.y + _holeRadius,wp,hp };
-		const D2D1_RECT_F rc4{ _player->position.x + _holeRadius,rc2.bottom,wp,rc3.top };
+		const Rectangle2D rc1(position.x, position.y, _player->position.x - _holeRadius, hp);
+		const Rectangle2D rc2(rc1.right, position.y, wp, _player->position.y - _holeRadius);
+		const Rectangle2D rc3(rc1.right, _player->position.y + _holeRadius, wp, hp);
+		const Rectangle2D rc4(_player->position.x + _holeRadius, rc2.bottom, wp, rc3.top);
 
 		WindowManager::fillRect(rc1, ColorF::Black);
 		WindowManager::fillRect(rc2, ColorF::Black);
@@ -327,7 +327,7 @@ void ActionPlane::Draw()
 
 	WwdTileDescription tileDesc;
 	ColorF color(0);
-	D2D1_RECT_F tileRc = {};
+	Rectangle2D tileRc;
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
 	const uint32_t MinXPos = (uint32_t)(position.x / _plane.tilePixelWidth);
 	const uint32_t MinYPos = (uint32_t)(position.y / _plane.tilePixelHeight);
@@ -414,25 +414,27 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath)
 {
 	static const float N = 2.5f; // this number indicate how many tile we will check from every side
-	const D2D1_RECT_F objRc = obj->GetRect();
+	const Rectangle2D objRc = obj->GetRect();
 	const uint32_t MinXPos = (uint32_t)(obj->position.x / _plane.tilePixelWidth - N);
 	const uint32_t MaxXPos = (uint32_t)(obj->position.x / _plane.tilePixelWidth + N);
 	const uint32_t MinYPos = (uint32_t)(obj->position.y / _plane.tilePixelHeight - N);
 	const uint32_t MaxYPos = (uint32_t)(obj->position.y / _plane.tilePixelHeight + N);
 
-	D2D1_RECT_F collisions[9] = {}, cumulatedCollision = {}, tileRc = {}, collisionRc = {};
-	D2D1_RECT_F originalTileRc, rc1, rc2;
+	Rectangle2D collisions[9];
+	Rectangle2D cumulatedCollision, tileRc;
+	Rectangle2D collisionRc;
+	Rectangle2D originalTileRc, rc1, rc2;
 	uint32_t i, j, collisionsNumber = 0;
 
 	const bool isPlayer = (obj == _player); //isinstance<Player>(obj);
 
 
 	auto _addCollision = [&]() { // add `collisionRect` to the `cumulatedCollision`
-		if (!CollisionDistances::isEmpty(collisionRc))
+		if (!collisionRc.isEmpty())
 		{
 			// add this collision to the list
 			collisions[collisionsNumber] = collisionRc;
-			CollisionDistances::keepSmallest(collisions[collisionsNumber]);
+			collisions[collisionsNumber].keepSmallest();
 			// add the collision details to the cummulated collision
 			_checkCollides_define1(top);
 			_checkCollides_define1(bottom);
@@ -441,20 +443,20 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 			collisionsNumber++;
 		}
 	};
-	auto _onSolid = [&](D2D1_RECT_F tileRect) {
-		collisionRc = CollisionDistances::getCollision(objRc, tileRect);
+	auto _onSolid = [&](Rectangle2D tileRect) {
+		collisionRc = objRc.getCollision(tileRect);
 		_addCollision();
 	};
 	auto _onGround = [&]() { // same to `BasePlaneObject::tryCatchPlayer`
-		collisionRc = CollisionDistances::getCollision(objRc, tileRc);
-		D2D1_RECT_F smallest = CollisionDistances::getSmallest(collisionRc);
+		collisionRc = objRc.getCollision(tileRc);
+		Rectangle2D smallest = collisionRc.getSmallest();
 		if (smallest.bottom > 0 && (collisionRc.right > 0 || collisionRc.left > 0) && _player->isFalling())
 		{
 			_addCollision();
 		}
 	};
 	auto _onLadder = [&]() {
-		if (CollisionDistances::isCollision(objRc, tileRc))
+		if (objRc.intersects(tileRc))
 		{
 			bool isOnLadderTop = false;
 
@@ -489,7 +491,7 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 		}
 	};
 	auto _onDeath = [&]() {
-		if (CollisionDistances::isCollision(objRc, tileRc))
+		if (objRc.intersects(tileRc))
 		{
 			whenTouchDeath();
 		}
@@ -582,7 +584,7 @@ void ActionPlane::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)
 	}
 
 	// whichever side collides the most, that side is taken into consideration
-	CollisionDistances::keepLargest(cumulatedCollision);
+	cumulatedCollision.keepLargest();
 	_checkCollides_define2(top);
 	_checkCollides_define2(bottom);
 	_checkCollides_define2(left);
@@ -817,6 +819,14 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	else if (obj.logic == "Wolvington")
 	{
 		ADD_ENEMY(DBG_NEW Wolvington(obj, _player));
+	}
+	else if (obj.logic == "Gabriel")
+	{
+		ADD_ENEMY(DBG_NEW Gabriel(obj, _player));
+	}
+	else if (obj.logic == "GabrielCannon")
+	{
+		_objects.push_back(DBG_NEW GabrielCannon(obj, _player));
 	}
 
 	//	throw Exception("TODO: logic=" + obj.logic);

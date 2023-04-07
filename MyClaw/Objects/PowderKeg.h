@@ -10,7 +10,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	int8_t getDamage() const;
 
-	void raise(); // makes the powder keg state to `Raised`
+	bool raise(); // makes the powder keg state to `Raised` and returns `true` if it was `Stand`
 	void thrown(bool forward); // makes the powder keg state to `Thrown`
 	void fall(); // makes the powder keg state to `Thrown` but set no speed
 

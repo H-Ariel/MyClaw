@@ -19,7 +19,7 @@ public:
 	~BaseEnemy();
 
 	virtual void Logic(uint32_t elapsedTime) override;
-	virtual D2D1_RECT_F GetRect() override;
+	virtual Rectangle2D GetRect() override;
 
 	bool isStanding() const override;
 	bool isDuck() const override;
@@ -39,7 +39,7 @@ protected:
 
 
 	bool isWalkAnimation() const;
-	bool checkForHurt(pair<D2D1_RECT_F, uint8_t> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
+	bool checkForHurt(pair<Rectangle2D, uint8_t> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
 	virtual bool checkForHurts();
 
 

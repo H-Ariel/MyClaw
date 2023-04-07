@@ -109,7 +109,7 @@ void WindowManager::fillRect(D2D1_RECT_F dst, ColorF color)
 {
 	fillRect(dst, (D2D1_COLOR_F)color);
 }
-void WindowManager::drawCircle(D2D1_POINT_2F center, FLOAT radius, ColorF color, float width)
+void WindowManager::drawCircle(D2D1_POINT_2F center, float radius, ColorF color, float width)
 {
 	D2D1_ELLIPSE el = { { center.x * PixelSize, center.y * PixelSize }, radius * PixelSize, radius * PixelSize };
 	if (!_isInScreen(el)) return;

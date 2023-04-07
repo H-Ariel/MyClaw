@@ -102,7 +102,7 @@ void BearSailor::makeAttack()
 	}
 }
 
-D2D1_RECT_F BearSailor::GetRect()
+Rectangle2D BearSailor::GetRect()
 {
 	_saveCurrRect.left = position.x - 25;
 	_saveCurrRect.right = position.x + 25;
@@ -111,11 +111,11 @@ D2D1_RECT_F BearSailor::GetRect()
 	return _saveCurrRect;
 }
 
-pair<D2D1_RECT_F, int8_t> BearSailor::GetAttackRect()
+pair<Rectangle2D, int8_t> BearSailor::GetAttackRect()
 {
 	if (_ani->getFrameNumber() != 3) return {};
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (_ani == ANIMATION_STRIKE)
 	{

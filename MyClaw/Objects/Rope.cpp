@@ -47,9 +47,9 @@ Rope::Rope(const WwdObject& obj, Player* player)
 
 void Rope::Logic(uint32_t elapsedTime)
 {
-	D2D1_RECT_F thisRc = GetRect();
+	Rectangle2D thisRc = GetRect();
 
-	if (!_player->isJumping() && CollisionDistances::isCollision(_player->GetRect(), thisRc))
+	if (!_player->isJumping() && _player->GetRect().intersects(thisRc))
 	{
 		_player->rope = this;
 	}
@@ -60,7 +60,7 @@ void Rope::Logic(uint32_t elapsedTime)
 		_player->position.y = thisRc.top + RECT_OFFSET;
 	}
 }
-D2D1_RECT_F Rope::GetRect()
+Rectangle2D Rope::GetRect()
 {
 	size_t idx = _ani->getFrameNumber();
 	D2D1_POINT_2F edgePos = {
@@ -68,10 +68,10 @@ D2D1_RECT_F Rope::GetRect()
 		position.y + ropeFrameIndexToRopeHandleOffset[idx].y
 	};
 
-	return {
+	return Rectangle2D(
 		edgePos.x - RECT_OFFSET,
 		edgePos.y - RECT_OFFSET,
 		edgePos.x + RECT_OFFSET,
 		edgePos.y + RECT_OFFSET
-	};
+	);
 }

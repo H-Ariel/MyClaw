@@ -7,9 +7,9 @@ Soldier::Soldier(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F Soldier::GetRect()
+Rectangle2D Soldier::GetRect()
 {
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (isWalkAnimation() || _isStanding || isTakeDamage())
 	{
@@ -50,11 +50,11 @@ D2D1_RECT_F Soldier::GetRect()
 
 	return rc;
 }
-pair<D2D1_RECT_F, int8_t> Soldier::GetAttackRect()
+pair<Rectangle2D, int8_t> Soldier::GetAttackRect()
 {
 	if (_ani->getFrameNumber() != 5 && _ani->getFrameNumber() != 4) return{};
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 	rc.top = 0;
 	rc.bottom = 20;
 

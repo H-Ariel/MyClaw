@@ -12,7 +12,7 @@ CrabNest::CrabNest(const WwdObject& obj, Player* player)
 	_ani->updateFrames = false;
 	_ani->loopAni = false;
 
-	myMemCpy(_objRc, RectF((float)obj.minX, (float)obj.minY, (float)obj.maxX, (float)obj.maxY));
+	myMemCpy(_objRc, Rectangle2D((float)obj.minX, (float)obj.minY, (float)obj.maxX, (float)obj.maxY));
 
 	WwdObject crabObj;
 	crabObj.x = obj.x;
@@ -41,7 +41,7 @@ CrabNest::~CrabNest()
 
 void CrabNest::Logic(uint32_t elapsedTime)
 {
-	if (_crabs.size() > 0 && CollisionDistances::isCollision(_player->GetRect(), _objRc))
+	if (_crabs.size() > 0 && _player->GetRect().intersects(_objRc))
 	{
 		_ani->updateFrames = true;
 

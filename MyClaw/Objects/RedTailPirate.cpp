@@ -7,7 +7,7 @@ RedTailPirate::RedTailPirate(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F RedTailPirate::GetRect()
+Rectangle2D RedTailPirate::GetRect()
 {
 	_saveCurrRect.left = position.x - 20;
 	_saveCurrRect.right = position.x + 20;
@@ -16,11 +16,11 @@ D2D1_RECT_F RedTailPirate::GetRect()
 	return _saveCurrRect;
 }
 
-pair<D2D1_RECT_F, int8_t> RedTailPirate::GetAttackRect()
+pair<Rectangle2D, int8_t> RedTailPirate::GetAttackRect()
 {
 	if (!_isAttack) return {};
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (_forward)
 	{

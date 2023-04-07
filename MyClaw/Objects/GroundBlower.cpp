@@ -12,7 +12,7 @@ GroundBlower::GroundBlower(const WwdObject& obj, Player* player)
 	_ani = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_GROUNDBLOWER"));
 	_blowhole = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_BLOW1"), 125, false);
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 	rc.left = position.x - 24;
 	rc.right = position.x + 24;
 	rc.bottom = rc.top = position.y + BLOWHOLE_OFFSET_Y - 40;

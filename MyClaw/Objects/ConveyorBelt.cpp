@@ -15,7 +15,7 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj, Player* player)
 void ConveyorBelt::Logic(uint32_t elapsedTime)
 {
 	// TODO: CC move faster in tiles limits
-	if (_canMoveCC && CollisionDistances::isCollision(_player->GetRect(), _objRc))
+	if (_canMoveCC && _player->GetRect().intersects(_objRc))
 	{
 		_player->position.x += _speed * elapsedTime;
 	}

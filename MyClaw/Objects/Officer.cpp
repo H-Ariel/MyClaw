@@ -7,9 +7,9 @@ Officer::Officer(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F Officer::GetRect()
+Rectangle2D Officer::GetRect()
 {
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (isWalkAnimation() || _isStanding || isTakeDamage())
 	{
@@ -46,11 +46,11 @@ D2D1_RECT_F Officer::GetRect()
 
 	return rc;
 }
-pair<D2D1_RECT_F, int8_t> Officer::GetAttackRect()
+pair<Rectangle2D, int8_t> Officer::GetAttackRect()
 {
 	if (_ani->getFrameNumber() != 3) return {};
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 	rc.top = 20;
 	rc.bottom = 40;
 

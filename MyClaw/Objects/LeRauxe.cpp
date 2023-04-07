@@ -88,9 +88,9 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 	PostLogic(elapsedTime);
 }
-D2D1_RECT_F LeRauxe::GetRect()
+Rectangle2D LeRauxe::GetRect()
 {
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	rc.left = -7.f + 15 * (!_forward);
 	rc.right = rc.left + 50;
@@ -108,9 +108,9 @@ D2D1_RECT_F LeRauxe::GetRect()
 
 	return rc;
 }
-pair<D2D1_RECT_F, int8_t> LeRauxe::GetAttackRect()
+pair<Rectangle2D, int8_t> LeRauxe::GetAttackRect()
 {
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (_ani == ANIMATION_STRIKE)
 	{
@@ -250,7 +250,7 @@ bool LeRauxe::checkForHurts()
 	{
 		if (isClawProjectile(p))
 		{
-			if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
+			if (_saveCurrRect.intersects(p->GetRect()))
 			{
 				if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
 				else _ani = ANIMATION_BLOCKHIGH;

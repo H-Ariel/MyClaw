@@ -53,7 +53,7 @@ class PowerupSparkle
 private:
 	shared_ptr<Animation> _ani;
 public:
-	static D2D1_RECT_F* playerRc;
+	static Rectangle2D* playerRc;
 
 	PowerupSparkle()
 	{
@@ -86,7 +86,7 @@ public:
 	}
 	void Draw() { _ani->Draw(); }
 };
-D2D1_RECT_F* PowerupSparkle::playerRc = nullptr;
+Rectangle2D* PowerupSparkle::playerRc = nullptr;
 
 
 Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
@@ -491,12 +491,15 @@ void Player::Logic(uint32_t elapsedTime)
 						// try lift powder keg
 						for (PowderKeg* p : ActionPlane::getPowderKegs())
 						{
-							if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
+							if (_saveCurrRect.intersects(p->GetRect()))
 							{
-								_aniName = "LIFT";
-								p->raise();
-								_raisedPowderKeg = p;
-								break;
+								if (p->raise())
+								{
+									_raisedPowderKeg = p;
+									_aniName = "LIFT";
+									_zPressed = false;
+									break;
+								}
 							}
 						}
 					}
@@ -539,7 +542,7 @@ void Player::Logic(uint32_t elapsedTime)
 				if (type != ClawProjectile::Types::None)
 				{
 					WwdObject obj;
-					D2D1_RECT_F atkRc = GetAttackRect().first;
+					Rectangle2D atkRc = GetAttackRect().first;
 					obj.x = (int32_t)position.x;
 					obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
 					obj.z = ZCoord;
@@ -571,7 +574,7 @@ void Player::Draw()
 		s.second.Draw();
 	}
 }
-D2D1_RECT_F Player::GetRect()
+Rectangle2D Player::GetRect()
 {
 	/*
 	TODO: special idea: create more method to calculate the
@@ -580,7 +583,7 @@ D2D1_RECT_F Player::GetRect()
 		  (also for `GetAttackRect`)
 	*/
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	rc.left = -7.f + 15 * (!_forward);
 	rc.right = rc.left + 44;
@@ -608,9 +611,9 @@ D2D1_RECT_F Player::GetRect()
 
 	return rc;
 }
-pair<D2D1_RECT_F, int8_t> Player::GetAttackRect()
+pair<Rectangle2D, int8_t> Player::GetAttackRect()
 {
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 	int8_t damage = 0;
 
 	if (_aniName == "SWIPE")
@@ -793,14 +796,14 @@ bool Player::checkForHurts()
 
 	if (isTakeDamage() || _damageRest > 0) return false;
 
-	pair<D2D1_RECT_F, int8_t> atkRc;
+	pair<Rectangle2D, int8_t> atkRc;
 
 	for (BaseEnemy* enemy : ActionPlane::getEnemies())
 	{
 		if (enemy->isAttack())
 		{
 			atkRc = enemy->GetAttackRect();
-			if (_lastAttackRect != atkRc.first && CollisionDistances::isCollision(_saveCurrRect, atkRc.first))
+			if (_lastAttackRect != atkRc.first && _saveCurrRect.intersects(atkRc.first))
 			{
 				_lastAttackRect = atkRc.first;
 				_health -= atkRc.second;
@@ -818,7 +821,7 @@ bool Player::checkForHurts()
 		}
 		if (isEnemyProjectile(p))
 		{
-			if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
+			if (_saveCurrRect.intersects(p->GetRect()))
 			{
 				_health -= p->getDamage();
 				p->removeObject = true;
@@ -833,7 +836,7 @@ bool Player::checkForHurts()
 	{
 		if (p != _lastPowderKegExplos && (damage = p->getDamage()) > 0)
 		{
-			if (CollisionDistances::isCollision(_saveCurrRect, p->GetRect()))
+			if (_saveCurrRect.intersects(p->GetRect()))
 			{
 				_health -= damage;
 				_lastPowderKegExplos = p;
@@ -845,7 +848,7 @@ bool Player::checkForHurts()
 	for (FloorSpike* s : ActionPlane::getFloorSpikes())
 	{
 		if ((damage = s->getDamage()) > 0)
-			if (CollisionDistances::isCollision(_saveCurrRect, s->GetRect()))
+			if (_saveCurrRect.intersects(s->GetRect()))
 			{
 				_health -= damage;
 				return true;
@@ -855,7 +858,7 @@ bool Player::checkForHurts()
 	for (GooVent* g : ActionPlane::getGooVents())
 	{
 		if ((damage = g->getDamage()) > 0)
-			if (CollisionDistances::isCollision(_saveCurrRect, g->GetRect()))
+			if (_saveCurrRect.intersects(g->GetRect()))
 			{
 				_health -= damage;
 				return true;
@@ -865,7 +868,7 @@ bool Player::checkForHurts()
 	for (Laser* l : ActionPlane::getLasers())
 	{
 		if ((damage = l->getDamage()) > 0)
-			if (CollisionDistances::isCollision(_saveCurrRect, l->GetRect()))
+			if (_saveCurrRect.intersects(l->GetRect()))
 			{
 				_health -= damage;
 				return true;

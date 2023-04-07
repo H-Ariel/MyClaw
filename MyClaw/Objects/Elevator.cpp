@@ -129,7 +129,7 @@ void Elevator::mainMainLogic(uint32_t elapsedTime)
 
 	if (_player->elevator == this)
 	{
-		const D2D1_RECT_F thisRc = GetRect(), playerRc = _player->GetRect();
+		const Rectangle2D thisRc = GetRect(), playerRc = _player->GetRect();
 
 		// if no collision - disable the 'elevator mode' for player
 		if (playerRc.right < thisRc.left || thisRc.right < playerRc.left)

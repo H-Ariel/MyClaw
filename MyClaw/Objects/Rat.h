@@ -10,7 +10,7 @@ public:
 	Rat(const WwdObject& obj, Player* player);
 
 	void makeAttack() override;
-	pair<D2D1_RECT_F, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int8_t> GetAttackRect() override;
 
 	bool isDuck() const override;
 	bool isTakeDamage() const override;
@@ -26,8 +26,8 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
-	D2D1_RECT_F GetRect() override;
-	pair<D2D1_RECT_F, int8_t> GetAttackRect() override;
+	Rectangle2D GetRect() override;
+	pair<Rectangle2D, int8_t> GetAttackRect() override;
 
 private:
 	Cannon* _cannon;

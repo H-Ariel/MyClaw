@@ -46,14 +46,14 @@ bool PowderKeg::shouldMakeExplos()
 {
 	if (_state == State::Stand)
 	{
-		D2D1_RECT_F thisRc = GetRect();
+		Rectangle2D thisRc = GetRect();
 		bool isClawBullet;
 
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
 			if ((isClawBullet = p->isClawBullet()) || (p->isClawDynamite() && p->getDamage() > 0)) // ATTENTION: =, not ==
 			{
-				if (CollisionDistances::isCollision(thisRc, p->GetRect()))
+				if (thisRc.intersects(p->GetRect()))
 				{
 					if (isClawBullet)
 						p->removeObject = true;
@@ -63,7 +63,7 @@ bool PowderKeg::shouldMakeExplos()
 		}
 		for (PowderKeg* p : ActionPlane::getPowderKegs())
 		{
-			if (p->_state == State::Explos && CollisionDistances::isCollision(thisRc, p->GetRect()))
+			if (p->_state == State::Explos && thisRc.intersects(p->GetRect()))
 			{
 				return true;
 			}
@@ -80,10 +80,15 @@ bool PowderKeg::shouldMakeExplos()
 	return false;
 }
 
-void PowderKeg::raise()
+bool PowderKeg::raise()
 {
+	if (_state != State::Stand)
+		return false;
+
 	_state = State::Raised;
 	_ani = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath(_imageSet) + "/014.PID")->getCopy();
+
+	return true;
 }
 void PowderKeg::thrown(bool forward)
 {

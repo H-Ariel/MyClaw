@@ -16,7 +16,7 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 	{
 	case States::Down:
 		// check if Claw touch the flag
-		if (CollisionDistances::isCollision(_objRc, _player->GetRect()))
+		if (_objRc.intersects(_player->GetRect()))
 		{
 			_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/CHECKPOINT/RISE.ANI", _imageSetPath);
 			_ani->position = position;

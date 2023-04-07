@@ -48,9 +48,6 @@
     <ClCompile Include="ClawLevelEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionDistances.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameMainApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -240,6 +237,12 @@
     <ClCompile Include="Objects\Fish.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Gabriel.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Rectangle2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -276,9 +279,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ClawLevelEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionDistances.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Exception.hpp">
@@ -419,9 +419,6 @@
     <ClInclude Include="Objects\GroundBlower.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\GooVent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\Wolvington.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
@@ -460,6 +457,15 @@
     </ClInclude>
     <ClInclude Include="Objects\Fish.h">
       <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Gabriel.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\GooVent.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

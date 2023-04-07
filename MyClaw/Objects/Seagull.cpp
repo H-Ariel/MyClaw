@@ -45,8 +45,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 		break;
 
 	case States::DiveIn:
-		if (position.y >= _player->position.y ||
-			CollisionDistances::isCollision(GetRect(), _player->GetRect()))
+		if (position.y >= _player->position.y || GetRect().intersects(_player->GetRect()))
 		{
 			_state = States::DiveOut;
 			_isAttack = false;
@@ -76,7 +75,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 	_isAttack = _state == States::DiveIn;
 }
 
-pair<D2D1_RECT_F, int8_t> Seagull::GetAttackRect()
+pair<Rectangle2D, int8_t> Seagull::GetAttackRect()
 {
 	if (_state == States::Fly) return {};
 	return { _saveCurrRect, _damage };

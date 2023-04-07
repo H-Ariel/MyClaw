@@ -32,7 +32,7 @@ void Crate::Logic(uint32_t elapsedTime)
 	_ani->Logic(elapsedTime);
 
 
-	if (_player->isAttack() && CollisionDistances::isCollision(_objRc, _player->GetAttackRect().first))
+	if (_player->isAttack() && _objRc.intersects(_player->GetAttackRect().first))
 	{
 		_ani->updateFrames = true;
 	}
@@ -43,7 +43,7 @@ void Crate::Logic(uint32_t elapsedTime)
 			if (isProjectile(p))
 			{
 				if (p->isClawDynamite() && p->getDamage() == 0) continue;
-				if (CollisionDistances::isCollision(_objRc, p->GetRect()))
+				if (_objRc.intersects(p->GetRect()))
 				{
 					_ani->updateFrames = true;
 					if (p->isClawBullet() || isinstance<EnemyProjectile>(p))
@@ -58,7 +58,7 @@ void Crate::Logic(uint32_t elapsedTime)
 			int8_t damage = p->getDamage();
 			if (damage > 0)
 			{
-				if (CollisionDistances::isCollision(_objRc, p->GetRect()))
+				if (_objRc.intersects(p->GetRect()))
 				{
 					_ani->updateFrames = true;
 					break;

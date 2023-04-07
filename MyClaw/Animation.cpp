@@ -153,7 +153,7 @@ void Animation::Draw()
 {
 	_images[_currImgIdx]->image->Draw();
 }
-D2D1_RECT_F Animation::GetRect()
+Rectangle2D Animation::GetRect()
 {
 	return _images[_currImgIdx]->image->GetRect();
 }

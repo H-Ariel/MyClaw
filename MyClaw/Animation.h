@@ -30,7 +30,7 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
-	D2D1_RECT_F GetRect() override;
+	Rectangle2D GetRect() override;
 
 	void updateImageData() const; // position, mirrored, etc.
 	void reset(); // reset to the first frame

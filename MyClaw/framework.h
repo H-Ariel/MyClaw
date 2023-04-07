@@ -39,7 +39,7 @@
 #include <set>
 
 #include "Exception.hpp"
-#include "CollisionDistances.h"
+#include "Rectangle2D.h"
 #include "PathManager.h"
 
 
@@ -115,10 +115,6 @@ inline bool contains(const string& str1, const string& str2) { return str1.find(
 inline float getRandomFloat(float a, float b) { return (float)rand() / RAND_MAX * (b - a) + a; }
 inline int getRandomInt(int a, int b) { return rand() % (b - a + 1) + a; }
 
-inline bool operator!=(const D2D1_RECT_F& a, const D2D1_RECT_F& b)
-{
-	return memcmp(&a, &b, sizeof(D2D1_RECT_F)) != 0;
-}
 
 // check if `arr` contains `val`
 template <class ArrT, class ValT>

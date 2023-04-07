@@ -47,7 +47,7 @@ void LevelHUD::Draw()
 
 	for (shared_ptr<Animation> ani : { _health, _weaponAni[_player->getCurrentWeapon()], _lives })
 	{
-		D2D1_RECT_F rc = ani->GetRect();
+		Rectangle2D rc = ani->GetRect();
 		ani->position = { winWidth - (rc.right - rc.left) / 2 + _offset.x, pos.y };
 		ani->updateImageData();
 		ani->Draw();

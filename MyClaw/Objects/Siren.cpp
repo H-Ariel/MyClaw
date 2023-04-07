@@ -9,7 +9,7 @@ Siren::Siren(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F Siren::GetRect()
+Rectangle2D Siren::GetRect()
 {
 	_saveCurrRect.left = position.x - 20;
 	_saveCurrRect.right = position.x + 20;
@@ -18,7 +18,7 @@ D2D1_RECT_F Siren::GetRect()
 	return _saveCurrRect;
 }
 
-pair<D2D1_RECT_F, int8_t> Siren::GetAttackRect()
+pair<Rectangle2D, int8_t> Siren::GetAttackRect()
 {
 	return {};
 }

@@ -139,7 +139,6 @@
     <ClCompile Include="BufferReader.cpp" />
     <ClCompile Include="BufferWriter.cpp" />
     <ClCompile Include="ClawLevelEngine.cpp" />
-    <ClCompile Include="CollisionDistances.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
     <ClCompile Include="ImagesManager.cpp" />
     <ClCompile Include="LevelHUD.cpp" />
@@ -162,6 +161,7 @@
     <ClCompile Include="Objects\Elevator.cpp" />
     <ClCompile Include="Objects\Fish.cpp" />
     <ClCompile Include="Objects\FloorSpike.cpp" />
+    <ClCompile Include="Objects\Gabriel.cpp" />
     <ClCompile Include="Objects\GooVent.cpp" />
     <ClCompile Include="Objects\GroundBlower.cpp" />
     <ClCompile Include="Objects\HermitCrab.cpp" />
@@ -192,6 +192,7 @@
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="PidPalette.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Rectangle2D.cpp" />
     <ClCompile Include="RezArchive.cpp" />
     <ClCompile Include="UIBaseButton.cpp" />
     <ClCompile Include="UIBaseElement.cpp" />
@@ -214,7 +215,6 @@
     <ClInclude Include="BufferReader.h" />
     <ClInclude Include="BufferWriter.h" />
     <ClInclude Include="ClawLevelEngine.h" />
-    <ClInclude Include="CollisionDistances.h" />
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameMainApp.h" />
@@ -238,6 +238,7 @@
     <ClInclude Include="Objects\Elevator.h" />
     <ClInclude Include="Objects\Fish.h" />
     <ClInclude Include="Objects\FloorSpike.h" />
+    <ClInclude Include="Objects\Gabriel.h" />
     <ClInclude Include="Objects\GooVent.h" />
     <ClInclude Include="Objects\GroundBlower.h" />
     <ClInclude Include="Objects\HermitCrab.h" />
@@ -268,6 +269,7 @@
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="PidPalette.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Rectangle2D.h" />
     <ClInclude Include="RezArchive.h" />
     <ClInclude Include="UIBaseButton.h" />
     <ClInclude Include="UIBaseElement.h" />

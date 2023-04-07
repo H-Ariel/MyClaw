@@ -9,7 +9,7 @@ PegLeg::PegLeg(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F PegLeg::GetRect()
+Rectangle2D PegLeg::GetRect()
 {
 	_saveCurrRect.left = position.x - 20;
 	_saveCurrRect.right = position.x + 20;
@@ -18,8 +18,8 @@ D2D1_RECT_F PegLeg::GetRect()
 	return _saveCurrRect;
 }
 
-pair<D2D1_RECT_F, int8_t> PegLeg::GetAttackRect()
+pair<Rectangle2D, int8_t> PegLeg::GetAttackRect()
 {
 	// the PegLeg use the pistol, so this stay empty
-	return pair<D2D1_RECT_F, int8_t>();
+	return {};
 }

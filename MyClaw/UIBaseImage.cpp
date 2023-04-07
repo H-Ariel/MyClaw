@@ -14,9 +14,9 @@ void UIBaseImage::Draw()
 	WindowManager::drawBitmap(_bitmap, GetRect(), mirrored);
 }
 
-D2D1_RECT_F UIBaseImage::GetRect()
+Rectangle2D UIBaseImage::GetRect()
 {
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 	rc.left = position.x - size.width / 2;
 	if (mirrored) rc.left -= offset.x;
 	else rc.left += offset.x;

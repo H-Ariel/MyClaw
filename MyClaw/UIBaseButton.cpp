@@ -29,12 +29,12 @@ UIBaseButton::~UIBaseButton()
 void UIBaseButton::Logic(uint32_t)
 {
 	// ensure that the drawn button is also the virtual button (set up button position by its center)
-	D2D1_RECT_F rc = GetRect();
+	Rectangle2D rc = GetRect();
 	SetWindowPos(_btnWnd, 0, (int)rc.left, (int)rc.top, (int)(rc.right - rc.left), (int)(rc.bottom - rc.top), SWP_NOOWNERZORDER);
 }
-D2D1_RECT_F UIBaseButton::GetRect()
+Rectangle2D UIBaseButton::GetRect()
 {
-	return RectF(
+	return Rectangle2D(
 		position.x - size.width / 2,
 		position.y - size.height / 2,
 		position.x + size.width / 2,

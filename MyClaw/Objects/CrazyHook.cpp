@@ -7,7 +7,7 @@ CrazyHook::CrazyHook(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F CrazyHook::GetRect()
+Rectangle2D CrazyHook::GetRect()
 {
 	_saveCurrRect.left = position.x - 20;
 	_saveCurrRect.right = position.x + 20;
@@ -16,11 +16,11 @@ D2D1_RECT_F CrazyHook::GetRect()
 	return _saveCurrRect;
 }
 
-pair<D2D1_RECT_F, int8_t> CrazyHook::GetAttackRect()
+pair<Rectangle2D, int8_t> CrazyHook::GetAttackRect()
 {
 	if (!_isAttack) return {};
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (_forward)
 	{

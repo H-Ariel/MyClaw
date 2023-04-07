@@ -16,7 +16,7 @@ SoundObjectBase::SoundObjectBase(const WwdObject& obj, Player* player)
 		_volume = 100;
 	}
 
-	D2D1_RECT_F newRc = {};
+	Rectangle2D newRc;
 
 	if (obj.minX != 0)
 	{
@@ -93,7 +93,7 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 {
 	if (!_isInCollision)
 	{
-		if (CollisionDistances::isCollision(_player->GetRect(), _objRc))
+		if (_player->GetRect().intersects(_objRc))
 		{
 			_isInCollision = true;
 			if (_timesCounter == -1 || _timesCounter > 0)
@@ -114,7 +114,7 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 	}
 	else
 	{
-		_isInCollision = CollisionDistances::isCollision(_player->GetRect(), _objRc);
+		_isInCollision = _player->GetRect().intersects(_objRc);
 	}
 }
 void SoundTrigger::Reset()
@@ -129,7 +129,7 @@ AmbientSound::AmbientSound(const WwdObject& obj, Player* player)
 }
 void AmbientSound::Logic(uint32_t elapsedTime)
 {
-	if (CollisionDistances::isCollision(_player->GetRect(), _objRc))
+	if (_player->GetRect().intersects(_objRc))
 	{
 		if (!_isPlaying)
 		{

@@ -77,6 +77,6 @@ void HermitCrab::stopFalling(float collisionSize)
 	myMemCpy(_maxX, position.x + 32);
 }
 
-pair<D2D1_RECT_F, int8_t> HermitCrab::GetAttackRect() { return {}; }
+pair<Rectangle2D, int8_t> HermitCrab::GetAttackRect() { return {}; }
 bool HermitCrab::isDuck() const { return true; }
 bool HermitCrab::isTakeDamage() const { return false; }

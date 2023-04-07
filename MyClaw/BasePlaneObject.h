@@ -13,7 +13,7 @@ public:
 	BasePlaneObject(const WwdObject& obj, Player* player = nullptr);
 	virtual void Logic(uint32_t elapsedTime) override = 0;
 	virtual void Draw() override;
-	virtual D2D1_RECT_F GetRect() override;
+	virtual Rectangle2D GetRect() override;
 	virtual void Reset(); // this method is called after Captain Claw is dead. It can be used to reset the object
 
 	const uint32_t ZCoord;
@@ -33,12 +33,12 @@ class BaseStaticPlaneObject : public BasePlaneObject
 public:
 	BaseStaticPlaneObject(const WwdObject& obj, Player* player = nullptr);
 	void Logic(uint32_t elapsedTime) override;
-	D2D1_RECT_F GetRect() override;
+	Rectangle2D GetRect() override;
 
 protected:
 	void setObjectRectangle(); // call this after defination of animation
 
-	const D2D1_RECT_F _objRc;
+	const Rectangle2D _objRc;
 };
 
 

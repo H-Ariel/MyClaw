@@ -9,7 +9,7 @@ public:
 	Rope(const WwdObject& obj, Player* player);
 
 	void Logic(uint32_t elapsedTime) override;
-	D2D1_RECT_F GetRect() override;
+	Rectangle2D GetRect() override;
 
 	bool isPassedHalf() const { return _ani->isPassedHalf(); }
 };

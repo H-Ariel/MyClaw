@@ -26,7 +26,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, Player* player)
 	_ani = AssetsManager::createAnimationFromFromPidImage(
 		PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
 
-	myMemCpy(_objRc, RectF((float)obj.minX, (float)obj.minY, (float)obj.maxX, (float)obj.maxY));
+	myMemCpy(_objRc, Rectangle2D((float)obj.minX, (float)obj.minY, (float)obj.maxX, (float)obj.maxY));
 }
 
 void TProjectilesShooter::Logic(uint32_t elapsedTime)
@@ -34,7 +34,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 	if (_restTime > 0)
 		_restTime -= elapsedTime;
 
-	if (_restTime <= 0 && CollisionDistances::isCollision(_objRc, _player->GetRect()))
+	if (_restTime <= 0 && _objRc.intersects(_player->GetRect()))
 	{
 		ActionPlane::addPlaneObject(DBG_NEW TProjectile(_ani, _damage,
 			_speed, { position.x + _offset.x, position.y + _offset.y }));

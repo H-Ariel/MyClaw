@@ -11,9 +11,9 @@ TownGuard::TownGuard(const WwdObject& obj, Player* player)
 	position.y += 8; // maybe they got their calculations wrong...
 }
 
-D2D1_RECT_F TownGuard::GetRect()
+Rectangle2D TownGuard::GetRect()
 {
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (_type == Type::Guard1)
 	{
@@ -43,11 +43,11 @@ D2D1_RECT_F TownGuard::GetRect()
 	return rc;
 }
 
-pair<D2D1_RECT_F, int8_t> TownGuard::GetAttackRect()
+pair<Rectangle2D, int8_t> TownGuard::GetAttackRect()
 {
 	if (!_isAttack) return {};
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (_forward)
 	{

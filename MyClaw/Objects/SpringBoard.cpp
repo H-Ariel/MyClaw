@@ -23,7 +23,7 @@ SpringBoard::SpringBoard(const WwdObject& obj, Player* player)
 	_ani = _idle;
 
 	_ani->updateImageData();
-	D2D1_RECT_F rc = _ani->GetRect();
+	Rectangle2D rc = _ani->GetRect();
 
 	if (obj.imageSet == "SPRINGYFERN") // level 4. TODO: something else
 	{

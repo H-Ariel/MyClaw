@@ -9,7 +9,7 @@ public:
 	UIBaseImage(ID2D1Bitmap* bitmap, D2D1_POINT_2F offset = {});
 	
 	void Draw() override;
-	D2D1_RECT_F GetRect() override;
+	Rectangle2D GetRect() override;
 
 	shared_ptr<UIBaseImage> getCopy();
 

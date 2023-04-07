@@ -7,4 +7,4 @@ UIBaseElement::~UIBaseElement() {}
 void UIBaseElement::Logic(uint32_t elapsedTime) {}
 void UIBaseElement::Draw() {}
 
-D2D1_RECT_F UIBaseElement::GetRect() { return RectF(); }
+Rectangle2D UIBaseElement::GetRect() { return {}; }

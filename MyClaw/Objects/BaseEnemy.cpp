@@ -58,7 +58,7 @@ void BossGem::Logic(uint32_t elapsedTime)
 {
 	if (_speed.x == 0 && _speed.y == 0)
 	{
-		if (CollisionDistances::isCollision(GetRect(), _player->GetRect()))
+		if (GetRect().intersects(_player->GetRect()))
 		{
 			_player->collectItem(this);
 		}
@@ -289,7 +289,7 @@ void BaseEnemy::PostLogic(uint32_t elapsedTime)
 	_ani->Logic(elapsedTime);
 }
 
-D2D1_RECT_F BaseEnemy::GetRect()
+Rectangle2D BaseEnemy::GetRect()
 {
 	_saveCurrRect = _ani->GetRect();
 	return _saveCurrRect;
@@ -338,14 +338,14 @@ void BaseEnemy::stopMovingRight(float collisionSize)
 	_forward = false;
 	_isStanding = true;
 }
-bool BaseEnemy::checkForHurt(pair<D2D1_RECT_F, uint8_t> hurtData)
+bool BaseEnemy::checkForHurt(pair<Rectangle2D, uint8_t> hurtData)
 {
 	if (removeObject)
 		return true;
 
 	if (hurtData.second > 0)
 	{
-		if (!isTakeDamage() && _lastAttackRect != hurtData.first && CollisionDistances::isCollision(_saveCurrRect, hurtData.first))
+		if (!isTakeDamage() && _lastAttackRect != hurtData.first && _saveCurrRect.intersects(hurtData.first))
 		{
 			_lastAttackRect = hurtData.first;
 			_health -= hurtData.second;

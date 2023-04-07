@@ -10,7 +10,7 @@ Mercat::Mercat(const WwdObject& obj, Player* player)
 {
 }
 
-D2D1_RECT_F Mercat::GetRect()
+Rectangle2D Mercat::GetRect()
 {
 	_saveCurrRect.left = position.x - 20;
 	_saveCurrRect.right = position.x + 20;
@@ -19,11 +19,11 @@ D2D1_RECT_F Mercat::GetRect()
 	return _saveCurrRect;
 }
 
-pair<D2D1_RECT_F, int8_t> Mercat::GetAttackRect()
+pair<Rectangle2D, int8_t> Mercat::GetAttackRect()
 {
 	if (!_isAttack) return {};
 
-	D2D1_RECT_F rc = {};
+	Rectangle2D rc;
 
 	if (_forward)
 	{
@@ -71,7 +71,7 @@ void Mercat::makeAttack()
 
 				WwdObject obj;
 				obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
-				obj.y = (int32_t)position.y ;
+				obj.y = (int32_t)position.y;
 				obj.z = ZCoord;
 				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 				obj.damage = 10;
