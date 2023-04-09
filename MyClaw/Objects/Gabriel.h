@@ -15,8 +15,6 @@ public:
 private:
 	void makeAttack() override;
 	bool checkForHurts() override;
-
-	int32_t _switchCannonTime;
 };
 
 class GabrielCannon : public BaseStaticPlaneObject
@@ -35,6 +33,9 @@ class CannonSwitch : public BaseStaticPlaneObject
 public:
 	CannonSwitch(const WwdObject& obj, Player* player);
 	void Logic(uint32_t elapsedTime) override;
+
+private:
+	int32_t _switchCannonTime;
 };
 
 class CannonButton : public BaseStaticPlaneObject

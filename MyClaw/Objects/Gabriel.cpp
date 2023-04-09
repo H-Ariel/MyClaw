@@ -1,55 +1,53 @@
 #include "Gabriel.h"
 #include "../Player.h"
 #include "../AssetsManager.h"
+#include "../ActionPlane.h"
 
 
+// TODO: move into classes
 static bool riseCannon = false;
-static bool operateSwitch = false;
 static bool operateCannon = false;
-static bool resetCannon = false;
+static bool makeGabrielHurt = false;
 
 
-#define GABRIAL_ANI_CHANGE_CANNON_SWITCH _animations["STRIKE6"] // TODO: rename
 #define ANIMATION_IDLE _animations["IDLE1"]
+#define ANIMATION_HITLOW _animations["HITLOW"]
+
+#define SWITCH_CANNON_TIME 3000 // TODO: change to 5000
 
 
 // TODO: continue write Gabriel class
 
+// TODO: change the `KILLFALL4` to the original death animations' sequence
 
 Gabriel::Gabriel(const WwdObject& obj, Player* player)
-	: BaseBoss(obj, player, 10, "", "HITHIGH", "HITLOW", "KILLFALL4", "", "", ""),
-	_switchCannonTime(0)
+	: BaseBoss(obj, player, 10, "", "HITHIGH", "HITLOW", "KILLFALL4", "", "", "")
 {
 	_forward = false;
 	_ani = ANIMATION_IDLE;
+	_health = 5; // we need hurt Gabriel only 5 times to win
 }
 
 void Gabriel::Logic(uint32_t elapsedTime)
 {
 	PreLogic(elapsedTime);
 
-	if (_ani != GABRIAL_ANI_CHANGE_CANNON_SWITCH)
+	// TODO: write logic (throw bombs, send pirates)
+
+	if (makeGabrielHurt)
 	{
-		_switchCannonTime += elapsedTime;
-	}
-	
-	if (_switchCannonTime >= 3000) // use cannon every 3 seconds
-	{
-		_switchCannonTime = 0;
-		operateSwitch = true;
-		_ani = GABRIAL_ANI_CHANGE_CANNON_SWITCH;
-		_forward = true;
+		_ani = ANIMATION_HITLOW;
 		_ani->reset();
+		_ani->loopAni = false;
+		makeGabrielHurt = false;
+		_health -= 1;
+		removeObject = (_health <= 0);
 	}
 
-	if (_ani == GABRIAL_ANI_CHANGE_CANNON_SWITCH && _ani->isFinishAnimation())
+	if (_ani == ANIMATION_HITLOW && _ani->isFinishAnimation())
 	{
 		_ani = ANIMATION_IDLE;
-		_forward = false;
-	//	resetCannon = true;
-		_ani->reset();
 	}
-
 
 	PostLogic(elapsedTime);
 }
@@ -93,13 +91,16 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 {
 	const shared_ptr<const Animation> prevAni = _ani;
 
-	if (_ani == _rest && _ani->isFinishAnimation())
+	if (_ani->isFinishAnimation())
 	{
-		_ani = _home;
-	}
-	else if ((_ani == _horzfire || _ani == _vertfire) && _ani->isFinishAnimation())
-	{
-		resetCannon = true;
+		if (_ani == _vertfire)
+		{
+			_ani = _rest;
+		}
+		else if (_ani == _horzfire || _ani == _rest)
+		{
+			_ani = _home;
+		}
 	}
 
 
@@ -111,31 +112,32 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 
 	if (operateCannon)
 	{
+		// send cannonball
+		WwdObject obj;
+		obj.x = (int32_t)position.x;
+		obj.y = (int32_t)position.y;
+		obj.z = ZCoord;
+		obj.damage = 15;
+
 		if (_ani == _rise)
-		{
-			_ani = _horzfire;
-		}
-		else
 		{
 			_ani = _vertfire;
-		}
-		operateCannon = false;
-	}
-
-	if (resetCannon)
-	{
-		if (_ani == _rise)
-		{
-			_ani = _rest;
+			obj.speedY = -DEFAULT_PROJECTILE_SPEED;
+			makeGabrielHurt = true;
 		}
 		else
 		{
- 			_ani = _home;
+			_ani = _horzfire;
+			obj.speedX = -DEFAULT_PROJECTILE_SPEED;
+			obj.y += 56;
 		}
 
-		resetCannon = false;
+		ActionPlane::addPlaneObject(DBG_NEW CannonBall(obj));
+
+		operateCannon = false;
 	}
 	
+
 	if (prevAni != _ani)
 	{
 		_ani->reset();
@@ -151,7 +153,7 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 
 
 CannonSwitch::CannonSwitch(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player)
+	: BaseStaticPlaneObject(obj, player), _switchCannonTime(SWITCH_CANNON_TIME)
 {
 	_ani = AssetsManager::loadAnimation(PathManager::getAnimationSetPath(obj.imageSet) + "/SWITCH.ANI", PathManager::getImageSetPath(obj.imageSet));
 	_ani->position = position;
@@ -160,12 +162,13 @@ CannonSwitch::CannonSwitch(const WwdObject& obj, Player* player)
 
 void CannonSwitch::Logic(uint32_t elapsedTime)
 {
-	if (operateSwitch)
+	if (_switchCannonTime > 0)
+		_switchCannonTime -= elapsedTime;
+	if (_switchCannonTime <= 0) // use cannon every SWITCH_CANNON_TIME milliseconds
 	{
-		operateSwitch = false;
+		_switchCannonTime = SWITCH_CANNON_TIME;
 		operateCannon = true;
 		_ani->reset();
-		_ani->position = position;
 		_ani->loopAni = false;
 	}
 
@@ -191,11 +194,10 @@ void CannonButton::Logic(uint32_t elapsedTime)
 {
 	_ani->Logic(elapsedTime);
 
-	if (_ani == _pressed )
+	if (_ani == _pressed)
 	{
 		_pressedTime += elapsedTime;
-
-		if (_pressedTime >= 2500)
+		if (_pressedTime >= 1500)
 		{
 			_ani = _idle;
 			_pressedTime = 0;
@@ -203,10 +205,7 @@ void CannonButton::Logic(uint32_t elapsedTime)
 	}
 	else
 	{
-		if (
-			_player->GetRect().intersects(_objRc) ||
-			_player->GetAttackRect().first.intersects(_objRc)
-			)
+		if (_player->GetRect().intersects(_objRc) || _player->GetAttackRect().first.intersects(_objRc))
 		{
 			_ani = _pressed;
 			riseCannon = true;

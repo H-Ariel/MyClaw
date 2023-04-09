@@ -88,15 +88,13 @@ Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string
 		else if (startsWith(aniPath, "LEVEL6/ANIS/WOLVINGTON/BLOCK")) duration /= 2;
 		else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/HORZFIRE.ANI") duration *= 8;
 		else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/VERTIFIRE.ANI") duration *= 8;
+		if (imageSetPath == "LEVEL8/IMAGES/GABRIELCANNON" && imageFileId == 0) imageFileId = 1;
+		else if (aniPath == "LEVEL8/ANIS/CANNONSWITCH/SWITCH.ANI") duration *= 2;
 		else if (aniPath == "LEVEL9/ANIS/SAWBLADE/SPIN.ANI") duration *= 4;
 
 		sprintf(imgName, "/%03d.PID", imageFileId); // according to `fixFileName` at `RezArchive.cpp`
 
-		_images.push_back(DBG_NEW FrameData(
-			imageSetPath + imgName,
-			duration,
-			soundFilePath
-		));
+		_images.push_back(DBG_NEW FrameData(imageSetPath + imgName, duration, soundFilePath));
 	}
 
 	reset();
