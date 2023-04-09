@@ -269,7 +269,7 @@ bool BaseEnemy::PreLogic(uint32_t elapsedTime)
 
 	if (checkForHurts())
 	{
-		_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH; // TODO: getRandomValue
+		_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
 		_ani->reset();
 		_ani->loopAni = false;
 		_ani->mirrored = _forward;
@@ -412,5 +412,8 @@ BaseBoss::~BaseBoss()
 bool BaseBoss::checkForHurts()
 {
 	throw Exception(__FUNCTION__ ": Write Me!");
-	return checkForHurt(_player->GetAttackRect());
+//	return checkForHurt(_player->GetAttackRect());
+
+	// TODO: maybe- `if BaseEnemy::checkForHurts(): block`
+	// or- implement this function (copy from other bosses)
 }

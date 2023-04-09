@@ -15,6 +15,7 @@ static bool makeGabrielHurt = false;
 #define ANIMATION_SEND_PIRATES	_animations["STRIKE2"]
 #define ANIMATION_ACTION_CANNON _animations["STRIKE3"]
 #define ANIMATION_THROW_BOMBS	_animations["STRIKE7"]
+#define ANIMATION_BLOCK			_animations["BLOCKED"]
 
 #define OPERATE_CANNON_TIME	7000
 #define THROW_BOMBS_TIME	4500
@@ -27,20 +28,24 @@ static bool makeGabrielHurt = false;
 
 Gabriel::Gabriel(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 10, "", "HITHIGH", "HITLOW", "KILLFALL4", "", "", "")
-	, _throwBombsTime(THROW_BOMBS_TIME), _sendPiratesTime(SEND_PIRATES_TIME)
-	, _canThrowBomb(true), _canSendPirates(true)
+	, _throwBombsTime(THROW_BOMBS_TIME), _canThrowBombs(true)
+	, _sendPiratesTime(SEND_PIRATES_TIME), _canSendPirates(true)
 {
 	_forward = false;
-	setIdleAni();
+	_ani = getRandomInt(0, 1) == 0 ? _animations["IDLE1"] : _animations["IDLE2"];
 	_health = 5; // we need hurt Gabriel only 5 times to win
 }
-
 void Gabriel::Logic(uint32_t elapsedTime)
 {
-	PreLogic(elapsedTime);
+	if (!PreLogic(elapsedTime)) return;
+	if (_ani == ANIMATION_BLOCK && !_ani->isFinishAnimation())
+	{
+		PostLogic(elapsedTime);
+		return;
+	}
 
 	// throw bombs
-	if (_canThrowBomb)
+	if (_canThrowBombs)
 	{
 		_throwBombsTime -= elapsedTime;
 		if (_throwBombsTime <= 0)
@@ -67,8 +72,8 @@ void Gabriel::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_THROW_BOMBS;
 			_ani->reset();
 			_ani->loopAni = false;
-
-			_canThrowBomb = false;
+			_forward = false;
+			_canThrowBombs = false;
 		}
 	}
 
@@ -83,20 +88,9 @@ void Gabriel::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_SEND_PIRATES;
 			_ani->reset();
 			_ani->loopAni = false;
-
+			_forward = false;
 			_canSendPirates = false;
 		}
-	}
-
-
-	if (makeGabrielHurt)
-	{
-		_ani = ANIMATION_HITLOW;
-		_ani->reset();
-		_ani->loopAni = false;
-		makeGabrielHurt = false;
-		_health -= 1;
-		removeObject = (_health <= 0);
 	}
 
 	if (GabrielChangeSwitch)
@@ -104,41 +98,53 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		_ani = ANIMATION_ACTION_CANNON;
 		_ani->reset();
 		_ani->loopAni = false;
-
-		GabrielChangeSwitch = false;
 		_forward = true;
-
+		GabrielChangeSwitch = false;
 		_throwBombsTime = THROW_BOMBS_TIME; // throw bombs after `THROW_BOMBS_TIME` ms
-		_canThrowBomb = true;
+		_canThrowBombs = true;
 		_sendPiratesTime = SEND_PIRATES_TIME; // send pirates after `SEND_PIRATES_TIME` ms
 		_canSendPirates = true;
 	}
 
-	if (isIdleAni() && _ani->isFinishAnimation())
+	if (makeGabrielHurt)
 	{
-		setIdleAni();
+		_ani = ANIMATION_HITLOW;
+		_ani->reset();
+		_ani->loopAni = false;
+		_forward = false;
+		makeGabrielHurt = false;
+		_health -= 1;
+		removeObject = (_health <= 0);
+	}
+
+	if ((_ani != _animations.at("IDLE1") && _ani != _animations.at("IDLE2")) && _ani->isFinishAnimation())
+	{
+		_ani = getRandomInt(0, 1) == 0 ? _animations["IDLE1"] : _animations["IDLE2"];
 		_forward = false;
 	}
 
 	PostLogic(elapsedTime);
 }
-
-pair<Rectangle2D, int8_t> Gabriel::GetAttackRect()
-{
-	return {};
-}
-
-void Gabriel::makeAttack()
-{
-}
-
+pair<Rectangle2D, int8_t> Gabriel::GetAttackRect() { return {}; }
 bool Gabriel::checkForHurts()
 {
-	// TODO: block all CC attacks
-	return BaseEnemy::checkForHurts();
+	// block all CC attacks
+
+	int16_t health = _health; // save health value
+
+	if (BaseEnemy::checkForHurts())
+	{
+		_ani = ANIMATION_BLOCK;
+		_ani->reset();
+		_ani->loopAni = false;
+	}
+
+	// make sure value did not changed
+	_health = health;
+	removeObject = false;
+
+	return false;
 }
-
-
 
 
 GabrielCannon::GabrielCannon(const WwdObject& obj, Player* player)
@@ -157,7 +163,6 @@ GabrielCannon::GabrielCannon(const WwdObject& obj, Player* player)
 
 	_ani->position = position;
 }
-
 void GabrielCannon::Logic(uint32_t elapsedTime)
 {
 	const shared_ptr<const Animation> prevAni = _ani;
@@ -221,9 +226,6 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 }
 
 
-
-
-
 CannonSwitch::CannonSwitch(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _switchCannonTime(OPERATE_CANNON_TIME)
 {
@@ -231,7 +233,6 @@ CannonSwitch::CannonSwitch(const WwdObject& obj, Player* player)
 	_ani->position = position;
 	_ani->updateFrames = false;
 }
-
 void CannonSwitch::Logic(uint32_t elapsedTime)
 {
 	_switchCannonTime -= elapsedTime;
@@ -247,9 +248,6 @@ void CannonSwitch::Logic(uint32_t elapsedTime)
 }
 
 
-
-
-
 CannonButton::CannonButton(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player), _pressedTime(0)
 {
@@ -260,7 +258,6 @@ CannonButton::CannonButton(const WwdObject& obj, Player* player)
 
 	setObjectRectangle();
 }
-
 void CannonButton::Logic(uint32_t elapsedTime)
 {
 	_ani->Logic(elapsedTime);
