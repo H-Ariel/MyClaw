@@ -2,10 +2,12 @@
 #include "../Player.h"
 #include "../AssetsManager.h"
 #include "../ActionPlane.h"
+#include "RedTailPirate.h"
 
 
 // TODO: move into classes
 static bool riseCannon = false;
+static bool cannonIsUp = false;
 static bool operateCannon = false;
 static bool GabrielChangeSwitch = false;
 static bool makeGabrielHurt = false;
@@ -22,10 +24,7 @@ static bool makeGabrielHurt = false;
 #define SEND_PIRATES_TIME	2000
 
 
-// TODO: continue write Gabriel class
-
 // TODO: change the `KILLFALL4` to the original death animations' sequence
-
 Gabriel::Gabriel(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 10, "", "HITHIGH", "HITLOW", "KILLFALL4", "", "", "")
 	, _throwBombsTime(THROW_BOMBS_TIME), _canThrowBombs(true)
@@ -83,8 +82,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		_sendPiratesTime -= elapsedTime;
 		if (_sendPiratesTime <= 0)
 		{
-			// TODO: send pirate (RedTailPirate that follow CC)
-
+			ActionPlane::addPlaneObject(DBG_NEW Gabriel_RedTailPirate(_player));
 			_ani = ANIMATION_SEND_PIRATES;
 			_ani->reset();
 			_ani->loopAni = false;
@@ -186,9 +184,11 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 		riseCannon = false;
 	}
 
+	cannonIsUp = _ani == _rise;
+
 	if (operateCannon)
 	{
-		// send cannonball
+		// shoot cannon ball
 		WwdObject obj;
 		obj.x = (int32_t)position.x;
 		obj.y = (int32_t)position.y;
@@ -243,40 +243,74 @@ void CannonSwitch::Logic(uint32_t elapsedTime)
 		_ani->reset();
 		_ani->loopAni = false;
 	}
-
 	_ani->Logic(elapsedTime);
 }
 
 
 CannonButton::CannonButton(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _pressedTime(0)
+	: BaseStaticPlaneObject(obj, player)
 {
 	_idle = AssetsManager::loadAnimation(PathManager::getAnimationSetPath(obj.imageSet) + "/IDLE.ANI", PathManager::getImageSetPath(obj.imageSet));
 	_pressed = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
-
 	_ani = _idle;
-
 	setObjectRectangle();
 }
 void CannonButton::Logic(uint32_t elapsedTime)
 {
 	_ani->Logic(elapsedTime);
 
-	if (_ani == _pressed)
+	if (_ani == _pressed && !cannonIsUp)
 	{
-		_pressedTime += elapsedTime;
-		if (_pressedTime >= 1500)
-		{
-			_ani = _idle;
-			_pressedTime = 0;
-		}
+		_ani = _idle;
+	}
+	else if (_player->GetRect().intersects(_objRc) || _player->GetAttackRect().first.intersects(_objRc))
+	{
+		_ani = _pressed;
+		riseCannon = true;
+	}
+}
+
+
+Gabriel_RedTailPirate::Gabriel_RedTailPirate(Player* player)
+	: BaseDynamicPlaneObject({}, player), _isJumping(false)
+{
+	position = { 43479, 5020 };
+	myMemCpy(ZCoord, 2000U);
+	_speed.x = -0.3f;
+	_ani = AssetsManager::loadCopyAnimation("LEVEL8/ANIS/REDTAILPIRATE/ADVANCE.ANI", "LEVEL8/IMAGES/REDTAILPIRATE");
+}
+void Gabriel_RedTailPirate::Logic(uint32_t elapsedTime)
+{
+	_speed.y += GRAVITY * elapsedTime;
+	position.x += _speed.x * elapsedTime;
+	position.y += _speed.y * elapsedTime;
+	if (position.x < 43200 && !_isJumping)
+	{
+		_speed.y = -0.7f;
+		_isJumping = true;
+		position.y -= 1;
+		_ani->updateFrames = false;
+	}
+	_ani->position = position;
+	_ani->Logic(elapsedTime);
+}
+void Gabriel_RedTailPirate::stopFalling(float collisionSize)
+{
+	if (_isJumping)
+	{
+		WwdObject obj;
+		obj.x = (int32_t)position.x;
+		obj.y = (int32_t)position.y;
+		obj.z = ZCoord;
+		obj.minX = 42560;
+		obj.maxX = 43200;
+		obj.imageSet = "LEVEL_REDTAILPIRATE";
+		ActionPlane::addPlaneObject(new RedTailPirate(obj, _player, true));
+
+		removeObject = true;
 	}
 	else
 	{
-		if (_player->GetRect().intersects(_objRc) || _player->GetAttackRect().first.intersects(_objRc))
-		{
-			_ani = _pressed;
-			riseCannon = true;
-		}
+		BaseDynamicPlaneObject::stopFalling(collisionSize);
 	}
 }

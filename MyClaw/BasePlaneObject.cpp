@@ -5,8 +5,8 @@
 BasePlaneObject::BasePlaneObject(const WwdObject& obj, Player* player)
 	: UIBaseElement({ (float)obj.x, (float)obj.y }), _player(player),
 	ZCoord(obj.z), removeObject(false), _ani(nullptr),
-	_isMirrored(obj.drawFlags& WwdObject::Mirror), // TODO: parse all flags
-	_isVisible(!(obj.drawFlags& WwdObject::NoDraw)) {}
+	_isMirrored(obj.drawFlags & WwdObject::Mirror), // TODO: parse all flags
+	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)) {}
 void BasePlaneObject::Draw()
 {
 	// TODO: some object need only `_ani->Draw();`, so we need create 2 functions...

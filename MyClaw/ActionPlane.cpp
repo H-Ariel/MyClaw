@@ -58,8 +58,8 @@
 
 // TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
-//#define DRAW_RECTANGLES
-//#define USE_ENEMIES
+#define DRAW_RECTANGLES
+#define USE_ENEMIES
 //#undef LOW_DETAILS
 
 
@@ -250,7 +250,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		obj->Logic(elapsedTime);
 
 		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj)
-			|| isinstance<ClawDynamite>(obj) || isinstance<PowderKeg>(obj)
+			|| isinstance<ClawDynamite>(obj) || isinstance<PowderKeg>(obj) || isinstance<Gabriel_RedTailPirate>(obj)
 			|| (isinstance<Item>(obj) && ((BaseDynamicPlaneObject*)obj)->getSpeedY() != 0))
 		{
 			checkCollides((BaseDynamicPlaneObject*)obj, [obj] { obj->removeObject = true; });

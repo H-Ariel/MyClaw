@@ -7,9 +7,7 @@ class Gabriel : public BaseBoss
 {
 public:
 	Gabriel(const WwdObject& obj, Player* player);
-
 	void Logic(uint32_t elapsedTime) override;
-
 	pair<Rectangle2D, int8_t> GetAttackRect() override;
 
 private:
@@ -23,7 +21,6 @@ class GabrielCannon : public BaseStaticPlaneObject
 {
 public:
 	GabrielCannon(const WwdObject& obj, Player* player);
-
 	void Logic(uint32_t elapsedTime) override;
 
 private:
@@ -48,5 +45,17 @@ public:
 
 private:
 	shared_ptr<Animation> _idle, _pressed;
-	int32_t _pressedTime;
+};
+
+
+// a pirate that Gabriel sends
+class Gabriel_RedTailPirate : public BaseDynamicPlaneObject
+{
+public:
+	Gabriel_RedTailPirate(Player* player);
+	void Logic(uint32_t elapsedTime) override;
+	void stopFalling(float collisionSize) override;
+
+private:
+	bool _isJumping;
 };
