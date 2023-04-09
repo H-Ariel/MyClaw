@@ -182,6 +182,34 @@ CrabBomb::~CrabBomb()
 	}
 }
 
+GabrielBomb::GabrielBomb(const WwdObject& obj)
+	: Projectile(obj, PathManager::getAnimationPath("LEVEL_GABRIELBOMB_FALL"),
+		PathManager::getImageSetPath("LEVEL_GABRIELBOMB"))
+{
+}
+GabrielBomb::~GabrielBomb()
+{
+	if (removeObject)
+	{
+		WwdObject obj;
+		obj.x = (int32_t)position.x;
+		obj.y = (int32_t)position.y;
+		obj.z = ZCoord;
+		ActionPlane::addPlaneObject(DBG_NEW RatBombExplos(obj, "LEVEL_GABRIELBOMB_EXPLODE", "LEVEL_GABRIELBOMB"));
+	}
+}
+void GabrielBomb::Logic(uint32_t elapsedTime)
+{
+	if (!removeObject )
+		_speed.y += GRAVITY * elapsedTime;
+	Projectile::Logic(elapsedTime);
+}
+void GabrielBomb::stopFalling(float collisionSize)
+{
+	position.y -= collisionSize;
+	position.y-= 32;
+	removeObject = true;
+}
 
 CannonBall::CannonBall(const WwdObject& obj)
 	: Projectile(obj, PathManager::getImageSetPath("LEVEL_CANNONBALL")) {}
@@ -245,6 +273,7 @@ bool isEnemyProjectile(BasePlaneObject* obj)
 		typeid(EnemyProjectile).hash_code(),
 		typeid(RatBomb).hash_code(),
 		typeid(CrabBomb).hash_code(),
+		typeid(GabrielBomb).hash_code(),
 		typeid(CannonBall).hash_code(),
 		typeid(MercatTrident).hash_code(),
 		typeid(SirenProjectile).hash_code(),

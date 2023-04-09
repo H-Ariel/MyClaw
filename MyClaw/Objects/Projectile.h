@@ -90,6 +90,15 @@ public:
 	~CrabBomb();
 };
 
+class GabrielBomb : public Projectile // TODO: combine with `RatBomb`
+{
+public:
+	GabrielBomb(const WwdObject& obj);
+	~GabrielBomb();
+	void Logic(uint32_t elapsedTime) override;
+	void stopFalling(float collisionSize) override;
+};
+
 class CannonBall : public Projectile
 {
 public:

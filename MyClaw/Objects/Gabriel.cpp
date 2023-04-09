@@ -7,13 +7,18 @@
 // TODO: move into classes
 static bool riseCannon = false;
 static bool operateCannon = false;
+static bool GabrielChangeSwitch = false;
 static bool makeGabrielHurt = false;
 
 
-#define ANIMATION_IDLE _animations["IDLE1"]
-#define ANIMATION_HITLOW _animations["HITLOW"]
+#define ANIMATION_HITLOW		_animations["HITLOW"]
+#define ANIMATION_SEND_PIRATES	_animations["STRIKE2"]
+#define ANIMATION_ACTION_CANNON _animations["STRIKE3"]
+#define ANIMATION_THROW_BOMBS	_animations["STRIKE7"]
 
-#define SWITCH_CANNON_TIME 3000 // TODO: change to 5000
+#define OPERATE_CANNON_TIME	7000
+#define THROW_BOMBS_TIME	4500
+#define SEND_PIRATES_TIME	2000
 
 
 // TODO: continue write Gabriel class
@@ -22,9 +27,11 @@ static bool makeGabrielHurt = false;
 
 Gabriel::Gabriel(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 10, "", "HITHIGH", "HITLOW", "KILLFALL4", "", "", "")
+	, _throwBombsTime(THROW_BOMBS_TIME), _sendPiratesTime(SEND_PIRATES_TIME)
+	, _canThrowBomb(true), _canSendPirates(true)
 {
 	_forward = false;
-	_ani = ANIMATION_IDLE;
+	setIdleAni();
 	_health = 5; // we need hurt Gabriel only 5 times to win
 }
 
@@ -32,7 +39,55 @@ void Gabriel::Logic(uint32_t elapsedTime)
 {
 	PreLogic(elapsedTime);
 
-	// TODO: write logic (throw bombs, send pirates)
+	// throw bombs
+	if (_canThrowBomb)
+	{
+		_throwBombsTime -= elapsedTime;
+		if (_throwBombsTime <= 0)
+		{
+			WwdObject obj;
+			obj.x = (int32_t)position.x;
+			obj.y = (int32_t)position.y;
+			obj.z = ZCoord;
+			obj.damage = 5;
+			obj.speedY = -800;
+
+			int32_t speedXs[] = {
+				getRandomInt(-600, -467),
+				getRandomInt(-467, -334),
+				getRandomInt(-334, -200)
+			};
+
+			for (int i = 0; i < 3; i++) // throw 3 bombs
+			{
+				obj.speedX = speedXs[i];
+				ActionPlane::addPlaneObject(DBG_NEW GabrielBomb(obj));
+			}
+
+			_ani = ANIMATION_THROW_BOMBS;
+			_ani->reset();
+			_ani->loopAni = false;
+
+			_canThrowBomb = false;
+		}
+	}
+
+	// send pirates
+	if (_canSendPirates)
+	{
+		_sendPiratesTime -= elapsedTime;
+		if (_sendPiratesTime <= 0)
+		{
+			// TODO: send pirate (RedTailPirate that follow CC)
+
+			_ani = ANIMATION_SEND_PIRATES;
+			_ani->reset();
+			_ani->loopAni = false;
+
+			_canSendPirates = false;
+		}
+	}
+
 
 	if (makeGabrielHurt)
 	{
@@ -44,9 +99,25 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		removeObject = (_health <= 0);
 	}
 
-	if (_ani == ANIMATION_HITLOW && _ani->isFinishAnimation())
+	if (GabrielChangeSwitch)
 	{
-		_ani = ANIMATION_IDLE;
+		_ani = ANIMATION_ACTION_CANNON;
+		_ani->reset();
+		_ani->loopAni = false;
+
+		GabrielChangeSwitch = false;
+		_forward = true;
+
+		_throwBombsTime = THROW_BOMBS_TIME; // throw bombs after `THROW_BOMBS_TIME` ms
+		_canThrowBomb = true;
+		_sendPiratesTime = SEND_PIRATES_TIME; // send pirates after `SEND_PIRATES_TIME` ms
+		_canSendPirates = true;
+	}
+
+	if (isIdleAni() && _ani->isFinishAnimation())
+	{
+		setIdleAni();
+		_forward = false;
 	}
 
 	PostLogic(elapsedTime);
@@ -135,6 +206,7 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 		ActionPlane::addPlaneObject(DBG_NEW CannonBall(obj));
 
 		operateCannon = false;
+		GabrielChangeSwitch = true;
 	}
 	
 
@@ -153,7 +225,7 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 
 
 CannonSwitch::CannonSwitch(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _switchCannonTime(SWITCH_CANNON_TIME)
+	: BaseStaticPlaneObject(obj, player), _switchCannonTime(OPERATE_CANNON_TIME)
 {
 	_ani = AssetsManager::loadAnimation(PathManager::getAnimationSetPath(obj.imageSet) + "/SWITCH.ANI", PathManager::getImageSetPath(obj.imageSet));
 	_ani->position = position;
@@ -162,11 +234,10 @@ CannonSwitch::CannonSwitch(const WwdObject& obj, Player* player)
 
 void CannonSwitch::Logic(uint32_t elapsedTime)
 {
-	if (_switchCannonTime > 0)
-		_switchCannonTime -= elapsedTime;
-	if (_switchCannonTime <= 0) // use cannon every SWITCH_CANNON_TIME milliseconds
+	_switchCannonTime -= elapsedTime;
+	if (_switchCannonTime <= 0) // use cannon every OPERATE_CANNON_TIME milliseconds
 	{
-		_switchCannonTime = SWITCH_CANNON_TIME;
+		_switchCannonTime = OPERATE_CANNON_TIME;
 		operateCannon = true;
 		_ani->reset();
 		_ani->loopAni = false;

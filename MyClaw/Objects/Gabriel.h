@@ -15,6 +15,16 @@ public:
 private:
 	void makeAttack() override;
 	bool checkForHurts() override;
+
+	bool isIdleAni() const { return _ani == _animations.at("IDLE1") || _ani == _animations.at("IDLE2"); }
+	void setIdleAni() {
+		_ani = getRandomInt(0, 1) == 0
+			? _animations["IDLE1"] : _animations["IDLE2"];
+	}
+
+	int32_t _throwBombsTime;
+	int32_t _sendPiratesTime;
+	bool _canThrowBomb, _canSendPirates;
 };
 
 class GabrielCannon : public BaseStaticPlaneObject
