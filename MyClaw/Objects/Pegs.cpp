@@ -1,6 +1,5 @@
 #include "Pegs.h"
 #include "../AssetsManager.h"
-#include "../WindowManager.h"
 
 
 TogglePeg::TogglePeg(const WwdObject& obj, Player* player)
@@ -51,6 +50,14 @@ TogglePeg::TogglePeg(const WwdObject& obj, Player* player)
 	}
 
 	setObjectRectangle();
+
+	/*
+	* TODO: used in level 8
+	if (obj.imageSet == "LEVEL_CANNON2")
+	{
+		myMemCpy(_objRc.top, _objRc.top + 32);
+	}
+	*/
 }
 void TogglePeg::Logic(uint32_t elapsedTime)
 {

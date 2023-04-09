@@ -15,7 +15,7 @@ public:
 		int8_t damage, string walkAni, string hit1, string hit2,
 		string fallDead, string strikeAni, string strikeDuckAni,
 		string shootAni, string shootDuckAni, string projectileAniDir,
-		bool noTreasures = false);
+		float walkingSpeed, bool noTreasures = false);
 	~BaseEnemy();
 
 	virtual void Logic(uint32_t elapsedTime) override;

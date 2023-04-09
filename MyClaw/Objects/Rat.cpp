@@ -11,7 +11,7 @@
 // the rat has its own Logic so we don't need pass all arguments
 Rat::Rat(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 1, 0, "WALK", "DEAD", "DEAD",
-		"DEAD", "", "", "THROWEASTWEST", "", "", true)
+		"DEAD", "", "", "THROWEASTWEST", "", "", 0.1f, true)
 {
 }
 
@@ -54,12 +54,11 @@ bool Rat::isTakeDamage() const { return false; }
 #define PUNKRAT_STAND	_animations.at("STAND")
 #define PUNKRAT_STRIKE	_animations.at("STRIKE")
 #define PUNKRAT_WALK	_animations.at("WALK")
-#define PUNKRAT_SPEED	0.07f
 
 //TODO: use all animation
 PunkRat::PunkRat(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 1, 0, "WALK", "IDLE",
-		"IDLE", "IDLE", "", "", "", "", "", true)
+		"IDLE", "IDLE", "", "", "", "", "", 0.07f, true)
 {
 	WwdObject cannonData(obj);
 	cannonData.imageSet = "LEVEL_CANNON";
@@ -72,8 +71,6 @@ PunkRat::PunkRat(const WwdObject& obj, Player* player)
 	Rectangle2D cRc = _cannon->GetRect();
 	myMemCpy(_minX, cRc.left);
 	myMemCpy(_maxX, cRc.right);
-
-	_speed.x = PUNKRAT_SPEED;
 }
 PunkRat::~PunkRat()
 {
@@ -97,8 +94,8 @@ void PunkRat::Logic(uint32_t elapsedTime)
 	const shared_ptr<Animation> prevAni = _ani;
 
 	position.x += _speed.x * elapsedTime;
-	if (position.x < _minX) { stopMovingLeft(_minX - position.x); _ani = PUNKRAT_STAND; _speed.x = PUNKRAT_SPEED; }
-	else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); _ani = PUNKRAT_STAND; _speed.x = -PUNKRAT_SPEED; }
+	if (position.x < _minX) { stopMovingLeft(_minX - position.x); _ani = PUNKRAT_STAND; }
+	else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); _ani = PUNKRAT_STAND; }
 
 	if (_ani == PUNKRAT_STAND)
 	{

@@ -3,7 +3,7 @@
 
 RobberThief::RobberThief(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL",
-		"", "", "STRIKE1", "STRIKE2", PathManager::getImageSetPath("LEVEL_ARROW"))
+		"", "", "STRIKE1", "STRIKE2", PathManager::getImageSetPath("LEVEL_ARROW"), 0.1f)
 {
 }
 

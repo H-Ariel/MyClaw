@@ -3,7 +3,7 @@
 
 RedTailPirate::RedTailPirate(const WwdObject& obj, Player* player, bool noTreasures)
 	: BaseEnemy(obj, player, 12, 10, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "", "", "", noTreasures)
+		"HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "", "", "", 0.2f, noTreasures)
 {
 }
 

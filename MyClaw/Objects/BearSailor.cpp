@@ -18,7 +18,7 @@ STRIKE4 - I couldn't figure it out
 
 BearSailor::BearSailor(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 14, 20, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "KILLFALL", "STRIKE1", "", "", "", "")
+		"HITLOW", "KILLFALL", "STRIKE1", "", "", "", "", 0.1f)
 {
 }
 

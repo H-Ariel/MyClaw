@@ -3,7 +3,7 @@
 
 CrazyHook::CrazyHook(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 12, 10, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "", "", "")
+		"HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "", "", "", 0.15f)
 {
 }
 

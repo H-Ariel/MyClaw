@@ -5,7 +5,7 @@
 
 Siren::Siren(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 10, 0, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "KILLFALL", "", "", "", "", "")
+		"HITLOW", "KILLFALL", "", "", "", "", "", 0.1f)
 {
 }
 

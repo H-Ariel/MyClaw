@@ -163,7 +163,7 @@ void LeRauxe::stopFalling(float collisionSize)
 	
 	if (_ani == ANIMATION_JUMPBACK)
 	{
-		stopMovingLeft(0);
+		stopMovingLeft(0); // TODO: maybe use `stopMovingRight`? or both?
 		_ani = ANIMATION_WALK;
 	}
 }

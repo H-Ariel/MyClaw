@@ -5,7 +5,7 @@
 
 PegLeg::PegLeg(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 12, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
-		"KILLFALL", "", "", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS")
+		"KILLFALL", "", "", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS", 0.15f)
 {
 }
 

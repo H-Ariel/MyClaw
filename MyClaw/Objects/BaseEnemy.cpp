@@ -83,7 +83,7 @@ void BossGem::Logic(uint32_t elapsedTime)
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,
 	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
-	string projectileAniDir, bool noTreasures)
+	string projectileAniDir, float walkingSpeed, bool noTreasures)
 	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
 	_isStanding(false), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni),
 	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
@@ -112,8 +112,8 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 		myMemCpy(_maxX, position.x + 32);
 	}
 
-	_speed.x = ENEMY_PATROL_SPEED;
-
+//	_speed.x = ENEMY_PATROL_SPEED;
+	_speed.x = walkingSpeed;
 
 	if (_isStaticEnemy)
 	{
@@ -325,16 +325,14 @@ vector<Item*> BaseEnemy::getItems()
 void BaseEnemy::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
-
-	_speed.x = ENEMY_PATROL_SPEED;
+	_speed.x = -_speed.x;
 	_forward = true;
 	_isStanding = true;
 }
 void BaseEnemy::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
-
-	_speed.x = -ENEMY_PATROL_SPEED;
+	_speed.x = -_speed.x;
 	_forward = false;
 	_isStanding = true;
 }
@@ -391,7 +389,7 @@ BaseBoss::BaseBoss(const WwdObject& obj, Player* player,
 	int8_t damage, string walkAni, string hit1, string hit2, string fallDead,
 	string strikeAni, string shootAni, string projectileAniDir)
 	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead,
-		strikeAni, "", shootAni, "", projectileAniDir, true),
+		strikeAni, "", shootAni, "", projectileAniDir, 0, true),
 	_hitsCuonter(1), _blockClaw(false), _canJump(true), _gemPos({ obj.speedX, obj.speedY })
 {
 }

@@ -6,7 +6,7 @@
 
 Mercat::Mercat(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 15, 10, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "KILLFALL", "", "", "", "", "")
+		"HITLOW", "KILLFALL", "", "", "", "", "", 0.1f)
 {
 }
 

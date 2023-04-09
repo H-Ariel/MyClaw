@@ -58,7 +58,7 @@
 
 // TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
-#define DRAW_RECTANGLES
+//#define DRAW_RECTANGLES
 #define USE_ENEMIES
 //#undef LOW_DETAILS
 

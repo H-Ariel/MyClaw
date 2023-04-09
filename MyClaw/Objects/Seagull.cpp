@@ -10,7 +10,7 @@ inline float calcSpeed(float srcPos, float dstPos, int msTime = 500)
 
 Seagull::Seagull(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 1, 10, "FLYING", "FEATHEREXPLODE",
-		"FEATHERFLOAT", "KILLFALL", "", "", "", "", ""),
+		"FEATHERFLOAT", "KILLFALL", "", "", "", "", "", ENEMY_PATROL_SPEED),
 	_state(States::Fly), _minY((float)obj.y), _maxY((float)obj.y + 192)
 {
 }

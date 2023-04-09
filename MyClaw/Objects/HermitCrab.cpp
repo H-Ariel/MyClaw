@@ -10,7 +10,7 @@
 
 HermitCrab::HermitCrab(const WwdObject& obj, Player* player, bool isFromNest)
 	: BaseEnemy(obj, player, 1, 10, "FASTADVANCE", "HIT", "HIT", "KILLFALL",
-		"STRIKE1", "", "STRIKE1", "", ""), _isFromNest(isFromNest)
+		"STRIKE1", "", "STRIKE1", "", "", 0.1f), _isFromNest(isFromNest)
 {
 	if (isFromNest)
 	{

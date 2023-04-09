@@ -9,7 +9,7 @@
 
 Fish::Fish(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 1, 10, "SWIM", "HIT", "HIT",
-		"KILLFALL", "", "", "", "", "", true), _yPos((float)obj.y)
+		"KILLFALL", "", "", "", "", "", 0.1f, true), _yPos((float)obj.y)
 {
 }
 
