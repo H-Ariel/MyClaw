@@ -27,20 +27,20 @@ private:
 	shared_ptr<Animation> _home, _rest, _rise, _horzfire, _vertfire;
 };
 
-class CannonSwitch : public BaseStaticPlaneObject
+class GabrielCannonSwitch : public BaseStaticPlaneObject
 {
 public:
-	CannonSwitch(const WwdObject& obj, Player* player);
+	GabrielCannonSwitch(const WwdObject& obj, Player* player);
 	void Logic(uint32_t elapsedTime) override;
 
 private:
 	int32_t _switchCannonTime;
 };
 
-class CannonButton : public BaseStaticPlaneObject
+class GabrielCannonButton : public BaseStaticPlaneObject
 {
 public:
-	CannonButton(const WwdObject& obj, Player* player);
+	GabrielCannonButton(const WwdObject& obj, Player* player);
 	void Logic(uint32_t elapsedTime) override;
 
 private:
@@ -49,10 +49,10 @@ private:
 
 
 // a pirate that Gabriel sends
-class Gabriel_RedTailPirate : public BaseDynamicPlaneObject
+class GabrielRedTailPirate : public BaseDynamicPlaneObject
 {
 public:
-	Gabriel_RedTailPirate(Player* player);
+	GabrielRedTailPirate(Player* player);
 	void Logic(uint32_t elapsedTime) override;
 	void stopFalling(float collisionSize) override;
 

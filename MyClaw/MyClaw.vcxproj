@@ -168,6 +168,7 @@
     <ClCompile Include="Objects\Item.cpp" />
     <ClCompile Include="Objects\Katherine.cpp" />
     <ClCompile Include="Objects\Laser.cpp" />
+    <ClCompile Include="Objects\Marrow.cpp" />
     <ClCompile Include="Objects\Mercat.cpp" />
     <ClCompile Include="Objects\Officer.cpp" />
     <ClCompile Include="Objects\PegLeg.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="Objects\Item.h" />
     <ClInclude Include="Objects\Katherine.h" />
     <ClInclude Include="Objects\Laser.h" />
+    <ClInclude Include="Objects\Marrow.h" />
     <ClInclude Include="Objects\Mercat.h" />
     <ClInclude Include="Objects\Officer.h" />
     <ClInclude Include="Objects\PegLeg.h" />

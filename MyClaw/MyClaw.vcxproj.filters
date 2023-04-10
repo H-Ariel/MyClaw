@@ -243,6 +243,9 @@
     <ClCompile Include="Rectangle2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Marrow.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -466,6 +469,9 @@
     </ClInclude>
     <ClInclude Include="Objects\GooVent.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Marrow.h">
+      <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

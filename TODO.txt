@@ -1,3 +1,4 @@
+* if CC die when he fight boss we should return CC to the boss start area and reset boss
 * do not use `int8_t`. maybe `int32_t` or regular `int`
 * find perfect speeds for enemies
 * create a class for phisics calculation and use it to manage movement (like Box2D)

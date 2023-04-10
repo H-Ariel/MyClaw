@@ -38,6 +38,7 @@
 #include "Objects/Siren.h"
 #include "Objects/Fish.h"
 #include "Objects/Gabriel.h"
+#include "Objects/Marrow.h"
 
 
 #define EMPTY_TILE -1
@@ -250,7 +251,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		obj->Logic(elapsedTime);
 
 		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj)
-			|| isinstance<ClawDynamite>(obj) || isinstance<PowderKeg>(obj) || isinstance<Gabriel_RedTailPirate>(obj)
+			|| isinstance<ClawDynamite>(obj) || isinstance<PowderKeg>(obj) || isinstance<GabrielRedTailPirate>(obj)
 			|| (isinstance<Item>(obj) && ((BaseDynamicPlaneObject*)obj)->getSpeedY() != 0))
 		{
 			checkCollides((BaseDynamicPlaneObject*)obj, [obj] { obj->removeObject = true; });
@@ -830,11 +831,19 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	}
 	else if (obj.logic == "CannonSwitch")
 	{
-		_objects.push_back(DBG_NEW CannonSwitch(obj, _player));
+		_objects.push_back(DBG_NEW GabrielCannonSwitch(obj, _player));
 	}
 	else if (obj.logic == "CannonButton")
 	{
-		_objects.push_back(DBG_NEW CannonButton(obj, _player));
+		_objects.push_back(DBG_NEW GabrielCannonButton(obj, _player));
+	}
+	else if (obj.logic == "Marrow")
+	{
+		ADD_ENEMY(DBG_NEW Marrow(obj, _player));
+	}
+	else if (obj.logic == "Parrot")
+	{
+		ADD_ENEMY(DBG_NEW MarrowParrot(obj, _player));
 	}
 
 	//	throw Exception("TODO: logic=" + obj.logic);

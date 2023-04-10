@@ -14,7 +14,7 @@ ColorF WindowManager::_backgroundColor(0);
 
 void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
 {
-	_hWnd = CreateWindow(WindowClassName, L"", WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
+	_hWnd = CreateWindow(WindowClassName, L"", WS_OVERLAPPEDWINDOW, 100, 100, 1200, 600, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
 	WINAPI_THROW_IF_NULL(_hWnd);
 	ShowWindow(_hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(_hWnd);
