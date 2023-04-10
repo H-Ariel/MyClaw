@@ -4,8 +4,16 @@
 #include "../ActionPlane.h"
 
 
-static bool openFloor = false, removeFloor = true;
+enum class GlobalState : int8_t
+{
+	ParrotAttackClaw = 0,
+	ParrotReturnToMarrow = 1, AddFloor = 1,
+	ClawAttackMarrow = 2, ParrotIdle = 2,
+	ParrotTakeMarrow = 0, RemoveFloor = 0,
+};
 
+static GlobalState globalState = GlobalState::RemoveFloor;
+static int floorCounter = 0; // use to sync floors
 
 #define MARROW_ANIMATION_BLOCK _animations["BLOCK"]
 
@@ -46,6 +54,19 @@ void Marrow::Logic(uint32_t elapsedTime)
 		
 
 	}
+
+
+	if (globalState == GlobalState::AddFloor)
+	{
+		if (floorCounter == 2)
+		{
+			// floor finish their job
+			floorCounter = 0;
+			globalState = GlobalState::ParrotAttackClaw;
+		}
+	}
+
+
 
 	PostLogic(elapsedTime);
 }
@@ -95,23 +116,29 @@ bool Marrow::checkForHurts()
 
 MarrowParrot::MarrowParrot(const WwdObject& obj, Player* player)
 	: BaseEnemy(obj, player, 3, 10, "FLY", "HIT", "HIT", "KILLFALL", "STRIKE1", "",
-		"", "", "", MARROW_PARROT_SPEED, true), _state(State::Fly), _hitsCounter(0),
+		"", "", "", MARROW_PARROT_SPEED, true), _hitsCounter(0), _initialPosition({}),
 	_flyRect((float)obj.minX, (float)obj.minY - 32.f, (float)obj.maxX, (float)obj.maxY - 32.f)
 {
+	myMemCpy(_initialPosition, position);
 	_forward = false;
 	_speed = { 0, MARROW_PARROT_SPEED };
 }
 
 void MarrowParrot::Logic(uint32_t elapsedTime)
 {
-	if (!PreLogic(elapsedTime))
-		return;
+	if (!PreLogic(elapsedTime)) return;
 
 	position.x += _speed.x * elapsedTime;
 	position.y += _speed.y * elapsedTime;
 
-
-	if (_state == State::Fly)
+	if (globalState == GlobalState::ParrotAttackClaw
+		
+		|| (
+			globalState == GlobalState::ParrotReturnToMarrow &&
+			position.x != _initialPosition.x &&
+			abs(position.y - _initialPosition.y) > 5 
+			)
+		)
 	{
 		if (position.y > _flyRect.bottom)
 		{
@@ -137,6 +164,15 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 		{
 			_speed = { 0, -MARROW_PARROT_SPEED };
 		}
+
+
+		if (_hitsCounter == 1) // todo: change to 3
+		{
+			_hitsCounter = 0;
+			// TODO: return to initial position
+
+			globalState = GlobalState::AddFloor;
+		}
 	}
 
 
@@ -152,22 +188,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	}
 	
 	
-	if (_hitsCounter == 1) // todo: change to 3
-	{
-		_hitsCounter = 0;
-		// TODO: return to initial position
-
-		if (removeFloor)
-		{
-			openFloor = true;
-			removeFloor = false;
-		}
-		else
-		{
-			openFloor = false;
-			removeFloor = true;
-		}
-	}
+	
 	
 	
 	
@@ -227,21 +248,23 @@ void MarrowFloor::Logic(uint32_t elapsedTime)
 	tryCatchPlayer();
 
 
-	if (openFloor)
+	if (globalState == GlobalState::AddFloor)
 	{
-		position.x += _speedX * elapsedTime;
+		position.x -= _speedX * elapsedTime;
 		if (position.x < _minX)
 		{
 			position.x = _minX;
+			floorCounter += 1;
 		}
 		else if (position.x > _maxX)
 		{
 			position.x = _maxX;
+			floorCounter += 1;
 		}
 	}
-	else if (removeFloor)
+	else if (globalState == GlobalState::RemoveFloor)
 	{
-		position.x -= _speedX * elapsedTime;
+		position.x += _speedX * elapsedTime;
 		if (position.x < _minX)
 		{
 			position.x = _minX;

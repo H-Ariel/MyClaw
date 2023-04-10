@@ -34,14 +34,9 @@ public:
 private:
 	bool checkForHurts() override;
 
-	enum class State : int8_t {
-		Fly,
-		TakeMarrow
-	};
-
 	const Rectangle2D _flyRect;
+	const D2D1_POINT_2F _initialPosition;
 	int8_t _hitsCounter;
-	State _state;
 };
 
 
