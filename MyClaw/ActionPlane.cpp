@@ -60,7 +60,7 @@
 // TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#define DRAW_RECTANGLES
-#define USE_ENEMIES
+//#define USE_ENEMIES
 //#undef LOW_DETAILS
 
 
@@ -844,6 +844,10 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	else if (obj.logic == "Parrot")
 	{
 		ADD_ENEMY(DBG_NEW MarrowParrot(obj, _player));
+	}
+	else if (obj.logic == "MarrowFloor")
+	{
+		_objects.push_back(DBG_NEW MarrowFloor(obj, _player));
 	}
 
 	//	throw Exception("TODO: logic=" + obj.logic);

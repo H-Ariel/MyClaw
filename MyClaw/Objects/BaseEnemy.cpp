@@ -353,7 +353,7 @@ bool BaseEnemy::checkForHurt(pair<Rectangle2D, uint8_t> hurtData)
 	}
 	return false;
 }
-bool BaseEnemy::checkForHurts()
+bool BaseEnemy::checkForHurts() // TODO: combine all `checkForHurts` methods from all enemies
 {
 	if (checkForHurt(_player->GetAttackRect()))
 		return true;

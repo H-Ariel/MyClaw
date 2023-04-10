@@ -32,5 +32,28 @@ public:
 	void bounceTop() override;
 
 private:
+	bool checkForHurts() override;
+
+	enum class State : int8_t {
+		Fly,
+		TakeMarrow
+	};
+
 	const Rectangle2D _flyRect;
+	int8_t _hitsCounter;
+	State _state;
+};
+
+
+
+class MarrowFloor : public BaseStaticPlaneObject
+{
+public:
+	MarrowFloor(const WwdObject& obj, Player* player);
+	void Logic(uint32_t elapsedTime) override;
+
+private:
+	const float _minX, _maxX;
+	float _speedX;
+	bool _isOpen;
 };
