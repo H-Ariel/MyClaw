@@ -21,7 +21,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 	if (!PreLogic(elapsedTime)) return;
 
 
-	const shared_ptr<Animation> prevAni = _ani;
+	const shared_ptr<const Animation> prevAni = _ani;
 
 	if (_hitsCuonter == 0 && _canJump)
 	{

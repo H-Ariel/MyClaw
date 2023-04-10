@@ -53,7 +53,5 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
-	const float _minX, _maxX;
-	float _speedX;
-	bool _isOpen;
+	const float _minX, _maxX, _speedX;
 };

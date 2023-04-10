@@ -1,15 +1,20 @@
 #include "Marrow.h"
 #include "../Player.h"
 #include "../AssetsManager.h"
+#include "../ActionPlane.h"
 
 
-static bool openFloor = false;
+static bool openFloor = false, removeFloor = true;
+
+
+#define MARROW_ANIMATION_BLOCK _animations["BLOCK"]
 
 
 Marrow::Marrow(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS")
 {
+	_health = 100;
 	_ani = _animations["HOME"];
 	_forward = false;
 }
@@ -17,6 +22,31 @@ Marrow::Marrow(const WwdObject& obj, Player* player)
 void Marrow::Logic(uint32_t elapsedTime)
 {
 	if (!PreLogic(elapsedTime)) return;
+	if (_ani == MARROW_ANIMATION_BLOCK)
+	{
+		if (_ani->isFinishAnimation())
+		{
+			_ani = _animations["HOME"];
+		}
+		else
+		{
+			PostLogic(elapsedTime);
+			return;
+		}
+	}
+
+
+	_blockClaw = (_hitsCuonter == 1 && !_blockClaw);
+
+	if (_hitsCuonter == 5)
+	{
+		_hitsCuonter = 0;
+
+		// TODO: open floor and move side (using parrot)
+		
+
+	}
+
 	PostLogic(elapsedTime);
 }
 
@@ -27,9 +57,35 @@ pair<Rectangle2D, int8_t> Marrow::GetAttackRect()
 
 bool Marrow::checkForHurts()
 {
+	for (Projectile* p : ActionPlane::getProjectiles())
+	{
+		if (isClawProjectile(p))
+		{
+			if (_saveCurrRect.intersects(p->GetRect()))
+			{
+				_ani = MARROW_ANIMATION_BLOCK;
+				_ani->reset();
+				return false;
+			}
+		}
+	}
+
+	if (checkForHurt(_player->GetAttackRect()))
+	{
+		if (_blockClaw)
+		{
+			_ani = MARROW_ANIMATION_BLOCK;
+			return false;
+		}
+		else
+		{
+			_hitsCuonter += 1;
+			return true;
+		}
+	}
+
 	return false;
 }
-
 
 
 
@@ -42,9 +98,7 @@ MarrowParrot::MarrowParrot(const WwdObject& obj, Player* player)
 		"", "", "", MARROW_PARROT_SPEED, true), _state(State::Fly), _hitsCounter(0),
 	_flyRect((float)obj.minX, (float)obj.minY - 32.f, (float)obj.maxX, (float)obj.maxY - 32.f)
 {
-	//	_ani = _animations["FLY"];
 	_forward = false;
-
 	_speed = { 0, MARROW_PARROT_SPEED };
 }
 
@@ -98,13 +152,21 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	}
 	
 	
-	if (_hitsCounter == 3)
+	if (_hitsCounter == 1) // todo: change to 3
 	{
 		_hitsCounter = 0;
 		// TODO: return to initial position
-		
-		// open floor
-		openFloor = true;
+
+		if (removeFloor)
+		{
+			openFloor = true;
+			removeFloor = false;
+		}
+		else
+		{
+			openFloor = false;
+			removeFloor = true;
+		}
 	}
 	
 	
@@ -152,24 +214,42 @@ bool MarrowParrot::checkForHurts()
 
 
 MarrowFloor::MarrowFloor(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _isOpen(false),
-	_minX((float)obj.minX), _maxX((float)obj.maxX), _speedX(obj.speedX / 1000.f)
+	: BaseStaticPlaneObject(obj, player),
+	_minX((float)obj.minX), _maxX((float)obj.maxX),
+	_speedX((obj.direction ? obj.speedX : -obj.speedX) / 1000.f)
 {
 	_ani = AssetsManager::createAnimationFromFromPidImage("LEVEL10/IMAGES/TRAPELEVATOR/001.PID");
+	setObjectRectangle();
 }
 
 void MarrowFloor::Logic(uint32_t elapsedTime)
 {
-	if (position.x < _minX )
-	{
-		position.x = _minX;
-		_speedX = -_speedX;
-	}
-	else if (position.x > _maxX)
-	{
-		position.x = _maxX;
-		_speedX = -_speedX;
-	}
+	tryCatchPlayer();
 
-	position.x += _speedX * elapsedTime;
+
+	if (openFloor)
+	{
+		position.x += _speedX * elapsedTime;
+		if (position.x < _minX)
+		{
+			position.x = _minX;
+		}
+		else if (position.x > _maxX)
+		{
+			position.x = _maxX;
+		}
+	}
+	else if (removeFloor)
+	{
+		position.x -= _speedX * elapsedTime;
+		if (position.x < _minX)
+		{
+			position.x = _minX;
+		}
+		else if (position.x > _maxX)
+		{
+			position.x = _maxX;
+		}
+	}
+	
 }
