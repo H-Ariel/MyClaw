@@ -39,6 +39,7 @@
 #include "Objects/Fish.h"
 #include "Objects/Gabriel.h"
 #include "Objects/Marrow.h"
+#include "Objects/Chameleon.h"
 
 
 #define EMPTY_TILE -1
@@ -605,7 +606,8 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	if (obj.logic == "FrontCandy" || obj.logic == "BehindCandy" ||
 		obj.logic == "BehindAniCandy" || obj.logic == "FrontAniCandy" ||
 		obj.logic == "DoNothing" || obj.logic == "DoNothingNormal" ||
-		obj.logic == "AniCycle" || obj.logic == "GooCoverup")
+		obj.logic == "AniCycle" || obj.logic == "GooCoverup" ||
+		obj.logic == "Sign" || obj.logic == "AniCycleNormal")
 	{
 		_objects.push_back(DBG_NEW DoNothing(obj));
 	}
@@ -695,7 +697,7 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	{
 		_objects.push_back(DBG_NEW Rope(obj, _player));
 	}
-	else if (obj.logic == "SpringBoard")
+	else if (obj.logic == "SpringBoard" || obj.logic == "WaterRock")
 	{
 		_objects.push_back(DBG_NEW SpringBoard(obj, _player));
 	}
@@ -809,6 +811,10 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 		ADD_ENEMY(DBG_NEW Fish(obj, _player));
 	}
 #endif
+	else if (obj.logic == "Chameleon")
+	{
+		ADD_ENEMY(DBG_NEW Chameleon(obj, _player));
+	}
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));

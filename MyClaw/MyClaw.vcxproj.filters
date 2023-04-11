@@ -246,6 +246,9 @@
     <ClCompile Include="Objects\Marrow.cpp">
       <Filter>Objects\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Chameleon.cpp">
+      <Filter>Objects\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h">
@@ -471,6 +474,9 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Marrow.h">
+      <Filter>Objects\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Chameleon.h">
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
