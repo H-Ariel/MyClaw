@@ -23,7 +23,6 @@ public:
 	static shared_ptr<WapWorld> loadWwdFile(const string& wwdPath);
 	static shared_ptr<WapWorld> loadLevelWwdFile(int8_t levelNumber);
 	static shared_ptr<PidPalette> loadPidPalette(const string& palPath);
-	static void setScoreScreenPalette();
 	static map<int32_t, shared_ptr<UIBaseImage>> loadPlaneTilesImages(const string& planeImagesPath);
 
 	static shared_ptr<MidiPlayer> getMidiPlayer(const string& xmiFilePath);

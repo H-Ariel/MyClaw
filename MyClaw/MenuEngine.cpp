@@ -285,6 +285,12 @@ void LevelLoadingEngine::Logic(uint32_t elapsedTime)
 }
 
 
+/*
+Because we don't have the palette of gems and
+maps I'm giving up on this part and we'll just
+show the score without the previous animations
+*/
+
 string getBGImgPath1(int l)
 {
 	string path = "STATES/BOOTY/SCREENS/";
@@ -306,94 +312,20 @@ string getBGImgPath2(int l)
 	return path;
 }
 
-shared_ptr<Animation> getSpecialItem(int l)
+
+LevelEndEngine::LevelEndEngine(int lvlNum, map<Item::Type, uint32_t> collectedTreasures)
+	: MenuEngine(false, getBGImgPath1(lvlNum)), _lvlNum(lvlNum),
+	_state(Start), _collectedTreasures(collectedTreasures)
 {
-	shared_ptr<Animation> ani;
-
-	char imagesPath[38];
-	sprintf(imagesPath, "STATES/BOOTY/IMAGES/MAPPIECE/LEVEL%03d", l);
-
-	switch (l)
-	{
-	case 1:
-	case 3:
-	case 5:
-	case 7:
-	case 9:
-	case 11: {
-		// map
-		ani = AssetsManager::createAnimationFromDirectory(imagesPath, 125, false);
-	}	break;
-
-	case 2:
-	case 4:
-	case 6:
-	case 8:
-	case 10:
-	case 12:
-	case 14:
-		// gem
-		ani = AssetsManager::loadAnimation("STATES/BOOTY/ANIS/GEM" + to_string(l) + ".ANI", imagesPath);
-		break;
-
-	case 13:
-		// has 2 gems...
-		break;
-
-	default:
-		throw Exception("invalid level number");
-	}
-
-	return ani;
-}
-D2D1_POINT_2F getItemEndPosition(int l)
-{
-	switch (l)
-	{
-	case 1: return { 0.38f, 0.32f };
-
-	default: throw Exception("invalid level number");
-	}
-	return {};
-}
-
-
-
-
-LevelEndEngine::LevelEndEngine(int lvlNum)
-	: MenuEngine(false, getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start), _levelSpecialItem(getSpecialItem(lvlNum))
-{
-	// TODO: set the palette
-
 	WindowManager::setBackgroundColor(ColorF::Black);
-
-//	_itemEndPos = getItemEndPosition(lvlNum);
-	_itemEndPos = {};
 }
 void LevelEndEngine::Logic(uint32_t elapsedTime)
 {
 	MenuEngine::Logic(elapsedTime);
 
-	_levelSpecialItem->position.x = _bgImg->position.x + _itemEndPos.x * _bgImg->size.width;
-	_levelSpecialItem->position.y = _bgImg->position.y + _itemEndPos.y * _bgImg->size.height;
-
 	switch (_state)
 	{
 	case Start:
-		break;
-
-	case InsertMap:
-		// TODO: cool animation of map piece
-	//	_elementsList.push_back(_levelSpecialItem.get());
-		_state = DrawDots;
-		break;
-
-	case DrawDots:
-		// TODO: draw dots
-		break;
-
-	case DrawGem:
-		// TODO: cool animation of gem
 		break;
 
 	case DrawScore:
@@ -401,6 +333,9 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 		_elementsList.clear();
 		_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(getBGImgPath2(_lvlNum)));
 		_state += 1;
+
+		// TODO: draw all treasures and their points
+
 		break;
 
 	case Wait:
@@ -424,4 +359,3 @@ void LevelEndEngine::playNextLevel()
 	else
 		changeEngine<LevelLoadingEngine>(_lvlNum + 1);
 }
-// TODO: continue

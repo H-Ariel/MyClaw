@@ -86,7 +86,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		}
 		else if (_player->isFinishLevel())
 		{
-			changeEngine<LevelEndEngine>(_levelNumber);
+			changeEngine<LevelEndEngine>(_levelNumber, _player->getCollectedTreasures());
 		}
 	}
 }

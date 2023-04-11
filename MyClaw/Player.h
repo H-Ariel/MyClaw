@@ -63,6 +63,7 @@ public:
 	int8_t getWeaponAmount() const { return _weaponsAmount.at(_currWeapon); }
 	uint32_t getScore() const { return _score; }
 	int32_t getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
+	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }
 
 	// used to move player
 	void keyUp(int key);

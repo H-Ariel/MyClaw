@@ -2,6 +2,7 @@
 
 #include "BaseEngine.h"
 #include "Animation.h"
+#include "Objects/Item.h"
 
 
 struct HierarchicalMenu;
@@ -51,7 +52,7 @@ private:
 class LevelEndEngine : public MenuEngine
 {
 public:
-	LevelEndEngine(int lvlNum);
+	LevelEndEngine(int lvlNum, map<Item::Type, uint32_t> collectedTreasures);
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -63,16 +64,12 @@ private:
 
 	enum State : int8_t {
 		Start,
-		InsertMap, DrawDots,
-		DrawGem,
 		DrawScore,
 		Wait,
 		End
 	};
 
+	map<Item::Type, uint32_t> _collectedTreasures;
 	const int8_t _lvlNum;
 	int8_t _state;
-
-	shared_ptr<Animation> _levelSpecialItem; // map-piece or gem
-	D2D1_POINT_2F _itemEndPos;
 };
