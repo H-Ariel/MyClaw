@@ -84,6 +84,7 @@ public:
 
 	static Item* getItem(const WwdObject& obj, Player* player, int8_t type = Type::None);
 	static void resetItemsPaths();
+	static uint32_t getTreasureScore(Type type);
 
 protected:
 	Item(const WwdObject& obj, Player* player, int8_t type);

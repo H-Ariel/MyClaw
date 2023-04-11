@@ -224,6 +224,63 @@ void Item::resetItemsPaths()
 	ItemsPaths.clear();
 }
 
+uint32_t Item::getTreasureScore(Type type)
+{
+	switch (type)
+	{
+	case Item::Default:
+	case Item::Treasure_Coins:
+		return 100;
+
+	case Item::Treasure_Goldbars:
+		return 500;
+		
+	case Item::Treasure_Rings_Red:
+	case Item::Treasure_Rings_Green:
+	case Item::Treasure_Rings_Blue:
+	case Item::Treasure_Rings_Purple:
+		return 1500;
+		
+	case Item::Treasure_Necklace:
+	case Item::Treasure_Chalices_Red:
+	case Item::Treasure_Chalices_Green:
+	case Item::Treasure_Chalices_Blue:
+	case Item::Treasure_Chalices_Purple:
+		return 2500;
+		
+	case Item::Treasure_Crosses_Red:
+	case Item::Treasure_Crosses_Green:
+	case Item::Treasure_Crosses_Blue:
+	case Item::Treasure_Crosses_Purple:
+		return 5000;
+		
+	case Item::Treasure_Scepters_Red:
+	case Item::Treasure_Scepters_Green:
+	case Item::Treasure_Scepters_Blue:
+	case Item::Treasure_Scepters_Purple:
+		return 7500;
+		
+	case Item::Treasure_Geckos_Red:
+	case Item::Treasure_Geckos_Green:
+	case Item::Treasure_Geckos_Blue:
+	case Item::Treasure_Geckos_Purple:
+		return 10000;
+		
+	case Item::Treasure_Crowns_Red:
+	case Item::Treasure_Crowns_Green:
+	case Item::Treasure_Crowns_Blue:
+	case Item::Treasure_Crowns_Purple:
+		return 15000;
+		
+	case Item::Treasure_Skull_Red:
+	case Item::Treasure_Skull_Green:
+	case Item::Treasure_Skull_Blue:
+	case Item::Treasure_Skull_Purple:
+		return 25000;
+	}
+
+	throw Exception("invalid treasure type");
+}
 
 Warp::Warp(const WwdObject& obj, Player* player, int8_t type)
 	: Item(obj, player, type), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)

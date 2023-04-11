@@ -889,61 +889,37 @@ bool Player::collectItem(Item* item)
 	{
 	case Item::Default:
 	case Item::Treasure_Coins:
-		_score += 100;
-		_collectedTreasures[type] += 1;
-		return true;
 	case Item::Treasure_Goldbars:
-		_score += 500;
-		_collectedTreasures[type] += 1;
-		return true;
 	case Item::Treasure_Rings_Red:
 	case Item::Treasure_Rings_Green:
 	case Item::Treasure_Rings_Blue:
 	case Item::Treasure_Rings_Purple:
-		_score += 1500;
-		_collectedTreasures[type] += 1;
-		return true;
 	case Item::Treasure_Necklace:
 	case Item::Treasure_Chalices_Red:
 	case Item::Treasure_Chalices_Green:
 	case Item::Treasure_Chalices_Blue:
 	case Item::Treasure_Chalices_Purple:
-		_score += 2500;
-		_collectedTreasures[type] += 1;
-		return true;
 	case Item::Treasure_Crosses_Red:
 	case Item::Treasure_Crosses_Green:
 	case Item::Treasure_Crosses_Blue:
 	case Item::Treasure_Crosses_Purple:
-		_score += 5000;
-		_collectedTreasures[type] += 1;
-		return true;
 	case Item::Treasure_Scepters_Red:
 	case Item::Treasure_Scepters_Green:
 	case Item::Treasure_Scepters_Blue:
 	case Item::Treasure_Scepters_Purple:
-		_score += 7500;
-		_collectedTreasures[type] += 1;
-		return true;
 	case Item::Treasure_Geckos_Red:
 	case Item::Treasure_Geckos_Green:
 	case Item::Treasure_Geckos_Blue:
 	case Item::Treasure_Geckos_Purple:
-		_score += 10000;
-		_collectedTreasures[type] += 1;
-		return true;
 	case Item::Treasure_Crowns_Red:
 	case Item::Treasure_Crowns_Green:
 	case Item::Treasure_Crowns_Blue:
 	case Item::Treasure_Crowns_Purple:
-		_score += 15000;
-		_collectedTreasures[type] += 1;
-		return true;
 	case Item::Treasure_Skull_Red:
 	case Item::Treasure_Skull_Green:
 	case Item::Treasure_Skull_Blue:
 	case Item::Treasure_Skull_Purple:
-		_score += 25000;
+		_score += Item::getTreasureScore(type);
 		_collectedTreasures[type] += 1;
 		return true;
 
@@ -968,7 +944,7 @@ bool Player::collectItem(Item* item)
 	case Item::BossWarp:
 		// impleted as `class Warp`
 		break;
-	
+
 		// TODO: not impleted
 	case Item::Curse_Ammo:		break;
 	case Item::Curse_Magic:		break;

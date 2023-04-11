@@ -313,11 +313,156 @@ string getBGImgPath2(int l)
 }
 
 
+static const Item::Type treasuresTypes[] = {
+	Item::Default,
+	Item::Treasure_Coins,
+	Item::Treasure_Goldbars,
+	Item::Treasure_Rings_Red,
+	Item::Treasure_Rings_Green,
+	Item::Treasure_Rings_Blue,
+	Item::Treasure_Rings_Purple,
+	Item::Treasure_Necklace,
+	Item::Treasure_Chalices_Red,
+	Item::Treasure_Chalices_Green,
+	Item::Treasure_Chalices_Blue,
+	Item::Treasure_Chalices_Purple,
+	Item::Treasure_Crosses_Red,
+	Item::Treasure_Crosses_Green,
+	Item::Treasure_Crosses_Blue,
+	Item::Treasure_Crosses_Purple,
+	Item::Treasure_Scepters_Red,
+	Item::Treasure_Scepters_Green,
+	Item::Treasure_Scepters_Blue,
+	Item::Treasure_Scepters_Purple,
+	Item::Treasure_Geckos_Red,
+	Item::Treasure_Geckos_Green,
+	Item::Treasure_Geckos_Blue,
+	Item::Treasure_Geckos_Purple,
+	Item::Treasure_Crowns_Red,
+	Item::Treasure_Crowns_Green,
+	Item::Treasure_Crowns_Blue,
+	Item::Treasure_Crowns_Purple,
+	Item::Treasure_Skull_Red,
+	Item::Treasure_Skull_Green,
+	Item::Treasure_Skull_Blue,
+	Item::Treasure_Skull_Purple
+};
+
+#define type_Treasure_Skull		Item::Treasure_Skull_Blue
+#define type_Treasure_Crowns	Item::Treasure_Crowns_Green
+#define type_Treasure_Geckos	Item::Treasure_Geckos_Red
+#define type_Treasure_Scepters	Item::Treasure_Scepters_Red
+#define type_Treasure_Crosses	Item::Treasure_Crosses_Blue
+#define type_Treasure_Chalices	Item::Treasure_Chalices_Green
+#define type_Treasure_Rings		Item::Treasure_Rings_Purple
+#define type_Treasure_Goldbars	Item::Treasure_Goldbars
+#define type_Treasure_Coins		Item::Treasure_Coins
+
+
+static const Item::Type treasuresTypesToShow[] = {
+	type_Treasure_Skull,
+	type_Treasure_Crowns,
+	type_Treasure_Geckos,
+	type_Treasure_Scepters,
+	type_Treasure_Crosses,
+	type_Treasure_Chalices,
+	type_Treasure_Rings,
+	type_Treasure_Goldbars,
+	type_Treasure_Coins
+};
+
+
+class MenuTreasureItem : public Item
+{
+public:
+	MenuTreasureItem(Item::Type type)
+		: Item({}, nullptr, (int8_t)type)
+	{
+	}
+
+	void Logic(uint32_t elapsedTime) override
+	{
+		// Do nothing
+	}
+};
+
+
 LevelEndEngine::LevelEndEngine(int lvlNum, map<Item::Type, uint32_t> collectedTreasures)
-	: MenuEngine(false, getBGImgPath1(lvlNum)), _lvlNum(lvlNum),
-	_state(Start), _collectedTreasures(collectedTreasures)
+	: MenuEngine(false, getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start)
 {
 	WindowManager::setBackgroundColor(ColorF::Black);
+
+	for (const auto& i : collectedTreasures)
+	{
+		Item::Type tresType;
+
+		switch (i.first)
+		{
+		case Item::Default:
+		case Item::Treasure_Coins:
+			tresType = type_Treasure_Coins;
+			break;
+
+		case Item::Treasure_Goldbars:
+			tresType = type_Treasure_Goldbars;
+			break;
+
+		case Item::Treasure_Rings_Red:
+		case Item::Treasure_Rings_Green:
+		case Item::Treasure_Rings_Blue:
+		case Item::Treasure_Rings_Purple:
+			tresType = type_Treasure_Rings;
+			break;
+
+		case Item::Treasure_Necklace:
+		case Item::Treasure_Chalices_Red:
+		case Item::Treasure_Chalices_Green:
+		case Item::Treasure_Chalices_Blue:
+		case Item::Treasure_Chalices_Purple:
+			tresType = type_Treasure_Chalices;
+			break;
+
+		case Item::Treasure_Crosses_Red:
+		case Item::Treasure_Crosses_Green:
+		case Item::Treasure_Crosses_Blue:
+		case Item::Treasure_Crosses_Purple:
+			tresType = type_Treasure_Crosses;
+			break;
+
+		case Item::Treasure_Scepters_Red:
+		case Item::Treasure_Scepters_Green:
+		case Item::Treasure_Scepters_Blue:
+		case Item::Treasure_Scepters_Purple:
+			tresType = type_Treasure_Scepters;
+			break;
+
+		case Item::Treasure_Geckos_Red:
+		case Item::Treasure_Geckos_Green:
+		case Item::Treasure_Geckos_Blue:
+		case Item::Treasure_Geckos_Purple:
+			tresType = type_Treasure_Geckos;
+			break;
+
+		case Item::Treasure_Crowns_Red:
+		case Item::Treasure_Crowns_Green:
+		case Item::Treasure_Crowns_Blue:
+		case Item::Treasure_Crowns_Purple:
+			tresType = type_Treasure_Crowns;
+			break;
+
+		case Item::Treasure_Skull_Red:
+		case Item::Treasure_Skull_Green:
+		case Item::Treasure_Skull_Blue:
+		case Item::Treasure_Skull_Purple:
+			tresType = type_Treasure_Skull;
+			break;
+
+		default:
+			throw Exception("invalid treasure type");
+		}
+
+		_collectedTreasures[tresType] += i.second;
+	}
 }
 void LevelEndEngine::Logic(uint32_t elapsedTime)
 {
@@ -335,6 +480,15 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 		_state += 1;
 
 		// TODO: draw all treasures and their points
+
+		for (int i = 0; i < 9; i++)
+		{
+			Item::Type type = treasuresTypesToShow[i];
+			MenuTreasureItem* item = DBG_NEW MenuTreasureItem(type);
+			item->position.x = 200;
+			item->position.y = 75 + i * 50;
+			_elementsList.push_back(item);
+		}
 
 		break;
 
