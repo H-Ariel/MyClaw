@@ -314,6 +314,7 @@ string getBGImgPath2(int l)
 }
 
 
+#define NUM_OF_TREASURES 9
 #define type_Treasure_Skull		Item::Treasure_Skull_Blue
 #define type_Treasure_Crowns	Item::Treasure_Crowns_Green
 #define type_Treasure_Geckos	Item::Treasure_Geckos_Red
@@ -325,18 +326,33 @@ string getBGImgPath2(int l)
 #define type_Treasure_Coins		Item::Treasure_Coins
 
 
-static const char treasuresPaths[][55] = {
-	"STATES/BOOTY/IMAGES/TREASURE/JEWELEDSKULL/BLUE/002.PID",
-	"STATES/BOOTY/IMAGES/TREASURE/CROWNS/GREEN/003.PID",
-	"STATES/BOOTY/IMAGES/TREASURE/GECKOS/RED/001.PID",
-	"STATES/BOOTY/IMAGES/TREASURE/SCEPTERS/RED/001.PID",
-	"STATES/BOOTY/IMAGES/TREASURE/CROSSES/BLUE/002.PID",
-	"STATES/BOOTY/IMAGES/TREASURE/CHALICES/GREEN/003.PID",
-	"STATES/BOOTY/IMAGES/TREASURE/RINGS/PURPLE/004.PID",
-	"STATES/BOOTY/IMAGES/TREASURE/GOLDBARS/001.PID",
-	"STATES/BOOTY/IMAGES/TREASURE/COINS/001.PID"
+static const pair<Item::Type, const char*> treasuresData[NUM_OF_TREASURES] = {
+	{ type_Treasure_Skull, "STATES/BOOTY/IMAGES/TREASURE/JEWELEDSKULL/BLUE/002.PID" },
+	{ type_Treasure_Crowns, "STATES/BOOTY/IMAGES/TREASURE/CROWNS/GREEN/003.PID" },
+	{ type_Treasure_Geckos, "STATES/BOOTY/IMAGES/TREASURE/GECKOS/RED/001.PID" },
+	{ type_Treasure_Scepters, "STATES/BOOTY/IMAGES/TREASURE/SCEPTERS/RED/001.PID" },
+	{ type_Treasure_Crosses, "STATES/BOOTY/IMAGES/TREASURE/CROSSES/BLUE/002.PID" },
+	{ type_Treasure_Chalices, "STATES/BOOTY/IMAGES/TREASURE/CHALICES/GREEN/003.PID" },
+	{ type_Treasure_Rings, "STATES/BOOTY/IMAGES/TREASURE/RINGS/PURPLE/004.PID" },
+	{ type_Treasure_Goldbars, "STATES/BOOTY/IMAGES/TREASURE/GOLDBARS/001.PID" },
+	{ type_Treasure_Coins, "STATES/BOOTY/IMAGES/TREASURE/COINS/001.PID" }
 };
 
+static const char* const scorenumbersPaths[] = {
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/000.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/001.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/002.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/003.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/004.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/005.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/006.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/007.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/008.PID",
+	"STATES/BOOTY/IMAGES/SCORENUMBERS/009.PID"
+};
+
+
+// TODO: draw cool animation of map/gem before showing score
 
 LevelEndEngine::LevelEndEngine(int lvlNum, map<Item::Type, uint32_t> collectedTreasures)
 	: MenuEngine(false, getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start)
@@ -432,12 +448,38 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 		// TODO: draw all treasures and their points
 
-		for (int i = 0; i < 9; i++)
+		int digits[3]; // we have only 3 digits to display
+		MenuItem* item;
+		float x, y;
+		int i, j;
+
+		for (i = 0; i < NUM_OF_TREASURES; i++)
 		{
-			MenuItem* item = DBG_NEW MenuItem(treasuresPaths[i], -0.25f,
-				(-230 + 53 * i) / 600.f, {}, _bgImg, this);
+			x = -0.18f;
+			y = (-230 + 53 * i) / 600.f;
+
+			// draw current treasures
+			item = DBG_NEW MenuItem(treasuresData[i].second, -0.25f, y, {}, _bgImg, this);
 			item->mulImageSizeRatio(0.75f);
 			_elementsList.push_back((UIBaseImage*)item);
+
+			// draw collected treasures count
+			digits[0] = _collectedTreasures[treasuresData[i].first] / 100;
+			digits[1] = _collectedTreasures[treasuresData[i].first] / 10 % 10;
+			digits[2] = _collectedTreasures[treasuresData[i].first] % 10;
+			
+			for (j = 0; j < 3; j++)
+			{
+				item = DBG_NEW MenuItem(scorenumbersPaths[digits[j]], x, y, {}, _bgImg, this);
+				item->mulImageSizeRatio(0.75f);
+				_elementsList.push_back((UIBaseImage*)item);
+				x += 0.02f;
+			}
+
+			/*
+			TODO: now it <IMG> <amount>
+			need continue to: <IMG> <amount> OF <total> X<score> = <total_treasure_score>
+			*/
 		}
 
 		break;
