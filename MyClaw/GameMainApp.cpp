@@ -31,8 +31,8 @@ GameMainApp::~GameMainApp()
 void GameMainApp::run()
 {
 	runApp = true;
-	_pEngine = allocNewSharedPtr<MenuEngine>();
-	//_pEngine = allocNewSharedPtr<ClawLevelEngine>(13);
+	//_pEngine = allocNewSharedPtr<MenuEngine>();
+	_pEngine = allocNewSharedPtr<ClawLevelEngine>(1);
 	runEngine();
 }
 

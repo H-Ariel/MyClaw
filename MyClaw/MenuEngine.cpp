@@ -77,6 +77,13 @@ public:
 		UIBaseButton::Logic(0);
 	}
 
+	// mul the size ratio by n
+	void mulImageSizeRatio(float n)
+	{
+		_sizeRatio.width *= n;
+		_sizeRatio.height *= n;
+	}
+
 private:
 	D2D1_POINT_2F _posRatio;
 	D2D1_SIZE_F _sizeRatio;
@@ -285,12 +292,6 @@ void LevelLoadingEngine::Logic(uint32_t elapsedTime)
 }
 
 
-/*
-Because we don't have the palette of gems and
-maps I'm giving up on this part and we'll just
-show the score without the previous animations
-*/
-
 string getBGImgPath1(int l)
 {
 	string path = "STATES/BOOTY/SCREENS/";
@@ -313,41 +314,6 @@ string getBGImgPath2(int l)
 }
 
 
-static const Item::Type treasuresTypes[] = {
-	Item::Default,
-	Item::Treasure_Coins,
-	Item::Treasure_Goldbars,
-	Item::Treasure_Rings_Red,
-	Item::Treasure_Rings_Green,
-	Item::Treasure_Rings_Blue,
-	Item::Treasure_Rings_Purple,
-	Item::Treasure_Necklace,
-	Item::Treasure_Chalices_Red,
-	Item::Treasure_Chalices_Green,
-	Item::Treasure_Chalices_Blue,
-	Item::Treasure_Chalices_Purple,
-	Item::Treasure_Crosses_Red,
-	Item::Treasure_Crosses_Green,
-	Item::Treasure_Crosses_Blue,
-	Item::Treasure_Crosses_Purple,
-	Item::Treasure_Scepters_Red,
-	Item::Treasure_Scepters_Green,
-	Item::Treasure_Scepters_Blue,
-	Item::Treasure_Scepters_Purple,
-	Item::Treasure_Geckos_Red,
-	Item::Treasure_Geckos_Green,
-	Item::Treasure_Geckos_Blue,
-	Item::Treasure_Geckos_Purple,
-	Item::Treasure_Crowns_Red,
-	Item::Treasure_Crowns_Green,
-	Item::Treasure_Crowns_Blue,
-	Item::Treasure_Crowns_Purple,
-	Item::Treasure_Skull_Red,
-	Item::Treasure_Skull_Green,
-	Item::Treasure_Skull_Blue,
-	Item::Treasure_Skull_Purple
-};
-
 #define type_Treasure_Skull		Item::Treasure_Skull_Blue
 #define type_Treasure_Crowns	Item::Treasure_Crowns_Green
 #define type_Treasure_Geckos	Item::Treasure_Geckos_Red
@@ -359,31 +325,16 @@ static const Item::Type treasuresTypes[] = {
 #define type_Treasure_Coins		Item::Treasure_Coins
 
 
-static const Item::Type treasuresTypesToShow[] = {
-	type_Treasure_Skull,
-	type_Treasure_Crowns,
-	type_Treasure_Geckos,
-	type_Treasure_Scepters,
-	type_Treasure_Crosses,
-	type_Treasure_Chalices,
-	type_Treasure_Rings,
-	type_Treasure_Goldbars,
-	type_Treasure_Coins
-};
-
-
-class MenuTreasureItem : public Item
-{
-public:
-	MenuTreasureItem(Item::Type type)
-		: Item({}, nullptr, (int8_t)type)
-	{
-	}
-
-	void Logic(uint32_t elapsedTime) override
-	{
-		// Do nothing
-	}
+static const char treasuresPaths[][55] = {
+	"STATES/BOOTY/IMAGES/TREASURE/JEWELEDSKULL/BLUE/002.PID",
+	"STATES/BOOTY/IMAGES/TREASURE/CROWNS/GREEN/003.PID",
+	"STATES/BOOTY/IMAGES/TREASURE/GECKOS/RED/001.PID",
+	"STATES/BOOTY/IMAGES/TREASURE/SCEPTERS/RED/001.PID",
+	"STATES/BOOTY/IMAGES/TREASURE/CROSSES/BLUE/002.PID",
+	"STATES/BOOTY/IMAGES/TREASURE/CHALICES/GREEN/003.PID",
+	"STATES/BOOTY/IMAGES/TREASURE/RINGS/PURPLE/004.PID",
+	"STATES/BOOTY/IMAGES/TREASURE/GOLDBARS/001.PID",
+	"STATES/BOOTY/IMAGES/TREASURE/COINS/001.PID"
 };
 
 
@@ -483,11 +434,10 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 		for (int i = 0; i < 9; i++)
 		{
-			Item::Type type = treasuresTypesToShow[i];
-			MenuTreasureItem* item = DBG_NEW MenuTreasureItem(type);
-			item->position.x = 200;
-			item->position.y = 75 + i * 50;
-			_elementsList.push_back(item);
+			MenuItem* item = DBG_NEW MenuItem(treasuresPaths[i], -0.25f,
+				(-230 + 53 * i) / 600.f, {}, _bgImg, this);
+			item->mulImageSizeRatio(0.75f);
+			_elementsList.push_back((UIBaseImage*)item);
 		}
 
 		break;
