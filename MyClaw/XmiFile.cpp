@@ -4,187 +4,14 @@
 #include "BufferWriter.h"
 
 
-// TODO: use BufferWriter and BufferReader
-class MemoryBuffer
-{
-public:
-	MemoryBuffer()
-		: m_pData(nullptr), m_pPointer(nullptr), m_pEnd(nullptr), m_pBufferEnd(nullptr)
-	{
-	}
-
-	MemoryBuffer(char* pData, size_t iLength)
-	{
-		m_pData = m_pPointer = (char*)pData;
-		m_pEnd = m_pData + iLength;
-		m_pBufferEnd = nullptr;
-	}
-
-	~MemoryBuffer()
-	{
-		if (m_pBufferEnd != nullptr)
-			delete[] m_pData;
-	}
-
-	vector<uint8_t> takeData()
-	{
-		vector<uint8_t> res(m_pEnd - m_pData);
-		memcpy(res.data(), m_pData, m_pEnd - m_pData);
-		delete[] m_pData;
-		m_pData = m_pPointer = m_pEnd = m_pBufferEnd = nullptr;
-		return res;
-	}
-
-	size_t tell() const { return m_pPointer - m_pData; }
-
-	bool seek(size_t position)
-	{
-		if (m_pData + position > m_pEnd)
-		{
-			if (!_realloc(position))
-				return false;
-		}
-		m_pPointer = m_pData + position;
-		return true;
-	}
-
-	bool skip(int distance)
-	{
-		if (distance < 0)
-		{
-			if (m_pPointer + distance < m_pData)
-				return false;
-		}
-		return seek(m_pPointer - m_pData + distance);
-	}
-
-	bool scanTo(const void* pData, size_t iLength)
-	{
-		for (; m_pPointer + iLength <= m_pEnd; ++m_pPointer)
-		{
-			if (memcmp(m_pPointer, pData, iLength) == 0)
-				return true;
-		}
-		return false;
-	}
-
-	const char* getPointer() const { return m_pPointer; }
-
-	template <class T>
-	bool read(T& value) { return read(&value, 1); }
-
-	template <class T>
-	bool read(T* values, size_t count)
-	{
-		if (m_pPointer + sizeof(T) * count > m_pEnd)
-			return false;
-		memcpy(values, m_pPointer, sizeof(T) * count);
-		m_pPointer += sizeof(T) * count;
-		return true;
-	}
-
-	unsigned int readBigEndianUInt24()
-	{
-		uint8_t iByte0, iByte1, iByte2;
-		if (read(iByte0) && read(iByte1) && read(iByte2))
-			return (((iByte0 << 8) | iByte1) << 8) | iByte2;
-		return 0;
-	}
-
-	unsigned int readUIntVar()
-	{
-		unsigned int iValue = 0;
-		uint8_t iByte;
-		for (int i = 0; i < 4; ++i)
-		{
-			if (!read(iByte))
-				return false;
-			iValue = (iValue << 7) | static_cast<unsigned int>(iByte & 0x7F);
-			if ((iByte & 0x80) == 0)
-				break;
-		}
-		return iValue;
-	}
-
-	template <class T>
-	bool write(const T& value) { return write(&value, 1); }
-
-	template <class T>
-	bool write(const T* values, size_t count)
-	{
-		if (!skip(static_cast<int>(sizeof(T) * count)))
-			return false;
-		memcpy(m_pPointer - sizeof(T) * count, values, sizeof(T) * count);
-		return true;
-	}
-
-	bool writeBigEndianUInt16(uint16_t iValue) { return write(_byteSwap(iValue)); }
-
-	bool writeBigEndianUInt32(uint32_t iValue) { return write(_byteSwap(iValue)); }
-
-	bool writeUIntVar(unsigned int iValue)
-	{
-		int iByteCount = 1;
-		unsigned int iBuffer = iValue & 0x7F;
-		for (; iValue >>= 7; ++iByteCount)
-		{
-			iBuffer = (iBuffer << 8) | 0x80 | (iValue & 0x7F);
-		}
-		for (int i = 0; i < iByteCount; ++i)
-		{
-			uint8_t iByte = iBuffer & 0xFF;
-			if (!write(iByte))
-				return false;
-			iBuffer >>= 8;
-		}
-		return true;
-	}
-
-	bool isEOF() const { return m_pPointer == m_pEnd; }
-
-protected:
-	template <class T>
-	static T _byteSwap(T value)
-	{
-		T swapped = 0;
-		for (int i = 0; i < static_cast<int>(sizeof(T)) * 8; i += 8)
-			swapped |= ((value >> i) & 0xFF) << (sizeof(T) * 8 - 8 - i);
-		return swapped;
-	}
-
-	bool _realloc(size_t size)
-	{
-		if (m_pData + size <= m_pBufferEnd)
-		{
-			m_pEnd = m_pData + size;
-			return true;
-		}
-
-		char* pNewData = DBG_NEW char[size * 2];
-		if (pNewData == nullptr)
-			return false;
-		size_t iOldLength = m_pEnd - m_pData;
-		memcpy(pNewData, m_pData, size > iOldLength ? iOldLength : size);
-		m_pPointer = m_pPointer - m_pData + pNewData;
-		if (m_pBufferEnd != nullptr)
-			delete[] m_pData;
-		m_pData = pNewData;
-		m_pEnd = pNewData + size;
-		m_pBufferEnd = pNewData + size * 2;
-		return true;
-	}
-
-	char* m_pData, *m_pPointer, *m_pEnd, *m_pBufferEnd;
-};
-
 struct MidiToken
 {
-	int iTime;
-	unsigned int iBufferLength;
-	const char* pBuffer;
-	uint8_t iType, iData;
+	int time;
+	unsigned int len; // buffer length
+	const uint8_t* buf;
+	uint8_t type, data;
 
-	bool operator<(const MidiToken& oRight) { return iTime < oRight.iTime; }
+	bool operator<(const MidiToken& oRight) { return time < oRight.time; }
 };
 
 class MidiTokensList : public vector<MidiToken>
@@ -194,166 +21,215 @@ public:
 	{
 		push_back(MidiToken());
 		MidiToken* pToken = &back();
-		pToken->iTime = iTime;
-		pToken->iType = iType;
+		pToken->time = iTime;
+		pToken->type = iType;
 		return pToken;
 	}
 };
 
+
+class NewBufferReader : public BufferReader
+{
+public:
+	NewBufferReader(const uint8_t data[], size_t size)
+		: BufferReader(data, size, false) {}
+
+	void scanTo(const void* data, size_t dataSize)
+	{
+		for (; _idx + dataSize <= _size; ++_idx)
+		{
+			if (memcmp(_data + _idx, data, dataSize) == 0)
+				return;
+		}
+		throw Exception(__FUNCTION__ " - not found");
+	}
+
+	const uint8_t* getPointer() const { return _data + _idx; }
+
+	uint32_t readUIntVar()
+	{
+		uint32_t val = 0;
+		uint8_t b;
+		for (int i = 0; i < 4; ++i)
+		{
+			read(b);
+			val = (val << 7) | uint32_t(b & 0x7F);
+			if ((b & 0x80) == 0)
+				break;
+		}
+		return val;
+	}
+	uint32_t readBigEndianUInt24()
+	{
+		uint8_t b1, b2, b3;
+		read(b1); read(b2); read(b3);
+		return (((b1 << 8) | b2) << 8) | b3;
+	}
+};
+
+class NewBufferWriter : public BufferWriter
+{
+public:
+	void writeBigEndianUInt16(uint16_t iValue) { write(_byteSwap(iValue)); }
+	void writeBigEndianUInt32(uint32_t iValue) { write(_byteSwap(iValue)); }
+	void writeUIntVar(uint32_t iValue)
+	{
+		int bytesCount = 1;
+		uint32_t buffer = iValue & 0x7F;
+		for (; iValue >>= 7; ++bytesCount, buffer = (buffer << 8) | 0x80 | (iValue & 0x7F));
+		for (; bytesCount > 0; --bytesCount)
+		{
+			write(uint8_t(buffer & 0xFF));
+			buffer >>= 8;
+		}
+	}
+
+private:
+	template <class T>
+	static T _byteSwap(T value)
+	{
+		uint8_t* ptr = (uint8_t*)(&value);
+		reverse(ptr, ptr + sizeof(T));
+		return value;
+	}
+};
+
+
 vector<uint8_t> xmiToMidi(vector<uint8_t> xmiFileData)
 {
-	MemoryBuffer bufInput((char*)xmiFileData.data(), xmiFileData.size());
-	MemoryBuffer bufOutput;
+	NewBufferReader input(xmiFileData.data(), xmiFileData.size());
+	NewBufferWriter output;
 
-	if (!bufInput.scanTo("EVNT", 4) || !bufInput.skip(8))
-		return {};
-
-	MidiTokensList lstTokens;
+	MidiTokensList tokensList;
 	MidiToken* pToken;
-	int iTokenTime = 0;
-	int iTempo = 500000;
-	bool bTempoSet = false;
-	bool bEnd = false;
-	uint8_t iTokenType, iExtendedType;
+	int tempo = 500000, tokenTime = 0;
+	bool isTempoSet = false, endLoop = false;
+	uint8_t tokenType, extendedType;
 
-	while (!bufInput.isEOF() && !bEnd)
+	input.scanTo("EVNT", 4);
+	input.skip(8);
+
+	while (!input.isEOF() && !endLoop)
 	{
 		while (true)
 		{
-			if (!bufInput.read(iTokenType))
-				return {};
+			input.read(tokenType);
 
-			if (iTokenType & 0x80)
+			if (tokenType & 0x80)
 				break;
 			else
-				iTokenTime += static_cast<int>(iTokenType) * 3;
+				tokenTime += (int)tokenType * 3;
 		}
-		pToken = lstTokens.append(iTokenTime, iTokenType);
-		pToken->pBuffer = bufInput.getPointer() + 1;
-		switch (iTokenType & 0xF0)
+
+		pToken = tokensList.append(tokenTime, tokenType);
+		pToken->buf = input.getPointer() + 1;
+
+		switch (tokenType & 0xF0)
 		{
 		case 0xC0:
 		case 0xD0:
-			if (!bufInput.read(pToken->iData))
-				return {};
-			pToken->pBuffer = nullptr;
+			input.read(pToken->data);
+			pToken->buf = nullptr;
 			break;
 
 		case 0x80:
 		case 0xA0:
 		case 0xB0:
 		case 0xE0:
-			if (!bufInput.read(pToken->iData))
-				return {};
-			if (!bufInput.skip(1))
-				return {};
+			input.read(pToken->data);
+			input.skip(1);
 			break;
 
 		case 0x90:
-			if (!bufInput.read(iExtendedType))
-				return {};
-			pToken->iData = iExtendedType;
-			if (!bufInput.skip(1))
-				return {};
-			pToken = lstTokens.append(iTokenTime + bufInput.readUIntVar() * 3, iTokenType);
-			pToken->iData = iExtendedType;
-			pToken->pBuffer = "\0";
+			input.read(extendedType);
+			pToken->data = extendedType;
+			input.skip(1);
+			pToken = tokensList.append(tokenTime + input.readUIntVar() * 3, tokenType);
+			pToken->data = extendedType;
+			pToken->buf = (const uint8_t*)"\0";
 			break;
 
 		case 0xF0:
-			iExtendedType = 0;
-			if (iTokenType == 0xFF)
+			extendedType = 0;
+			if (tokenType == 0xFF)
 			{
-				if (!bufInput.read(iExtendedType))
-					return {};
+				input.read(extendedType);
 
-				if (iExtendedType == 0x2F)
-					bEnd = true;
-				else if (iExtendedType == 0x51)
+				if (extendedType == 0x2F)
+					endLoop = true;
+				else if (extendedType == 0x51)
 				{
-					if (!bTempoSet)
+					if (!isTempoSet)
 					{
-						bufInput.skip(1);
-						iTempo = bufInput.readBigEndianUInt24() * 3;
-						bTempoSet = true;
-						bufInput.skip(-4);
+						input.skip(1);
+						tempo = input.readBigEndianUInt24() * 3;
+						isTempoSet = true;
+						input.skip(-4);
 					}
 					else
 					{
-						lstTokens.pop_back();
-						if (!bufInput.skip(bufInput.readUIntVar()))
-							return {};
+						tokensList.pop_back();
+						input.skip(input.readUIntVar());
 						break;
 					}
 				}
 			}
-			pToken->iData = iExtendedType;
-			pToken->iBufferLength = bufInput.readUIntVar();
-			pToken->pBuffer = bufInput.getPointer();
-			if (!bufInput.skip(pToken->iBufferLength))
-				return {};
+
+			pToken->data = extendedType;
+			pToken->len = input.readUIntVar();
+			pToken->buf = input.getPointer();
+			input.skip(pToken->len);
 			break;
 		}
 	}
 
-	if (lstTokens.empty())
-		return {};
-	if (!bufOutput.write("MThd\0\0\0\x06\0\0\0\x01", 12))
-		return {};
-	if (!bufOutput.writeBigEndianUInt16((iTempo * 3) / 25000))
-		return {};
-	if (!bufOutput.write("MTrk\xBA\xAD\xF0\x0D", 8))
+	if (tokensList.empty())
 		return {};
 
-	sort(lstTokens.begin(), lstTokens.end());
+	sort(tokensList.begin(), tokensList.end());
 
-	iTokenTime = 0;
-	iTokenType = 0;
-	bEnd = false;
+	output.write("MThd\0\0\0\x06\0\0\0\x01", 12);
+	output.writeBigEndianUInt16(tempo * 3 / 25000);
+	output.write("MTrk\xBA\xAD\xF0\x0D", 8);
 
-	for (auto& itr : lstTokens)
+	tokenTime = 0;
+	tokenType = 0;
+	endLoop = false;
+
+	for (MidiToken& tok : tokensList)
 	{
-		if (bEnd) break;
+		if (endLoop) break;
 
-		if (!bufOutput.writeUIntVar(itr.iTime - iTokenTime))
-			return {};
-		iTokenTime = itr.iTime;
-		if (itr.iType >= 0xF0)
+		output.writeUIntVar(tok.time - tokenTime);
+		tokenTime = tok.time;
+		if (tok.type >= 0xF0)
 		{
-			if (!bufOutput.write(iTokenType = itr.iType))
-				return {};
-			if (iTokenType == 0xFF)
+			output.write(tokenType = tok.type);
+			if (tokenType == 0xFF)
 			{
-				if (!bufOutput.write(itr.iData))
-					return {};
-				if (itr.iData == 0x2F)
-					bEnd = true;
+				output.write(tok.data);
+				endLoop = (tok.data == 0x2F);
 			}
-			if (!bufOutput.writeUIntVar(itr.iBufferLength))
-				return {};
-			if (!bufOutput.write(itr.pBuffer, itr.iBufferLength))
-				return {};
+			output.writeUIntVar(tok.len);
+			output.write(tok.buf, tok.len);
 		}
 		else
 		{
-			if (itr.iType != iTokenType)
+			if (tok.type != tokenType)
 			{
-				if (!bufOutput.write(iTokenType = itr.iType))
-					return {};
+				output.write(tokenType = tok.type);
 			}
-			if (!bufOutput.write(itr.iData))
-				return {};
-			if (itr.pBuffer)
+			output.write(tok.data);
+			if (tok.buf)
 			{
-				if (!bufOutput.write(itr.pBuffer, 1))
-					return {};
+				output.write(tok.buf, 1);
 			}
 		}
 	}
 
-	uint32_t iLength = static_cast<uint32_t>(bufOutput.tell() - 22);
-	bufOutput.seek(18);
-	bufOutput.writeBigEndianUInt32(iLength);
+	uint32_t len = uint32_t(output.getIndex() - 22);
+	output.setIndex(18);
+	output.writeBigEndianUInt32(len);
 
-	return bufOutput.takeData();
+	return output.getData();
 }
