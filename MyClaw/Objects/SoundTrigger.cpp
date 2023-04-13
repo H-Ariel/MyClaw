@@ -3,6 +3,10 @@
 #include "../Player.h"
 
 
+// TODO: split this file into 4 files (?)
+// [ SoundObjectBase | SoundTrigger | AmbientSound | GlobalAmbientSound ]
+
+
 SoundObjectBase::SoundObjectBase(const WwdObject& obj, Player* player)
 	: BaseStaticPlaneObject(obj, player),
 	_wavPath(PathManager::getSoundFilePath(obj.animation)), _wavPlayerId(-1)
@@ -155,7 +159,7 @@ GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj, Player* player)
 	_minTimeOff(obj.moveRect.right),
 	_maxTimeOff(obj.moveRect.bottom),
 	_isLooping(obj.moveRect.left == 0),
-	_currentTime(0)
+	_currentTime(0), _soundDurationMs(0)
 {
 	_timeOff = getRandomInt(_minTimeOff, _maxTimeOff);
 

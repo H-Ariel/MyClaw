@@ -11,8 +11,7 @@ BaseCharacter::BaseCharacter(const WwdObject& obj, Player* player)
 void BaseCharacter::Draw()
 {
 	_ani->Draw();
-#define DRAW_RECTANGLES
-#ifdef DRAW_RECTANGLES
+#ifdef _DEBUG
 	WindowManager::drawRect(GetRect(), ColorF::Blue);
 	if (isAttack())
 		WindowManager::drawRect(GetAttackRect().first, ColorF::LightSkyBlue);
