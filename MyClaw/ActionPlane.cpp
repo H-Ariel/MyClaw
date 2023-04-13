@@ -62,9 +62,9 @@
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#define DRAW_RECTANGLES
 //#undef LOW_DETAILS
-#ifndef _DEBUG
+//#ifndef _DEBUG
 #define USE_ENEMIES
-#endif
+//#endif
 
 class SimpleObject : public BasePlaneObject
 {
@@ -636,14 +636,13 @@ void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
 	{
 		_objects.push_back(DBG_NEW Statue(obj, _player));
 	}
-	else
-#endif
-		if (obj.logic == "PowderKeg")
+	else if (obj.logic == "PowderKeg")
 	{
 		PowderKeg* p = DBG_NEW PowderKeg(obj, _player);
 		_objects.push_back(p); _powderKegs.push_back(p);
 	}
 	else
+#endif
 	if (obj.logic == "Elevator"
 		|| obj.logic == "TriggerElevator" || obj.logic == "OneWayTriggerElevator"
 		|| obj.logic == "StartElevator" || obj.logic == "OneWayStartElevator")
