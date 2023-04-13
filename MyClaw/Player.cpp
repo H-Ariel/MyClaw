@@ -111,7 +111,7 @@ Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	renameKey("EMPTYJUMPMAGIC", "JUMPEMPTYMAGIC");
 
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
-	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH" };
+	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT"};
 
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 125, false);
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromFromPidImage("CLAW/IMAGES/100.PID");
@@ -414,7 +414,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 						obj.x = (int32_t)position.x;
 						obj.y = (int32_t)position.y;
-						obj.speedY = -DEFAULT_PROJECTILE_SPEED;
+						//obj.speedY = -DEFAULT_PROJECTILE_SPEED;
 						obj.damage = 15;
 
 						if (inAir)
@@ -469,49 +469,49 @@ void Player::Logic(uint32_t elapsedTime)
 				_aniName = "WALK";
 			}
 		}
-		else
+		else if (_aniName != "DUCK" && isDuck() && _ani->isFinishAnimation())
 		{
-			if (_aniName != "DUCK" && isDuck() && _ani->isFinishAnimation())
+			_aniName = "DUCK";
+		}
+		else if (_aniName != "JUMP")
+		{
+			if (_zPressed)
 			{
-				_aniName = "DUCK";
-			}
-			else if (_aniName != "JUMP")
-			{
-				if (_zPressed)
+				if (_raisedPowderKeg)
 				{
-					if (_raisedPowderKeg)
-					{
-						// throw the powder keg
-						_raisedPowderKeg->thrown(_forward);
-						_raisedPowderKeg = nullptr;
-						_aniName = "THROW";
-					}
-					else
-					{
-						// try lift powder keg
-						for (PowderKeg* p : ActionPlane::getPowderKegs())
-						{
-							if (_saveCurrRect.intersects(p->GetRect()))
-							{
-								if (p->raise())
-								{
-									_raisedPowderKeg = p;
-									_aniName = "LIFT";
-									_zPressed = false;
-									break;
-								}
-							}
-						}
-					}
-				}
-				else if (_raisedPowderKeg)
-				{
-					_aniName = "LIFT2";
+					// throw the powder keg
+					_raisedPowderKeg->thrown(_forward);
+					_raisedPowderKeg = nullptr;
+					_aniName = "THROW";
+					_zPressed = false; // if we throw do not try catch other keg
 				}
 				else
 				{
-					_aniName = "STAND";
+					// try lift powder keg
+					for (PowderKeg* p : ActionPlane::getPowderKegs())
+					{
+						if (_saveCurrRect.intersects(p->GetRect()))
+						{
+							if (p->raise())
+							{
+								_raisedPowderKeg = p;
+								_aniName = "LIFT";
+								_zPressed = false;
+								break;
+							}
+						}
+					}
+
+					// TODO: throw enemies
 				}
+			}
+			else if (_raisedPowderKeg)
+			{
+				_aniName = "LIFT2";
+			}
+			else
+			{
+				_aniName = "STAND";
 			}
 		}
 
@@ -532,15 +532,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 			if (endsWith(_aniName, "SWIPE"))
 			{
-				ClawProjectile::Types type = ClawProjectile::Types::None;
-				switch (_currPowerup)
-				{
-				case Player::PowerupType::FireSword: type = ClawProjectile::Types::FireSword; break;
-				case Player::PowerupType::IceSword: type = ClawProjectile::Types::IceSword; break;
-				case Player::PowerupType::LightningSword: type = ClawProjectile::Types::LightningSword; break;
-				}
-				if (type != ClawProjectile::Types::None)
-				{
+				auto shootSwordProjectile = [&](ClawProjectile::Types type) {
 					WwdObject obj;
 					Rectangle2D atkRc = GetAttackRect().first;
 					obj.x = (int32_t)position.x;
@@ -549,12 +541,21 @@ void Player::Logic(uint32_t elapsedTime)
 					obj.speedX = (_forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED);
 					obj.damage = 25;
 					ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
+				};
+
+				switch (_currPowerup)
+				{
+				case PowerupType::FireSword: shootSwordProjectile(ClawProjectile::Types::FireSword); break;
+				case PowerupType::IceSword: shootSwordProjectile(ClawProjectile::Types::IceSword); break;
+				case PowerupType::LightningSword: shootSwordProjectile(ClawProjectile::Types::LightningSword); break;
 				}
 			}
 		}
 	}
-
-	if (isInDeathAnimation()) _ani->loopAni = false;
+	else
+	{
+		_ani->loopAni = false;
+	}
 
 	_ani->mirrored = !_forward && !_isOnLadder;
 	_ani->position = position;
@@ -740,7 +741,7 @@ pair<Rectangle2D, int8_t> Player::GetAttackRect()
 void Player::stopFalling(float collisionSize)
 {
 	BaseCharacter::stopFalling(collisionSize);
-	if (_speed.x == 0 && !isDuck() && _aniName != "STAND" && !_isAttack && !isWeaponAnimation())
+	if (_speed.x == 0 && !isDuck() && !isStanding() && !_isAttack && !isWeaponAnimation())
 	{
 		// If CC stopped falling (and he is not walking) he should stand
 		_ani = _animations[_aniName = "STAND"];
@@ -968,7 +969,7 @@ bool Player::collectItem(Item* item)
 
 bool Player::isStanding() const
 {
-	return _aniName == "STAND" || _aniName == "IDLE";
+	return _aniName == "STAND" || _aniName == "IDLE" || _aniName == "LIFT" || _aniName == "LIFT2";
 }
 bool Player::isDuck() const
 {
@@ -1055,8 +1056,8 @@ void Player::keyUp(int key)
 	case '2':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Magic; break;
 	case '3':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Dynamite; break;
 
-	case VK_MENU:		_useWeapon = !_isOnLadder && !rope; _altPressed = false; break;
-	case VK_CONTROL:	_isAttack = !_isOnLadder && !_altPressed && !rope; break;
+	case VK_MENU:		_useWeapon = !_isOnLadder && !rope && !_raisedPowderKeg; _altPressed = false; break;
+	case VK_CONTROL:	_isAttack = !_isOnLadder && !_altPressed && !rope && !_raisedPowderKeg; break;
 	}
 }
 void Player::keyDown(int key)
@@ -1065,13 +1066,13 @@ void Player::keyDown(int key)
 
 	switch (key)
 	{
-	case VK_UP:		if (!rope && !_useWeapon && !_isAttack && !_altPressed) _upPressed = true; break;
-	case VK_DOWN:	if (!rope) _downPressed = true; break;
+	case VK_UP:		if (!_useWeapon && !_isAttack && !_altPressed && !rope && !_raisedPowderKeg) _upPressed = true; break;
+	case VK_DOWN:	if (!rope && !_raisedPowderKeg) _downPressed = true; break;
 	case VK_LEFT:	_leftPressed = true; break;
 	case VK_RIGHT:	_rightPressed = true; break;
 	case VK_SPACE:	_spacePressed = true; break;
 	case 'Z':		if (!rope) _zPressed = true; break;
-	case VK_MENU:	if (!rope) {
+	case VK_MENU:	if (!rope && !_raisedPowderKeg) {
 		if (!_altPressed) _holdAltTime = 0;
 		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount[ClawProjectile::Types::Dynamite] > 0);
 	} break;

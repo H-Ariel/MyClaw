@@ -107,7 +107,7 @@ void PowderKeg::fall()
 	_speed.y = 0.01f; // almost no speed
 }
 
-void PowderKeg::stopFalling		(float collisionSize) { _speed = {}; position.y -= collisionSize; }
-void PowderKeg::stopMovingLeft	(float collisionSize) { _speed = {}; position.x += collisionSize; }
-void PowderKeg::stopMovingRight	(float collisionSize) { _speed = {}; position.x -= collisionSize; }
+void PowderKeg::stopFalling(float collisionSize) { _speed = {}; if (_state != State::Explos) position.y -= collisionSize; }
+void PowderKeg::stopMovingLeft(float collisionSize) { _speed = {}; if (_state != State::Explos) position.x += collisionSize; }
+void PowderKeg::stopMovingRight(float collisionSize) { _speed = {}; if (_state != State::Explos) position.x -= collisionSize; }
 void PowderKeg::bounceTop() { _speed.y = abs(_speed.y); }
