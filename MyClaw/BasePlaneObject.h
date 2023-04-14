@@ -55,6 +55,8 @@ public:
 	void setSpeedX(float speedX) { _speed.x = speedX; }
 	void setSpeedY(float speedY) { _speed.y = speedY; }
 
+	virtual bool isFalling() const;
+
 	virtual void stopFalling(float collisionSize);
 	virtual void stopMovingLeft(float collisionSize);
 	virtual void stopMovingRight(float collisionSize);

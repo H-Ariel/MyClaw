@@ -192,6 +192,7 @@
     <ClCompile Include="Objects\TProjectilesShooter.cpp" />
     <ClCompile Include="Objects\Wolvington.cpp" />
     <ClCompile Include="PathManager.cpp" />
+    <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="PidPalette.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Rectangle2D.cpp" />
@@ -271,6 +272,7 @@
     <ClInclude Include="Objects\TProjectilesShooter.h" />
     <ClInclude Include="Objects\Wolvington.h" />
     <ClInclude Include="PathManager.h" />
+    <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="PidPalette.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rectangle2D.h" />

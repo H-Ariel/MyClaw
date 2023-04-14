@@ -967,6 +967,10 @@ bool Player::collectItem(Item* item)
 	return false;
 }
 
+bool Player::isFalling() const
+{
+	return _speed.y > 0 && !_isOnLadder;
+}
 bool Player::isStanding() const
 {
 	return _aniName == "STAND" || _aniName == "IDLE" || _aniName == "LIFT" || _aniName == "LIFT2";

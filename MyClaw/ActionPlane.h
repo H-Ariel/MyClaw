@@ -2,6 +2,7 @@
 
 #include "LevelPlane.h"
 #include "Player.h"
+#include "PhysicsManager.h"
 #include "Objects/PowderKeg.h"
 #include "Objects/FloorSpike.h"
 #include "Objects/GooVent.h"
@@ -32,7 +33,6 @@ public:
 	static const vector<Laser*>& getLasers() { return _lasers; }
 
 private:
-	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath);
 	void addObject(const WwdObject& obj, int8_t levelNumber);
 
 	// TODO: make non-static
@@ -52,6 +52,7 @@ private:
 		Open // open the screen
 	};
 
+	PhysicsManager _physicsManager;
 	shared_ptr<WapWorld> _wwd;
 	Player* _player;
 	const D2D1_SIZE_F _planeSize;

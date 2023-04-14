@@ -40,7 +40,6 @@ public:
 	bool collectItem(Item* item); // returns true if the item collected and should be removed. else - false
 
 	bool isJumping() const { return _speed.y < 0 && !_isOnLadder; }
-	bool isFalling() const { return _speed.y > 0 && !_isOnLadder; }
 	bool isClimbing() const { return _isOnLadder; }
 	bool isSpikeDeath() const { return _aniName == "SPIKEDEATH"; }
 	bool isFallDeath() const { return _aniName == "FALLDEATH"; }
@@ -48,6 +47,7 @@ public:
 	bool isFinishDeathAnimation() const { return isInDeathAnimation() && _ani->isFinishAnimation(); }
 	bool isFinishLevel() const { return _finishLevel; }
 	bool isFreeze() const { return _freezeTime > 0; }
+	bool isFalling() const override;
 	bool isStanding() const override;
 	bool isDuck() const override;
 	bool isTakeDamage() const override;

@@ -49,6 +49,7 @@ void BaseStaticPlaneObject::setObjectRectangle() { myMemCpy(_objRc, BasePlaneObj
 
 BaseDynamicPlaneObject::BaseDynamicPlaneObject(const WwdObject& obj, Player* player)
 	: BasePlaneObject(obj, player), _speed({}) {}
+bool BaseDynamicPlaneObject::isFalling() const { return _speed.y > 0; }
 void BaseDynamicPlaneObject::stopFalling(float collisionSize) { _speed.y = 0; position.y -= collisionSize; }
 void BaseDynamicPlaneObject::stopMovingLeft(float collisionSize) { _speed.x = 0; position.x += collisionSize; }
 void BaseDynamicPlaneObject::stopMovingRight(float collisionSize) { _speed.x = 0; position.x -= collisionSize; }

@@ -8,7 +8,6 @@ TownGuard::TownGuard(const WwdObject& obj, Player* player)
 		"KILLFALL", "STRIKE2", "STRIKE1", "", "", "", 0.1f),
 	_type((Type)(obj.logic[obj.logic.length() - 1] - '1'))
 {
-	position.y += 8; // maybe they got their calculations wrong...
 }
 
 Rectangle2D TownGuard::GetRect()

@@ -167,6 +167,8 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
 
+//	_speed.y += GRAVITY * elapsedTime;
+//	position.y += _speed.y * elapsedTime;
 	
 
 	if (!_isAttack)
