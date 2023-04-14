@@ -106,6 +106,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	if (!noTreasures && _itemsTypes.size() == 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
 
 
+	// TODO: use the `PhysicsManager`
 	if (obj.minX == 0 && obj.maxX == 0)
 	{
 		myMemCpy(_minX, position.x - 32);
@@ -167,8 +168,8 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
 
-//	_speed.y += GRAVITY * elapsedTime;
-//	position.y += _speed.y * elapsedTime;
+	_speed.y += GRAVITY * elapsedTime;
+	position.y += _speed.y * elapsedTime;
 	
 
 	if (!_isAttack)

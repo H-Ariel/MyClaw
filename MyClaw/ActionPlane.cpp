@@ -139,6 +139,8 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int8_t
 
 	_objects.push_back(_player);
 	_needSort = true;
+
+	_physicsManager.init(); // must be after WWd map loaded
 }
 ActionPlane::~ActionPlane()
 {
@@ -303,6 +305,8 @@ void ActionPlane::Draw()
 	{
 		i->Draw();
 	}
+
+	_physicsManager.Draw();
 
 	if (_state == States::Close || _state == States::Open)
 	{
