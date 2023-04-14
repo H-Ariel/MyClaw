@@ -59,7 +59,7 @@
 //#define DRAW_RECTANGLES
 //#undef LOW_DETAILS
 //#ifndef _DEBUG
-#define USE_ENEMIES
+//#define USE_ENEMIES
 //#endif
 
 class SimpleObject : public BasePlaneObject
@@ -140,7 +140,7 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int8_t
 	_objects.push_back(_player);
 	_needSort = true;
 
-	_physicsManager.init(); // must be after WWd map loaded
+	_physicsManager.init(levelNumber); // must be after WWd map loaded
 }
 ActionPlane::~ActionPlane()
 {

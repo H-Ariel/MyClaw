@@ -23,22 +23,13 @@ void reduceRectangles(vector<Rectangle2D>& rects)
 {
 	size_t i, j;
 
-	// this loop round all rectangles edges
-	for (Rectangle2D& r : rects)
-	{
-		if ((int32_t)r.left % 64 == 63) r.left += 1;
-		if ((int32_t)r.top % 64 == 63) r.top += 1;
-		if ((int32_t)r.right % 64 == 63) r.right += 1;
-		if ((int32_t)r.bottom % 64 == 63) r.bottom += 1;
-	}
-
 	// this loop combines rectangles that are next to each other (according to x axis)
 	for (i = 0; i < rects.size(); i++)
 	{
 		for (j = i + 1; j < rects.size(); j++)
 		{
 			if (rects[i].top == rects[j].top && rects[i].bottom == rects[j].bottom &&
-				rects[i].right == rects[j].left || rects[i].right + 1 == rects[j].left)
+				(rects[i].right == rects[j].left /*|| rects[i].right + 1 == rects[j].left*/))
 			{
 				Rectangle2D newRc(rects[i].left, rects[i].top, rects[j].right, rects[i].bottom);
 				rects.erase(rects.begin() + j);
@@ -54,7 +45,7 @@ void reduceRectangles(vector<Rectangle2D>& rects)
 		for (j = i + 1; j < rects.size(); j++)
 		{
 			if (rects[i].left == rects[j].left && rects[i].right == rects[j].right &&
-				rects[i].bottom == rects[j].top || rects[i].bottom + 1 == rects[j].top)
+				(rects[i].bottom == rects[j].top /*|| rects[i].bottom + 1 == rects[j].top*/))
 			{
 				Rectangle2D newRc(rects[i].left, rects[i].top, rects[i].right, rects[j].bottom);
 				rects.erase(rects.begin() + j);
@@ -65,12 +56,34 @@ void reduceRectangles(vector<Rectangle2D>& rects)
 	}
 }
 
-void PhysicsManager::init()
+void PhysicsManager::init(int8_t levelNumber)
 {
 	// map of all rectangles that player can collide with 
 
 	Rectangle2D tileRc, originalTileRc, rc1, rc2;
 	uint32_t i, j;
+
+
+
+	// minor change to tiles so they will be more accurate for `reduceRectangles`
+	// TODO: continue for all levels
+	if (levelNumber == 1)
+	{
+		WwdTileDescription& t401 = _wwd->tilesDescription[401];
+		WwdTileDescription& t406 = _wwd->tilesDescription[406];
+		
+		t401.rect.right = 29;
+		t401.rect.bottom = 63;
+		t401.insideAttrib = WwdTileDescription::TileAttribute_Solid;
+		t401.type = WwdTileDescription::TileType_Double;
+
+		t406.rect.left = 40;
+		t406.rect.right = 63;
+		t406.rect.bottom = 63;
+		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
+		t406.type = WwdTileDescription::TileType_Double;
+	}
+	
 
 	for (i = 0; i < _plane.tilesOnAxisY; i++)
 	{
@@ -111,8 +124,8 @@ void PhysicsManager::init()
 
 				tileRc.left += tileDesc.rect.left;
 				tileRc.top += tileDesc.rect.top;
-				tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width;
-				tileRc.bottom = tileRc.bottom + tileDesc.rect.bottom - tileDesc.height;
+				tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width + 1;
+				tileRc.bottom = tileRc.bottom + tileDesc.rect.bottom - tileDesc.height + 1;
 
 				switch (tileDesc.insideAttrib)
 				{
@@ -183,8 +196,6 @@ void PhysicsManager::Draw()
 
 void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath)
 {
-	// TODO: _solidRects, _groundRects, _deathRects, _climbRects
-
 	static const float N = 2.5f; // this number indicate how many tile we will check from every side
 	const Rectangle2D objRc = obj->GetRect();
 	const uint32_t MinXPos = (uint32_t)(obj->position.x / _plane.tilePixelWidth - N);
@@ -196,7 +207,7 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(vo
 	Rectangle2D cumulatedCollision, tileRc;
 	Rectangle2D collisionRc;
 	Rectangle2D originalTileRc, rc1, rc2;
-	uint32_t i, j, collisionsNumber = 0;
+	uint32_t i = 0, j = 0, collisionsNumber = 0;
 
 	const bool isPlayer = isinstance<Player>(obj);
 
@@ -268,91 +279,123 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(vo
 		}
 	};
 
-	for (i = MinYPos; i < MaxYPos && i < _plane.tilesOnAxisY; i++)
+
+	// TODO: use _solidRects, _groundRects, _deathRects, _climbRects
+	if (true) // (delete this condition)
 	{
-		for (j = MinXPos; j < MaxXPos && j < _plane.tilesOnAxisX; j++)
+		for (i = MinYPos; i < MaxYPos && i < _plane.tilesOnAxisY; i++)
 		{
-			const WwdTileDescription& tileDesc = _wwd->tilesDescription[_plane.tiles[i][j]];
-
-			tileRc.left = (float)(j * _plane.tilePixelWidth);
-			tileRc.top = (float)(i * _plane.tilePixelHeight);
-			tileRc.right = tileRc.left + _plane.tilePixelWidth;
-			tileRc.bottom = tileRc.top + _plane.tilePixelHeight;
-
-			switch (tileDesc.type)
+			for (j = MinXPos; j < MaxXPos && j < _plane.tilesOnAxisX; j++)
 			{
-			case WwdTileDescription::TileType_Single: {
-				switch (tileDesc.insideAttrib)
+				const WwdTileDescription& tileDesc = _wwd->tilesDescription[_plane.tiles[i][j]];
+
+				tileRc.left = (float)(j * _plane.tilePixelWidth);
+				tileRc.top = (float)(i * _plane.tilePixelHeight);
+				tileRc.right = tileRc.left + _plane.tilePixelWidth;
+				tileRc.bottom = tileRc.top + _plane.tilePixelHeight;
+
+				switch (tileDesc.type)
 				{
-				case WwdTileDescription::TileAttribute_Solid:
-					_onSolid(tileRc);
-					break;
-
-				case WwdTileDescription::TileAttribute_Ground:
-					_onGround();
-					break;
-
-				case WwdTileDescription::TileAttribute_Climb:
-					_onLadder();
-					break;
-
-				case WwdTileDescription::TileAttribute_Death: // this case is the purple rectangles
-					_onDeath();
-					break;
-				}
-			}	break;
-
-			case WwdTileDescription::TileType_Double: { // TODO: improve this part
-				originalTileRc = tileRc;
-
-				tileRc.left += tileDesc.rect.left;
-				tileRc.top += tileDesc.rect.top;
-				tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width;
-				tileRc.bottom = tileRc.bottom + tileDesc.rect.bottom - tileDesc.height;
-
-				switch (tileDesc.insideAttrib)
-				{
-				case WwdTileDescription::TileAttribute_Solid: // this case is the green rectangles
-					_onSolid(tileRc);
-					break;
-				case WwdTileDescription::TileAttribute_Ground: // this case is the magenta rectangles
-					_onGround();
-					break;
-				case WwdTileDescription::TileAttribute_Climb:
-					_onLadder();
-					break;
-				case WwdTileDescription::TileAttribute_Death: // also this case is the purple rectangles
-					_onDeath();
-					break;
-				}
-
-				if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid) // this case is the yellow rectangles
-				{
-					if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.top == 0)
+				case WwdTileDescription::TileType_Single: {
+					switch (tileDesc.insideAttrib)
 					{
-						rc1 = { originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom };
-						rc2 = { tileRc.left, tileRc.bottom, tileRc.right, originalTileRc.bottom };
+					case WwdTileDescription::TileAttribute_Solid:
+						_onSolid(tileRc);
+						break;
+
+					case WwdTileDescription::TileAttribute_Ground:
+						_onGround();
+						break;
+
+					case WwdTileDescription::TileAttribute_Climb:
+						_onLadder();
+						break;
+
+					case WwdTileDescription::TileAttribute_Death: // this case is the purple rectangles
+						_onDeath();
+						break;
 					}
-					else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0)
+				}	break;
+
+				case WwdTileDescription::TileType_Double: { // TODO: improve this part
+					originalTileRc = tileRc;
+
+					tileRc.left += tileDesc.rect.left;
+					tileRc.top += tileDesc.rect.top;
+					tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width;
+					tileRc.bottom = tileRc.bottom + tileDesc.rect.bottom - tileDesc.height;
+
+					switch (tileDesc.insideAttrib)
 					{
-						rc1 = { tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom };
-						rc2 = { originalTileRc.left, tileRc.bottom, originalTileRc.right, originalTileRc.bottom };
-					}
-					else
-					{
-						continue;
-						// TODO: handle the other case
+					case WwdTileDescription::TileAttribute_Solid: // this case is the green rectangles
+						_onSolid(tileRc);
+						break;
+					case WwdTileDescription::TileAttribute_Ground: // this case is the magenta rectangles
+						_onGround();
+						break;
+					case WwdTileDescription::TileAttribute_Climb:
+						_onLadder();
+						break;
+					case WwdTileDescription::TileAttribute_Death: // also this case is the purple rectangles
+						_onDeath();
+						break;
 					}
 
-					_onSolid(rc1);
-					_onSolid(rc2);
-				}
-			}	break;
+					if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid) // this case is the yellow rectangles
+					{
+						if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.top == 0)
+						{
+							rc1 = { originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom };
+							rc2 = { tileRc.left, tileRc.bottom, tileRc.right, originalTileRc.bottom };
+						}
+						else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0)
+						{
+							rc1 = { tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom };
+							rc2 = { originalTileRc.left, tileRc.bottom, originalTileRc.right, originalTileRc.bottom };
+						}
+						else
+						{
+							continue;
+							// TODO: handle the other case
+						}
 
-			default: break;
+						_onSolid(rc1);
+						_onSolid(rc2);
+					}
+				}	break;
+
+				default: break;
+				}
 			}
 		}
 	}
+	else
+	{
+		for (Rectangle2D& rc : _solidRects)
+		{
+			_onSolid(rc);
+		}
+		for (Rectangle2D& rc : _groundRects)
+		{
+			tileRc = rc;
+			_onGround();
+		}
+		for (Rectangle2D& rc : _climbRects)
+		{
+			tileRc = rc;
+
+			j = (int)(tileRc.left / _plane.tilePixelWidth);
+			i = (int)(tileRc.top / _plane.tilePixelHeight);
+
+			_onLadder();
+		}
+		for (Rectangle2D& rc : _deathRects)
+		{
+			tileRc = rc;
+			_onDeath();
+		}
+	}
+
 
 	// whichever side collides the most, that side is taken into consideration
 	cumulatedCollision.keepLargest();
