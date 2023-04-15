@@ -11,6 +11,11 @@
 
 // TODO: add function to update object position
 
+/*
+IMPORTANT TODO: (this is the current mission of this class)
+svae rects with type, and check only the rect who collide with the object
+*/
+
 
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
@@ -72,7 +77,7 @@ void PhysicsManager::init(int8_t levelNumber)
 		WwdTileDescription& t401 = _wwd->tilesDescription[401];
 		WwdTileDescription& t406 = _wwd->tilesDescription[406];
 		
-		t401.rect.right = 29;
+		t401.rect.right = 28;
 		t401.rect.bottom = 63;
 		t401.insideAttrib = WwdTileDescription::TileAttribute_Solid;
 		t401.type = WwdTileDescription::TileType_Double;
