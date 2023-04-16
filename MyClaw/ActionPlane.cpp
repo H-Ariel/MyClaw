@@ -59,7 +59,7 @@
 //#define DRAW_RECTANGLES
 //#undef LOW_DETAILS
 //#ifndef _DEBUG
-//#define USE_ENEMIES
+#define USE_ENEMIES
 //#endif
 
 class SimpleObject : public BasePlaneObject

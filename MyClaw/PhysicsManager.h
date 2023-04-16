@@ -18,7 +18,9 @@ public:
 	void Draw();
 
 private:
-	vector<Rectangle2D> _solidRects, _groundRects, _deathRects, _climbRects;
+	void reduceRectangles();
+
+	vector<pair<Rectangle2D, uint32_t>> _rects; // { rc, WwdTileDescription::WwdTileAttributeFlags }
 	const WwdPlane& _plane;
 	const shared_ptr<WapWorld>& _wwd;
 	Player*& _player;
