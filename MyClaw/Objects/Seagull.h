@@ -9,7 +9,7 @@ public:
 	Seagull(const WwdObject& obj, Player* player);
 
 	void Logic(uint32_t elapsedTime) override;
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 
 private:
 	enum class States : int8_t { Fly, DiveIn, DiveOut };

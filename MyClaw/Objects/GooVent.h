@@ -8,9 +8,9 @@ class GooVent : public BaseStaticPlaneObject
 public:
 	GooVent(const WwdObject& obj, Player* player);
 
-	int8_t getDamage() const;
+	int getDamage() const;
 
 private:
-	const int32_t _damage;
+	const int _damage;
 };
 

@@ -50,7 +50,7 @@ Rectangle2D Soldier::GetRect()
 
 	return rc;
 }
-pair<Rectangle2D, int8_t> Soldier::GetAttackRect()
+pair<Rectangle2D, int> Soldier::GetAttackRect()
 {
 	if (_ani->getFrameNumber() != 5 && _ani->getFrameNumber() != 4) return{};
 

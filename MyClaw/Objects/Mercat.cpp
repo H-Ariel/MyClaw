@@ -19,7 +19,7 @@ Rectangle2D Mercat::GetRect()
 	return _saveCurrRect;
 }
 
-pair<Rectangle2D, int8_t> Mercat::GetAttackRect()
+pair<Rectangle2D, int> Mercat::GetAttackRect()
 {
 	if (!_isAttack) return {};
 

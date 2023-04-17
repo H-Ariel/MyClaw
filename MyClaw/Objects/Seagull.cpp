@@ -75,7 +75,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 	_isAttack = _state == States::DiveIn;
 }
 
-pair<Rectangle2D, int8_t> Seagull::GetAttackRect()
+pair<Rectangle2D, int> Seagull::GetAttackRect()
 {
 	if (_state == States::Fly) return {};
 	return { _saveCurrRect, _damage };

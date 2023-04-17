@@ -42,7 +42,7 @@ void Rat::makeAttack()
 	}
 }
 
-pair<Rectangle2D, int8_t> Rat::GetAttackRect() { return {}; }
+pair<Rectangle2D, int> Rat::GetAttackRect() { return {}; }
 bool Rat::isDuck() const { return true; }
 bool Rat::isTakeDamage() const { return false; }
 
@@ -121,4 +121,4 @@ Rectangle2D PunkRat::GetRect()
 //	return _ani->GetRect();
 	return BasePlaneObject::GetRect();
 }
-pair<Rectangle2D, int8_t> PunkRat::GetAttackRect() { return{}; }
+pair<Rectangle2D, int> PunkRat::GetAttackRect() { return{}; }

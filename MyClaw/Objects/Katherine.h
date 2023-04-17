@@ -11,7 +11,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 	Rectangle2D GetRect() override;
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 
 	void stopFalling(float collisionSize) override;
 	void stopMovingLeft(float collisionSize) override;

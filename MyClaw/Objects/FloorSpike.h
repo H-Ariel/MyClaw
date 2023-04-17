@@ -10,7 +10,7 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 
-	int8_t getDamage() const;
+	int getDamage() const;
 
 protected:
 	shared_ptr<Animation> _aniAppear, _aniDisappear;

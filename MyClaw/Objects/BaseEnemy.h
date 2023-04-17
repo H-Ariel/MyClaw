@@ -11,8 +11,8 @@
 class BaseEnemy : public BaseCharacter
 {
 public:
-	BaseEnemy(const WwdObject& obj, Player* player, int16_t health,
-		int8_t damage, string walkAni, string hit1, string hit2,
+	BaseEnemy(const WwdObject& obj, Player* player, int health,
+		int damage, string walkAni, string hit1, string hit2,
 		string fallDead, string strikeAni, string strikeDuckAni,
 		string shootAni, string shootDuckAni, string projectileAniDir,
 		float walkingSpeed, bool noTreasures = false);
@@ -39,7 +39,7 @@ protected:
 
 
 	bool isWalkAnimation() const;
-	bool checkForHurt(pair<Rectangle2D, uint8_t> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
+	bool checkForHurt(pair<Rectangle2D, int> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
 	virtual bool checkForHurts();
 
 
@@ -49,7 +49,7 @@ protected:
 	vector<int8_t> _itemsTypes;
 	const float _minX, _maxX;
 	int32_t _attackRest; // rest time between attack. NOTE: not all enemies used that
-	int8_t _damage; // the amount of health that enemy took when he hit Claw
+	int _damage; // the amount of health that enemy took when he hit Claw
 	bool _itemsTaken; // store if the items were taken from this crate
 	bool _isStanding;
 	const bool _canStrike, _canStrikeDuck, _canShoot, _canShootDuck;
@@ -62,7 +62,7 @@ class BaseBoss : public BaseEnemy
 public:
 	// same ot BaseEnemy c'tor
 	BaseBoss(const WwdObject& obj, Player* player,
-		int8_t damage, string walkAni, string hit1,
+		int damage, string walkAni, string hit1,
 		string hit2, string fallDead, string strikeAni,
 		string shootAni, string projectileAniDir);
 	~BaseBoss();

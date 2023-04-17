@@ -15,7 +15,7 @@ LevelHUD::LevelHUD(const Player* player, const D2D1_POINT_2F& offset)
 	_stopwatch = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/STOPWATCH", 125, false);
 
 	char imgPath[44] = {};
-	for (uint8_t i = 0; i <= 9; i++)
+	for (int i = 0; i <= 9; i++)
 	{
 		sprintf(imgPath, "GAME/IMAGES/INTERFACE/HEALTHNUMBERS/%03d.PID", i);
 		_healthNumbers[i] = AssetsManager::loadImage(imgPath);
@@ -61,7 +61,7 @@ void LevelHUD::Draw()
 	drawNumbers(_player->getScore(), 8, _scoreNumbers, { 50 + _offset.x, 20 }, true);
 }
 
-void LevelHUD::drawNumbers(uint32_t amount, int8_t numOfDigits, shared_ptr<UIBaseImage> const numArr[], D2D1_POINT_2F pos, bool isScore) const
+void LevelHUD::drawNumbers(uint32_t amount, int numOfDigits, shared_ptr<UIBaseImage> const numArr[], D2D1_POINT_2F pos, bool isScore) const
 {
 	shared_ptr<UIBaseImage> img;
 	char str[9];
@@ -75,7 +75,7 @@ void LevelHUD::drawNumbers(uint32_t amount, int8_t numOfDigits, shared_ptr<UIBas
 	
 	pos.y += _offset.y;
 	
-	for (int8_t i = 0; i < numOfDigits; i++)
+	for (int i = 0; i < numOfDigits; i++)
 	{
 		img = numArr[str[i] - '0'];
 		img->position = pos;

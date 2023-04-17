@@ -36,7 +36,7 @@ void Laser::Logic(uint32_t elapsedTime)
 	}
 }
 
-int8_t Laser::getDamage()
+int Laser::getDamage()
 {
 	return _isActive ? _damage : 0;
 }

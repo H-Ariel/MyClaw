@@ -46,7 +46,7 @@ Rectangle2D Officer::GetRect()
 
 	return rc;
 }
-pair<Rectangle2D, int8_t> Officer::GetAttackRect()
+pair<Rectangle2D, int> Officer::GetAttackRect()
 {
 	if (_ani->getFrameNumber() != 3) return {};
 

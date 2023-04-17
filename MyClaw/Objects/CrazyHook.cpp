@@ -16,7 +16,7 @@ Rectangle2D CrazyHook::GetRect()
 	return _saveCurrRect;
 }
 
-pair<Rectangle2D, int8_t> CrazyHook::GetAttackRect()
+pair<Rectangle2D, int> CrazyHook::GetAttackRect()
 {
 	if (!_isAttack) return {};
 

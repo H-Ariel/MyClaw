@@ -55,7 +55,7 @@ void Crate::Logic(uint32_t elapsedTime)
 
 		for (PowderKeg* p : ActionPlane::getPowderKegs())
 		{
-			int8_t damage = p->getDamage();
+			int damage = p->getDamage();
 			if (damage > 0)
 			{
 				if (_objRc.intersects(p->GetRect()))

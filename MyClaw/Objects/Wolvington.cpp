@@ -99,7 +99,7 @@ Rectangle2D Wolvington::GetRect()
 
 	return rc;
 }
-pair<Rectangle2D, int8_t> Wolvington::GetAttackRect()
+pair<Rectangle2D, int> Wolvington::GetAttackRect()
 {
 	Rectangle2D rc;
 

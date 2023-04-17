@@ -388,7 +388,7 @@ void Player::Logic(uint32_t elapsedTime)
 				case ClawProjectile::Types::Dynamite: _aniName = "POSTDYNAMITE"; break;
 				}
 
-				int8_t& amount = _weaponsAmount[_currWeapon];
+				int& amount = _weaponsAmount[_currWeapon];
 
 				if (amount > 0)
 				{
@@ -530,10 +530,11 @@ void Player::Logic(uint32_t elapsedTime)
 			_ani->loopAni = !FindInArray(NoLoopAnimations, _aniName) && !FindInArray(AttackAnimations, _aniName)
 				&& !isWeaponAnimation() && !isDuck();
 
-			if (endsWith(_aniName, "SWIPE"))
+			if (endsWith(_aniName, "SWIPE") && _currPowerup != PowerupType::None)
 			{
 				auto shootSwordProjectile = [&](ClawProjectile::Types type) {
 					WwdObject obj;
+					calcAttackRect();
 					Rectangle2D atkRc = GetAttackRect().first;
 					obj.x = (int32_t)position.x;
 					obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
@@ -560,6 +561,9 @@ void Player::Logic(uint32_t elapsedTime)
 	_ani->mirrored = !_forward && !_isOnLadder;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
+	
+	calcRect();
+	calcAttackRect();
 }
 void Player::Draw()
 {
@@ -575,47 +579,40 @@ void Player::Draw()
 		s.second.Draw();
 	}
 }
-Rectangle2D Player::GetRect()
+Rectangle2D Player::GetRect() { return _saveCurrRect; }
+pair<Rectangle2D, int> Player::GetAttackRect() { return _saveCurrAttackRect; }
+void Player::calcRect()
 {
-	/*
-	TODO: special idea: create more method to calculate the
-	      rect (call it from ActionPlane::Logic), and here
-		  put just `return _saveCurrRect;`
-		  (also for `GetAttackRect`)
-	*/
+	// calculate _saveCurrRect
 
-	Rectangle2D rc;
-
-	rc.left = -7.f + 15 * (!_forward);
-	rc.right = rc.left + 44;
+	_saveCurrRect.left = -7.f + 15 * (!_forward);
+	_saveCurrRect.right = _saveCurrRect.left + 44;
 
 	if (isDuck())
 	{
-		rc.top = 30;
-		rc.bottom = 90;
+		_saveCurrRect.top = 30;
+		_saveCurrRect.bottom = 90;
 	}
 	else
 	{
-		rc.top = 5;
-		rc.bottom = 115;
+		_saveCurrRect.top = 5;
+		_saveCurrRect.bottom = 115;
 	}
 
-
 	// set rectangle by center
-	const float addX = position.x - (rc.right - rc.left) / 2, addY = position.y - (rc.bottom - rc.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-	
-	_saveCurrRect = rc;
-
-	return rc;
+	float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2;
+	float addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
+	_saveCurrRect.top += addY;
+	_saveCurrRect.bottom += addY;
+	_saveCurrRect.left += addX;
+	_saveCurrRect.right += addX;
 }
-pair<Rectangle2D, int8_t> Player::GetAttackRect()
+void Player::calcAttackRect()
 {
+	// calculate _saveCurrAttackRect
+
 	Rectangle2D rc;
-	int8_t damage = 0;
+	int damage = 0;
 
 	if (_aniName == "SWIPE")
 	{
@@ -725,17 +722,20 @@ pair<Rectangle2D, int8_t> Player::GetAttackRect()
 
 		damage = 2;
 	}
-	else return {};
+	else { _saveCurrAttackRect = {}; return; }
 
 	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
+	float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2;
+	float addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
 	rc.top += addY;
 	rc.bottom += addY;
 	rc.left += addX;
 	rc.right += addX;
 
-
-	return { rc, _currPowerup == PowerupType::Catnip ? 100 : damage };
+	_saveCurrAttackRect = { rc, (_currPowerup == PowerupType::Catnip
+		|| _currPowerup == PowerupType::FireSword
+		|| _currPowerup == PowerupType::IceSword
+		|| _currPowerup == PowerupType::LightningSword) ? 100 : damage };
 }
 
 void Player::stopFalling(float collisionSize)
@@ -797,7 +797,7 @@ bool Player::checkForHurts()
 
 	if (isTakeDamage() || _damageRest > 0) return false;
 
-	pair<Rectangle2D, int8_t> atkRc;
+	pair<Rectangle2D, int> atkRc;
 
 	for (BaseEnemy* enemy : ActionPlane::getEnemies())
 	{
@@ -831,7 +831,7 @@ bool Player::checkForHurts()
 		}
 	}
 
-	int8_t damage;
+	int damage;
 
 	for (PowderKeg* p : ActionPlane::getPowderKegs())
 	{
@@ -1019,6 +1019,7 @@ void Player::backToLife()
 	_lastPowderKegExplos = nullptr;
 	_raisedPowderKeg = nullptr;
 	_lastAttackRect = {};
+	_saveCurrAttackRect = {};
 	_damageRest = 0;
 	_forward = true;
 	_freezeTime = 0;
@@ -1055,7 +1056,7 @@ void Player::keyUp(int key)
 	case VK_SPACE:	_spacePressed = false; break;
 	case 'Z':		_zPressed = false; break;
 
-	case VK_SHIFT:	if (!_useWeapon) _currWeapon = ClawProjectile::Types(((uint8_t)_currWeapon + 1) % 3); break;
+	case VK_SHIFT:	if (!_useWeapon) _currWeapon = ClawProjectile::Types(((int)_currWeapon + 1) % 3); break;
 	case '1':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Pistol; break;
 	case '2':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Magic; break;
 	case '3':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Dynamite; break;

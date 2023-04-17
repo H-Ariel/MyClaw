@@ -21,7 +21,7 @@ public:
 	static shared_ptr<Animation> createCopyAnimationFromFromPidImage(const string& pidPath);
 	static map<string, shared_ptr<Animation>> loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath = ""); // load all ANI files in `dirPath`
 	static shared_ptr<WapWorld> loadWwdFile(const string& wwdPath);
-	static shared_ptr<WapWorld> loadLevelWwdFile(int8_t levelNumber);
+	static shared_ptr<WapWorld> loadLevelWwdFile(int levelNumber);
 	static shared_ptr<PidPalette> loadPidPalette(const string& palPath);
 	static map<int32_t, shared_ptr<UIBaseImage>> loadPlaneTilesImages(const string& planeImagesPath);
 

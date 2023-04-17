@@ -30,7 +30,7 @@ PhysicsManager::PhysicsManager(const WwdPlane& plane, const shared_ptr<WapWorld>
 {
 }
 
-void PhysicsManager::init(int8_t levelNumber)
+void PhysicsManager::init(int levelNumber)
 {
 #ifndef USE_OLD_WAY
 	// map of all rectangles that player can collide with 
@@ -55,6 +55,10 @@ void PhysicsManager::init(int8_t levelNumber)
 		t406.rect.bottom = 63;
 		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
 		t406.type = WwdTileDescription::TileType_Double;
+	}
+	else if (levelNumber == 5)
+	{
+		// i think there is something wrong here...
 	}
 
 

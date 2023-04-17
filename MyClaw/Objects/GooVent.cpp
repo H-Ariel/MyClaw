@@ -9,7 +9,7 @@ GooVent::GooVent(const WwdObject& obj, Player* player)
 	setObjectRectangle();
 }
 
-int8_t GooVent::getDamage() const
+int GooVent::getDamage() const
 {
 	size_t i = _ani->getFrameNumber();
 	if (6 < i && i < 11)

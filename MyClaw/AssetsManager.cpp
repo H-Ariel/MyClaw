@@ -73,7 +73,7 @@ shared_ptr<WapWorld> AssetsManager::loadWwdFile(const string& wwdPath)
 {
 	return allocNewSharedPtr<WapWorld>(_rezArchive->getFileBufferReader(wwdPath));
 }
-shared_ptr<WapWorld> AssetsManager::loadLevelWwdFile(int8_t levelNumber)
+shared_ptr<WapWorld> AssetsManager::loadLevelWwdFile(int levelNumber)
 {
 	shared_ptr<WapWorld> wwd = loadWwdFile("LEVEL" + to_string((int)levelNumber) + "/WORLDS/WORLD.WWD");
 

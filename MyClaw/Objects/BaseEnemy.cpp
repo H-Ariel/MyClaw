@@ -81,7 +81,7 @@ void BossGem::Logic(uint32_t elapsedTime)
 // TODO: add gravity to enemies and make sure it does not cause problems
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
-	int16_t health, int8_t damage, string walkAni, string hit1, string hit2,
+	int health, int damage, string walkAni, string hit1, string hit2,
 	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
 	string projectileAniDir, float walkingSpeed, bool noTreasures)
 	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
@@ -339,7 +339,7 @@ void BaseEnemy::stopMovingRight(float collisionSize)
 	_forward = false;
 	_isStanding = true;
 }
-bool BaseEnemy::checkForHurt(pair<Rectangle2D, uint8_t> hurtData)
+bool BaseEnemy::checkForHurt(pair<Rectangle2D, int> hurtData)
 {
 	if (removeObject)
 		return true;
@@ -389,7 +389,7 @@ bool BaseEnemy::checkForHurts() // TODO: combine all `checkForHurts` methods fro
 
 // TODO: maybe this c'tor don't need get parameters...
 BaseBoss::BaseBoss(const WwdObject& obj, Player* player,
-	int8_t damage, string walkAni, string hit1, string hit2, string fallDead,
+	int damage, string walkAni, string hit1, string hit2, string fallDead,
 	string strikeAni, string shootAni, string projectileAniDir)
 	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead,
 		strikeAni, "", shootAni, "", projectileAniDir, 0, true),

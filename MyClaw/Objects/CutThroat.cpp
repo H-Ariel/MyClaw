@@ -7,7 +7,7 @@ CutThroat::CutThroat(const WwdObject& obj, Player* player)
 {
 }
 
-pair<Rectangle2D, int8_t> CutThroat::GetAttackRect()
+pair<Rectangle2D, int> CutThroat::GetAttackRect()
 {
 	if (_ani->getFrameNumber() != 2) return {};
 

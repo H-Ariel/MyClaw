@@ -74,7 +74,7 @@ void Marrow::Logic(uint32_t elapsedTime)
 	PostLogic(elapsedTime);
 }
 
-pair<Rectangle2D, int8_t> Marrow::GetAttackRect()
+pair<Rectangle2D, int> Marrow::GetAttackRect()
 {
 	return {};
 }
@@ -201,7 +201,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	PostLogic(elapsedTime);
 }
 
-pair<Rectangle2D, int8_t> MarrowParrot::GetAttackRect()
+pair<Rectangle2D, int> MarrowParrot::GetAttackRect()
 {
 	return { GetRect(), _damage };
 }
@@ -216,7 +216,7 @@ bool MarrowParrot::checkForHurts()
 {
 	// when CC hurt parrot, it returns to Marrow
 
-	int16_t health = _health; // save health value
+	int health = _health; // save health value
 
 	if (_isAttack && BaseEnemy::checkForHurts())
 	{

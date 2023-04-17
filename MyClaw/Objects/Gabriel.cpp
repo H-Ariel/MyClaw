@@ -123,12 +123,12 @@ void Gabriel::Logic(uint32_t elapsedTime)
 
 	PostLogic(elapsedTime);
 }
-pair<Rectangle2D, int8_t> Gabriel::GetAttackRect() { return {}; }
+pair<Rectangle2D, int> Gabriel::GetAttackRect() { return {}; }
 bool Gabriel::checkForHurts()
 {
 	// block all CC attacks
 
-	int16_t health = _health; // save health value
+	int health = _health; // save health value
 
 	if (BaseEnemy::checkForHurts())
 	{

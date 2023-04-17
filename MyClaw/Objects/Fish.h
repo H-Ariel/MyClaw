@@ -9,7 +9,7 @@ public:
 	Fish(const WwdObject& obj, Player* player);
 
 	void Logic(uint32_t elapsedTime) override;
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
 	void makeAttack() override;

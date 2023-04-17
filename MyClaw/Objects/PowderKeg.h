@@ -8,7 +8,7 @@ class PowderKeg : public BaseDynamicPlaneObject
 public:
 	PowderKeg(const WwdObject& obj, Player* player);
 	void Logic(uint32_t elapsedTime) override;
-	int8_t getDamage() const;
+	int getDamage() const;
 
 	bool raise(); // makes the powder keg state to `Raised` and returns `true` if it was `Stand`
 	void thrown(bool forward); // makes the powder keg state to `Thrown`

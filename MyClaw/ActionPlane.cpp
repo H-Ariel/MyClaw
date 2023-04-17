@@ -87,7 +87,7 @@ vector<Laser*> ActionPlane::_lasers;
 bool ActionPlane::_needSort;
 
 
-ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int8_t levelNumber)
+ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int levelNumber)
 	: LevelPlane(plane), _wwd(wwd), _state(States::Play), _physicsManager(plane, _wwd, _player)
 	, _deathAniWait(false), _planeSize({ (float)plane.tilePixelWidth * plane.tilesOnAxisX,
 		(float)plane.tilePixelHeight * plane.tilesOnAxisY })
@@ -418,7 +418,7 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 
 #define ADD_ENEMY(p) { BaseEnemy* enemy=p; _objects.push_back(enemy); _enemies.push_back(enemy); }
 
-void ActionPlane::addObject(const WwdObject& obj, int8_t levelNumber)
+void ActionPlane::addObject(const WwdObject& obj, int levelNumber)
 {
 #ifndef LOW_DETAILS
 	if (obj.logic == "FrontCandy" || obj.logic == "BehindCandy" ||

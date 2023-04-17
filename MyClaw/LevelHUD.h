@@ -12,7 +12,7 @@ public:
 	void Draw() override;
 
 private:
-	void drawNumbers(uint32_t amount, int8_t numOfDigits, shared_ptr<UIBaseImage> const numArr[], D2D1_POINT_2F pos, bool isScore = false) const;
+	void drawNumbers(uint32_t amount, int numOfDigits, shared_ptr<UIBaseImage> const numArr[], D2D1_POINT_2F pos, bool isScore = false) const;
 
 	const Player* const _player;
 	shared_ptr<Animation> _chest, _health, _lives, _stopwatch;

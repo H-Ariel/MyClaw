@@ -9,7 +9,7 @@ public:
 	TownGuard(const WwdObject& obj, Player* player);
 
 	Rectangle2D GetRect() override;
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 
 private:
 	enum class Type : int8_t { Guard1, Guard2 }; // 1-white, 2-brown

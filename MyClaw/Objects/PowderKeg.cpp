@@ -35,7 +35,7 @@ void PowderKeg::Logic(uint32_t elapsedTime)
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
 }
-int8_t PowderKeg::getDamage() const
+int PowderKeg::getDamage() const
 {
 	if (_state == State::Explos && !_ani->isPassedHalf())
 		return 15;

@@ -18,7 +18,7 @@ Rectangle2D PegLeg::GetRect()
 	return _saveCurrRect;
 }
 
-pair<Rectangle2D, int8_t> PegLeg::GetAttackRect()
+pair<Rectangle2D, int> PegLeg::GetAttackRect()
 {
 	// the PegLeg use the pistol, so this stay empty
 	return {};

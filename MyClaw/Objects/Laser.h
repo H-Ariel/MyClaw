@@ -10,11 +10,11 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 
-	int8_t getDamage();
+	int getDamage();
 
 private:
 	const int32_t _swapTime; // in milliseconds
 	int32_t _timeCounter;
-	int8_t _damage;
+	int _damage;
 	bool _isActive;
 };

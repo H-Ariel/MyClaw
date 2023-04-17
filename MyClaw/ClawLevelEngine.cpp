@@ -4,7 +4,7 @@
 #include "MenuEngine.h"
 
 
-ClawLevelEngine::ClawLevelEngine(int8_t levelNumber)
+ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	: _state(State::Play), saveBgColor(0), _levelNumber(levelNumber)
 {
 	_helpImage = DBG_NEW MenuBackgroundImage("STATES/HELP/SCREENS/HELP.PCX");

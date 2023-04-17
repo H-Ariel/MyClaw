@@ -18,7 +18,7 @@ Rectangle2D Siren::GetRect()
 	return _saveCurrRect;
 }
 
-pair<Rectangle2D, int8_t> Siren::GetAttackRect()
+pair<Rectangle2D, int> Siren::GetAttackRect()
 {
 	return {};
 }

@@ -20,14 +20,14 @@ public:
 	bool isClawBullet() const; // pistol shot
 	bool isClawDynamite() const { return isinstance<ClawDynamite>(this); }
 
-	virtual int8_t getDamage() const;
+	virtual int getDamage() const;
 
 protected:
-	Projectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
+	Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 
 private:
 	int32_t _timeLeft; // time left before projectile disappears
-	const int8_t _damage;
+	const int _damage;
 };
 
 
@@ -61,7 +61,7 @@ public:
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
 	void bounceTop() override;
-	int8_t getDamage() const override;
+	int getDamage() const override;
 
 private:
 	enum class State : int8_t { Fly, Wait, Explos };
@@ -126,7 +126,7 @@ private:
 class TProjectile : public Projectile
 {
 public:
-	TProjectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
+	TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 };
 
 

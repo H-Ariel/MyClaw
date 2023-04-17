@@ -20,7 +20,7 @@ Rectangle2D Chameleon::GetRect()
 	return _saveCurrRect;
 }
 
-pair<Rectangle2D, int8_t> Chameleon::GetAttackRect()
+pair<Rectangle2D, int> Chameleon::GetAttackRect()
 {
 	Rectangle2D rc;
 

@@ -2,7 +2,7 @@
 #include "AssetsManager.h"
 
 
-LevelMap::LevelMap(int8_t levelNumber)
+LevelMap::LevelMap(int levelNumber)
 	: _actionPlane(nullptr)
 {
 	shared_ptr<WapWorld> wwd = AssetsManager::loadLevelWwdFile(levelNumber);

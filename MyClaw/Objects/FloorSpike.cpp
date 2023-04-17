@@ -104,7 +104,7 @@ void FloorSpike::Logic(uint32_t elapsedTime)
 	_ani->Logic(elapsedTime);
 }
 
-int8_t FloorSpike::getDamage() const
+int FloorSpike::getDamage() const
 {
 	if ((_state == States::Disappear && !_ani->isPassedHalf()) ||
 		(_state == States::Appear && _ani->isPassedHalf()) ||

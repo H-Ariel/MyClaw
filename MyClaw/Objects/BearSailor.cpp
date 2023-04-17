@@ -111,7 +111,7 @@ Rectangle2D BearSailor::GetRect()
 	return _saveCurrRect;
 }
 
-pair<Rectangle2D, int8_t> BearSailor::GetAttackRect()
+pair<Rectangle2D, int> BearSailor::GetAttackRect()
 {
 	if (_ani->getFrameNumber() != 3) return {};
 

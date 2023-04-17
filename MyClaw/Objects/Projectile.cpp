@@ -17,7 +17,7 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 	_speed.y = obj.speedY / 1000.f;
 	_isMirrored = _speed.x < 0;
 }
-Projectile::Projectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+Projectile::Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
 	: BaseDynamicPlaneObject({}), _damage(damage), _timeLeft(3000)
 {
 	_ani = ani;
@@ -47,7 +47,7 @@ bool Projectile::isClawBullet() const
 		return ((ClawProjectile*)this)->type == ClawProjectile::Types::Pistol;
 	return false;
 }
-int8_t Projectile::getDamage() const { return _damage; }
+int Projectile::getDamage() const { return _damage; }
 
 ClawProjectile* ClawProjectile::createNew(Types type, const WwdObject& data)
 {
@@ -122,7 +122,7 @@ void ClawDynamite::bounceTop()
 	if (_state == State::Explos) return;
 	_speed.y = abs(_speed.y);
 }
-int8_t ClawDynamite::getDamage() const
+int ClawDynamite::getDamage() const
 {
 	if (_state == State::Explos)
 		return ClawProjectile::getDamage();
@@ -256,7 +256,7 @@ void SirenProjectile::Draw()
 		_ani->Draw();
 }
 
-TProjectile::TProjectile(shared_ptr<Animation> ani, int8_t damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+TProjectile::TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
 	: Projectile(ani, damage, speed, initialPosition) {}
 
 bool isProjectile(BasePlaneObject* obj)

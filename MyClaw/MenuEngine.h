@@ -45,7 +45,7 @@ public:
 
 private:
 	uint32_t _totalTime;
-	const int8_t _lvlNo;
+	const int _lvlNo;
 	bool _isDrawn;
 };
 
@@ -70,6 +70,6 @@ private:
 	};
 
 	map<Item::Type, uint32_t> _collectedTreasures;
-	const int8_t _lvlNum;
+	const int _lvlNum;
 	int8_t _state;
 };

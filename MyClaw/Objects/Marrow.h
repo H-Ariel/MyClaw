@@ -10,7 +10,7 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 
 private:
 	bool checkForHurts() override;
@@ -24,7 +24,7 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 	
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 
 	void stopFalling(float collisionSize) override;
 	void stopMovingLeft(float collisionSize) override;
@@ -36,7 +36,7 @@ private:
 
 	const Rectangle2D _flyRect;
 	const D2D1_POINT_2F _initialPosition;
-	int8_t _hitsCounter;
+	int _hitsCounter;
 };
 
 

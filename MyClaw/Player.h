@@ -30,7 +30,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 	Rectangle2D GetRect() override;
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 
 	void stopFalling(float collisionSize);
 	void stopMovingLeft(float collisionSize) override;
@@ -58,9 +58,9 @@ public:
 	void setLadderFlags(bool isOnLadderTop) { _isOnLadderTop = isOnLadderTop; _isCollideWithLadder = true; }
 
 	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
-	int16_t getHealthAmount() const { return _health; }
-	int8_t getLivesAmount() const { return _lives; }
-	int8_t getWeaponAmount() const { return _weaponsAmount.at(_currWeapon); }
+	int getHealthAmount() const { return _health; }
+	int getLivesAmount() const { return _lives; }
+	int getWeaponAmount() const { return _weaponsAmount.at(_currWeapon); }
 	uint32_t getScore() const { return _score; }
 	int32_t getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
 	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }
@@ -81,13 +81,16 @@ private:
 	void jump();
 	bool checkForHurts(); // check for hits from enemies, projectiles, and exploding powder kegs
 	bool isWeaponAnimation() const;
+	void calcRect(); // calculate the player rectangle and save in `_saveCurrRect`
+	void calcAttackRect(); // calculate the player attack rectangle and save in `_saveCurrAttackRect`
 
 
 	string _aniName;
 	vector<string> AttackAnimations, NoLoopAnimations;
 	map<Item::Type, uint32_t> _collectedTreasures; // save all collected treasures and their amount
 	map<size_t, PowerupSparkle> _powerupSparkles;
-	map<ClawProjectile::Types, int8_t> _weaponsAmount;
+	map<ClawProjectile::Types, int> _weaponsAmount;
+	pair<Rectangle2D, int> _saveCurrAttackRect;
 	const D2D1_SIZE_F& _planeSize; // in pixels
 	PowderKeg* _lastPowderKegExplos; // saves the last explos so he does not take damage over and over again.
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
@@ -96,9 +99,9 @@ private:
 	int32_t _holdAltTime; // in milliseconds. it used for pre-dynamite
 	int32_t _damageRest; // rest time between enemies attacks
 	int32_t _freezeTime; // in milliseconds. it used for freeze from siren.
+	int _lives;
 	ClawProjectile::Types _currWeapon;
 	PowerupType _currPowerup;
-	int8_t _lives;
 	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _spacePressed, _altPressed, _zPressed;
 	bool _leftCollision, _rightCollision, _isOnLadder, _useWeapon;
 	bool _finishLevel, _isCollideWithLadder, _isOnLadderTop;

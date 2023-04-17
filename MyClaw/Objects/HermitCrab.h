@@ -10,7 +10,7 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 	void stopFalling(float collisionSize) override;
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 	bool isDuck() const override;
 	bool isTakeDamage() const override;
 

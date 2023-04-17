@@ -108,7 +108,7 @@ Rectangle2D LeRauxe::GetRect()
 
 	return rc;
 }
-pair<Rectangle2D, int8_t> LeRauxe::GetAttackRect()
+pair<Rectangle2D, int> LeRauxe::GetAttackRect()
 {
 	Rectangle2D rc;
 

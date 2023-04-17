@@ -15,7 +15,7 @@ class BaseEnemy;
 class ActionPlane : public LevelPlane
 {
 public:
-	ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int8_t levelNumber);
+	ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int levelNumber);
 	~ActionPlane();
 
 	void Logic(uint32_t elapsedTime) override;
@@ -33,7 +33,7 @@ public:
 	static const vector<Laser*>& getLasers() { return _lasers; }
 
 private:
-	void addObject(const WwdObject& obj, int8_t levelNumber);
+	void addObject(const WwdObject& obj, int levelNumber);
 
 	// TODO: make non-static
 	static vector<BasePlaneObject*> _objects;

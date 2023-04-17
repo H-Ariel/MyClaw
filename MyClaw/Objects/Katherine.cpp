@@ -98,7 +98,7 @@ Rectangle2D Katherine::GetRect()
 
 	return rc;
 }
-pair<Rectangle2D, int8_t> Katherine::GetAttackRect()
+pair<Rectangle2D, int> Katherine::GetAttackRect()
 {
 	Rectangle2D rc;
 

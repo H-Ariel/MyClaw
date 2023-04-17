@@ -8,7 +8,7 @@ class Gabriel : public BaseBoss
 public:
 	Gabriel(const WwdObject& obj, Player* player);
 	void Logic(uint32_t elapsedTime) override;
-	pair<Rectangle2D, int8_t> GetAttackRect() override;
+	pair<Rectangle2D, int> GetAttackRect() override;
 
 private:
 	bool checkForHurts() override;

@@ -42,7 +42,7 @@ Rectangle2D TownGuard::GetRect()
 	return rc;
 }
 
-pair<Rectangle2D, int8_t> TownGuard::GetAttackRect()
+pair<Rectangle2D, int> TownGuard::GetAttackRect()
 {
 	if (!_isAttack) return {};
 

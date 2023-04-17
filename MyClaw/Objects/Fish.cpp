@@ -54,7 +54,7 @@ void Fish::Logic(uint32_t elapsedTime)
 	PostLogic(elapsedTime);
 }
 
-pair<Rectangle2D, int8_t> Fish::GetAttackRect()
+pair<Rectangle2D, int> Fish::GetAttackRect()
 {
 	return { _saveCurrRect, _damage };
 }

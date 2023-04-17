@@ -16,7 +16,7 @@ Rectangle2D RedTailPirate::GetRect()
 	return _saveCurrRect;
 }
 
-pair<Rectangle2D, int8_t> RedTailPirate::GetAttackRect()
+pair<Rectangle2D, int> RedTailPirate::GetAttackRect()
 {
 	if (!_isAttack) return {};
 

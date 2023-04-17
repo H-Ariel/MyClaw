@@ -6,7 +6,7 @@
 class LevelMap : public UIBaseElement
 {
 public:
-	LevelMap(int8_t levelNumber);
+	LevelMap(int levelNumber);
 	~LevelMap() override;
 
 	void Logic(uint32_t elapsedTime) override;
