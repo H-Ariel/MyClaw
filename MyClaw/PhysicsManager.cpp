@@ -59,6 +59,8 @@ void PhysicsManager::init(int levelNumber)
 	else if (levelNumber == 5)
 	{
 		// i think there is something wrong here...
+		WwdTileDescription& t407 = _wwd->tilesDescription[407];
+		t407.insideAttrib = WwdTileDescription::TileAttribute_Solid;
 	}
 
 
