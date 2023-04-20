@@ -21,9 +21,8 @@ LevelMap::LevelMap(int levelNumber)
 #endif
 			_planes.push_back(DBG_NEW LevelPlane(pln));
 		}
-
-		pln.objects.clear();
 	}
+	wwd->planes.clear();
 }
 LevelMap::~LevelMap()
 {

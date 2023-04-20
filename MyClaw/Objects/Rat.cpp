@@ -17,13 +17,11 @@ Rat::Rat(const WwdObject& obj, Player* player)
 
 void Rat::makeAttack()
 {
-	const float deltaX = abs(_player->position.x - position.x);
-	const float deltaY = abs(_player->position.y - position.y);
 	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
 
 	if (_isStanding || isInRange)
 	{
-		if (deltaX < 352 && deltaY < 42)
+		if (abs(_player->position.x - position.x) < 352 && abs(_player->position.y - position.y) < 42)
 		{
 			_ani = ANIMATION_SHOOT;
 			_ani->reset();

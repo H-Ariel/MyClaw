@@ -67,14 +67,19 @@ void HermitCrab::makeAttack()
 
 void HermitCrab::stopFalling(float collisionSize)
 {
-	_speed = {};
-	position.y -= collisionSize;
-	_isFromNest = false;
-	_speed.x = ENEMY_PATROL_SPEED;
-
-	// TODO: fix movement range (for all enemies and especially for the carbs)
-	myMemCpy(_minX, position.x - 32);
-	myMemCpy(_maxX, position.x + 32);
+	if (_isFromNest)
+	{
+		// find enemy range (copied from BaseEnemy)
+		auto range = ActionPlane::getPhysicsManager().getEnemyRange(position, _minX, _maxX);
+		myMemCpy(_minX, range.first);
+		myMemCpy(_maxX, range.second);
+		_speed.x = ENEMY_PATROL_SPEED;
+		_isFromNest = false;
+	}
+	else
+	{
+		BaseEnemy::stopFalling(collisionSize);
+	}
 }
 
 pair<Rectangle2D, int> HermitCrab::GetAttackRect() { return {}; }

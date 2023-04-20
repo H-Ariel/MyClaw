@@ -9,17 +9,17 @@ class PhysicsManager
 public:
 	static const float myGRAVITY;
 
-	PhysicsManager(const WwdPlane& plane, const shared_ptr<WapWorld>& wwd, Player*& player);
+	PhysicsManager();
 
-	void init(int levelNumber);
+	void init(const WwdPlane* plane, WapWorld* wwd, Player* player, int levelNumber);
 
 	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath);
+
+	pair<float, float> getEnemyRange(D2D1_POINT_2F enemyPos, const float minX, const float maxX) const;
 
 	void Draw();
 
 private:
 	vector<pair<Rectangle2D, uint32_t>> _rects; // { rc, WwdTileDescription::WwdTileAttributeFlags }
-	const WwdPlane& _plane;
-	const shared_ptr<WapWorld>& _wwd;
-	Player*& _player;
+	Player* _player;
 };

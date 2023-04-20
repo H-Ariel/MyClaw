@@ -14,8 +14,6 @@
 Katherine::Katherine(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 10, "WALK", "HITHIGH", "HITLOW", "FALL", "", "", "")
 {
-	myMemCpy(_minX, position.x - 320);
-	myMemCpy(_maxX, position.x + 320);
 }
 
 void Katherine::Logic(uint32_t elapsedTime)

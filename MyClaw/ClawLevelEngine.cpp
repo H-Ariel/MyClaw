@@ -12,6 +12,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	_elementsList.push_back(_hud = DBG_NEW LevelHUD(_player = _levelMap->getPlayer(), *_levelMap->getWindowOffset()));
 	WindowManager::setWindowOffset(_levelMap->getWindowOffset());
 
+	if (levelNumber == 1) _player->position = { 3586, 4859 };
+//	if (levelNumber == 1) _player->position = { 8537, 4430};
 //	if (levelNumber == 1) _player->position = { 17485, 1500 }; // END OF LEVEL
 //	if (levelNumber == 1) _player->position = { 5775, 4347 };
 //	if (levelNumber == 1) _player->position = { 9696, 772 };
@@ -31,8 +33,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 //	if (levelNumber == 3) _player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
 	if (levelNumber == 3) _player->position = { 6080, 6224 };
 //	if (levelNumber == 3) _player->position = { 11054, 8720 };
-//	if (levelNumber == 4) _player->position = { 16010, 1464 }; // END OF LEVEL
-	if (levelNumber == 4) _player->position = { 3902, 4192 };
+	if (levelNumber == 4) _player->position = { 16010, 1464 }; // END OF LEVEL
+//	if (levelNumber == 4) _player->position = { 3902, 4192 };
 //	if (levelNumber == 4) _player->position = { 3909, 4832 };
 //	if (levelNumber == 5) _player->position = { 9981, 3616 };
 //	if (levelNumber == 5) _player->position = { 2620, 2848 };

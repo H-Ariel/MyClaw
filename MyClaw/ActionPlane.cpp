@@ -65,10 +65,7 @@
 class SimpleObject : public BasePlaneObject
 {
 public:
-	SimpleObject(WwdObject obj)
-		: BasePlaneObject(obj)
-	{
-	}
+	SimpleObject(const WwdObject& obj) : BasePlaneObject(obj) {}
 	void Logic(uint32_t elapsedTime) override {}
 	void Draw() override {
 		WindowManager::drawRect(Rectangle2D(position.x - 32, position.y - 32, position.x + 32, position.y + 32), ColorF::Green);
@@ -77,6 +74,7 @@ public:
 };
 
 
+PhysicsManager ActionPlane::_physicsManager;
 vector<BasePlaneObject*> ActionPlane::_objects;
 vector<PowderKeg*> ActionPlane::_powderKegs;
 vector<BaseEnemy*> ActionPlane::_enemies;
@@ -88,8 +86,8 @@ bool ActionPlane::_needSort;
 
 
 ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int levelNumber)
-	: LevelPlane(plane), _wwd(wwd), _state(States::Play), _physicsManager(plane, _wwd, _player)
-	, _deathAniWait(false), _planeSize({ (float)plane.tilePixelWidth * plane.tilesOnAxisX,
+	: LevelPlane(plane), _wwd(wwd), _state(States::Play), _deathAniWait(false),
+	_planeSize({ (float)plane.tilePixelWidth * plane.tilesOnAxisX,
 		(float)plane.tilePixelHeight * plane.tilesOnAxisY })
 {
 	_objects.clear(); // because it static member and we don't want recycle objects...
@@ -99,17 +97,21 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int le
 	_floorSpikes.clear();
 	_gooVents.clear();
 	_lasers.clear();
-
-
+	_needSort = true;
+	
+	
 	WwdObject playerData;
 	playerData.x = _wwd->startX;
 	playerData.y = _wwd->startY;
 	playerData.z = 4000;
-	_player = DBG_NEW Player(playerData, _planeSize);
+	_objects.push_back(_player = DBG_NEW Player(playerData, _planeSize));
 
 #ifdef SAVE_LOGICS
 	set<string> allLogics;
 #endif
+
+	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
+	_physicsManager.init(&_plane, _wwd.get(), _player, levelNumber); // must be after WWD map loaded and before objects added
 
 	for (const WwdObject& obj : plane.objects)
 	{
@@ -134,13 +136,6 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int le
 	ofstream of(SAVE_LOGICS);
 	for (auto& i : allLogics) of << i << endl;
 #endif
-
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
-
-	_objects.push_back(_player);
-	_needSort = true;
-
-	_physicsManager.init(levelNumber); // must be after WWd map loaded
 }
 ActionPlane::~ActionPlane()
 {

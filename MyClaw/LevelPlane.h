@@ -12,6 +12,6 @@ public:
 	void Draw() override;
 
 protected:
-	const WwdPlane& _plane;
+	const WwdPlane _plane;
 	const uint32_t maxTileIdxX, maxTileIdxY;
 };

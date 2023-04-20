@@ -106,14 +106,6 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	if (!noTreasures && _itemsTypes.size() == 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
 
 
-	// TODO: use the `PhysicsManager`
-	if (obj.minX == 0 && obj.maxX == 0)
-	{
-		myMemCpy(_minX, position.x - 32);
-		myMemCpy(_maxX, position.x + 32);
-	}
-
-//	_speed.x = ENEMY_PATROL_SPEED;
 	_speed.x = walkingSpeed;
 
 	if (_isStaticEnemy)
@@ -124,6 +116,14 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	}
 	else
 	{
+		if (obj.logic != "Seagull" && obj.logic != "Fish")
+		{
+			// find enemy range
+			auto range = ActionPlane::getPhysicsManager().getEnemyRange(position, _minX, _maxX);
+			myMemCpy(_minX, range.first);
+			myMemCpy(_maxX, range.second);
+		}
+
 		if (!_walkAniName.empty())
 			_ani = ANIMATION_WALK;
 	}
