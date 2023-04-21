@@ -57,9 +57,6 @@
     <ClCompile Include="LevelHUD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LevelMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LevelPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -303,9 +300,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LevelHUD.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LevelPlane.h">

@@ -20,6 +20,7 @@ PhysicsManager::PhysicsManager()
 
 void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, int levelNumber)
 {
+	_rects.clear();
 	_player = player;
 
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
@@ -45,10 +46,10 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
 		t406.type = WwdTileDescription::TileType_Double;
 	}
-	else if (levelNumber == 3)
+	else if (levelNumber == 2)
 	{
-		WwdTileDescription& t633 = wwd->tilesDescription[633];
-		t633.rect.left -= 1;
+		WwdTileDescription& t403 = wwd->tilesDescription[403];
+		t403.insideAttrib = WwdTileDescription::TileAttribute_Solid;
 	}
 	else if (levelNumber == 5)
 	{
@@ -136,10 +137,9 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 		for (j = i + 1; j < _rects.size(); j++)
 		{
 			if (_rects[i].second == _rects[j].second &&
-				_rects[i].first.top == _rects[j].first.top &&
-				_rects[i].first.bottom == _rects[j].first.bottom &&
-				(_rects[i].first.right == _rects[j].first.left ||
-					_rects[i].first.right + 1 == _rects[j].first.left))
+				abs(_rects[i].first.top - _rects[j].first.top) <= 1 &&
+				abs(_rects[i].first.bottom - _rects[j].first.bottom) <= 1 &&
+				abs(_rects[i].first.right - _rects[j].first.left) <= 1)
 			{
 				Rectangle2D newRc(_rects[i].first.left, _rects[i].first.top,
 					_rects[j].first.right, _rects[i].first.bottom);
@@ -156,10 +156,9 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 		for (j = i + 1; j < _rects.size(); j++)
 		{
 			if (_rects[i].second == _rects[j].second &&
-				_rects[i].first.left == _rects[j].first.left &&
-				_rects[i].first.right == _rects[j].first.right &&
-				(_rects[i].first.bottom == _rects[j].first.top ||
-					_rects[i].first.bottom + 1 == _rects[j].first.top))
+				abs(_rects[i].first.left - _rects[j].first.left) <= 1 &&
+				abs(_rects[i].first.right - _rects[j].first.right) <= 1 &&
+				abs(_rects[i].first.bottom - _rects[j].first.top) <= 1)
 			{
 				Rectangle2D newRc(_rects[i].first.left, _rects[i].first.top,
 					_rects[i].first.right, _rects[j].first.bottom);
