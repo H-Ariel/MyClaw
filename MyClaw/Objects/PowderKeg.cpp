@@ -20,16 +20,15 @@ void PowderKeg::Logic(uint32_t elapsedTime)
 		_ani->loopAni = false;
 	}
 
-	if (_state == State::Explos)
-	{
-		removeObject = _ani->isFinishAnimation();
-	}
-
 	if (_state == State::Thrown)
 	{
 		position.x += _speed.x * elapsedTime;
 		position.y += _speed.y * elapsedTime;
 		_speed.y += GRAVITY * elapsedTime;
+	}
+	else if (_state == State::Explos)
+	{
+		removeObject = _ani->isFinishAnimation();
 	}
 
 	_ani->position = position;
@@ -44,21 +43,25 @@ int PowderKeg::getDamage() const
 
 bool PowderKeg::shouldMakeExplos()
 {
-	if (_state == State::Stand)
+	if (_state == State::Thrown && _speed.x == 0 && _speed.y == 0)
+	{
+		return true;
+	}
+	else if (_state == State::Stand)
 	{
 		Rectangle2D thisRc = GetRect();
 		bool isClawBullet;
 
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
-			if ((isClawBullet = p->isClawBullet()) || (p->isClawDynamite() && p->getDamage() > 0)) // ATTENTION: =, not ==
+			if (
+				((isClawBullet = p->isClawBullet()) // ATTENTION: =, not ==
+					|| (p->isClawDynamite() && p->getDamage() > 0))
+				&& thisRc.intersects(p->GetRect()))
 			{
-				if (thisRc.intersects(p->GetRect()))
-				{
-					if (isClawBullet)
-						p->removeObject = true;
-					return true;
-				}
+				if (isClawBullet)
+					p->removeObject = true;
+				return true;
 			}
 		}
 		for (PowderKeg* p : ActionPlane::getPowderKegs())
@@ -67,13 +70,6 @@ bool PowderKeg::shouldMakeExplos()
 			{
 				return true;
 			}
-		}
-	}
-	else if (_state == State::Thrown)
-	{
-		if (_speed.x == 0 && _speed.y == 0)
-		{
-			return true;
 		}
 	}
 

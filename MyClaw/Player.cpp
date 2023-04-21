@@ -42,7 +42,7 @@
 	_currPowerup = PowerupType:: type; \
 	return true;
 
-#define renameKey(oldKey, newKey) _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey);
+#define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
 
 
 static int32_t MAX_DYNAMITE_SPEED = DEFAULT_PROJECTILE_SPEED * 8 / 7;
@@ -160,7 +160,7 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_holdAltTime < 1050) _holdAltTime += elapsedTime; // the max time for holding is 1050 milliseconds
 	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
 	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
-	else
+	else if (_currPowerup != PowerupType::None)
 	{
 		_powerupLeftTime = 0;
 		_currPowerup = PowerupType::None;
@@ -297,7 +297,7 @@ void Player::Logic(uint32_t elapsedTime)
 		// update position based on speed, but make sure we don't go outside the level
 		position.x += _speed.x * elapsedTime;
 		position.y += _speed.y * elapsedTime;
-
+		
 		/*
 		// TODO: Delete after we are sure we are not using it
 		if (position.x < 0) position.x = 0;
@@ -496,7 +496,7 @@ void Player::Logic(uint32_t elapsedTime)
 							{
 								_raisedPowderKeg = p;
 								_aniName = "LIFT";
-								_zPressed = false;
+								_zPressed = false; // if we lift do not try throw other keg
 								break;
 							}
 						}
@@ -517,6 +517,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 		if (_raisedPowderKeg)
 		{
+			_speed.y = 0;
 			_raisedPowderKeg->position.x = position.x;
 			_raisedPowderKeg->position.y = position.y - 104;
 		}
@@ -593,6 +594,14 @@ void Player::calcRect()
 		_saveCurrRect.top = 30;
 		_saveCurrRect.bottom = 90;
 	}
+	/*
+	// TODO: improve this so CC doesn't hover when he lifts
+	else if (_aniName == "LIFT")
+	{
+		_saveCurrRect.top = 30;
+		_saveCurrRect.bottom = 70;
+	}
+	*/
 	else
 	{
 		_saveCurrRect.top = 5;
@@ -973,7 +982,9 @@ bool Player::isFalling() const
 }
 bool Player::isStanding() const
 {
-	return _aniName == "STAND" || _aniName == "IDLE" || _aniName == "LIFT" || _aniName == "LIFT2";
+	return _aniName == "STAND" || _aniName == "IDLE" 
+		|| _aniName == "LIFT" || _aniName == "LIFT2"
+		|| _aniName == "THROW";
 }
 bool Player::isDuck() const
 {
