@@ -15,19 +15,15 @@ DoNothing::DoNothing(const WwdObject& obj)
 		sprintf(str, "/%03d.PID", i);
 		_ani = AssetsManager::createAnimationFromFromPidImage(path + str);
 	}
+	else if (obj.animation.empty())
+	{
+		if (contains(path, "SIGN/"))
+			path[path.find_last_of('/')] = '_';
+
+		_ani = AssetsManager::createAnimationFromDirectory(path, 125, false);
+	}
 	else
 	{
-		if (obj.animation.empty())
-		{
-			// TODO: something else
-			if (contains(path, "SIGN/"))
-				path[path.find_last_of('/')] = '_';
-
-			_ani = AssetsManager::createAnimationFromDirectory(path, 125, false);
-		}
-		else
-		{
-			_ani = AssetsManager::loadAnimation(PathManager::getAnimationPath(obj.animation), obj.imageSet);
-		}
+		_ani = AssetsManager::loadAnimation(PathManager::getAnimationPath(obj.animation), obj.imageSet);
 	}
 }

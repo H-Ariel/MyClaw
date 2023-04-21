@@ -45,13 +45,27 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
 		t406.type = WwdTileDescription::TileType_Double;
 	}
+	else if (levelNumber == 3)
+	{
+		WwdTileDescription& t633 = wwd->tilesDescription[633];
+		t633.rect.left -= 1;
+	}
 	else if (levelNumber == 5)
 	{
 		// i think there is something wrong here...
 		WwdTileDescription& t407 = wwd->tilesDescription[407];
 		t407.insideAttrib = WwdTileDescription::TileAttribute_Solid;
 	}
+	else if (levelNumber == 14)
+	{
+		WwdTileDescription& t049 = wwd->tilesDescription[49];
+		WwdTileDescription& t050 = wwd->tilesDescription[50];
+		WwdTileDescription& t054 = wwd->tilesDescription[54];
 
+		t049.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		t050.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		t054.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
 
 	for (i = 0; i < plane->tilesOnAxisY; i++)
 	{
@@ -66,14 +80,12 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 
 			switch (tileDesc.type)
 			{
-			case WwdTileDescription::TileType_Single: {
+			case WwdTileDescription::TileType_Single:
 				if (tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear)
-				{
 					_rects.push_back({ tileRc, tileDesc.insideAttrib });
-				}
-			}	break;
+				break;
 
-			case WwdTileDescription::TileType_Double: { // TODO: improve this part
+			case WwdTileDescription::TileType_Double: // TODO: improve this part
 				originalTileRc = tileRc;
 
 				tileRc.left += tileDesc.rect.left;
@@ -107,7 +119,7 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 					_rects.push_back({ rc1, tileDesc.outsideAttrib });
 					_rects.push_back({ rc2, tileDesc.outsideAttrib });
 				}
-			}	break;
+				break;
 
 			default: break;
 			}
@@ -126,7 +138,8 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 			if (_rects[i].second == _rects[j].second &&
 				_rects[i].first.top == _rects[j].first.top &&
 				_rects[i].first.bottom == _rects[j].first.bottom &&
-				_rects[i].first.right == _rects[j].first.left)
+				(_rects[i].first.right == _rects[j].first.left ||
+					_rects[i].first.right + 1 == _rects[j].first.left))
 			{
 				Rectangle2D newRc(_rects[i].first.left, _rects[i].first.top,
 					_rects[j].first.right, _rects[i].first.bottom);
@@ -145,7 +158,8 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 			if (_rects[i].second == _rects[j].second &&
 				_rects[i].first.left == _rects[j].first.left &&
 				_rects[i].first.right == _rects[j].first.right &&
-				_rects[i].first.bottom == _rects[j].first.top)
+				(_rects[i].first.bottom == _rects[j].first.top ||
+					_rects[i].first.bottom + 1 == _rects[j].first.top))
 			{
 				Rectangle2D newRc(_rects[i].first.left, _rects[i].first.top,
 					_rects[i].first.right, _rects[j].first.bottom);
@@ -276,12 +290,9 @@ pair<float, float> PhysicsManager::getEnemyRange(D2D1_POINT_2F enemyPos, const f
 
 	for (auto& p : _rects)
 	{
-		if (
-			//p.first.getCollision(enemyRect).getSmallest().bottom > 0
-			p.first.intersects(enemyRect) && (
-				p.second == WwdTileDescription::TileAttribute_Solid ||
-				p.second == WwdTileDescription::TileAttribute_Ground
-				))
+		if (p.first.intersects(enemyRect) && (
+			p.second == WwdTileDescription::TileAttribute_Solid ||
+			p.second == WwdTileDescription::TileAttribute_Ground))
 		{
 			float left = p.first.left + 32, right = p.first.right - 32;
 

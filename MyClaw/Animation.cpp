@@ -169,8 +169,8 @@ void Animation::reset()
 	_currImgIdx = 0;
 	_isFinishAnimation = false;
 	mirrored = false;
-	updateFrames = true;
-	loopAni = true;
+	updateFrames = (_images.size() > 1); // true;
+	loopAni = (_images.size() > 1); // true;
 	for (FrameData* i : _images)
 	{
 		i->elapsedTime = 0;

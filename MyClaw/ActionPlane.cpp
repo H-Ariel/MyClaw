@@ -449,13 +449,13 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber)
 		_objects.push_back(DBG_NEW Statue(obj, _player));
 	}
 	else 
-#endif
 		if (obj.logic == "PowderKeg")
 	{
 		PowderKeg* p = DBG_NEW PowderKeg(obj, _player);
 		_objects.push_back(p); _powderKegs.push_back(p);
 	}
 	else
+#endif
 	if (obj.logic == "Elevator"
 		|| obj.logic == "TriggerElevator" || obj.logic == "OneWayTriggerElevator"
 		|| obj.logic == "StartElevator" || obj.logic == "OneWayStartElevator")

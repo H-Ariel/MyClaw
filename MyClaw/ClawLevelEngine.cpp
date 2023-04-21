@@ -31,7 +31,9 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 //	if (levelNumber == 2) _player->position = { 4596, 3958 };
 //	if (levelNumber == 2) _player->position = { 20070, 2092 }; // END OF LEVEL
 //	if (levelNumber == 3) _player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
-	if (levelNumber == 3) _player->position = { 6080, 6224 };
+//	if (levelNumber == 3) _player->position = { 6080, 6224 };
+//	if (levelNumber == 3) _player->position = { 9693, 8528 };
+	if (levelNumber == 3) _player->position = { 12289, 8144 };
 //	if (levelNumber == 3) _player->position = { 11054, 8720 };
 	if (levelNumber == 4) _player->position = { 16010, 1464 }; // END OF LEVEL
 //	if (levelNumber == 4) _player->position = { 3902, 4192 };
@@ -110,7 +112,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 			_elementsList.push_back(_helpImage);
 			WindowManager::setWindowOffset(nullptr);
 		}
-		/*
+		/**/
 		else if (key == VK_ADD)
 		{
 			if (WindowManager::PixelSize <= 3.5f)
@@ -121,7 +123,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 			if (WindowManager::PixelSize >= 1)
 				WindowManager::PixelSize -= 0.5f;
 		}
-		*/
+		/**/
 		else
 		{
 			_player->keyUp(key);

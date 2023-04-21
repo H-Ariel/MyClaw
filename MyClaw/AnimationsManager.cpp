@@ -3,24 +3,23 @@
 
 static inline bool isEnemyAniations(string dirPath)
 {
-	// TODO: endsWith(dirPath, "/ANIS/OFFICER") etc.
+	return (
+		endsWith(dirPath, "/ANIS/OFFICER") ||
+		endsWith(dirPath, "/ANIS/SOLDIER") ||
+		endsWith(dirPath, "/ANIS/ROBBERTHIEF") ||
+		endsWith(dirPath, "/ANIS/CUTTHROAT") ||
+		endsWith(dirPath, "/ANIS/TOWNGUARD1") ||
+		endsWith(dirPath, "/ANIS/TOWNGUARD2") ||
+		endsWith(dirPath, "/ANIS/BEARSAILOR") ||
+		endsWith(dirPath, "/ANIS/REDTAILPIRATE") ||
+		endsWith(dirPath, "/ANIS/CRAZYHOOK") ||
+		endsWith(dirPath, "/ANIS/PEGLEG") ||
+		endsWith(dirPath, "/ANIS/MERCAT") ||
+		endsWith(dirPath, "/ANIS/FISH") ||
 
-	return contains(dirPath, "/ANIS/") && (
-		endsWith(dirPath, "OFFICER") ||
-		endsWith(dirPath, "SOLDIER") ||
-		endsWith(dirPath, "ROBBERTHIEF") ||
-		endsWith(dirPath, "CUTTHROAT") ||
-		endsWith(dirPath, "TOWNGUARD1") ||
-		endsWith(dirPath, "TOWNGUARD2") ||
-		endsWith(dirPath, "BEARSAILOR") ||
-		endsWith(dirPath, "REDTAILPIRATE") ||
-		endsWith(dirPath, "CRAZYHOOK") ||
-		endsWith(dirPath, "PEGLEG") ||
-		endsWith(dirPath, "MERCAT") ||
-		endsWith(dirPath, "FISH") ||
-
-		endsWith(dirPath, "GABRIEL")
+		endsWith(dirPath, "/ANIS/GABRIEL")
 		);
+
 	// TODO: add all of them
 }
 
@@ -129,8 +128,6 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const stri
 
 		_loadedAnimations[k] = allocNewSharedPtr<Animation>(images);
 	}
-
-	// TODO: if ani.images.size=0: ani.update=false
 
 	return _loadedAnimations[k];
 }
