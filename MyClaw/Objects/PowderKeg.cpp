@@ -20,11 +20,11 @@ void PowderKeg::Logic(uint32_t elapsedTime)
 		_ani->loopAni = false;
 	}
 
-	if (_state == State::Thrown)
+	if (_state == State::Thrown || _state == State::Stand)
 	{
 		position.x += _speed.x * elapsedTime;
-		position.y += _speed.y * elapsedTime;
 		_speed.y += GRAVITY * elapsedTime;
+		position.y += _speed.y * elapsedTime;
 	}
 	else if (_state == State::Explos)
 	{

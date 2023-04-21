@@ -399,7 +399,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 					if (_currWeapon == ClawProjectile::Types::Pistol)
 					{
-						obj.y = (int32_t)(position.y - (duck ? -8 : 16));
+						obj.y = (int32_t)(position.y - (duck ? -12 : 16));
 						obj.damage = 8;
 					}
 					else if (_currWeapon == ClawProjectile::Types::Magic)
@@ -517,7 +517,8 @@ void Player::Logic(uint32_t elapsedTime)
 
 		if (_raisedPowderKeg)
 		{
-			_speed.y = 0;
+			if (isStanding())
+				_speed.y = 0;
 			_raisedPowderKeg->position.x = position.x;
 			_raisedPowderKeg->position.y = position.y - 104;
 		}
@@ -594,14 +595,13 @@ void Player::calcRect()
 		_saveCurrRect.top = 30;
 		_saveCurrRect.bottom = 90;
 	}
-	/*
-	// TODO: improve this so CC doesn't hover when he lifts
-	else if (_aniName == "LIFT")
+	else if (_aniName == "LIFT" || _aniName == "THROW")
 	{
-		_saveCurrRect.top = 30;
-		_saveCurrRect.bottom = 70;
+		// this cause that CC doesn't hover when he lifts or throws
+		Rectangle2D aniRc = _ani->GetRect();
+		_saveCurrRect.top = position.y - aniRc.top;
+		_saveCurrRect.bottom = aniRc.bottom - position.y;
 	}
-	*/
 	else
 	{
 		_saveCurrRect.top = 5;

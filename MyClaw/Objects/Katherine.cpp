@@ -186,8 +186,8 @@ bool Katherine::PreLogic(uint32_t elapsedTime)
 		else
 		{
 			position.x += _speed.x * elapsedTime;
-			position.y += _speed.y * elapsedTime;
 			_speed.y += GRAVITY * elapsedTime;
+			position.y += _speed.y * elapsedTime;
 
 			PostLogic(elapsedTime);
 			return false;

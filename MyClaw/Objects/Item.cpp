@@ -174,8 +174,8 @@ void Item::Logic(uint32_t elapsedTime)
 
 	if (_speed.y != 0)
 	{
-		position.y += _speed.y * elapsedTime;
 		_speed.y += GRAVITY * elapsedTime;
+		position.y += _speed.y * elapsedTime;
 	}
 	if (_speed.x != 0)
 	{

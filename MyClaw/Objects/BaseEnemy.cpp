@@ -27,9 +27,9 @@ DeadEnemy::DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni)
 }
 void DeadEnemy::Logic(uint32_t elapsedTime)
 {
-	position.x += elapsedTime * _speed.x;
-	position.y += elapsedTime * _speed.y;
-	_speed.y += elapsedTime * GRAVITY;
+	position.x += _speed.x * elapsedTime;
+	_speed.y += GRAVITY * elapsedTime;
+	position.y += _speed.y * elapsedTime;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
 	removeObject = !WindowManager::isInScreen(_ani->GetRect());
