@@ -3,12 +3,54 @@
 #include "../AssetsManager.h"
 
 
+// The following classes indicate precisely the type of elevator:
+// TriggerElevator: the elevator starts move when the player touches it (and never stops)
+// StartElevator: the elevator starts move when the player touches it (and stops when he leaves it)
+// PathElevator: the elevator moves along a path (defined in the logic field of the object)
+class TriggerElevator : public Elevator
+{
+public:
+	TriggerElevator(const WwdObject& obj, Player* player);
+	void Logic(uint32_t elapsedTime) override;
+};
+class StartElevator : public Elevator
+{
+public:
+	StartElevator(const WwdObject& obj, Player* player);
+	void Logic(uint32_t elapsedTime) override;
+	void Reset() override;
+};
+class PathElevator : public Elevator
+{
+public:
+	PathElevator(const WwdObject& obj, Player* player);
+	void Logic(uint32_t elapsedTime) override;
+	void Reset() override;
+
+private:
+	vector<pair<int32_t, int32_t>> _paths; // { direction, delay (ms) }
+	int _pathIdx, _timeCounter;
+	const float _totalSpeed;
+};
+
+
+Elevator* Elevator::create(const WwdObject& obj, Player* player)
+{
+	if (obj.logic == "PathElevator")
+		return DBG_NEW PathElevator(obj, player);
+	if (contains(obj.logic, "Trigger"))
+		return DBG_NEW TriggerElevator(obj, player);
+	if (contains(obj.logic, "Start"))
+		return DBG_NEW StartElevator(obj, player);
+
+	return DBG_NEW Elevator(obj, player);
+}
+
+
 Elevator::Elevator(const WwdObject& obj, Player* player)
 	: BaseDynamicPlaneObject(obj, player), _arrivedToEdge(false),
 	_minPos({ (float)obj.minX, (float)obj.minY }), _maxPos({ (float)obj.maxX, (float)obj.maxY }),
 	_initialPos({ (float)obj.x, (float)obj.y }), _initialSpeed({}),
-	_isTriggerElevator(contains(obj.logic, "Trigger")),
-	_isStartElevator(contains(obj.logic, "Start")),
 	_isOneWayElevator(contains(obj.logic, "OneWay")),
 	_operateElevator(true)
 {
@@ -59,11 +101,6 @@ Elevator::Elevator(const WwdObject& obj, Player* player)
 	_speed.y /= 1000;
 
 	myMemCpy(_initialSpeed, _speed);
-
-	if (_isTriggerElevator || _isStartElevator)
-	{
-		_operateElevator = false;
-	}
 }
 void Elevator::Logic(uint32_t elapsedTime)
 {
@@ -72,38 +109,6 @@ void Elevator::Logic(uint32_t elapsedTime)
 		return;
 	}
 
-	if (_isTriggerElevator)
-	{
-		if (_operateElevator)
-		{
-			mainLogic(elapsedTime);
-		}
-		else
-		{
-			// even if Claw has left the elevator it will keep moving
-			_operateElevator = tryCatchPlayer();
-		}
-	}
-	else if (_isStartElevator)
-	{
-		if (_player->elevator != this)
-		{
-			// if Claw has left the elevator it will not keep moving (until he comes up again)
-			_operateElevator = tryCatchPlayer();
-		}
-
-		if (_operateElevator)
-		{
-			mainLogic(elapsedTime);
-		}
-	}
-	else
-	{
-		mainLogic(elapsedTime);
-	}
-}
-void Elevator::mainLogic(uint32_t elapsedTime)
-{
 	if ((_speed.x < 0 && position.x < _minPos.x) || (_speed.x > 0 && position.x > _maxPos.x))
 	{
 		_speed.x = -_speed.x;
@@ -117,12 +122,11 @@ void Elevator::mainLogic(uint32_t elapsedTime)
 		_arrivedToEdge = true;
 	}
 
-	mainMainLogic(elapsedTime);
+	mainLogic(elapsedTime);
 }
-void Elevator::mainMainLogic(uint32_t elapsedTime)
+void Elevator::mainLogic(uint32_t elapsedTime) // logic for every elevator
 {
-	const float deltaX = _speed.x * elapsedTime;
-	const float deltaY = _speed.y * elapsedTime;
+	const float deltaX = _speed.x * elapsedTime, deltaY = _speed.y * elapsedTime;
 
 	position.x += deltaX;
 	position.y += deltaY;
@@ -139,7 +143,7 @@ void Elevator::mainMainLogic(uint32_t elapsedTime)
 		else
 		{
 			_player->position.x += deltaX;
-			_player->position.y = position.y - 64;
+			_player->position.y = position.y - 64; // TODO: fit offset to level elevator
 		}
 	}
 	else
@@ -152,10 +156,8 @@ void Elevator::Reset()
 	position = _initialPos;
 	_speed = _initialSpeed;
 	_arrivedToEdge = false;
-	if (_isStartElevator)
-	{
+	if (_isOneWayElevator)
 		_operateElevator = false;
-	}
 }
 bool Elevator::tryCatchPlayer()
 {
@@ -168,8 +170,41 @@ bool Elevator::tryCatchPlayer()
 }
 
 
+TriggerElevator::TriggerElevator(const WwdObject& obj, Player* player)
+	: Elevator(obj, player)
+{
+	_operateElevator = false;
+}
+void TriggerElevator::Logic(uint32_t elapsedTime)
+{
+	if (_operateElevator)
+		Elevator::Logic(elapsedTime);
+	else
+		_operateElevator = tryCatchPlayer(); // even if CC left the elevator it will keep moving
+}
+
+
+StartElevator::StartElevator(const WwdObject& obj, Player* player)
+	: Elevator(obj, player)
+{
+	_operateElevator = false;
+}
+void StartElevator::Logic(uint32_t elapsedTime)
+{
+	if (_player->elevator != this)
+		_operateElevator = tryCatchPlayer(); // if CC left the elevator it will not keep moving (until he comes up again)
+	if (_operateElevator)
+		Elevator::Logic(elapsedTime);
+}
+void StartElevator::Reset()
+{
+	Elevator::Reset();
+	_operateElevator = false;
+}
+
+
 PathElevator::PathElevator(const WwdObject& obj, Player* player)
-	: Elevator(obj, player), _initialSpeed(0)
+	: Elevator(obj, player), _totalSpeed(obj.speed ? (obj.speed / 1000.f) : 0.125f)
 {
 	if (obj.moveRect.left != 0) _paths.push_back({ obj.moveRect.left, obj.moveRect.top });
 	if (obj.moveRect.right != 0) _paths.push_back({ obj.moveRect.right, obj.moveRect.bottom });
@@ -180,17 +215,9 @@ PathElevator::PathElevator(const WwdObject& obj, Player* player)
 	if (obj.clipRect.left != 0) _paths.push_back({ obj.clipRect.left, obj.clipRect.top });
 	if (obj.clipRect.right != 0) _paths.push_back({ obj.clipRect.right, obj.clipRect.bottom });
 
-	if (_paths.size() == 0)
-	{
-		throw Exception(__FUNCTION__ " - no paths");
-	}
+	if (_paths.size() == 0) throw Exception(__FUNCTION__ " - no paths");
 
 	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
-
-	_totalSpeed = obj.speed / 1000.f;
-	if (_totalSpeed == 0) _totalSpeed = 0.125f;
-
-	myMemCpy(_initialSpeed, _totalSpeed);
 
 	Reset();
 }
@@ -216,12 +243,11 @@ void PathElevator::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	mainMainLogic(elapsedTime);
+	mainLogic(elapsedTime);
 }
 void PathElevator::Reset()
 {
 	position = _initialPos;
-	_totalSpeed = _initialSpeed;
 	_pathIdx = -1;
 	_timeCounter = 0;
 }

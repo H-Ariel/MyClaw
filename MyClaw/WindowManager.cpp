@@ -143,7 +143,7 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirror
 		_renderTarget->SetTransform(transformMatrix);
 	}
 
-	_renderTarget->DrawBitmap(bitmap, dst);
+	_renderTarget->DrawBitmap(bitmap, dst); // TODO: use opacity for CC-Ghost and Lizards
 
 	if (mirrored)
 	{

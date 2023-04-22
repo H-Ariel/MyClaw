@@ -3,6 +3,10 @@
 #include "Item.h"
 
 
+/*
+TODO: maybe it should be BaseDynamicPlaneObject, because
+it can fall down after lower crate is broken
+*/
 class Crate : public BaseStaticPlaneObject
 {
 public:

@@ -31,12 +31,15 @@ Rectangle2D BasePlaneObject::GetRect()
 void BasePlaneObject::Reset() {}
 bool BasePlaneObject::tryCatchPlayer()
 {
-	Rectangle2D colRc = _player->GetRect().getCollision(GetRect());
-	if (colRc.getSmallest().bottom > 0 && (colRc.right > 0 || colRc.left > 0) && _player->isFalling())
+	if (_player->isFalling())
 	{
-		// if the player fall or go to this object - catch him
-		_player->stopFalling(colRc.bottom);
-		return true;
+		Rectangle2D colRc = _player->GetRect().getCollision(GetRect());
+		if ((colRc.right > 0 || colRc.left > 0) && colRc.getSmallest().bottom > 0)
+		{
+			// if player is falling/going to this object - catch him
+			_player->stopFalling(colRc.bottom);
+			return true;
+		}
 	}
 	return false;
 }

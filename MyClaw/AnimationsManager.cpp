@@ -35,7 +35,7 @@ shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, co
 	{
 		try 
 		{
-			shared_ptr<Animation> ani = allocNewSharedPtr<Animation>(_rezArchive, aniPath, imageSetPath);
+			shared_ptr<Animation> ani(DBG_NEW Animation(_rezArchive, aniPath, imageSetPath));
 			if (!save)
 			{
 				return ani;

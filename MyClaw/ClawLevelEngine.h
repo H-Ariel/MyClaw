@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MenuEngine.h"
-#include "ActionPlane.h"
+#include "LevelPlane.h"
 #include "LevelHUD.h"
 
 
@@ -20,8 +20,8 @@ public:
 private:
 	enum class State : int8_t { Play, Help };
 
-	vector<LevelPlane*> _planes;
-	ActionPlane* _actionPlane;
+	shared_ptr<WapWorld> _wwd;
+	LevelPlane* _mainPlane;
 	LevelHUD* _hud;
 	Player* _player;
 	MenuBackgroundImage _helpImage;

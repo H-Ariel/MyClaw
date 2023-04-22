@@ -28,8 +28,6 @@ public:
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
 
-	vector<Item*> getItems();
-
 
 protected:
 	virtual void makeAttack();
@@ -50,7 +48,6 @@ protected:
 	const float _minX, _maxX;
 	int32_t _attackRest; // rest time between attack. NOTE: not all enemies used that
 	int _damage; // the amount of health that enemy took when he hit Claw
-	bool _itemsTaken; // store if the items were taken from this crate
 	bool _isStanding;
 	const bool _canStrike, _canStrikeDuck, _canShoot, _canShootDuck;
 	const bool _isStaticEnemy; // it always idle

@@ -11,7 +11,7 @@ public:
 
 	PhysicsManager();
 
-	void init(const WwdPlane* plane, WapWorld* wwd, Player* player, int levelNumber);
+	void init(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber);
 
 	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath);
 

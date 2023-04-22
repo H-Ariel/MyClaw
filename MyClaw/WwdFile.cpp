@@ -2,6 +2,7 @@
 #include "Miniz.h"
 #include "AssetsManager.h"
 #include "WindowManager.h"
+#include "ActionPlane.h"
 
 
 enum WwdFlags
@@ -72,12 +73,12 @@ WwdObject::WwdObject()
 	moveResY = 0;
 }
 
-WwdPlane::WwdPlane()
+WwdPlaneData::WwdPlaneData()
 	: fillColor(0), tilePixelWidth(0), tilePixelHeight(0),
 	tilesOnAxisX(0), tilesOnAxisY(0), movementPercentX(0), movementPercentY(0),
 	ZCoord(0), isWrappedX(false), isWrappedY(false), isMainPlane(false) {}
 
-WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
+WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 {
 	// signature holds WWD header size, if size does not match then it is not supported WWD file
 	if (wwdFileReader->read<uint32_t>() != 1524)
@@ -85,12 +86,8 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 		throw Exception("invlaid WWD file");
 	}
 
-	uint32_t mainBlockLength;
-	uint32_t planesOffset, tileDescriptionsOffset;
-	uint32_t flags; // WwdFlags
-
 	wwdFileReader->skip(4);
-	wwdFileReader->read(flags);
+	uint32_t flags = wwdFileReader->read<uint32_t>();
 	wwdFileReader->skip(4);
 	WindowManager::setTitle(wwdFileReader->ReadString(64));
 	wwdFileReader->skip(384); // 64 bytes - author, 64 bytes - birth, 256 bytes - rezFile
@@ -100,16 +97,17 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 	wwdFileReader->read(startX);
 	wwdFileReader->read(startY);
 	wwdFileReader->skip(4);
-	planes.resize(wwdFileReader->read<uint32_t>());
-	wwdFileReader->read(planesOffset);
-	wwdFileReader->read(tileDescriptionsOffset);
-	wwdFileReader->read(mainBlockLength);
+	vector<WwdPlaneData> planesData(wwdFileReader->read<uint32_t>());
+	uint32_t planesOffset = wwdFileReader->read< uint32_t>();
+	uint32_t tileDescriptionsOffset = wwdFileReader->read<uint32_t>();
+	uint32_t mainBlockLength = wwdFileReader->read<uint32_t>();
 	wwdFileReader->skip(136); // 4 checksum + 4 unk + 128 launch app
 
 	vector<string> prefix, imageSet;
 	for (int8_t i = 0; i < 4; i++, imageSet.push_back(replaceString(wwdFileReader->ReadString(128), '\\', '/')));
 	for (int8_t i = 0; i < 4; i++, prefix.push_back(replaceString(wwdFileReader->ReadString(32), '\\', '/')));
 	// TODO: add `prefix`/`imageSet` to `PathManager`
+	PathManager::setLevelRoot(levelNumber); // for now, levelNumber is used as level root
 
 	if (flags & WwdFlag_Compress)
 	{
@@ -123,9 +121,9 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 
 		BufferReader wwdFileStreamInflated(decompressedMainBlock, decompressedMainBlockLength, false);
 		wwdFileStreamInflated.setIndex(planesOffset);
-		readPlanes(wwdFileStreamInflated, palette->colors, imageDirectoryPath);
+		readPlanes(wwdFileStreamInflated, planesData, palette->colors, imageDirectoryPath);
 		wwdFileStreamInflated.setIndex(tileDescriptionsOffset);
-		readTileDescriptions(wwdFileStreamInflated);
+		readTileDescriptions(wwdFileStreamInflated, planesData);
 
 		delete[] decompressedMainBlock;
 	}
@@ -136,12 +134,38 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader)
 
 	if (flags & WwdFlag_UseZCoords)
 	{
-		sort(planes.begin(), planes.end(), [](const WwdPlane& a, const WwdPlane& b) { return a.ZCoord < b.ZCoord; });
+		sort(planesData.begin(), planesData.end(), [](const WwdPlaneData& a, const WwdPlaneData& b) { return a.ZCoord < b.ZCoord; });
 	}
+
+	WindowManager::setBackgroundColor(planesData[0].fillColor);
 	
-	WindowManager::setBackgroundColor(planes[0].fillColor);
+	for (const WwdPlaneData& pln : planesData)
+	{
+		if (pln.isMainPlane)
+		{
+			planes.push_back(DBG_NEW ActionPlane(pln, this, levelNumber));
+		}
+		else
+		{
+#ifdef LOW_DETAILS
+			if (pln.name == "Front") continue;
+#endif
+			planes.push_back(DBG_NEW LevelPlane(pln));
+		}
+	}
+
+	if (levelNumber == 5)
+	{
+		tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[509].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+	else if (levelNumber == 11)
+	{
+		tilesDescription[39].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[39].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
 }
-void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath)
+void WapWorld::readPlanes(BufferReader& reader, vector<WwdPlaneData>& planesData, const ColorRGBA colors[], const string& imageDirectoryPath)
 {
 	vector<string> imageSets;
 	int64_t currIdx;
@@ -149,7 +173,7 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 	uint32_t tilesOffset, imageSetsOffset, objectsOffset;
 	uint32_t flags; // WwdPlaneFlags flags
 
-	for (WwdPlane& pln : planes)
+	for (WwdPlaneData& pln : planesData)
 	{
 		reader.skip(8);
 		reader.read(flags);
@@ -205,7 +229,7 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		imageSets.clear();
 	}
 }
-void WapWorld::readPlaneObjects(BufferReader& reader, WwdPlane& pln)
+void WapWorld::readPlaneObjects(BufferReader& reader, WwdPlaneData& pln)
 {
 	uint32_t nameLength, logicLength, imageSetLength, animationLength;
 
@@ -275,7 +299,7 @@ void WapWorld::readPlaneObjects(BufferReader& reader, WwdPlane& pln)
 
 	sort(pln.objects.begin(), pln.objects.end(), [](const WwdObject& a, const WwdObject& b) { return a.z < b.z; });
 }
-void WapWorld::readTileDescriptions(BufferReader& reader)
+void WapWorld::readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& planesData)
 {
 	reader.skip(8);
 	vector<WwdTileDescription> tilesDescList(reader.read<uint32_t>());
@@ -307,7 +331,7 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
 
 	// save only what we need...
 	tilesDescription[-1].type = WwdTileDescription::TileType_Empty;
-	for (const WwdPlane& pln : planes)
+	for (const WwdPlaneData& pln : planesData)
 		if (pln.isMainPlane)
 		{
 			for (const vector<int32_t>& vec : pln.tiles)

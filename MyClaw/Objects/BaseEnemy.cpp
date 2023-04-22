@@ -83,7 +83,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int health, int damage, string walkAni, string hit1, string hit2,
 	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
 	string projectileAniDir, float walkingSpeed, bool noTreasures)
-	: BaseCharacter(obj, player), _itemsTaken(false), _damage(damage),
+	: BaseCharacter(obj, player), _damage(damage),
 	_isStanding(false), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni),
 	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
 	_shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir),
@@ -135,6 +135,17 @@ BaseEnemy::~BaseEnemy()
 		obj.x = (int32_t)position.x;
 		obj.y = (int32_t)position.y;
 		obj.z = ZCoord;
+
+		// add items
+		for (int8_t t : _itemsTypes)
+		{
+			Item* i = Item::getItem(obj, _player, t);
+			i->setSpeedY(-0.6f);
+			i->setSpeedX(getRandomFloat(-0.25f, 0.25f));
+			ActionPlane::addPlaneObject(i);
+		}
+
+		// add dead enemy
 		obj.speedX = position.x < _player->position.x ? -250 : 250;
 		obj.speedY = -500;
 		ActionPlane::addPlaneObject(DBG_NEW DeadEnemy(obj, _animations[_fallDeadAniName]));
@@ -301,29 +312,6 @@ bool BaseEnemy::isStanding() const { return _isStanding; }
 bool BaseEnemy::isDuck() const { return _ani == ANIMATION_SHOOTDUCK; }
 bool BaseEnemy::isTakeDamage() const { return (_ani == ANIMATION_HITHIGH || _ani == ANIMATION_HITLOW) && !_ani->isFinishAnimation(); }
 bool BaseEnemy::isWalkAnimation() const { return _ani == ANIMATION_WALK; }
-vector<Item*> BaseEnemy::getItems()
-{
-	vector<Item*> items;
-
-	if (!_itemsTaken)
-	{
-		WwdObject newObj;
-		newObj.x = (int32_t)position.x;
-		newObj.y = (int32_t)position.y;
-		newObj.z = ZCoord;
-
-		for (int8_t t : _itemsTypes)
-		{
-			Item* i = Item::getItem(newObj, _player, t);
-			i->setSpeedY(-0.6f);
-			i->setSpeedX(getRandomFloat(-0.25f, 0.25f));
-			items.push_back(i);
-		}
-		_itemsTaken = true;
-	}
-
-	return items;
-}
 void BaseEnemy::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;

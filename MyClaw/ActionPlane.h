@@ -15,7 +15,7 @@ class BaseEnemy;
 class ActionPlane : public LevelPlane
 {
 public:
-	ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int levelNumber);
+	ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int levelNumber);
 	~ActionPlane();
 
 	void Logic(uint32_t elapsedTime) override;
@@ -34,7 +34,7 @@ public:
 	static const vector<Laser*>& getLasers() { return _lasers; }
 
 private:
-	void addObject(const WwdObject& obj, int levelNumber);
+	void addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd);
 
 	// TODO: make non-static
 	static PhysicsManager _physicsManager;
@@ -54,11 +54,10 @@ private:
 		Open // open the screen
 	};
 
-	shared_ptr<WapWorld> _wwd;
 	Player* _player;
 	const D2D1_SIZE_F _planeSize;
 	
-	// the next variables used when CC died
+	// the next variables used when CC died and the screen is closing
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish
 	States _state;

@@ -31,10 +31,10 @@ void AssetsManager::Initialize()
 void AssetsManager::Finalize()
 {
 	_runApp = false;
-	delete _imagesManager;
-	delete _animationsManager;
-	delete _audioManager;
-	delete _rezArchive;
+	delete _imagesManager; _imagesManager = nullptr;
+	delete _animationsManager; _animationsManager = nullptr;
+	delete _audioManager; _audioManager = nullptr;
+	delete _rezArchive; _rezArchive = nullptr;
 }
 
 shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
@@ -75,26 +75,13 @@ shared_ptr<WapWorld> AssetsManager::loadWwdFile(const string& wwdPath)
 }
 shared_ptr<WapWorld> AssetsManager::loadLevelWwdFile(int levelNumber)
 {
-	shared_ptr<WapWorld> wwd = loadWwdFile("LEVEL" + to_string((int)levelNumber) + "/WORLDS/WORLD.WWD");
-
-	PathManager::setLevelRoot(levelNumber);
-	
-	if (levelNumber == 5)
-	{
-		wwd->tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		wwd->tilesDescription[509].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-	else if (levelNumber == 11)
-	{
-		wwd->tilesDescription[39].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		wwd->tilesDescription[39].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-
-	return wwd;
+	char path[25];
+	sprintf(path, "LEVEL%d/WORLDS/WORLD.WWD", levelNumber);
+	return allocNewSharedPtr<WapWorld>(_rezArchive->getFileBufferReader(path), levelNumber);
 }
 shared_ptr<PidPalette> AssetsManager::loadPidPalette(const string& palPath)
 {
-	shared_ptr<PidPalette> pal = allocNewSharedPtr<PidPalette>(_rezArchive->getFileData(palPath));
+	shared_ptr<PidPalette> pal(DBG_NEW PidPalette(_rezArchive->getFileData(palPath)));
 	_imagesManager->setPalette(pal);
 	return pal;
 }

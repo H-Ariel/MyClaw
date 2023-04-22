@@ -18,7 +18,7 @@ PhysicsManager::PhysicsManager()
 {
 }
 
-void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, int levelNumber)
+void PhysicsManager::init(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber)
 {
 	_rects.clear();
 	_player = player;
@@ -30,6 +30,7 @@ void PhysicsManager::init(const WwdPlane* plane, WapWorld* wwd, Player* player, 
 
 	// minor change to tiles so they will be more accurate for reduce rectangles
 	// TODO: continue for all levels
+	// TODO: move to `WwdFile`
 	if (levelNumber == 1)
 	{
 		WwdTileDescription& t401 = wwd->tilesDescription[401];
@@ -215,43 +216,29 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(vo
 			collisionsNumber++;
 		}
 	};
-	auto _onSolid = [&](Rectangle2D tileRect) {
-		collisionRc = objRc.getCollision(tileRect);
-		_addCollision();
-	};
 	auto _onGround = [&]() { // same to `BasePlaneObject::tryCatchPlayer`
-		collisionRc = objRc.getCollision(tileRc);
-		if (collisionRc.getSmallest().bottom > 0 && (collisionRc.right > 0 || collisionRc.left > 0) && obj->isFalling())
+		if (obj->isFalling() && (collisionRc.right > 0 || collisionRc.left > 0) && collisionRc.getSmallest().bottom > 0)
 		{
 			_addCollision();
 		}
 	};
 	auto _onLadder = [&]() {
-		if (objRc.intersects(tileRc))
+		// check if object is at the top of the ladder, so it should stay here (and not fall)
+		bool isOnLadderTop = collisionRc.bottom < 32;
+		if (isPlayer)
+			isOnLadderTop = !_player->isClimbing() && isOnLadderTop;
+
+		if (isOnLadderTop)
+			_onGround(); // ladder top behaves like ground
+
+		if (isPlayer) // let Captain Claw climb
 		{
-			// check if object is at the top of the ladder, so it should stay here (and not fall)
-			bool isOnLadderTop = objRc.bottom - tileRc.top < 32;
-			if (isPlayer)
-				isOnLadderTop = !_player->isClimbing() && isOnLadderTop;
-
-			if (isOnLadderTop)
-				_onGround(); // ladder top behaves like ground
-
-			if (isPlayer) // let Captain Claw climb
+			_player->setLadderFlags(isOnLadderTop);
+			if (_player->isClimbing())
 			{
-				_player->setLadderFlags(isOnLadderTop);
-				if (_player->isClimbing())
-				{
-					// set the player position on the ladder easily for the user
-					_player->position.x = (tileRc.left + tileRc.right) / 2;
-				}
+				// set the player position on the ladder easily for the user
+				_player->position.x = (tileRc.left + tileRc.right) / 2;
 			}
-		}
-	};
-	auto _onDeath = [&]() {
-		if (objRc.intersects(tileRc))
-		{
-			whenTouchDeath();
 		}
 	};
 
@@ -260,12 +247,13 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(vo
 		if (objRc.intersects(p.first))
 		{
 			tileRc = p.first;
+			collisionRc = objRc.getCollision(tileRc);
 			switch (p.second)
 			{
-			case WwdTileDescription::TileAttribute_Solid: _onSolid(tileRc); break;
+			case WwdTileDescription::TileAttribute_Solid: _addCollision(); break;
 			case WwdTileDescription::TileAttribute_Ground: _onGround(); break;
 			case WwdTileDescription::TileAttribute_Climb: _onLadder(); break;
-			case WwdTileDescription::TileAttribute_Death: _onDeath(); break;
+			case WwdTileDescription::TileAttribute_Death: whenTouchDeath(); break;
 			}
 		}
 	}

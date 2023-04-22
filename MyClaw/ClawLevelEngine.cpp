@@ -2,42 +2,29 @@
 #include "AssetsManager.h"
 #include "WindowManager.h"
 #include "MenuEngine.h"
+#include "ActionPlane.h"
 
 
 ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	: _state(State::Play), _saveBgColor(0), _levelNumber(levelNumber),
-	_actionPlane(nullptr), _helpImage("STATES/HELP/SCREENS/HELP.PCX")
+	_mainPlane(nullptr), _helpImage("STATES/HELP/SCREENS/HELP.PCX")
 {
-	shared_ptr<WapWorld> wwd = AssetsManager::loadLevelWwdFile(levelNumber);
-
-	// TODO: read directly from file to LevelPlane (cancel usage of WwdPlane)
-	LevelPlane* pLevelPlane = nullptr;
-	for (const WwdPlane& pln : wwd->planes)
+	_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
+	for (LevelPlane* pln : _wwd->planes)
 	{
-		if (pln.isMainPlane)
-		{
-			_actionPlane = DBG_NEW ActionPlane(pln, wwd, levelNumber);
-			pLevelPlane = _actionPlane;
-		}
-		else
-		{
-#ifdef LOW_DETAILS
-			if (pln.name == "Front") continue;
-#endif
-			pLevelPlane = DBG_NEW LevelPlane(pln);
-		}
-
-		_planes.push_back(pLevelPlane);
-		_elementsList.push_back(pLevelPlane);
+		if (pln->isMainPlane())
+			_mainPlane = pln;
+		_elementsList.push_back(pln);
 	}
-	wwd->planes.clear();
-	
-	_elementsList.push_back(_hud = DBG_NEW LevelHUD(_player = _actionPlane->getPlayer(), _actionPlane->position));
-	WindowManager::setWindowOffset(&_actionPlane->position);
+
+	if (_mainPlane == nullptr) throw Exception("no main plane found");
+
+	_elementsList.push_back(_hud = DBG_NEW LevelHUD(_player = ((ActionPlane*)_mainPlane)->getPlayer(), _mainPlane->position));
+	WindowManager::setWindowOffset(&_mainPlane->position);
 
 //	if (levelNumber == 1) _player->position = { 3586, 4859 };
 //	if (levelNumber == 1) _player->position = { 8537, 4430};
-	if (levelNumber == 1) _player->position = { 17485, 1500 }; // END OF LEVEL
+//	if (levelNumber == 1) _player->position = { 17485, 1500 }; // END OF LEVEL
 //	if (levelNumber == 1) _player->position = { 5775, 4347 };
 //	if (levelNumber == 1) _player->position = { 9696, 772 };
 //	if (levelNumber == 1) _player->position = { 5226, 4035 };
@@ -47,12 +34,12 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 //	if (levelNumber == 1) _player->position = { 2567, 4388 };
 //	if (levelNumber == 1) _player->position = { 3123, 4219 };
 //	if (levelNumber == 2) _player->position = { 9196, 3958 };
-//	if (levelNumber == 2) _player->position = { 16734, 1542 };
+	if (levelNumber == 2) _player->position = { 16734, 1542 };
 //	if (levelNumber == 2) _player->position = { 10881, 3382 };
 //	if (levelNumber == 2) _player->position = { 593, 4086 };
 //	if (levelNumber == 2) _player->position = { 17044, 3062 };
 //	if (levelNumber == 2) _player->position = { 4596, 3958 };
-	if (levelNumber == 2) _player->position = { 20070, 2092 }; // END OF LEVEL
+//	if (levelNumber == 2) _player->position = { 20070, 2092 }; // END OF LEVEL
 //	if (levelNumber == 3) _player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
 //	if (levelNumber == 3) _player->position = { 6080, 6224 };
 //	if (levelNumber == 3) _player->position = { 9693, 8528 };
@@ -92,7 +79,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 ClawLevelEngine::~ClawLevelEngine()
 {
 	delete _hud;
-	for (LevelPlane* p : _planes)
+	for (LevelPlane* p : _wwd->planes)
 		delete p;
 	AssetsManager::clearLevelAssets(_levelNumber);
 }
@@ -101,8 +88,8 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
 	BaseEngine::Logic(elapsedTime);
 
-	for (LevelPlane* p : _planes)
-		p->position = _actionPlane->position;
+	for (LevelPlane* p : _wwd->planes)
+		p->position = _mainPlane->position;
 
 	if (_state == State::Play)
 	{
@@ -155,10 +142,10 @@ void ClawLevelEngine::OnKeyUp(int key)
 	else // if (_state == State::Help)
 	{
 		_elementsList.clear();
-		for (LevelPlane* p : _planes)
+		for (LevelPlane* p : _wwd->planes)
 			_elementsList.push_back(p);
 		_elementsList.push_back(_hud);
-		WindowManager::setWindowOffset(&_actionPlane->position);
+		WindowManager::setWindowOffset(&_mainPlane->position);
 		WindowManager::setBackgroundColor(_saveBgColor);
 		_state = State::Play;
 	}

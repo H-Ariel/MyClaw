@@ -56,9 +56,8 @@
 
 // TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
-//#define DRAW_RECTANGLES
-//#undef LOW_DETAILS
 //#ifndef _DEBUG
+//#undef LOW_DETAILS
 #define USE_ENEMIES
 //#endif
 
@@ -85,10 +84,10 @@ vector<Laser*> ActionPlane::_lasers;
 bool ActionPlane::_needSort;
 
 
-ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int levelNumber)
-	: LevelPlane(plane), _wwd(wwd), _state(States::Play), _deathAniWait(false),
-	_planeSize({ (float)plane.tilePixelWidth * plane.tilesOnAxisX,
-		(float)plane.tilePixelHeight * plane.tilesOnAxisY })
+ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int levelNumber)
+	: LevelPlane(planeData), _state(States::Play), _deathAniWait(false),
+	_planeSize({ (float)planeData.tilePixelWidth * planeData.tilesOnAxisX,
+		(float)planeData.tilePixelHeight * planeData.tilesOnAxisY })
 {
 	_objects.clear(); // because it static member and we don't want recycle objects...
 	_powderKegs.clear();
@@ -101,8 +100,8 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int le
 	
 	
 	WwdObject playerData;
-	playerData.x = _wwd->startX;
-	playerData.y = _wwd->startY;
+	playerData.x = wwd->startX;
+	playerData.y = wwd->startY;
 	playerData.z = 4000;
 	_objects.push_back(_player = DBG_NEW Player(playerData, _planeSize));
 
@@ -111,9 +110,9 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int le
 #endif
 
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
-	_physicsManager.init(&_plane, _wwd.get(), _player, levelNumber); // must be after WWD map loaded and before objects added
+	_physicsManager.init(&_planeData, wwd, _player, levelNumber); // must be after WWD map loaded and before objects added
 
-	for (const WwdObject& obj : plane.objects)
+	for (const WwdObject& obj : planeData.objects)
 	{
 #ifdef SAVE_LOGICS
 		allLogics.insert(obj.logic);
@@ -121,7 +120,7 @@ ActionPlane::ActionPlane(const WwdPlane& plane, shared_ptr<WapWorld> wwd, int le
 
 		try
 		{
-			addObject(obj, levelNumber);
+			addObject(obj, levelNumber, wwd);
 		}
 		catch (Exception& ex)
 		{
@@ -188,7 +187,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 				_state = States::Play;
 			}
 			break;
-			
+
 		case States::Fall:
 			_player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
 			_player->Logic(0); // update position of animation
@@ -226,7 +225,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	{
 		_physicsManager.checkCollides(_player, [&] { _player->loseLife(); });
 	}
-	
+
 	_update_position();
 
 	if (_needSort)
@@ -246,9 +245,9 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 		obj->Logic(elapsedTime);
 
-		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<ClawDynamite>(obj) 
-			|| isinstance<PowderKeg>(obj)  || isinstance<GabrielRedTailPirate>(obj) 
-			|| (isinstance<Item>(obj) && ((BaseDynamicPlaneObject*)obj)->getSpeedY() != 0))
+		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
+			|| (isinstance<Item>(obj) && ((Item*)obj)->getSpeedY() != 0)
+			|| isinstance<GabrielRedTailPirate>(obj))
 		{
 			_physicsManager.checkCollides((BaseDynamicPlaneObject*)obj, [obj] { obj->removeObject = true; });
 		}
@@ -270,19 +269,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		if (obj->removeObject)
 		{
 			if (isbaseinstance<BaseEnemy>(obj))
-			{
-				vector<Item*> items = ((BaseEnemy*)obj)->getItems();
-				_objects.insert(_objects.end(), items.begin(), items.end());
 				eraseByValue(_enemies, obj);
-			}
 			else if (isProjectile(obj))
-			{
 				eraseByValue(_projectiles, obj);
-			}
 			else if (isinstance<PowderKeg>(obj))
-			{
 				eraseByValue(_powderKegs, obj);
-			}
 
 			delete obj;
 			_objects.erase(_objects.begin() + i);
@@ -296,10 +287,8 @@ void ActionPlane::Draw()
 {
 	LevelPlane::Draw();
 
-	for (BasePlaneObject* i : _objects)
-	{
-		i->Draw();
-	}
+	for (BasePlaneObject* obj : _objects)
+		obj->Draw();
 
 	_physicsManager.Draw();
 
@@ -320,85 +309,6 @@ void ActionPlane::Draw()
 		// TODO: draw circle, not 4 rectangles
 		//WindowManager::drawCircle(_player->position, _holeRadius, ColorF::Black, 20);
 	}
-	
-#ifdef DRAW_RECTANGLES
-	// draw rectangles around tiles limits
-
-	WwdTileDescription tileDesc;
-	ColorF color(0);
-	Rectangle2D tileRc;
-	const D2D1_SIZE_F wndSz = WindowManager::getSize();
-	const uint32_t MinXPos = (uint32_t)(position.x / _plane.tilePixelWidth);
-	const uint32_t MinYPos = (uint32_t)(position.y / _plane.tilePixelHeight);
-	const uint32_t MaxXPos = (uint32_t)(MinXPos + wndSz.width / _plane.tilePixelWidth + 2);
-	const uint32_t MaxYPos = (uint32_t)(MinYPos + wndSz.height / _plane.tilePixelHeight + 2);
-	uint32_t i, j;
-	int32_t tileId;
-
-	for (i = MinYPos; i < MaxYPos && i < _plane.tilesOnAxisY; i++)
-	{
-		for (j = MinXPos; j < MaxXPos && j < _plane.tilesOnAxisX; j++)
-		{
-			tileRc.left = (float)(j * _plane.tilePixelWidth);
-			tileRc.top = (float)(i * _plane.tilePixelHeight);
-			tileRc.right = tileRc.left + _plane.tilePixelWidth;
-			tileRc.bottom = tileRc.top + _plane.tilePixelHeight;
-
-			WindowManager::drawRect(tileRc, ColorF::Red);
-
-			tileId = _plane.tiles[i][j];
-
-			if (tileId != EMPTY_TILE)
-			{
-				tileDesc = _wwd->tilesDescription[tileId];
-
-				if (tileDesc.type == WwdTileDescription::TileType_Double)
-				{
-					tileRc.left += tileDesc.rect.left;
-					tileRc.top += tileDesc.rect.top;
-					tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width;
-					tileRc.bottom = tileRc.bottom + tileDesc.rect.bottom - tileDesc.height;
-
-					if (tileDesc.insideAttrib == WwdTileDescription::TileAttribute_Solid)
-					{
-						color = ColorF::Green;
-					}
-					else if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid)
-					{
-						color = ColorF::Yellow;
-					}
-					else if (tileDesc.insideAttrib == WwdTileDescription::TileAttribute_Ground)
-					{
-						color = ColorF::Magenta;
-					}
-					else if (tileDesc.insideAttrib == WwdTileDescription::TileAttribute_Death)
-					{
-						color = ColorF::Purple;
-					}
-					else
-					{
-						color.a = 0;
-						tileRc = {};
-					}
-				}
-				else if (tileDesc.type == WwdTileDescription::TileType_Single)
-				{
-					if (tileDesc.insideAttrib == WwdTileDescription::TileAttribute_Death)
-					{
-						color = ColorF::Purple;
-					}
-					else
-					{
-						color.a = 0;
-						tileRc = {};
-					}
-				}
-				
-				WindowManager::drawRect(tileRc, color, 3);
-			}
-		}
-	}
-#endif
 }
 
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
@@ -407,13 +317,13 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 	_objects.push_back(obj);
 	_needSort = true;
 	if (isProjectile(obj)) _projectiles.push_back((Projectile*)obj);
-	else if (isbaseinstance<BaseEnemy>(obj)) _enemies.push_back((BaseEnemy*)obj);
+	else if (isbaseinstance<BaseEnemy>(obj)) _enemies.push_back((BaseEnemy*)obj); // TODO: make sure we need this
 }
 
 
 #define ADD_ENEMY(p) { BaseEnemy* enemy=p; _objects.push_back(enemy); _enemies.push_back(enemy); }
 
-void ActionPlane::addObject(const WwdObject& obj, int levelNumber)
+void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd)
 {
 #ifndef LOW_DETAILS
 	if (obj.logic == "FrontCandy" || obj.logic == "BehindCandy" ||
@@ -456,7 +366,7 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber)
 	}
 	else
 #endif
-	if (obj.logic == "Elevator"
+	/*if (obj.logic == "Elevator"
 		|| obj.logic == "TriggerElevator" || obj.logic == "OneWayTriggerElevator"
 		|| obj.logic == "StartElevator" || obj.logic == "OneWayStartElevator")
 	{
@@ -465,6 +375,11 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber)
 	else if (obj.logic == "PathElevator")
 	{
 		_objects.push_back(DBG_NEW PathElevator(obj, _player));
+	}
+	*/
+	if (endsWith(obj.logic, "Elevator"))
+	{
+		_objects.push_back(Elevator::create(obj, _player));
 	}
 	else if (endsWith(obj.logic, "Checkpoint"))
 	{
@@ -489,8 +404,8 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber)
 	else if (obj.logic == "BreakPlank")
 	{
 		WwdRect rc = {};
-		if (levelNumber == 5) rc = _wwd->tilesDescription[509].rect;
-		else if (levelNumber == 11) rc = _wwd->tilesDescription[39].rect;
+		if (levelNumber == 5) rc = wwd->tilesDescription[509].rect;
+		else if (levelNumber == 11) rc = wwd->tilesDescription[39].rect;
 
 		for (int32_t i = 0; i < obj.width; i++)
 		{

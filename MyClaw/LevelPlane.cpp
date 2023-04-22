@@ -2,38 +2,37 @@
 #include "WindowManager.h"
 
 
-LevelPlane::LevelPlane(const WwdPlane& plane)
-	: _plane(plane),
-	maxTileIdxX(plane.isWrappedX ? INT32_MAX : plane.tilesOnAxisX),
-	maxTileIdxY(plane.isWrappedY ? INT32_MAX : plane.tilesOnAxisY)
+LevelPlane::LevelPlane(const WwdPlaneData& planeData)
+	: _planeData(planeData),
+	maxTileIdxX(planeData.isWrappedX ? INT32_MAX : planeData.tilesOnAxisX),
+	maxTileIdxY(planeData.isWrappedY ? INT32_MAX : planeData.tilesOnAxisY)
 {
 }
 
 void LevelPlane::Draw()
 {
 	shared_ptr<UIBaseImage> img;
-	int32_t tileId, rowTileIndex;
-	int32_t row, col;
+	int row, col, tileId, rowTileIndex;
 
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
-	const float parallaxCameraPosX = position.x * _plane.movementPercentX;
-	const float parallaxCameraPosY = position.y * _plane.movementPercentY;
-	const int32_t startCol = (int32_t)(parallaxCameraPosX / _plane.tilePixelWidth);
-	const int32_t startRow = (int32_t)(parallaxCameraPosY / _plane.tilePixelHeight);
-	const int32_t endCol = min<int32_t>(maxTileIdxX, (int32_t)(wndSz.width / _plane.tilePixelWidth + 2 + startCol));
-	const int32_t endRow = min<int32_t>(maxTileIdxY, (int32_t)(wndSz.height / _plane.tilePixelHeight + 2 + startRow));
+	const float parallaxCameraPosX = position.x * _planeData.movementPercentX;
+	const float parallaxCameraPosY = position.y * _planeData.movementPercentY;
+	const int startRow = (int)(parallaxCameraPosY / _planeData.tilePixelHeight);
+	const int startCol = (int)(parallaxCameraPosX / _planeData.tilePixelWidth);
+	const int endRow = min<int>(maxTileIdxY, (int)(wndSz.height / _planeData.tilePixelHeight + 2 + startRow));
+	const int endCol = min<int>(maxTileIdxX, (int)(wndSz.width / _planeData.tilePixelWidth + 2 + startCol));
 
 	for (row = startRow; row < endRow; row++)
 	{
-		rowTileIndex = row % _plane.tilesOnAxisY;
+		rowTileIndex = row % _planeData.tilesOnAxisY;
 		for (col = startCol; col < endCol; col++)
 		{
-			tileId = _plane.tiles[rowTileIndex][col % _plane.tilesOnAxisX];
-			if (_plane.tilesImages.count(tileId))
+			tileId = _planeData.tiles[rowTileIndex][col % _planeData.tilesOnAxisX];
+			if (_planeData.tilesImages.count(tileId))
 			{
-				img = _plane.tilesImages.at(tileId);
-				img->position.x = (col + 0.5f) * _plane.tilePixelWidth - parallaxCameraPosX + position.x;
-				img->position.y = (row + 0.5f) * _plane.tilePixelHeight - parallaxCameraPosY + position.y;
+				img = _planeData.tilesImages.at(tileId);
+				img->position.x = (col + 0.5f) * _planeData.tilePixelWidth - parallaxCameraPosX + position.x;
+				img->position.y = (row + 0.5f) * _planeData.tilePixelHeight - parallaxCameraPosY + position.y;
 				img->Draw();
 			}
 		}

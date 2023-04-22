@@ -12,7 +12,6 @@
 	#include <crtdbg.h>
 	#define DBG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 
-//	#define DRAW_RECTANGLES	// draw rectangles around tiles, objects, characters, etc.
 	#define LOW_DETAILS		// cancel the `...Candy` objects, treasures glitter, front plane, sounds, etc.
 #else
 	#define DBG_NEW new // do not check for memory leaks

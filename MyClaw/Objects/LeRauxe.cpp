@@ -29,12 +29,12 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 		/*
 		y = 0.5 * a * t^2 + v0 * t + y0
-		  
+		
 		v0 = ?
-		a  = GRAVITY
+		a = GRAVITY
 		y0 = 0
-		y  = 96
-		t  = 150
+		y = 96
+		t = 150
 		
 		96 = 0.5 * GRAVITY * 22500 + v0 * 150 + 0
 		...

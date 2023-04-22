@@ -17,9 +17,9 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, Player* player)
 	switch (obj.userValue1)
 	{
 	case 1: myMemCpy(_offset.x, -OFFSET_X); break;
-	case 2: myMemCpy(_offset.x,  OFFSET_X); myMemCpy(_speed.x, -_speed.x); break;
+	case 2: myMemCpy(_offset.x, OFFSET_X); myMemCpy(_speed.x, -_speed.x); break;
 	case 3: myMemCpy(_offset.y, -OFFSET_Y); break;
-	case 4: myMemCpy(_offset.y,  OFFSET_Y); myMemCpy(_speed.y, -_speed.y); break;
+	case 4: myMemCpy(_offset.y, OFFSET_Y); myMemCpy(_speed.y, -_speed.y); break;
 	}
 
 	char frame[9]; sprintf(frame, "/%03d.PID", obj.userValue1);

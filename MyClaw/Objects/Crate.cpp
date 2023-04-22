@@ -19,7 +19,7 @@ Crate::Crate(const WwdObject& obj, Player* player)
 	if (obj.userRect2.right		> 0) _itemsTypes.push_back(obj.userRect2.right);
 	if (obj.userRect2.bottom	> 0) _itemsTypes.push_back(obj.userRect2.bottom);
 	if (obj.userRect2.top		> 0) _itemsTypes.push_back(obj.userRect2.top);
-	if (_itemsTypes.size()	   == 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
+	if (_itemsTypes.size()		== 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
 	
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false);
 	_ani->updateFrames = false;
