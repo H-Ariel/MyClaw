@@ -25,6 +25,3 @@ protected: //private:
 	bool _operateElevator;
 	const bool _isOneWayElevator;
 };
-
-
-

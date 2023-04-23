@@ -83,7 +83,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int health, int damage, string walkAni, string hit1, string hit2,
 	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
 	string projectileAniDir, float walkingSpeed, bool noTreasures)
-	: BaseCharacter(obj, player), _damage(damage),
+	: BaseCharacter(obj, player), _damage(damage), _forward(true),
 	_isStanding(false), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni),
 	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
 	_shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir),

@@ -16,9 +16,7 @@ public:
 	virtual bool isStanding() const;
 	virtual bool isDuck() const;
 	virtual bool isTakeDamage() const;
-
-	bool hasHealth() const { return _health > 0; }
-	bool isAttack() const { return _isAttack; }
+	virtual bool isAttack() const { return _isAttack; }
 
 
 protected:
@@ -26,6 +24,5 @@ protected:
 	Rectangle2D _lastAttackRect; // the player/enemy attackRect (that this character get, e.g. officer use it after player hit him)
 	Rectangle2D _saveCurrRect;
 	int _health;
-	bool _forward; // TODO use `_isMirrored`
 	bool _isAttack;
 };

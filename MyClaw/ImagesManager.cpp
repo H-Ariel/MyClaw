@@ -20,7 +20,7 @@ ImagesManager::~ImagesManager()
 {
 	for (auto& i : _loadedBitmaps)
 	{
-		SafeRelease(&i.second.first);
+		SafeRelease(i.second.first);
 	}
 }
 

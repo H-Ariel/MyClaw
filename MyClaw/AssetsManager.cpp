@@ -31,10 +31,10 @@ void AssetsManager::Initialize()
 void AssetsManager::Finalize()
 {
 	_runApp = false;
-	delete _imagesManager; _imagesManager = nullptr;
-	delete _animationsManager; _animationsManager = nullptr;
-	delete _audioManager; _audioManager = nullptr;
-	delete _rezArchive; _rezArchive = nullptr;
+	SafeDelete(_imagesManager);
+	SafeDelete(_animationsManager);
+	SafeDelete(_audioManager);
+	SafeDelete(_rezArchive);
 }
 
 shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)

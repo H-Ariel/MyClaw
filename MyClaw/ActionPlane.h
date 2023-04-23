@@ -25,7 +25,7 @@ public:
 
 	// TODO: make non-static
 	static void addPlaneObject(BasePlaneObject* obj);
-	static const PhysicsManager& getPhysicsManager() { return _physicsManager; }
+	static const PhysicsManager& getPhysicsManager() { return *_physicsManager; }
 	static const vector<PowderKeg*>& getPowderKegs() { return _powderKegs; }
 	static const vector<BaseEnemy*>& getEnemies() { return _enemies; }
 	static const vector<Projectile*>& getProjectiles() { return _projectiles; }
@@ -37,7 +37,7 @@ private:
 	void addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd);
 
 	// TODO: make non-static
-	static PhysicsManager _physicsManager;
+	static PhysicsManager* _physicsManager;
 	static vector<BasePlaneObject*> _objects;
 	static vector<PowderKeg*> _powderKegs;
 	static vector<BaseEnemy*> _enemies;

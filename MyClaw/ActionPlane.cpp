@@ -44,8 +44,8 @@
 
 #define EMPTY_TILE -1
 
-#define RECT_SPEED			0.5f
-#define CC_FALLDEATH_SPEED	0.7f
+#define RECT_SPEED			0.5f // speed of the rect that shows when player is died
+#define CC_FALLDEATH_SPEED	0.7f // speed of CC when he falls out the window
 
 #define MIN_OFFSET_X 0
 #define MIN_OFFSET_Y 0
@@ -73,7 +73,7 @@ public:
 };
 
 
-PhysicsManager ActionPlane::_physicsManager;
+PhysicsManager* ActionPlane::_physicsManager = nullptr;
 vector<BasePlaneObject*> ActionPlane::_objects;
 vector<PowderKeg*> ActionPlane::_powderKegs;
 vector<BaseEnemy*> ActionPlane::_enemies;
@@ -81,24 +81,14 @@ vector<Projectile*> ActionPlane::_projectiles;
 vector<FloorSpike*> ActionPlane::_floorSpikes;
 vector<GooVent*> ActionPlane::_gooVents;
 vector<Laser*> ActionPlane::_lasers;
-bool ActionPlane::_needSort;
+bool ActionPlane::_needSort = true;
 
 
 ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int levelNumber)
 	: LevelPlane(planeData), _state(States::Play), _deathAniWait(false),
 	_planeSize({ (float)planeData.tilePixelWidth * planeData.tilesOnAxisX,
 		(float)planeData.tilePixelHeight * planeData.tilesOnAxisY })
-{
-	_objects.clear(); // because it static member and we don't want recycle objects...
-	_powderKegs.clear();
-	_enemies.clear();
-	_projectiles.clear();
-	_floorSpikes.clear();
-	_gooVents.clear();
-	_lasers.clear();
-	_needSort = true;
-	
-	
+{	
 	WwdObject playerData;
 	playerData.x = wwd->startX;
 	playerData.y = wwd->startY;
@@ -110,7 +100,7 @@ ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int level
 #endif
 
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
-	_physicsManager.init(&_planeData, wwd, _player, levelNumber); // must be after WWD map loaded and before objects added
+	_physicsManager = DBG_NEW PhysicsManager(&_planeData, wwd, _player, levelNumber); // must be after WWD map loaded and before objects added
 
 	for (const WwdObject& obj : planeData.objects)
 	{
@@ -142,6 +132,17 @@ ActionPlane::~ActionPlane()
 	{
 		delete i;
 	}
+
+	// because it static member and we don't want recycle objects...
+	SafeDelete(_physicsManager);
+	_objects.clear();
+	_powderKegs.clear();
+	_enemies.clear();
+	_projectiles.clear();
+	_floorSpikes.clear();
+	_gooVents.clear();
+	_lasers.clear();
+	_needSort = true;
 }
 
 void ActionPlane::Logic(uint32_t elapsedTime)
@@ -223,7 +224,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 	if (!_player->isInDeathAnimation())
 	{
-		_physicsManager.checkCollides(_player, [&] { _player->loseLife(); });
+		_physicsManager->checkCollides(_player, [&] { _player->loseLife(); });
 	}
 
 	_update_position();
@@ -249,7 +250,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			|| (isinstance<Item>(obj) && ((Item*)obj)->getSpeedY() != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{
-			_physicsManager.checkCollides((BaseDynamicPlaneObject*)obj, [obj] { obj->removeObject = true; });
+			_physicsManager->checkCollides((BaseDynamicPlaneObject*)obj, [obj] { obj->removeObject = true; });
 		}
 		else if (isinstance<StackedCrates>(obj))
 		{
@@ -290,7 +291,7 @@ void ActionPlane::Draw()
 	for (BasePlaneObject* obj : _objects)
 		obj->Draw();
 
-	_physicsManager.Draw();
+	_physicsManager->Draw();
 
 	if (_state == States::Close || _state == States::Open)
 	{
@@ -366,17 +367,6 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	}
 	else
 #endif
-	/*if (obj.logic == "Elevator"
-		|| obj.logic == "TriggerElevator" || obj.logic == "OneWayTriggerElevator"
-		|| obj.logic == "StartElevator" || obj.logic == "OneWayStartElevator")
-	{
-		_objects.push_back(DBG_NEW Elevator(obj, _player));
-	}
-	else if (obj.logic == "PathElevator")
-	{
-		_objects.push_back(DBG_NEW PathElevator(obj, _player));
-	}
-	*/
 	if (endsWith(obj.logic, "Elevator"))
 	{
 		_objects.push_back(Elevator::create(obj, _player));

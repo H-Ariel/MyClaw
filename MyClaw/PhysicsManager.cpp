@@ -13,16 +13,9 @@
 
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
-PhysicsManager::PhysicsManager()
-	: _player(nullptr)
+PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Player * player, int levelNumber)
+	: _player(player)
 {
-}
-
-void PhysicsManager::init(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber)
-{
-	_rects.clear();
-	_player = player;
-
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
 	Rectangle2D tileRc, originalTileRc, rc1, rc2;

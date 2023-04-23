@@ -2,6 +2,7 @@
 #include "Player.h"
 
 
+// TODO: get ActionPlane as function parameter (?)
 BasePlaneObject::BasePlaneObject(const WwdObject& obj, Player* player)
 	: UIBaseElement({ (float)obj.x, (float)obj.y }), _player(player),
 	ZCoord(obj.z), removeObject(false), _ani(nullptr),

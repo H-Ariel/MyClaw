@@ -195,7 +195,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_ani = _animations[_aniName];
 		_ani->reset();
 		_ani->loopAni = false;
-		_ani->mirrored = !_forward; ////////
+		_ani->mirrored = _isMirrored; ////////
 		_ani->position = position; ////////
 		_isOnLadder = false;
 	}
@@ -236,8 +236,8 @@ void Player::Logic(uint32_t elapsedTime)
 	bool climbUp = false, climbDown = false;
 
 
-	if (_leftPressed) _forward = false;
-	else if (_rightPressed || isClimbing()) _forward = true;
+	if (_leftPressed) _isMirrored = true;
+	else if (_rightPressed || isClimbing()) _isMirrored = false;
 
 	if (goLeft) _speed.x = -speedX;
 	else if (goRight) _speed.x = speedX;
@@ -333,7 +333,7 @@ void Player::Logic(uint32_t elapsedTime)
 		else if (rope)
 		{
 			_aniName = "SWING";
-			_forward = !rope->isPassedHalf();
+			_isMirrored = rope->isPassedHalf();
 			_speed = {};
 		}
 		else if (_isAttack)
@@ -393,9 +393,9 @@ void Player::Logic(uint32_t elapsedTime)
 				if (amount > 0)
 				{
 					WwdObject obj;
-					obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+					obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
 					obj.z = ZCoord;
-					obj.speedX = (_forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED);
+					obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 
 					if (_currWeapon == ClawProjectile::Types::Pistol)
 					{
@@ -414,20 +414,19 @@ void Player::Logic(uint32_t elapsedTime)
 
 						obj.x = (int32_t)position.x;
 						obj.y = (int32_t)position.y;
-						//obj.speedY = -DEFAULT_PROJECTILE_SPEED;
 						obj.damage = 15;
 
 						if (inAir)
 						{
-							obj.speedX = _forward ? MAX_DYNAMITE_SPEED : -MAX_DYNAMITE_SPEED;
+							obj.speedX = _isMirrored ? -MAX_DYNAMITE_SPEED : MAX_DYNAMITE_SPEED;
 							obj.speedY = -MAX_DYNAMITE_SPEED;
 						}
 						else
 						{
-							if (_forward)
-								obj.speedX = min(obj.speedX * _holdAltTime / 1000, MAX_DYNAMITE_SPEED);
-							else
+							if (_isMirrored)
 								obj.speedX = max(obj.speedX * _holdAltTime / 1000, -MAX_DYNAMITE_SPEED);
+							else
+								obj.speedX = min(obj.speedX * _holdAltTime / 1000, MAX_DYNAMITE_SPEED);
 							obj.speedY = min(obj.speedY * _holdAltTime / 1000, -MAX_DYNAMITE_SPEED);
 						}
 					}
@@ -480,7 +479,7 @@ void Player::Logic(uint32_t elapsedTime)
 				if (_raisedPowderKeg)
 				{
 					// throw the powder keg
-					_raisedPowderKeg->thrown(_forward);
+					_raisedPowderKeg->thrown(!_isMirrored);
 					_raisedPowderKeg = nullptr;
 					_aniName = "THROW";
 					_zPressed = false; // if we throw do not try catch other keg
@@ -541,7 +540,7 @@ void Player::Logic(uint32_t elapsedTime)
 					obj.x = (int32_t)position.x;
 					obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
 					obj.z = ZCoord;
-					obj.speedX = (_forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED);
+					obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 					obj.damage = 25;
 					ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
 				};
@@ -560,7 +559,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_ani->loopAni = false;
 	}
 
-	_ani->mirrored = !_forward && !_isOnLadder;
+	_ani->mirrored = _isMirrored && !_isOnLadder;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
 	
@@ -587,7 +586,7 @@ void Player::calcRect()
 {
 	// calculate _saveCurrRect
 
-	_saveCurrRect.left = -7.f + 15 * (!_forward);
+	_saveCurrRect.left = -7.f + 15 * _isMirrored;
 	_saveCurrRect.right = _saveCurrRect.left + 44;
 
 	if (isDuck())
@@ -628,15 +627,15 @@ void Player::calcAttackRect()
 		rc.top = 60;
 		rc.bottom = 80;
 
-		if (_forward)
-		{
-			rc.left = 50;
-			rc.right = 130;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -80;
 			rc.right = 0;
+		}
+		else
+		{
+			rc.left = 50;
+			rc.right = 130;
 		}
 
 		damage = 5;
@@ -646,15 +645,15 @@ void Player::calcAttackRect()
 		rc.top = 35;
 		rc.bottom = 55;
 
-		if (_forward)
-		{
-			rc.left = 50;
-			rc.right = 120;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -70;
 			rc.right = 0;
+		}
+		else
+		{
+			rc.left = 50;
+			rc.right = 120;
 		}
 
 		damage = 5;
@@ -664,15 +663,15 @@ void Player::calcAttackRect()
 		rc.top = 25;
 		rc.bottom = 85;
 
-		if (_forward)
-		{
-			rc.left = 35;
-			rc.right = 75;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -25;
 			rc.right = 15;
+		}
+		else
+		{
+			rc.left = 35;
+			rc.right = 75;
 		}
 
 		damage = 5;
@@ -682,15 +681,15 @@ void Player::calcAttackRect()
 		rc.top = 5;
 		rc.bottom = 65;
 
-		if (_forward)
-		{
-			rc.left = 35;
-			rc.right = 75;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -30;
 			rc.right = 10;
+		}
+		else
+		{
+			rc.left = 35;
+			rc.right = 75;
 		}
 
 		damage = 5;
@@ -700,15 +699,15 @@ void Player::calcAttackRect()
 		rc.top = 30;
 		rc.bottom = 65;
 
-		if (_forward)
-		{
-			rc.left = 35;
-			rc.right = 75;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -30;
 			rc.right = 10;
+		}
+		else
+		{
+			rc.left = 35;
+			rc.right = 75;
 		}
 
 		damage = 5;
@@ -718,15 +717,15 @@ void Player::calcAttackRect()
 		rc.top = 45;
 		rc.bottom = 60;
 
-		if (_forward)
-		{
-			rc.left = 50;
-			rc.right = 115;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -65;
 			rc.right = 0;
+		}
+		else
+		{
+			rc.left = 50;
+			rc.right = 115;
 		}
 
 		damage = 2;
@@ -755,7 +754,7 @@ void Player::stopFalling(float collisionSize)
 		// If CC stopped falling (and he is not walking) he should stand
 		_ani = _animations[_aniName = "STAND"];
 		_ani->reset();
-		_ani->mirrored = !_forward && !_isOnLadder;
+		_ani->mirrored = _isMirrored && !_isOnLadder;
 		_ani->position = position;
 		_ani->updateImageData();
 	}
@@ -1032,7 +1031,7 @@ void Player::backToLife()
 	_lastAttackRect = {};
 	_saveCurrAttackRect = {};
 	_damageRest = 0;
-	_forward = true;
+	_isMirrored = false;
 	_freezeTime = 0;
 
 	Logic(0); // update position and animation

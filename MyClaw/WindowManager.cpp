@@ -26,9 +26,9 @@ void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
 }
 void WindowManager::Finalize()
 {
-	SafeRelease(&_renderTarget);
-	SafeRelease(&_d2dFactory);
-	SafeRelease(&_wicImagingFactory);
+	SafeRelease(_renderTarget);
+	SafeRelease(_d2dFactory);
+	SafeRelease(_wicImagingFactory);
 	CoUninitialize();
 };
 
@@ -81,7 +81,7 @@ void WindowManager::drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width)
 		dst.right *= PixelSize;
 
 		_renderTarget->DrawRectangle(dst, brush, width);
-		SafeRelease(&brush);
+		SafeRelease(brush);
 	}
 }
 void WindowManager::drawRect(D2D1_RECT_F dst, ColorF color, float width)
@@ -102,7 +102,7 @@ void WindowManager::fillRect(D2D1_RECT_F dst, D2D1_COLOR_F color)
 		dst.right *= PixelSize;
 
 		_renderTarget->FillRectangle(dst, brush);
-		SafeRelease(&brush);
+		SafeRelease(brush);
 	}
 }
 void WindowManager::fillRect(D2D1_RECT_F dst, ColorF color)
@@ -119,7 +119,7 @@ void WindowManager::drawCircle(D2D1_POINT_2F center, float radius, ColorF color,
 	if (brush)
 	{
 		_renderTarget->DrawEllipse(el, brush, width);
-		SafeRelease(&brush);
+		SafeRelease(brush);
 	}
 }
 void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirrored)
@@ -167,7 +167,7 @@ ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uin
 
 	HRESULT_THROW_IF_FAILED(_renderTarget->CreateBitmapFromWicBitmap(wicBitmap, &bitmap));
 
-	SafeRelease(&wicBitmap);
+	SafeRelease(wicBitmap);
 
 	return bitmap;
 }

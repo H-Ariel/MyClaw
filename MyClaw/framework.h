@@ -125,13 +125,20 @@ inline bool FindInArray(ArrT arr, ValT val)
 
 // safe release for COM objects
 template <class T>
-inline void SafeRelease(T** ppT)
+inline void SafeRelease(T*& p)
 {
-	if (*ppT)
+	if (p)
 	{
-		(*ppT)->Release();
-		*ppT = nullptr;
+		p->Release();
+		p = nullptr;
 	}
+}
+// safe delete for regular objects
+template <class T>
+inline void SafeDelete(T*& p)
+{
+	delete p;
+	p = nullptr;
 }
 
 
