@@ -57,8 +57,17 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
+	else if (levelNumber == 7)
+	{
+		// TODO: tiles (308, 310, 312, 313)
+	}
+	else if (levelNumber == 8)
+	{
+		// TODO: tiles (98, 102)
+	}
 	else if (levelNumber == 11)
 	{
+		// TODO: tiles (9)
 		WwdTileDescription& t39 = wwd->tilesDescription[39];
 		t39.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		t39.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
@@ -134,6 +143,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 
 				if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid)
 				{
+					// TODO: split to rect for inAttr and outAttr
 					// TODO: use OpenClaw for this part (change my code)
 
 					if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.top == 0)
