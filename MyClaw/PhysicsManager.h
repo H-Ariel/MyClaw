@@ -18,9 +18,6 @@ public:
 	void Draw();
 
 private:
-	bool loadFromFile(const string& filename); // if failed to load, return false
-	void saveToFile(const string& filename);
-
 	vector<pair<Rectangle2D, uint32_t>> _rects; // { rc, WwdTileDescription::WwdTileAttributeFlags }
 	Player* _player;
 };

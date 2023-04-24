@@ -421,8 +421,6 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 
 		if (pcxReader->read<uint8_t>() == 0x0c)
 		{
-			static int q = 0;
-
 			// 256 color palette
 			for (uint16_t i = 0; i < 256; i++)
 			{

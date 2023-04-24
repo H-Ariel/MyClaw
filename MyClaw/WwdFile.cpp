@@ -153,17 +153,6 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 			planes.push_back(DBG_NEW LevelPlane(pln));
 		}
 	}
-
-	if (levelNumber == 5)
-	{
-		tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[509].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-	else if (levelNumber == 11)
-	{
-		tilesDescription[39].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[39].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
 }
 void WapWorld::readPlanes(BufferReader& reader, vector<WwdPlaneData>& planesData, const ColorRGBA colors[], const string& imageDirectoryPath)
 {

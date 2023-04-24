@@ -153,14 +153,10 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	position.x += _speed.x * elapsedTime;
 	position.y += _speed.y * elapsedTime;
 
-	if (globalState == GlobalState::ParrotAttackClaw
-		
-		|| (
-			globalState == GlobalState::ParrotReturnToMarrow &&
+	if (globalState == GlobalState::ParrotAttackClaw ||
+		(globalState == GlobalState::ParrotReturnToMarrow &&
 			position.x != _initialPosition.x &&
-			abs(position.y - _initialPosition.y) > 5 
-			)
-		)
+			abs(position.y - _initialPosition.y) > 5))
 	{
 		if (position.y > _flyRect.bottom)
 		{
@@ -237,6 +233,8 @@ bool MarrowParrot::checkForHurts()
 
 	int health = _health; // save health value
 
+	// TODO: hurt only from CC attack (not weapons)
+	// i.e. if (checkForHurt(_player->GetAttackRect())) { ... }
 	if (_isAttack && BaseEnemy::checkForHurts())
 	{
 		_hitsCounter += 1;

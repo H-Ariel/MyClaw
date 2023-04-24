@@ -14,50 +14,16 @@
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
 
-bool PhysicsManager::loadFromFile(const string& filename)
-{
-	ifstream file(filename, ios::binary);
-
-	if (!file.is_open()) return false;
-
-	_rects.clear();
-
-	pair<Rectangle2D, uint32_t> rc;
-
-	while (file.read((char*)&rc.first, sizeof(rc.first)))
-	{
-		file.read((char*)&rc.second, sizeof(rc.second));
-		_rects.push_back(rc);
-	}
-
-	return true;
-}
-
-void PhysicsManager::saveToFile(const string& filename)
-{
-	ofstream file(filename, ios::binary);
-
-	for (auto& rc : _rects)
-	{
-		file.write((char*)&rc.first, sizeof(rc.first));
-		file.write((char*)&rc.second, sizeof(rc.second));
-	}
-}
-
-
 PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber)
 	: _player(player)
 {
-	string filename = "Physics\\" + to_string(levelNumber) + ".physics";
-
-	if (loadFromFile(filename)) return;
-
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
-	Rectangle2D tileRc, originalTileRc, rc1, rc2;
+	Rectangle2D tileRc, originalTileRc;
 	uint32_t i, j;
 
 	// minor change to tiles so they will be more accurate for reduce rectangles
+	// (in levels 5,11 it is necessary to change the tiles for "BreakPlanks")
 	// TODO: continue for all levels
 	// TODO: move to `WwdFile`
 	if (levelNumber == 1)
@@ -85,7 +51,17 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 	{
 		// i think there is something wrong here...
 		WwdTileDescription& t407 = wwd->tilesDescription[407];
+		WwdTileDescription& t509 = wwd->tilesDescription[509];
+
 		t407.insideAttrib = WwdTileDescription::TileAttribute_Solid;
+		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+	else if (levelNumber == 11)
+	{
+		WwdTileDescription& t39 = wwd->tilesDescription[39];
+		t39.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		t39.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 14)
 	{
@@ -97,6 +73,33 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 		t050.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		t054.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
+
+	// add rectangle to list and merge it with previous rectangle if possible
+	auto addRect = [&](const Rectangle2D& rc, uint32_t attrib) {
+		pair<Rectangle2D, uint32_t> curr = { rc, attrib };
+
+		if (_rects.empty())
+		{
+			_rects.push_back(curr);
+			return;
+		}
+		
+		pair<Rectangle2D, uint32_t>& last = _rects.back();
+
+		if (last.second == curr.second &&
+			abs(last.first.top - curr.first.top) <= 2 &&
+			abs(last.first.bottom - curr.first.bottom) <= 2 &&
+			abs(last.first.right - curr.first.left) <= 2)
+		{
+			Rectangle2D newRc(last.first.left, last.first.top,
+				curr.first.right, last.first.bottom);
+			last.first = newRc;
+		}
+		else
+		{
+			_rects.push_back(curr);
+		}
+	};
 
 	for (i = 0; i < plane->tilesOnAxisY; i++)
 	{
@@ -113,7 +116,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 			{
 			case WwdTileDescription::TileType_Single:
 				if (tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear)
-					_rects.push_back({ tileRc, tileDesc.insideAttrib });
+					addRect(tileRc, tileDesc.insideAttrib);
 				break;
 
 			case WwdTileDescription::TileType_Double: // TODO: improve this part
@@ -121,34 +124,63 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 
 				tileRc.left += tileDesc.rect.left;
 				tileRc.top += tileDesc.rect.top;
-				tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width + 1;
-				tileRc.bottom = tileRc.bottom + tileDesc.rect.bottom - tileDesc.height + 1;
+				tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width;
+				tileRc.bottom = tileRc.bottom + tileDesc.rect.bottom - tileDesc.height;
 
 				if (tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear)
 				{
-					_rects.push_back({ tileRc, tileDesc.insideAttrib });
+					addRect(tileRc, tileDesc.insideAttrib);
 				}
 
 				if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid)
 				{
+					// TODO: use OpenClaw for this part (change my code)
+
 					if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.top == 0)
 					{
-						rc1 = { originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom };
-						rc2 = { tileRc.left, tileRc.bottom, tileRc.right, originalTileRc.bottom };
+						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(tileRc.left, tileRc.bottom, tileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
 					}
 					else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0)
 					{
-						rc1 = { tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom };
-						rc2 = { originalTileRc.left, tileRc.bottom, originalTileRc.right, originalTileRc.bottom };
+						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(originalTileRc.left, tileRc.bottom, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
 					}
+					else if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.bottom == tileDesc.height - 1)
+					{
+						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(tileRc.left, originalTileRc.top, tileRc.right, tileRc.top), tileDesc.outsideAttrib);
+					}
+					else if (tileDesc.rect.left == 0 && tileDesc.rect.bottom == tileDesc.height - 1)
+					{
+						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, originalTileRc.right, tileRc.top), tileDesc.outsideAttrib);
+					}
+					/*
+					else if (tileDesc.rect.top == 0)
+					{
+						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(tileRc.left, tileRc.bottom, tileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
+					}
+					else if (tileDesc.rect.bottom == tileDesc.height - 1)
+					{
+						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(tileRc.left, originalTileRc.top, tileRc.right, tileRc.top), tileDesc.outsideAttrib);
+					}
+					else if (tileDesc.rect.left == 0)
+					{
+						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, originalTileRc.right, tileRc.top), tileDesc.outsideAttrib);
+						addRect(Rectangle2D(originalTileRc.left, tileRc.bottom, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
+					}
+					*/
 					else
 					{
 						continue;
 						// TODO: handle the other case
 					}
-
-					_rects.push_back({ rc1, tileDesc.outsideAttrib });
-					_rects.push_back({ rc2, tileDesc.outsideAttrib });
 				}
 				break;
 
@@ -157,19 +189,15 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 		}
 	}
 
-#ifdef _DEBUG
-	cout << "before: " << _rects.size() << endl;
-#endif
-
 	// this loop combines rectangles that are next to each other (according to x axis)
 	for (i = 0; i < _rects.size(); i++)
 	{
 		for (j = i + 1; j < _rects.size(); j++)
 		{
 			if (_rects[i].second == _rects[j].second &&
-				abs(_rects[i].first.top - _rects[j].first.top) <= 1 &&
-				abs(_rects[i].first.bottom - _rects[j].first.bottom) <= 1 &&
-				abs(_rects[i].first.right - _rects[j].first.left) <= 1)
+				abs(_rects[i].first.top - _rects[j].first.top) <= 2 &&
+				abs(_rects[i].first.bottom - _rects[j].first.bottom) <= 2 &&
+				abs(_rects[i].first.right - _rects[j].first.left) <= 2)
 			{
 				Rectangle2D newRc(_rects[i].first.left, _rects[i].first.top,
 					_rects[j].first.right, _rects[i].first.bottom);
@@ -198,12 +226,6 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 			}
 		}
 	}
-
-#ifdef _DEBUG
-	cout << "after: " << _rects.size() << endl;
-#endif
-
-	saveToFile(filename);
 }
 
 void PhysicsManager::Draw()
