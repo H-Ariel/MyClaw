@@ -13,6 +13,7 @@ public:
 	pair<Rectangle2D, int> GetAttackRect() override;
 
 private:
+	void makeAttack() override;
 	bool checkForHurts() override;
 
 };
@@ -46,6 +47,7 @@ class MarrowFloor : public BaseStaticPlaneObject
 public:
 	MarrowFloor(const WwdObject& obj, Player* player);
 	void Logic(uint32_t elapsedTime) override;
+	Rectangle2D GetRect() override;
 
 private:
 	const float _minX, _maxX, _speedX;

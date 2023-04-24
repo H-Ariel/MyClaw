@@ -182,7 +182,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 	position.y += _speed.y * elapsedTime;
 	
 
-	if (!_isAttack)
+	if (!_isAttack) // TODO: replace blocks and do not use `!`
 	{
 		if (_attackRest > 0)
 			_attackRest -= elapsedTime;

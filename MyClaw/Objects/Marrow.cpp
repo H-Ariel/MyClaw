@@ -49,29 +49,47 @@ void Marrow::Logic(uint32_t elapsedTime)
 
 	_blockClaw = (_hitsCuonter == 1 && !_blockClaw);
 
-	if (_hitsCuonter == 5)
+	if (globalState == GlobalState::ClawAttackMarrow)
 	{
-		_hitsCuonter = 0;
-
-		// TODO: open floor and move side (using parrot)
-		
-
-	}
-
-
-	if (globalState == GlobalState::AddFloor)
-	{
-		if (floorCounter == 2)
+		if (_hitsCuonter == 5)
 		{
-			// floor finish their job
-			floorCounter = 0;
-			globalState = GlobalState::ParrotAttackClaw;
+			_hitsCuonter = 0;
+
+			// TODO: open floor and move side (using parrot)
+
+			globalState = GlobalState::RemoveFloor;
+		}
+	}
+	
+
+	if (!_isAttack)
+	{
+		makeAttack();
+	}
+	else
+	{
+		if (_ani->isFinishAnimation())
+		{
+			_ani = _animations["HOME"];
+			_ani->reset();
+			_isAttack = false;
+			_forward = false;
 		}
 	}
 
 
 
 	PostLogic(elapsedTime);
+}
+void Marrow::makeAttack()
+{
+	if (abs(_player->position.x - position.x) < 96 && abs(_player->position.y - position.y) < 16)
+	{
+		_ani = _animations["STRIKE2"]; // knife attack
+		_ani->reset();
+		_isAttack = true;
+		_forward = _player->position.x > position.x;
+	}
 }
 
 pair<Rectangle2D, int> Marrow::GetAttackRect()
@@ -103,7 +121,8 @@ bool Marrow::checkForHurts()
 		}
 		else
 		{
-			_hitsCuonter += 1;
+			if (globalState == GlobalState::ClawAttackMarrow)
+				_hitsCuonter += 1;
 			return true;
 		}
 	}
@@ -169,7 +188,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 		}
 
 
-		if (_hitsCounter == 1) // todo: change to 3
+		if (_hitsCounter == 3) // todo: change to 3
 		{
 			_hitsCounter = 0;
 			// TODO: return to initial position
@@ -243,7 +262,6 @@ MarrowFloor::MarrowFloor(const WwdObject& obj, Player* player)
 	_speedX((obj.direction ? obj.speedX : -obj.speedX) / 1000.f)
 {
 	_ani = AssetsManager::createAnimationFromFromPidImage("LEVEL10/IMAGES/TRAPELEVATOR/001.PID");
-	setObjectRectangle();
 }
 
 void MarrowFloor::Logic(uint32_t elapsedTime)
@@ -264,6 +282,13 @@ void MarrowFloor::Logic(uint32_t elapsedTime)
 			position.x = _maxX;
 			floorCounter += 1;
 		}
+
+		if (floorCounter == 2)
+		{
+			// floors finish their job
+			floorCounter = 0;
+			globalState = GlobalState::ClawAttackMarrow;
+		}
 	}
 	else if (globalState == GlobalState::RemoveFloor)
 	{
@@ -278,4 +303,9 @@ void MarrowFloor::Logic(uint32_t elapsedTime)
 		}
 	}
 	
+}
+
+Rectangle2D MarrowFloor::GetRect()
+{
+	return BasePlaneObject::GetRect();
 }

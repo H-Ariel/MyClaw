@@ -13,9 +13,45 @@
 
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
-PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Player * player, int levelNumber)
+
+bool PhysicsManager::loadFromFile(const string& filename)
+{
+	ifstream file(filename, ios::binary);
+
+	if (!file.is_open()) return false;
+
+	_rects.clear();
+
+	pair<Rectangle2D, uint32_t> rc;
+
+	while (file.read((char*)&rc.first, sizeof(rc.first)))
+	{
+		file.read((char*)&rc.second, sizeof(rc.second));
+		_rects.push_back(rc);
+	}
+
+	return true;
+}
+
+void PhysicsManager::saveToFile(const string& filename)
+{
+	ofstream file(filename, ios::binary);
+
+	for (auto& rc : _rects)
+	{
+		file.write((char*)&rc.first, sizeof(rc.first));
+		file.write((char*)&rc.second, sizeof(rc.second));
+	}
+}
+
+
+PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber)
 	: _player(player)
 {
+	string filename = "Physics\\" + to_string(levelNumber) + ".physics";
+
+	if (loadFromFile(filename)) return;
+
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
 	Rectangle2D tileRc, originalTileRc, rc1, rc2;
@@ -166,6 +202,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 #ifdef _DEBUG
 	cout << "after: " << _rects.size() << endl;
 #endif
+
+	saveToFile(filename);
 }
 
 void PhysicsManager::Draw()
