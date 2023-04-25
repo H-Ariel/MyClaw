@@ -74,9 +74,9 @@ WwdObject::WwdObject()
 }
 
 WwdPlaneData::WwdPlaneData()
-	: fillColor(0), tilePixelWidth(0), tilePixelHeight(0),
-	tilesOnAxisX(0), tilesOnAxisY(0), movementPercentX(0), movementPercentY(0),
-	ZCoord(0), isWrappedX(false), isWrappedY(false), isMainPlane(false) {}
+	: fillColor(0), tilesOnAxisX(0), tilesOnAxisY(0),
+	movementPercentX(0), movementPercentY(0), ZCoord(0),
+	isWrappedX(false), isWrappedY(false), isMainPlane(false) {}
 
 WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 {
@@ -164,6 +164,8 @@ void WapWorld::readPlanes(BufferReader& reader, vector<WwdPlaneData>& planesData
 	uint32_t tilesOffset, imageSetsOffset, objectsOffset;
 	uint32_t flags; // WwdPlaneFlags flags
 
+	uint32_t tilePixelWidth, tilePixelHeight; // in pixels
+
 	for (WwdPlaneData& pln : planesData)
 	{
 		reader.skip(8);
@@ -171,8 +173,12 @@ void WapWorld::readPlanes(BufferReader& reader, vector<WwdPlaneData>& planesData
 		reader.skip(4);
 		pln.name = reader.ReadString(64);
 		reader.skip(8); // total pixel width, total pixel height
-		reader.read(pln.tilePixelWidth);
-		reader.read(pln.tilePixelHeight);
+		reader.read(tilePixelWidth);
+		reader.read(tilePixelHeight);
+
+		if (tilePixelWidth != 64 && tilePixelHeight != 64)
+			throw Exception(__FUNCTION__ ": invalid tile's size");
+
 		reader.read(pln.tilesOnAxisX);
 		reader.read(pln.tilesOnAxisY);
 		reader.skip(8);
@@ -296,7 +302,7 @@ void WapWorld::readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& 
 	vector<WwdTileDescription> tilesDescList(reader.read<uint32_t>());
 	reader.skip(20);
 
-	uint32_t width, height;
+	uint32_t width, height; // in pixels
 
 	for (WwdTileDescription& tileDesc : tilesDescList)
 	{

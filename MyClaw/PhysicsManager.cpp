@@ -15,17 +15,7 @@ const float PhysicsManager::myGRAVITY = GRAVITY;
 
 #define assert(b) if (!(b)) throw Exception(#b); // TODO: delete this line
 
-template <class T, class V, class U, class S>
-Rectangle2D makeRectangle2D(T x, U y, V w, S h)
-{
-	return Rectangle2D((float)x, (float)y, (float)(x + w), (float)(y + h));
-}
-template <>
-Rectangle2D makeRectangle2D(float x, float y, float w, float h)
-{
-	return Rectangle2D(x, y, x + w, y + h);
-}
-bool IsInBetween(int32_t num, int32_t leftLimit, int32_t rightLimit)
+bool IsInBetween(int32_t num, int32_t leftLimit, int32_t rightLimit) // TODO: delete this function (?)
 {
 	return leftLimit < num && num < rightLimit;
 }
@@ -123,10 +113,10 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 		{
 			const WwdTileDescription& tileDesc = wwd->tilesDescription[plane->tiles[i][j]];
 
-			tileRc.left = (float)(j * plane->tilePixelWidth);
-			tileRc.top = (float)(i * plane->tilePixelHeight);
-			tileRc.right = tileRc.left + plane->tilePixelWidth;
-			tileRc.bottom = tileRc.top + plane->tilePixelHeight;
+			tileRc.left = (float)(j * TILE_SIZE);
+			tileRc.top = (float)(i * TILE_SIZE);
+			tileRc.right = tileRc.left + TILE_SIZE;
+			tileRc.bottom = tileRc.top + TILE_SIZE;
 
 			switch (tileDesc.type)
 			{
@@ -141,41 +131,98 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 &&
 					tileDesc.rect.right == 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, 64, tileDesc.rect.bottom);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom, 64, 64 - tileDesc.rect.bottom);
+					Rectangle2D rect1(
+						tileRc.left, 
+						tileRc.top, 
+						tileRc.right,
+						tileRc.top+tileDesc.rect.bottom
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						tileRc.top + tileDesc.rect.bottom,
+						tileRc.right,
+						tileRc.bottom
+					);
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
 				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 &&
 					tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top, 64 - tileDesc.rect.left, 64);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, 64);
+					Rectangle2D rect1(
+						tileRc.left + tileDesc.rect.left,
+						tileRc.top,
+						tileRc.right,
+						tileRc.bottom
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						tileRc.top,
+						rect1.left,
+						tileRc.bottom
+					);
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
 				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 &&
 					tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, 64, 64 - tileDesc.rect.top);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, 64, tileDesc.rect.top);
+					Rectangle2D rect1(
+						tileRc.left,
+						tileRc.top + tileDesc.rect.top,
+						tileRc.right,
+						tileRc.bottom
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						tileRc.top,
+						tileRc.right,
+						rect1.top
+					);
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
 				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 &&
 					tileDesc.rect.right > 0 && tileDesc.rect.bottom == 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.right, 64);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left + tileDesc.rect.right, tileRc.top, 64 - tileDesc.rect.right, 64);
+					Rectangle2D rect1(
+						tileRc.left,
+						tileRc.top,
+						tileRc.left + tileDesc.rect.right,
+						tileRc.bottom
+					);
+					Rectangle2D rect2(
+						rect1.right,
+						tileRc.top,
+						tileRc.right,
+						tileRc.bottom
+					);
+					
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
 				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 &&
 					tileDesc.rect.right == 63 && tileDesc.rect.bottom > 0)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, 64, tileDesc.rect.top);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, 64, tileDesc.rect.bottom - tileDesc.rect.top);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom, 64, 64 - tileDesc.rect.bottom);
+					Rectangle2D rect1(
+						tileRc.left,
+						tileRc.top,
+						tileRc.right,
+						tileRc.top + tileDesc.rect.top
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						rect1.bottom,
+						tileRc.right,
+						tileRc.top + tileDesc.rect.bottom
+					);
+					Rectangle2D rect3(
+						tileRc.left,
+						rect2.bottom,
+						tileRc.right,
+						tileRc.bottom
+					);
+					
 					addRect(rect1, tileDesc.outsideAttrib);
 					addRect(rect2, tileDesc.insideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -183,9 +230,24 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 &&
 					tileDesc.rect.right > 0 && tileDesc.rect.bottom == 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, 64);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top, tileDesc.rect.right - tileDesc.rect.left, 64);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.right, tileRc.top, 64 - tileDesc.rect.right, 64);
+					Rectangle2D rect1(
+						tileRc.left,
+						tileRc.top,
+						tileRc.left + tileDesc.rect.left,
+						tileRc.bottom
+					);
+					Rectangle2D rect2(
+						rect1.right,
+						tileRc.top,
+						tileRc.left + tileDesc.rect.right,
+						tileRc.bottom
+					);
+					Rectangle2D rect3(
+						rect2.right,
+						tileRc.top,
+						tileRc.right,
+						tileRc.bottom
+					);
 					addRect(rect1, tileDesc.outsideAttrib);
 					addRect(rect2, tileDesc.insideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -193,9 +255,25 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 &&
 					tileDesc.rect.right != 63 && tileDesc.rect.bottom != 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.right, tileDesc.rect.bottom);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom, tileDesc.rect.right, 64 - tileDesc.rect.bottom);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.right, tileRc.top, 64 - tileDesc.rect.right, 64);
+					Rectangle2D rect1(
+						tileRc.left,
+						tileRc.top,
+						tileRc.left + tileDesc.rect.right,
+						tileRc.top + tileDesc.rect.bottom
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						rect1.bottom,
+						rect1.right,
+						tileRc.bottom
+					);
+					Rectangle2D rect3(
+						rect1.right,
+						tileRc.top,
+						tileRc.right,
+						tileRc.bottom
+					);
+					
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -203,9 +281,25 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 &&
 					tileDesc.rect.right == 63 && tileDesc.rect.bottom != 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top, 64 - tileDesc.rect.left, tileDesc.rect.bottom);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, 64);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top + tileDesc.rect.bottom, 64 - tileDesc.rect.left, 64 - tileDesc.rect.bottom);
+					Rectangle2D rect1(
+						tileRc.left + tileDesc.rect.left,
+						tileRc.top,
+						tileRc.right,
+						tileRc.top + tileDesc.rect.bottom
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						tileRc.top,
+						rect1.left,
+						tileRc.bottom
+					);
+					Rectangle2D rect3(
+						rect1.left,
+						rect1.bottom,
+						tileRc.right,
+						tileRc.bottom
+					);
+					
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -213,9 +307,25 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (tileDesc.rect.left > 0 && tileDesc.rect.top > 0 &&
 					tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top + tileDesc.rect.top, 64 - tileDesc.rect.left, 64 - tileDesc.rect.top);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, 64);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top, 64 - tileDesc.rect.left, tileDesc.rect.top);
+					Rectangle2D rect1(
+						tileRc.left + tileDesc.rect.left,
+						tileRc.top + tileDesc.rect.top,
+						tileRc.right,
+						tileRc.bottom
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						tileRc.top,
+						rect1.left,
+						tileRc.bottom
+					);
+					Rectangle2D rect3(
+						rect1.left,
+						tileRc.top,
+						tileRc.right,
+						rect1.top
+					);
+					
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -223,9 +333,25 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 &&
 					tileDesc.rect.right != 63 && tileDesc.rect.bottom == 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.right, 64 - tileDesc.rect.top);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.right, tileDesc.rect.top);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.right, tileRc.top, 64 - tileDesc.rect.right, 64);
+					Rectangle2D rect1(
+						tileRc.left,
+						tileRc.top + tileDesc.rect.top,
+						tileRc.left + tileDesc.rect.right,
+						tileRc.bottom
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						tileRc.top,
+						rect1.right,
+						rect1.top
+					);
+					Rectangle2D rect3(
+						rect1.right,
+						tileRc.top,
+						tileRc.right,
+						tileRc.bottom
+					);
+
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -233,17 +359,45 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (IsInBetween(tileDesc.rect.left, 0, 63) && tileDesc.rect.top == 0 &&
 					IsInBetween(tileDesc.rect.right, 0, 63) && IsInBetween(tileDesc.rect.bottom, 0, 63))
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.right - tileDesc.rect.left, tileDesc.rect.bottom);
+					Rectangle2D rect1(
+						tileRc.left + tileDesc.rect.left,
+						tileRc.top + tileDesc.rect.top,
+						tileRc.left + tileDesc.rect.right,
+						tileRc.top + tileDesc.rect.top + tileDesc.rect.bottom
+					);
 					addRect(rect1, tileDesc.insideAttrib);
+					
+					// TODO: maybe use the next line for similiar cases ?
 					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
 				}
 				else if (IsInBetween(tileDesc.rect.left, 0, 63) && IsInBetween(tileDesc.rect.top, 0, 63) &&
 					tileDesc.rect.right == 63 && IsInBetween(tileDesc.rect.bottom, 0, 63))
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, 64, tileDesc.rect.top);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.left, tileDesc.rect.bottom - tileDesc.rect.top);
-					Rectangle2D rect4 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top + tileDesc.rect.top, 64 - tileDesc.rect.left, tileDesc.rect.bottom - tileDesc.rect.top);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom, 64, 64 - tileDesc.rect.bottom);
+					Rectangle2D rect1(
+						tileRc.left,
+						tileRc.top,
+						tileRc.right,
+						tileRc.top + tileDesc.rect.top
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						rect1.bottom,
+						tileRc.left + tileDesc.rect.left,
+						tileRc.top + tileDesc.rect.bottom
+					);
+					Rectangle2D rect4(
+						rect2.right,
+						rect1.bottom,
+						tileRc.right,
+						rect2.bottom
+					);
+					Rectangle2D rect3(
+						tileRc.left,
+						rect2.bottom,
+						tileRc.right,
+						tileRc.bottom
+					);
+					
 					addRect(rect1, tileDesc.outsideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -252,10 +406,30 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (IsInBetween(tileDesc.rect.left, 0, 63) && IsInBetween(tileDesc.rect.top, 0, 63) &&
 					IsInBetween(tileDesc.rect.right, 0, 63) && tileDesc.rect.bottom == 63)
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.right - tileDesc.rect.left, 64 - tileDesc.rect.top);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, 64);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top, tileDesc.rect.right - tileDesc.rect.left, tileDesc.rect.top);
-					Rectangle2D rect4 = makeRectangle2D(tileRc.left + tileDesc.rect.right, tileRc.top, 64 - tileDesc.rect.right, 64);
+					Rectangle2D rect1(
+						tileRc.left + tileDesc.rect.left,
+						tileRc.top + tileDesc.rect.top,
+						tileRc.left + tileDesc.rect.right,
+						tileRc.bottom
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						tileRc.top,
+						rect1.left,
+						tileRc.bottom
+					);
+					Rectangle2D rect3(
+						rect1.left,
+						tileRc.top,
+						rect1.right,
+						tileRc.top + tileDesc.rect.top
+					);
+					Rectangle2D rect4(
+						tileRc.left + tileDesc.rect.right,
+						tileRc.top,
+						tileRc.right,
+						tileRc.bottom
+					);
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -264,10 +438,30 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (tileDesc.rect.left == 0 && IsInBetween(tileDesc.rect.top, 0, 63) &&
 					IsInBetween(tileDesc.rect.right, 0, 63) && IsInBetween(tileDesc.rect.bottom, 0, 63))
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, 64, tileDesc.rect.top);
-					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.right, tileDesc.rect.bottom - tileDesc.rect.top);
-					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.right, tileRc.top + tileDesc.rect.top, 64 - tileDesc.rect.right, tileDesc.rect.bottom - tileDesc.rect.top);
-					Rectangle2D rect4 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom, 64, tileDesc.rect.bottom);
+					Rectangle2D rect1(
+						tileRc.left,
+						tileRc.top,
+						tileRc.right,
+						tileRc.top + tileDesc.rect.top
+					);
+					Rectangle2D rect2(
+						tileRc.left,
+						rect1.bottom,
+						tileRc.left + tileDesc.rect.right,
+						tileRc.top + tileDesc.rect.bottom
+					);
+					Rectangle2D rect3(
+						rect2.right,
+						rect1.bottom,
+						tileRc.right,
+						rect2.bottom
+					);
+					Rectangle2D rect4(
+						tileRc.left,
+						rect2.bottom,
+						tileRc.right,
+						tileRc.bottom
+					);
 					addRect(rect1, tileDesc.outsideAttrib);
 					addRect(rect2, tileDesc.insideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -322,8 +516,6 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 			}
 		}
 	}
-
-	cout << "rects count: " << _rects.size() << endl;
 }
 
 void PhysicsManager::Draw()

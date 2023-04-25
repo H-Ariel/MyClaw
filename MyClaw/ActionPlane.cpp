@@ -86,8 +86,7 @@ bool ActionPlane::_needSort = true;
 
 ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int levelNumber)
 	: LevelPlane(planeData), _state(States::Play), _deathAniWait(false),
-	_planeSize({ (float)planeData.tilePixelWidth * planeData.tilesOnAxisX,
-		(float)planeData.tilePixelHeight * planeData.tilesOnAxisY })
+	_planeSize({ (float)TILE_SIZE * planeData.tilesOnAxisX, (float)TILE_SIZE * planeData.tilesOnAxisY })
 {	
 	WwdObject playerData;
 	playerData.x = wwd->startX;
@@ -400,8 +399,8 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 		for (int32_t i = 0; i < obj.width; i++)
 		{
 			_objects.push_back(DBG_NEW BreakPlank(obj, _player, rc));
-			//obj.x += 64;
-			myMemCpy(obj.x, obj.x + 64);
+			//obj.x += TILE_SIZE;
+			myMemCpy(obj.x, obj.x + TILE_SIZE);
 		}
 	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"

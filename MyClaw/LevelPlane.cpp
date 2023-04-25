@@ -17,10 +17,10 @@ void LevelPlane::Draw()
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
 	const float parallaxCameraPosX = position.x * _planeData.movementPercentX;
 	const float parallaxCameraPosY = position.y * _planeData.movementPercentY;
-	const int startRow = (int)(parallaxCameraPosY / _planeData.tilePixelHeight);
-	const int startCol = (int)(parallaxCameraPosX / _planeData.tilePixelWidth);
-	const int endRow = min<int>(maxTileIdxY, (int)(wndSz.height / _planeData.tilePixelHeight + 2 + startRow));
-	const int endCol = min<int>(maxTileIdxX, (int)(wndSz.width / _planeData.tilePixelWidth + 2 + startCol));
+	const int startRow = int(parallaxCameraPosY / TILE_SIZE);
+	const int startCol = int(parallaxCameraPosX / TILE_SIZE);
+	const int endRow = min<int>(maxTileIdxY, int(wndSz.height / TILE_SIZE + 2 + startRow));
+	const int endCol = min<int>(maxTileIdxX, int(wndSz.width / TILE_SIZE + 2 + startCol));
 
 	for (row = startRow; row < endRow; row++)
 	{
@@ -31,8 +31,8 @@ void LevelPlane::Draw()
 			if (_planeData.tilesImages.count(tileId))
 			{
 				img = _planeData.tilesImages.at(tileId);
-				img->position.x = (col + 0.5f) * _planeData.tilePixelWidth - parallaxCameraPosX + position.x;
-				img->position.y = (row + 0.5f) * _planeData.tilePixelHeight - parallaxCameraPosY + position.y;
+				img->position.x = (col + 0.5f) * TILE_SIZE - parallaxCameraPosX + position.x;
+				img->position.y = (row + 0.5f) * TILE_SIZE - parallaxCameraPosY + position.y;
 				img->Draw();
 			}
 		}

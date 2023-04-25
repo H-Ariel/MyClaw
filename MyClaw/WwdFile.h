@@ -4,6 +4,9 @@
 #include "UIBaseImage.h"
 
 
+#define TILE_SIZE 64 // width and height of tile in pixels
+
+
 struct WwdRect
 {
 	uint32_t left, top, right, bottom; // TODO: use int32_t ?
@@ -137,7 +140,6 @@ struct WwdTileDescription
 	};
 
 	uint32_t type; // WwdTileTypeFlags single value
-//	uint32_t width, height; // in pixels
 	uint32_t insideAttrib; // WwdTileAttributeFlags
 
 	// `outside_attrib` and `rect` used only if `type == TileType_DOUBLE`
@@ -154,7 +156,6 @@ struct WwdPlaneData
 	vector<WwdObject> objects;
 	map<int32_t, shared_ptr<UIBaseImage>> tilesImages; // [id]=image
 	ColorF fillColor;
-	uint32_t tilePixelWidth, tilePixelHeight; // in pixels
 	uint32_t tilesOnAxisX, tilesOnAxisY;
 	int32_t ZCoord;
 	float movementPercentX, movementPercentY;
