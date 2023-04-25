@@ -20,7 +20,7 @@ const float PhysicsManager::myGRAVITY = GRAVITY;
 	throw Exception(buf); }
 
 
-PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber)
+PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Player * player, int levelNumber)
 	: _player(player)
 {
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
@@ -31,7 +31,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 	// add rectangle to list and merge it with previous rectangle if possible
 	auto addRect = [&](const Rectangle2D& rc, uint32_t attrib) {
 
-		if (attrib == WwdTileDescription::TileAttribute_Clear)
+		if (attrib == WwdTileDescription::TileAttribute_Clear ||
+			rc.left == rc.right || rc.top == rc.bottom)
 			return;
 
 		pair<Rectangle2D, uint32_t> curr = { rc, attrib };
@@ -41,7 +42,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 			_rects.push_back(curr);
 			return;
 		}
-		
+
 		pair<Rectangle2D, uint32_t>& last = _rects.back();
 
 		if (last.second == curr.second &&
@@ -59,6 +60,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 		}
 	};
 
+	float x1, x2, y1, y2;
+
 	for (i = 0; i < plane->tilesOnAxisY; i++)
 	{
 		for (j = 0; j < plane->tilesOnAxisX; j++)
@@ -67,8 +70,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 
 			tileRc.left = (float)(j * TILE_SIZE);
 			tileRc.top = (float)(i * TILE_SIZE);
-			tileRc.right = tileRc.left + TILE_SIZE;
-			tileRc.bottom = tileRc.top + TILE_SIZE;
+			tileRc.right = tileRc.left + TILE_SIZE - 1;
+			tileRc.bottom = tileRc.top + TILE_SIZE - 1;
 
 			switch (tileDesc.type)
 			{
@@ -76,261 +79,30 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				addRect(tileRc, tileDesc.insideAttrib);
 				break;
 
-			case WwdTileDescription::TileType_Double: // TODO: improve this part
-				// the next code is based on OpenClaw
-				// in this part when I used "assert" to reduce code and run-time
-
-				if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && tileDesc.rect.right == 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top,
-						tileRc.right,
-						tileRc.top + tileDesc.rect.bottom
-					);
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top + tileDesc.rect.bottom,
-						tileRc.right,
-						tileRc.bottom
-					);
-					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-				}
-				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left + tileDesc.rect.left,
-						tileRc.top,
-						tileRc.right,
-						tileRc.bottom
-					);
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top,
-						rect1.left,
-						tileRc.bottom
-					);
-					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top + tileDesc.rect.top,
-						tileRc.right,
-						tileRc.bottom
-					);
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top,
-						tileRc.right,
-						rect1.top
-					);
-					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && tileDesc.rect.right > 0 && tileDesc.rect.bottom == 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top,
-						tileRc.left + tileDesc.rect.right,
-						tileRc.bottom
-					);
-					Rectangle2D rect2(
-						rect1.right,
-						tileRc.top,
-						tileRc.right,
-						tileRc.bottom
-					);
-
-					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom > 0)
-				{
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top + tileDesc.rect.top,
-						tileRc.right,
-						tileRc.top + tileDesc.rect.bottom
-					);
-
-					addRect(rect2, tileDesc.insideAttrib);
-
-					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
-				}
-				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && tileDesc.rect.right > 0 && tileDesc.rect.bottom == 63)
-				{
-					Rectangle2D rect2(
-						tileRc.left + tileDesc.rect.left,
-						tileRc.top,
-						tileRc.left + tileDesc.rect.right,
-						tileRc.bottom
-					);
-					
-					addRect(rect2, tileDesc.insideAttrib);
-
-					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
-				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && tileDesc.rect.right != 63 && tileDesc.rect.bottom != 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top,
-						tileRc.left + tileDesc.rect.right,
-						tileRc.top + tileDesc.rect.bottom
-					);
-					Rectangle2D rect2(
-						tileRc.left,
-						rect1.bottom,
-						rect1.right,
-						tileRc.bottom
-					);
-					Rectangle2D rect3(
-						rect1.right,
-						tileRc.top,
-						tileRc.right,
-						tileRc.bottom
-					);
-
-					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
-				}
-				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom != 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left + tileDesc.rect.left,
-						tileRc.top,
-						tileRc.right,
-						tileRc.top + tileDesc.rect.bottom
-					);
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top,
-						rect1.left,
-						tileRc.bottom
-					);
-					Rectangle2D rect3(
-						rect1.left,
-						rect1.bottom,
-						tileRc.right,
-						tileRc.bottom
-					);
-
-					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
-				}
-				else if (tileDesc.rect.left > 0 && tileDesc.rect.top > 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left + tileDesc.rect.left,
-						tileRc.top + tileDesc.rect.top,
-						tileRc.right,
-						tileRc.bottom
-					);
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top,
-						rect1.left,
-						tileRc.bottom
-					);
-					Rectangle2D rect3(
-						rect1.left,
-						tileRc.top,
-						tileRc.right,
-						rect1.top
-					);
-
-					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
-				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && tileDesc.rect.right != 63 && tileDesc.rect.bottom == 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top + tileDesc.rect.top,
-						tileRc.left + tileDesc.rect.right,
-						tileRc.bottom
-					);
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top,
-						rect1.right,
-						rect1.top
-					);
-					Rectangle2D rect3(
-						rect1.right,
-						tileRc.top,
-						tileRc.right,
-						tileRc.bottom
-					);
-
-					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
-				}
-				else if (tileDesc.rect.top == 0)
-				{
-					Rectangle2D rect1(
-						tileRc.left + tileDesc.rect.left,
-						tileRc.top + tileDesc.rect.top,
-						tileRc.left + tileDesc.rect.right,
-						tileRc.top + tileDesc.rect.top + tileDesc.rect.bottom
-					);
-					addRect(rect1, tileDesc.insideAttrib);
-
-					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
-				}
-				else if (tileDesc.rect.right == 63)
-				{
-					Rectangle2D rect4(
-						tileRc.left + tileDesc.rect.left,
-						tileRc.top + tileDesc.rect.top,
-						tileRc.right,
-						tileRc.top + tileDesc.rect.bottom
-					);
-					
-					addRect(rect4, tileDesc.insideAttrib);
-
-					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
-				}
-				else if (tileDesc.rect.bottom == 63)
-				{
-					Rectangle2D rect1(
-						tileRc.left + tileDesc.rect.left,
-						tileRc.top + tileDesc.rect.top,
-						tileRc.left + tileDesc.rect.right,
-						tileRc.bottom
-					);
-					
-					addRect(rect1, tileDesc.insideAttrib);
-
-					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
-				}
-				else if (tileDesc.rect.left == 0)
-				{
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top + tileDesc.rect.top,
-						tileRc.left + tileDesc.rect.right,
-						tileRc.top + tileDesc.rect.bottom
-					);
-				
-					addRect(rect2, tileDesc.insideAttrib);
-
-					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
-				}
-				else
-				{
-					cout << "unknown tile: " << plane->tiles[i][j] << endl;
-				}
-
+			case WwdTileDescription::TileType_Double:
+				/*
+				create 9 rectangles from `tileDesc.rect` and `tileRc`:
+				all rectangles create `tileRc` except the middle one which creates `tileDesc.rect`
+				o | o | o
+				--+---+--
+				o | i | o
+				--+---+--
+				o | o | o
+				(o - outside, i - inside)
+				*/
+				x1 = tileRc.left + tileDesc.rect.left;
+				x2 = tileRc.left + tileDesc.rect.right;
+				y1 = tileRc.top + tileDesc.rect.top;
+				y2 = tileRc.top + tileDesc.rect.bottom;
+				addRect({ tileRc.left, tileRc.top, x1, y1 }, tileDesc.outsideAttrib);
+				addRect({ x1, tileRc.top, x2, y1 }, tileDesc.outsideAttrib);
+				addRect({ x2, tileRc.top, tileRc.right, y1 }, tileDesc.outsideAttrib);
+				addRect({ tileRc.left, y1, x1, y2 }, tileDesc.outsideAttrib);
+				addRect({ x1, y1, x2, y2 }, tileDesc.insideAttrib);
+				addRect({ x2, y1, tileRc.right, y2 }, tileDesc.outsideAttrib);
+				addRect({ tileRc.left, y2, x1, tileRc.bottom }, tileDesc.outsideAttrib);
+				addRect({ x1, y2, x2, tileRc.bottom }, tileDesc.outsideAttrib);
+				addRect({ x2, y2, tileRc.right, tileRc.bottom }, tileDesc.outsideAttrib);
 				break;
 
 			default: break;
