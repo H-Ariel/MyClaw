@@ -296,12 +296,17 @@ void WapWorld::readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& 
 	vector<WwdTileDescription> tilesDescList(reader.read<uint32_t>());
 	reader.skip(20);
 
+	uint32_t width, height;
+
 	for (WwdTileDescription& tileDesc : tilesDescList)
 	{
 		reader.read(tileDesc.type);
 		reader.skip(4);
-		reader.read(tileDesc.width);
-		reader.read(tileDesc.height);
+		reader.read(width);
+		reader.read(height);
+
+		if (width != 64 && height != 64)
+			throw Exception(__FUNCTION__ ": invalid tile's size");
 
 		switch (tileDesc.type)
 		{

@@ -77,6 +77,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 	}
 
 	// send pirates
+	// TODO: send pirates after CC comes to boss
 	if (_canSendPirates)
 	{
 		_sendPiratesTime -= elapsedTime;

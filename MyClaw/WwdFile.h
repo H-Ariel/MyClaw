@@ -137,7 +137,7 @@ struct WwdTileDescription
 	};
 
 	uint32_t type; // WwdTileTypeFlags single value
-	uint32_t width, height; // in pixels
+//	uint32_t width, height; // in pixels
 	uint32_t insideAttrib; // WwdTileAttributeFlags
 
 	// `outside_attrib` and `rect` used only if `type == TileType_DOUBLE`

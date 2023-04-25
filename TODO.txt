@@ -1,3 +1,4 @@
+* activate boss after CC comes to boss area
 * if CC die when he fight boss we should return CC to the boss start area and reset boss
 * find perfect speeds for enemies
 * fix Seagull
