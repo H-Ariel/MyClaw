@@ -62,7 +62,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	if (levelNumber == 7) _player->position = { 15419, 7388 };
 //	if (levelNumber == 7) _player->position = { 25210, 7196 };
 //	if (levelNumber == 8) _player->position = { 4466, 5039 };
-	if (levelNumber == 8) _player->position = { 31535, 5267 }; // END OF LEVEL
+	if (levelNumber == 8) _player->position = { 6160, 5232 };
+//	if (levelNumber == 8) _player->position = { 31535, 5267 }; // END OF LEVEL
 //	if (levelNumber == 8) _player->position = { 9225, 5533 };
 //	if (levelNumber == 9) _player->position = { 5210, 7776 };
 //	if (levelNumber == 9) _player->position = { 4220, 6484 };

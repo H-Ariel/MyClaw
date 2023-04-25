@@ -13,15 +13,21 @@
 
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
-#define assert(b) if (!(b)) throw Exception(#b);
+#define assert(b) if (!(b)) throw Exception(#b); // TODO: delete this line
 
+template <class T, class V, class U>
+Rectangle2D makeRectangle2D(T x, U y, V w, V h)
+{
+	return Rectangle2D((float)x, (float)y, (float)(x + w), (float)(y + h));
+}
+template <>
 Rectangle2D makeRectangle2D(float x, float y, float w, float h)
 {
 	return Rectangle2D(x, y, x + w, y + h);
 }
 bool IsInBetween(int32_t num, int32_t leftLimit, int32_t rightLimit)
 {
-	return ((num > leftLimit) && (num < rightLimit));
+	return leftLimit < num && num < rightLimit;
 }
 
 
@@ -130,100 +136,62 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				break;
 
 			case WwdTileDescription::TileType_Double: // TODO: improve this part
-#define NEW_CODE
-#ifdef NEW_CODE
 				// the next code is based on OpenClaw
 
-				// My paper case (1)
-				// This yields 2 rectangles
-				if ((tileDesc.rect.left == 0 && tileDesc.rect.top == 0) && // Starting in upper left corner
-					(tileDesc.rect.right == tileDesc.width - 1)) // Ending on right side of the rect
+				if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && // Starting in upper left corner
+					tileDesc.rect.right == tileDesc.width - 1) // Ending on right side of the rect
 				{
-					// Inside rect
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.width, tileDesc.rect.bottom);
-					// Outside rect
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom + 1, tileDesc.width, tileDesc.height - tileDesc.rect.bottom);
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
-				// My paper case (2)
-				// This yields 2 rectangles
-				else if ((tileDesc.rect.left > 0 && tileDesc.rect.top == 0) && // Starting in between right and left corners with top being on the top side
-					(tileDesc.rect.right == tileDesc.width - 1) && (tileDesc.rect.bottom == tileDesc.height - 1)) // Ends in bottom right corner of the tile
+				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && // Starting in between right and left corners with top being on the top side
+					tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.bottom == tileDesc.height - 1) // Ends in bottom right corner of the tile
 				{
-					// Inside rect
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top, tileDesc.width - tileDesc.rect.left, tileDesc.height);
-					// Outside rect
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, tileDesc.height);
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
-				// My paper case (3)
-				// This yields 2 rectangles
-				else if ((tileDesc.rect.left == 0) && (tileDesc.rect.top > 0) && // Starting on left side between top and bottom
-					(tileDesc.rect.right == tileDesc.width - 1) && (tileDesc.rect.bottom == tileDesc.height - 1)) // ending in bottom right corner
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && // Starting on left side between top and bottom
+					tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.bottom == tileDesc.height - 1) // ending in bottom right corner
 				{
-					// Inside rect
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, tileDesc.width, tileDesc.height - tileDesc.rect.top);
-					// Outside rect
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.width, tileDesc.rect.top);
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
-				// My paper case (4)
-				// This yields 2 rectangles
-				else if ((tileDesc.rect.left == 0) && (tileDesc.rect.top == 0) && // Starting in upper left corner
-					(tileDesc.rect.right > 0) && (tileDesc.rect.bottom == tileDesc.height - 1)) // Ending on the bottom line somewhere between left and right
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && // Starting in upper left corner
+					tileDesc.rect.right > 0 && tileDesc.rect.bottom == tileDesc.height - 1) // Ending on the bottom line somewhere between left and right
 				{
-					// Inside rect
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.right, tileDesc.height);
-					// Outside rect
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left + tileDesc.rect.right + 1, tileRc.top, tileDesc.width - tileDesc.rect.right, tileDesc.height);
-
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
-
-				// TODO: from here fix all "0, ..."
-
-				// My paper case (5)
-				// This yields 3 rectangles
-				else if ((tileDesc.rect.left == 0) && (tileDesc.rect.top > 0) && // Starting on the left side somewhere between top and bottom
-					(tileDesc.rect.right == tileDesc.width - 1) && (tileDesc.rect.bottom > 0)) // !!! Not 100% but it works because we have case (3) ending on right side somewhere between top and bottom
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && // Starting on the left side somewhere between top and bottom
+					tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.bottom > 0) // !!! Not 100% but it works because we have case (3) ending on right side somewhere between top and bottom
 				{
-					Rectangle2D rect1 = makeRectangle2D(0, 0, tileDesc.width, tileDesc.rect.top);
-					Rectangle2D rect2 = makeRectangle2D(0, 0, tileDesc.width, tileDesc.rect.bottom - tileDesc.rect.top);
-					Rectangle2D rect3 = makeRectangle2D(0, tileDesc.rect.bottom, tileDesc.width, tileDesc.height - tileDesc.rect.bottom);
-					
-					rect1.left += tileRc.left; rect1.top += tileRc.top; rect1.right += tileRc.left; rect1.bottom += tileRc.top;
-					rect2.left += tileRc.left; rect2.top += tileRc.top; rect2.right += tileRc.left; rect2.bottom += tileRc.top;
-					rect3.left += tileRc.left; rect3.top += tileRc.top; rect3.right += tileRc.left; rect3.bottom += tileRc.top;
-
+					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.width, tileDesc.rect.top);
+					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top+ tileDesc.rect.top, tileDesc.width, tileDesc.rect.bottom - tileDesc.rect.top);
+					Rectangle2D rect3 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom, tileDesc.width, tileDesc.height - tileDesc.rect.bottom);
 					addRect(rect1, tileDesc.outsideAttrib);
 					addRect(rect2, tileDesc.insideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				// My paper case (6)
-				// This yields 3 rectangles
-				else if ((tileDesc.rect.left > 0) && (tileDesc.rect.top == 0) && // Starting on top side somewhere between left and right
-					(tileDesc.rect.right > 0) && (tileDesc.rect.bottom == tileDesc.height - 1)) // !!! similiar to (2)
+				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && // Starting on top side somewhere between left and right
+					tileDesc.rect.right > 0 && tileDesc.rect.bottom == tileDesc.height - 1) // !!! similiar to (2)
 				{
-					Rectangle2D rect1 = makeRectangle2D(0, 0, tileDesc.rect.left, tileDesc.height);
-					Rectangle2D rect2 = makeRectangle2D(tileDesc.rect.left, 0, tileDesc.rect.right - tileDesc.rect.left, tileDesc.height);
-					Rectangle2D rect3 = makeRectangle2D(tileDesc.rect.right, 0, tileDesc.width - tileDesc.rect.right, tileDesc.height);
-					
-					rect1.left += tileRc.left; rect1.top += tileRc.top; rect1.right += tileRc.left; rect1.bottom += tileRc.top;
-					rect2.left += tileRc.left; rect2.top += tileRc.top; rect2.right += tileRc.left; rect2.bottom += tileRc.top;
-					rect3.left += tileRc.left; rect3.top += tileRc.top; rect3.right += tileRc.left; rect3.bottom += tileRc.top;
-					
+					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, tileDesc.height);
+					Rectangle2D rect2 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top, tileDesc.rect.right - tileDesc.rect.left, tileDesc.height);
+					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.right, tileRc.top, tileDesc.width - tileDesc.rect.right, tileDesc.height);
 					addRect(rect1, tileDesc.outsideAttrib);
 					addRect(rect2, tileDesc.insideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				// My paper case (7) --- PAPERFIED
-				// This yields 3 rectangles
-				else if ((tileDesc.rect.left == 0) && (tileDesc.rect.top == 0) && // Starting in top left corner
-					(tileDesc.rect.right != tileDesc.width - 1) && (tileDesc.rect.bottom != tileDesc.height - 1)) // Ending somewhere inside the rect
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && // Starting in top left corner
+					tileDesc.rect.right != tileDesc.width - 1 && tileDesc.rect.bottom != tileDesc.height - 1) // Ending somewhere inside the rect
 				{
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.right, tileDesc.rect.bottom);
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom + 1, tileDesc.rect.right + 1, tileDesc.height - tileDesc.rect.bottom);
@@ -232,10 +200,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				// My paper case (8) --- PAPERFIED
-				// This yields 3 rectangles
-				else if ((tileDesc.rect.left > 0) && (tileDesc.rect.top == 0) && // Starting somewhere on the top between left and right
-					(tileDesc.rect.right == tileDesc.width - 1) && (tileDesc.rect.bottom != tileDesc.height - 1)) // ending somewhere on the right side between top and bottom
+				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && // Starting somewhere on the top between left and right
+					tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.bottom != tileDesc.height - 1) // ending somewhere on the right side between top and bottom
 				{
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top, tileDesc.width - tileDesc.rect.left, tileDesc.rect.bottom);
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left - 1, tileDesc.height);
@@ -244,10 +210,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				// My paper case (9) --- PAPERFIED
-				// This yields 3 rectangles
-				else if ((tileDesc.rect.left > 0) && (tileDesc.rect.top > 0) &&
-					(tileDesc.rect.right == tileDesc.width - 1) && (tileDesc.rect.bottom == tileDesc.height - 1))
+				else if (tileDesc.rect.left > 0 && tileDesc.rect.top > 0 &&
+					tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.bottom == tileDesc.height - 1)
 				{
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top + tileDesc.rect.top, tileDesc.width - tileDesc.rect.left, tileDesc.height - tileDesc.rect.top);
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, tileDesc.height);
@@ -256,10 +220,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				// My paper case (10) --- PAPERFIED
-				// This yields 3 rectangles
-				else if ((tileDesc.rect.left == 0) && (tileDesc.rect.top > 0) && // Beginning somewhere on the left side between top and bottom
-					(tileDesc.rect.right != tileDesc.width - 1) && (tileDesc.rect.bottom == tileDesc.height - 1))
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && // Beginning somewhere on the left side between top and bottom
+					tileDesc.rect.right != tileDesc.width - 1 && tileDesc.rect.bottom == tileDesc.height - 1)
 				{
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.right, tileDesc.height - tileDesc.rect.top);
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.right, tileDesc.rect.top);
@@ -268,20 +230,15 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				// My paper case (11)
-				// This yields 4 rectangles
-				else if (IsInBetween(tileDesc.rect.left, 0, tileDesc.width - 1) && (tileDesc.rect.top == 0) &&
-					(IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1)) && (IsInBetween(tileDesc.rect.bottom, 0, tileDesc.height - 1)))
+				else if (IsInBetween(tileDesc.rect.left, 0, tileDesc.width - 1) && tileDesc.rect.top == 0 &&
+					IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1) && IsInBetween(tileDesc.rect.bottom, 0, tileDesc.height - 1))
 				{
-					Rectangle2D rect1 = makeRectangle2D(tileDesc.rect.left, tileDesc.rect.top, tileDesc.rect.right - tileDesc.rect.left, tileDesc.rect.bottom);
-					rect1.left += tileRc.left; rect1.top += tileRc.top; rect1.right += tileRc.left; rect1.bottom += tileRc.top;
+					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.right - tileDesc.rect.left, tileDesc.rect.bottom);
 					addRect(rect1, tileDesc.insideAttrib);
 					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
 				}
-				// My paper case (12)
-				// This yields 4 rectangles
 				else if (IsInBetween(tileDesc.rect.left, 0, tileDesc.width - 1) && IsInBetween(tileDesc.rect.top, 0, tileDesc.height - 1) &&
-					(tileDesc.rect.right == tileDesc.width - 1) && IsInBetween(tileDesc.rect.bottom, 0, tileDesc.height - 1))
+					tileDesc.rect.right == tileDesc.width - 1 && IsInBetween(tileDesc.rect.bottom, 0, tileDesc.height - 1))
 				{
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.width, tileDesc.rect.top);
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.left, tileDesc.rect.bottom - tileDesc.rect.top);
@@ -292,10 +249,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect3, tileDesc.outsideAttrib);
 					addRect(rect4, tileDesc.insideAttrib);
 				}
-				// My paper case (13) --- PAPERFIED
-				// This yields 4 rectangles
 				else if (IsInBetween(tileDesc.rect.left, 0, tileDesc.width - 1) && IsInBetween(tileDesc.rect.top, 0, tileDesc.height - 1) &&
-					IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1) && (tileDesc.rect.bottom == tileDesc.height - 1))
+					IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1) && tileDesc.rect.bottom == tileDesc.height - 1)
 				{
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left + tileDesc.rect.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.right - tileDesc.rect.left, tileDesc.height - tileDesc.rect.top);
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.rect.left, tileDesc.height);
@@ -306,18 +261,26 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect3, tileDesc.outsideAttrib);
 					addRect(rect4, tileDesc.outsideAttrib);
 				}
-				// My paper case (14)
-				// This yields 4 rectangles
-				else if ((tileDesc.rect.left == 0) && IsInBetween(tileDesc.rect.top, 0, tileDesc.height - 1) &&
-					IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1) && (tileDesc.rect.bottom == tileDesc.height - 1))
+				else if (tileDesc.rect.left == 0 && IsInBetween(tileDesc.rect.top, 0, tileDesc.height - 1) &&
+					IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1) && IsInBetween(tileDesc.rect.bottom, 0, tileDesc.height - 1))
+				{
+					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.width, tileDesc.rect.top);
+					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.right, tileDesc.rect.bottom - tileDesc.rect.top);
+					Rectangle2D rect3 = makeRectangle2D(tileRc.left + tileDesc.rect.right, tileRc.top + tileDesc.rect.top, tileDesc.width - tileDesc.rect.right, tileDesc.rect.bottom - tileDesc.rect.top);
+					Rectangle2D rect4 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom, tileDesc.width, tileDesc.rect.bottom);
+					addRect(rect1, tileDesc.outsideAttrib);
+					addRect(rect2, tileDesc.insideAttrib);
+					addRect(rect3, tileDesc.outsideAttrib);
+					addRect(rect4, tileDesc.outsideAttrib);
+				}
+				else if (tileDesc.rect.left == 0 && IsInBetween(tileDesc.rect.top, 0, tileDesc.height - 1) &&
+					IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1) && tileDesc.rect.bottom == tileDesc.height - 1)
 				{
 					cout << "Paring rects case: 14" << endl;
 					assert(false && "Paring rects case: 14");
 				}
-				// My paper case (15)
-				// This yields 5 rectangles
 				else if (IsInBetween(tileDesc.rect.left, 0, tileDesc.width - 1) && IsInBetween(tileDesc.rect.top, 0, tileDesc.height - 1) &&
-					IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1) && (tileDesc.rect.bottom == tileDesc.height - 1))
+					IsInBetween(tileDesc.rect.right, 0, tileDesc.width - 1) && tileDesc.rect.bottom == tileDesc.height - 1)
 				{
 					cout << "Paring rects case: 16" << endl;
 					assert(false && "Paring rects case: 16");
@@ -326,73 +289,6 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				{
 					cout << "unknown tile: " << plane->tiles[i][j] << endl;
 				}
-
-
-#else
-				originalTileRc = tileRc;
-
-				tileRc.left += tileDesc.rect.left;
-				tileRc.top += tileDesc.rect.top;
-				tileRc.right = tileRc.right + tileDesc.rect.right - tileDesc.width;
-				tileRc.bottom = tileRc.bottom + tileDesc.rect.bottom - tileDesc.height;
-
-				if (tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear)
-				{
-					addRect(tileRc, tileDesc.insideAttrib);
-				}
-
-				if (tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Solid)
-				{
-					// TODO: split to rect for inAttr and outAttr
-					// TODO: use OpenClaw for this part (change my code)
-
-					if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.top == 0)
-					{
-						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(tileRc.left, tileRc.bottom, tileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-					}
-					else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0)
-					{
-						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(originalTileRc.left, tileRc.bottom, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-					}
-					else if (tileDesc.rect.right == tileDesc.width - 1 && tileDesc.rect.bottom == tileDesc.height - 1)
-					{
-						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(tileRc.left, originalTileRc.top, tileRc.right, tileRc.top), tileDesc.outsideAttrib);
-					}
-					else if (tileDesc.rect.left == 0 && tileDesc.rect.bottom == tileDesc.height - 1)
-					{
-						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, originalTileRc.right, tileRc.top), tileDesc.outsideAttrib);
-					}
-					/*
-					else if (tileDesc.rect.top == 0)
-					{
-						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(tileRc.left, tileRc.bottom, tileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-					}
-					else if (tileDesc.rect.bottom == tileDesc.height - 1)
-					{
-						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, tileRc.left, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(tileRc.left, originalTileRc.top, tileRc.right, tileRc.top), tileDesc.outsideAttrib);
-					}
-					else if (tileDesc.rect.left == 0)
-					{
-						addRect(Rectangle2D(tileRc.right, originalTileRc.top, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(originalTileRc.left, originalTileRc.top, originalTileRc.right, tileRc.top), tileDesc.outsideAttrib);
-						addRect(Rectangle2D(originalTileRc.left, tileRc.bottom, originalTileRc.right, originalTileRc.bottom), tileDesc.outsideAttrib);
-					}
-					*/
-					else
-					{
-						continue;
-						// TODO: handle the other case
-					}
-				}
-#endif
 				break;
 
 			default: break;
