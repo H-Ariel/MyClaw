@@ -153,6 +153,8 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 			planes.push_back(DBG_NEW LevelPlane(pln));
 		}
 	}
+
+	tilesDescription.clear();
 }
 void WapWorld::readPlanes(BufferReader& reader, vector<WwdPlaneData>& planesData, const ColorRGBA colors[], const string& imageDirectoryPath)
 {
@@ -306,13 +308,13 @@ void WapWorld::readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& 
 		case WwdTileDescription::TileType_Single:
 			reader.read(tileDesc.insideAttrib);
 			break;
-		
+
 		case WwdTileDescription::TileType_Double:
 			reader.read(tileDesc.outsideAttrib);
 			reader.read(tileDesc.insideAttrib);
 			reader.read(tileDesc.rect);
 			break;
-		
+
 		default:
 			throw Exception(__FUNCTION__ ": invalid value");
 		}

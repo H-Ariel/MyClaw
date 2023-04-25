@@ -58,13 +58,6 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 		WwdTileDescription& t403 = wwd->tilesDescription[403];
 		t403.insideAttrib = WwdTileDescription::TileAttribute_Solid;
 	}
-	else if (levelNumber == 4)
-	{
-		// TODO: delete
-	//	WwdTileDescription& t155 = wwd->tilesDescription[155];
-	//	t155.rect.top = 0;
-	//	cout << 'a';
-	}
 	else if (levelNumber == 5)
 	{
 		// i think there is something wrong here...
@@ -75,17 +68,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
-	else if (levelNumber == 7)
-	{
-		// TODO: tiles (308, 310, 312, 313)
-	}
-	else if (levelNumber == 8)
-	{
-		// TODO: tiles (98, 102)
-	}
 	else if (levelNumber == 11)
 	{
-		// TODO: tiles (9)
 		WwdTileDescription& t39 = wwd->tilesDescription[39];
 		t39.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		t39.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
@@ -100,6 +84,9 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 		t050.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		t054.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
+
+	// levels 6,8: fix ladders
+
 
 	// add rectangle to list and merge it with previous rectangle if possible
 	auto addRect = [&](const Rectangle2D& rc, uint32_t attrib) {
@@ -290,13 +277,10 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				else if (IsInBetween(tileDesc.rect.left, 0, tileDesc.width - 1) && IsInBetween(tileDesc.rect.top, 0, tileDesc.height - 1) &&
 					(tileDesc.rect.right == tileDesc.width - 1) && IsInBetween(tileDesc.rect.bottom, 0, tileDesc.height - 1))
 				{
-					//	cout << "Case 12: Tile " << plane->tiles[i][j] << " not implemented !" << endl;
-
 					Rectangle2D rect1 = makeRectangle2D(tileRc.left, tileRc.top, tileDesc.width, tileDesc.rect.top);
 					Rectangle2D rect2 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.top, tileDesc.rect.left, tileDesc.rect.bottom - tileDesc.rect.top);
 					Rectangle2D rect4 = makeRectangle2D(tileRc.left + tileDesc.rect.left + 1, tileRc.top + tileDesc.rect.top, tileDesc.width - tileDesc.rect.left, tileDesc.rect.bottom - tileDesc.rect.top);
 					Rectangle2D rect3 = makeRectangle2D(tileRc.left, tileRc.top + tileDesc.rect.bottom + 1, tileDesc.width, tileDesc.height - tileDesc.rect.bottom);
-
 					addRect(rect1, tileDesc.outsideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
@@ -334,7 +318,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 				}
 				else
 				{
-					cout << "unknown tile" << endl;
+					cout << "unknown tile: " << plane->tiles[i][j] << endl;
 				}
 
 

@@ -31,7 +31,7 @@ void Rat::makeAttack()
 
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
-			obj.y = (int32_t)position.y - 24;
+			obj.y = (int32_t)position.y - 32;
 			obj.z = ZCoord;
 			obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 15;
