@@ -527,6 +527,7 @@ void Player::Logic(uint32_t elapsedTime)
 		{
 			_ani = _animations[_aniName];
 			_ani->reset();
+			_ani->updateFrames = true;
 
 			_ani->loopAni = !FindInArray(NoLoopAnimations, _aniName) && !FindInArray(AttackAnimations, _aniName)
 				&& !isWeaponAnimation() && !isDuck();
