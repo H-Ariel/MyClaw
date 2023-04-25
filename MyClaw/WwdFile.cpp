@@ -139,6 +139,49 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 
 	WindowManager::setBackgroundColor(planesData[0].fillColor);
 	
+	// minor change to tiles so they will be more accurate for reduce rectangles (in PhysicsManager)
+	// in levels 5,11 it is necessary to change the tiles for "BreakPlanks"
+	// TODO: continue for all levels (if needed)
+	if (levelNumber == 1)
+	{
+		WwdTileDescription& t401 = tilesDescription[401];
+		WwdTileDescription& t406 = tilesDescription[406];
+
+		t401.rect.right = 28;
+		t401.rect.bottom = 63;
+		t401.insideAttrib = WwdTileDescription::TileAttribute_Solid;
+		t401.type = WwdTileDescription::TileType_Double;
+
+		t406.rect.left = 40;
+		t406.rect.right = 63;
+		t406.rect.bottom = 63;
+		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
+		t406.type = WwdTileDescription::TileType_Double;
+	}
+	else if (levelNumber == 2)
+	{
+		tilesDescription[88].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[91].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+	else if (levelNumber == 5)
+	{
+		WwdTileDescription& t509 = tilesDescription[509];
+		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+	else if (levelNumber == 11)
+	{
+		WwdTileDescription& t39 = tilesDescription[39];
+		t39.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		t39.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+	else if (levelNumber == 14)
+	{
+		tilesDescription[49].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[50].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[54].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+
 	for (const WwdPlaneData& pln : planesData)
 	{
 		if (pln.isMainPlane)
@@ -312,7 +355,7 @@ void WapWorld::readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& 
 		reader.read(height);
 
 		if (width != 64 && height != 64)
-			throw Exception(__FUNCTION__ ": invalid tile's size");
+			throw Exception(__FUNCTION__ ": invalid size");
 
 		switch (tileDesc.type)
 		{
@@ -324,10 +367,13 @@ void WapWorld::readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& 
 			reader.read(tileDesc.outsideAttrib);
 			reader.read(tileDesc.insideAttrib);
 			reader.read(tileDesc.rect);
+			if (tileDesc.rect.left > 63 || tileDesc.rect.top > 63 || tileDesc.rect.right > 63 || tileDesc.rect.bottom > 63 ||
+				tileDesc.rect.left < 0 || tileDesc.rect.top < 0 || tileDesc.rect.right < 0 || tileDesc.rect.bottom < 0)
+				throw Exception(__FUNCTION__ ": invalid rect");
 			break;
 
 		default:
-			throw Exception(__FUNCTION__ ": invalid value");
+			throw Exception(__FUNCTION__ ": invalid type");
 		}
 	}
 

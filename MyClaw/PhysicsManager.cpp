@@ -13,12 +13,11 @@
 
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
-#define assert(b) if (!(b)) throw Exception(#b); // TODO: delete this line
-
-bool IsInBetween(int32_t num, int32_t leftLimit, int32_t rightLimit) // TODO: delete this function (?)
-{
-	return leftLimit < num && num < rightLimit;
-}
+// TODO: delete this ?
+// if stay move to "framework.h"
+#define assert(b) if (!(b)){\
+	char buf[256]; sprintf(buf, "%d [%d]: %s", __LINE__, plane->tiles[i][j], #b);\
+	throw Exception(buf); }
 
 
 PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber)
@@ -28,53 +27,6 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 
 	Rectangle2D tileRc, originalTileRc;
 	uint32_t i, j;
-
-	// minor change to tiles so they will be more accurate for reduce rectangles
-	// (in levels 5,11 it is necessary to change the tiles for "BreakPlanks")
-	// TODO: continue for all levels
-	// TODO: move to `WwdFile`
-	if (levelNumber == 1)
-	{
-		WwdTileDescription& t401 = wwd->tilesDescription[401];
-		WwdTileDescription& t406 = wwd->tilesDescription[406];
-
-		t401.rect.right = 28;
-		t401.rect.bottom = 63;
-		t401.insideAttrib = WwdTileDescription::TileAttribute_Solid;
-		t401.type = WwdTileDescription::TileType_Double;
-
-		t406.rect.left = 40;
-		t406.rect.right = 63;
-		t406.rect.bottom = 63;
-		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
-		t406.type = WwdTileDescription::TileType_Double;
-	}
-	else if (levelNumber == 2)
-	{
-		WwdTileDescription& t88 = wwd->tilesDescription[88];
-		WwdTileDescription& t91 = wwd->tilesDescription[91];
-		t88.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-		t91.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-	else if (levelNumber == 5)
-	{
-		WwdTileDescription& t509 = wwd->tilesDescription[509];
-		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-	else if (levelNumber == 11)
-	{
-		WwdTileDescription& t39 = wwd->tilesDescription[39];
-		t39.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		t39.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-	else if (levelNumber == 14)
-	{
-		wwd->tilesDescription[49].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		wwd->tilesDescription[50].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		wwd->tilesDescription[54].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-
 
 	// add rectangle to list and merge it with previous rectangle if possible
 	auto addRect = [&](const Rectangle2D& rc, uint32_t attrib) {
@@ -121,21 +73,20 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 			switch (tileDesc.type)
 			{
 			case WwdTileDescription::TileType_Single:
-				if (tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear)
-					addRect(tileRc, tileDesc.insideAttrib);
+				addRect(tileRc, tileDesc.insideAttrib);
 				break;
 
 			case WwdTileDescription::TileType_Double: // TODO: improve this part
 				// the next code is based on OpenClaw
+				// in this part when I used "assert" to reduce code and run-time
 
-				if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 &&
-					tileDesc.rect.right == 63)
+				if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && tileDesc.rect.right == 63)
 				{
 					Rectangle2D rect1(
-						tileRc.left, 
-						tileRc.top, 
+						tileRc.left,
+						tileRc.top,
 						tileRc.right,
-						tileRc.top+tileDesc.rect.bottom
+						tileRc.top + tileDesc.rect.bottom
 					);
 					Rectangle2D rect2(
 						tileRc.left,
@@ -146,8 +97,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
-				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 &&
-					tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
+				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
 				{
 					Rectangle2D rect1(
 						tileRc.left + tileDesc.rect.left,
@@ -164,8 +114,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 &&
-					tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
 				{
 					Rectangle2D rect1(
 						tileRc.left,
@@ -182,8 +131,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 &&
-					tileDesc.rect.right > 0 && tileDesc.rect.bottom == 63)
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && tileDesc.rect.right > 0 && tileDesc.rect.bottom == 63)
 				{
 					Rectangle2D rect1(
 						tileRc.left,
@@ -197,63 +145,37 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 						tileRc.right,
 						tileRc.bottom
 					);
-					
+
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 &&
-					tileDesc.rect.right == 63 && tileDesc.rect.bottom > 0)
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom > 0)
 				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top,
-						tileRc.right,
-						tileRc.top + tileDesc.rect.top
-					);
 					Rectangle2D rect2(
 						tileRc.left,
-						rect1.bottom,
+						tileRc.top + tileDesc.rect.top,
 						tileRc.right,
 						tileRc.top + tileDesc.rect.bottom
 					);
-					Rectangle2D rect3(
-						tileRc.left,
-						rect2.bottom,
-						tileRc.right,
-						tileRc.bottom
-					);
-					
-					addRect(rect1, tileDesc.outsideAttrib);
+
 					addRect(rect2, tileDesc.insideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
+
+					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
 				}
-				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 &&
-					tileDesc.rect.right > 0 && tileDesc.rect.bottom == 63)
+				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && tileDesc.rect.right > 0 && tileDesc.rect.bottom == 63)
 				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top,
+					Rectangle2D rect2(
 						tileRc.left + tileDesc.rect.left,
-						tileRc.bottom
-					);
-					Rectangle2D rect2(
-						rect1.right,
 						tileRc.top,
 						tileRc.left + tileDesc.rect.right,
 						tileRc.bottom
 					);
-					Rectangle2D rect3(
-						rect2.right,
-						tileRc.top,
-						tileRc.right,
-						tileRc.bottom
-					);
-					addRect(rect1, tileDesc.outsideAttrib);
+					
 					addRect(rect2, tileDesc.insideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
+
+					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
 				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 &&
-					tileDesc.rect.right != 63 && tileDesc.rect.bottom != 63)
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top == 0 && tileDesc.rect.right != 63 && tileDesc.rect.bottom != 63)
 				{
 					Rectangle2D rect1(
 						tileRc.left,
@@ -273,13 +195,12 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 						tileRc.right,
 						tileRc.bottom
 					);
-					
+
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 &&
-					tileDesc.rect.right == 63 && tileDesc.rect.bottom != 63)
+				else if (tileDesc.rect.left > 0 && tileDesc.rect.top == 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom != 63)
 				{
 					Rectangle2D rect1(
 						tileRc.left + tileDesc.rect.left,
@@ -299,13 +220,12 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 						tileRc.right,
 						tileRc.bottom
 					);
-					
+
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				else if (tileDesc.rect.left > 0 && tileDesc.rect.top > 0 &&
-					tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
+				else if (tileDesc.rect.left > 0 && tileDesc.rect.top > 0 && tileDesc.rect.right == 63 && tileDesc.rect.bottom == 63)
 				{
 					Rectangle2D rect1(
 						tileRc.left + tileDesc.rect.left,
@@ -325,13 +245,12 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 						tileRc.right,
 						rect1.top
 					);
-					
+
 					addRect(rect1, tileDesc.insideAttrib);
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 &&
-					tileDesc.rect.right != 63 && tileDesc.rect.bottom == 63)
+				else if (tileDesc.rect.left == 0 && tileDesc.rect.top > 0 && tileDesc.rect.right != 63 && tileDesc.rect.bottom == 63)
 				{
 					Rectangle2D rect1(
 						tileRc.left,
@@ -356,8 +275,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 					addRect(rect2, tileDesc.outsideAttrib);
 					addRect(rect3, tileDesc.outsideAttrib);
 				}
-				else if (IsInBetween(tileDesc.rect.left, 0, 63) && tileDesc.rect.top == 0 &&
-					IsInBetween(tileDesc.rect.right, 0, 63) && IsInBetween(tileDesc.rect.bottom, 0, 63))
+				else if (tileDesc.rect.top == 0)
 				{
 					Rectangle2D rect1(
 						tileRc.left + tileDesc.rect.left,
@@ -366,45 +284,23 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 						tileRc.top + tileDesc.rect.top + tileDesc.rect.bottom
 					);
 					addRect(rect1, tileDesc.insideAttrib);
-					
-					// TODO: maybe use the next line for similiar cases ?
+
 					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
 				}
-				else if (IsInBetween(tileDesc.rect.left, 0, 63) && IsInBetween(tileDesc.rect.top, 0, 63) &&
-					tileDesc.rect.right == 63 && IsInBetween(tileDesc.rect.bottom, 0, 63))
+				else if (tileDesc.rect.right == 63)
 				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top,
-						tileRc.right,
-						tileRc.top + tileDesc.rect.top
-					);
-					Rectangle2D rect2(
-						tileRc.left,
-						rect1.bottom,
+					Rectangle2D rect4(
 						tileRc.left + tileDesc.rect.left,
+						tileRc.top + tileDesc.rect.top,
+						tileRc.right,
 						tileRc.top + tileDesc.rect.bottom
 					);
-					Rectangle2D rect4(
-						rect2.right,
-						rect1.bottom,
-						tileRc.right,
-						rect2.bottom
-					);
-					Rectangle2D rect3(
-						tileRc.left,
-						rect2.bottom,
-						tileRc.right,
-						tileRc.bottom
-					);
 					
-					addRect(rect1, tileDesc.outsideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
 					addRect(rect4, tileDesc.insideAttrib);
+
+					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
 				}
-				else if (IsInBetween(tileDesc.rect.left, 0, 63) && IsInBetween(tileDesc.rect.top, 0, 63) &&
-					IsInBetween(tileDesc.rect.right, 0, 63) && tileDesc.rect.bottom == 63)
+				else if (tileDesc.rect.bottom == 63)
 				{
 					Rectangle2D rect1(
 						tileRc.left + tileDesc.rect.left,
@@ -412,60 +308,23 @@ PhysicsManager::PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player*
 						tileRc.left + tileDesc.rect.right,
 						tileRc.bottom
 					);
-					Rectangle2D rect2(
-						tileRc.left,
-						tileRc.top,
-						rect1.left,
-						tileRc.bottom
-					);
-					Rectangle2D rect3(
-						rect1.left,
-						tileRc.top,
-						rect1.right,
-						tileRc.top + tileDesc.rect.top
-					);
-					Rectangle2D rect4(
-						tileRc.left + tileDesc.rect.right,
-						tileRc.top,
-						tileRc.right,
-						tileRc.bottom
-					);
+					
 					addRect(rect1, tileDesc.insideAttrib);
-					addRect(rect2, tileDesc.outsideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
-					addRect(rect4, tileDesc.outsideAttrib);
+
+					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
 				}
-				else if (tileDesc.rect.left == 0 && IsInBetween(tileDesc.rect.top, 0, 63) &&
-					IsInBetween(tileDesc.rect.right, 0, 63) && IsInBetween(tileDesc.rect.bottom, 0, 63))
+				else if (tileDesc.rect.left == 0)
 				{
-					Rectangle2D rect1(
-						tileRc.left,
-						tileRc.top,
-						tileRc.right,
-						tileRc.top + tileDesc.rect.top
-					);
 					Rectangle2D rect2(
 						tileRc.left,
-						rect1.bottom,
+						tileRc.top + tileDesc.rect.top,
 						tileRc.left + tileDesc.rect.right,
 						tileRc.top + tileDesc.rect.bottom
 					);
-					Rectangle2D rect3(
-						rect2.right,
-						rect1.bottom,
-						tileRc.right,
-						rect2.bottom
-					);
-					Rectangle2D rect4(
-						tileRc.left,
-						rect2.bottom,
-						tileRc.right,
-						tileRc.bottom
-					);
-					addRect(rect1, tileDesc.outsideAttrib);
+				
 					addRect(rect2, tileDesc.insideAttrib);
-					addRect(rect3, tileDesc.outsideAttrib);
-					addRect(rect4, tileDesc.outsideAttrib);
+
+					assert(tileDesc.insideAttrib != WwdTileDescription::TileAttribute_Clear && tileDesc.outsideAttrib == WwdTileDescription::TileAttribute_Clear);
 				}
 				else
 				{
