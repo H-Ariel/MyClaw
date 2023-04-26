@@ -15,14 +15,24 @@ enum class GlobalState : int8_t
 	ParrotTakeMarrow = 3, RemoveFloor = 3
 };
 
+enum class MarrowSise : int8_t
+{
+	Left = 0,
+	Right = 1
+};
+
+
 static GlobalState globalState = GlobalState::ParrotAttackClaw;
 static int floorCounter = 0; // use to sync floors
 static bool firstFloorsRemove = true;
+static MarrowSise marrowSise = MarrowSise::Left;
+
 
 #define MARROW_ANIMATION_BLOCK	_animations["BLOCK"]
 #define MARROW_ANIMATION_HOME	_animations["HOME"]
-#define MARROW_ANIMATION_HAND_UP	_animations["IDLE1"]
-#define MARROW_ANIMATION_HAND_DOWN	_animations["IDLE4"]
+#define MARROW_ANIMATION_HAND_UP		_animations["IDLE1"]
+#define MARROW_ANIMATION_WAIT_HAND_UP	_animations["IDLE2"]
+#define MARROW_ANIMATION_HAND_DOWN		_animations["IDLE4"]
 
 /*
 HOME - just stand
@@ -75,6 +85,29 @@ void Marrow::Logic(uint32_t elapsedTime)
 			_ani->loopAni = false;
 		}
 	}
+	else if (globalState == GlobalState::ParrotTakeMarrow)
+	{
+		if (_ani == MARROW_ANIMATION_HAND_UP && _ani->isFinishAnimation())
+		{
+			_speed.x = marrowSise == MarrowSise::Left ? -0.4f : 0.4f;
+			_forward = marrowSise == MarrowSise::Left ? false : true;
+			position.y -= 128;
+			_ani = MARROW_ANIMATION_WAIT_HAND_UP;
+			_ani->reset();
+			_ani->loopAni = false;
+		}
+		else if (_ani == MARROW_ANIMATION_WAIT_HAND_UP && _speed.x == 0) // Marrow stops move
+		{
+			position.y += 128;
+			marrowSise = marrowSise == MarrowSise::Left ? MarrowSise::Right : MarrowSise::Left;
+			_forward = marrowSise == MarrowSise::Left ? false : true;
+			globalState = GlobalState::AddFloor;
+			_ani = MARROW_ANIMATION_HOME;
+			_ani->reset();
+		}
+
+		position.x += _speed.x * elapsedTime;
+	}
 	
 
 	if (!_isAttack)
@@ -89,7 +122,7 @@ void Marrow::Logic(uint32_t elapsedTime)
 			_ani = MARROW_ANIMATION_HOME;
 			_ani->reset();
 			_isAttack = false;
-			_forward = false;
+		//	_forward = false;
 		}
 	}
 
@@ -149,6 +182,18 @@ bool Marrow::checkForHurts()
 	return false;
 }
 
+void Marrow::stopMovingLeft(float collisionSize)
+{
+	BaseBoss::stopMovingLeft(collisionSize);
+	_speed = {};
+	_forward = false;
+}
+void Marrow::stopMovingRight(float collisionSize)
+{
+	BaseBoss::stopMovingRight(collisionSize);
+	_speed = {};
+	_forward = true;
+}
 
 
 

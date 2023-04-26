@@ -12,6 +12,9 @@ public:
 
 	pair<Rectangle2D, int> GetAttackRect() override;
 
+	void stopMovingLeft(float collisionSize) override;
+	void stopMovingRight(float collisionSize) override;
+
 private:
 	void makeAttack() override;
 	bool checkForHurts() override;
