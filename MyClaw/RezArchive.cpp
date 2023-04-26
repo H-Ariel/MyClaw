@@ -23,10 +23,9 @@ static vector<string> splitStringIntoTokens(string input, char delim)
 }
 
 
-RezFile::RezFile(uint32_t size, uint32_t offset, const string& name, char extension[4], RezDirectory* parent, ifstream* ownerFile)
-	: name(name), _parent(parent), _ownerFile(ownerFile), _size(size), _offset(offset), extension("")
+RezFile::RezFile(uint32_t size, uint32_t offset, const string& name, RezDirectory* parent, ifstream* ownerFile)
+	: name(name), _parent(parent), _ownerFile(ownerFile), _size(size), _offset(offset)
 {
-	memcpy((char*)this->extension, extension, sizeof(this->extension));
 }
 vector<uint8_t> RezFile::getData() const
 {
@@ -44,7 +43,7 @@ string RezFile::getFullPath() const
 {
 	string dirPath;
 	for (RezDirectory* dir = _parent; dir != nullptr; dirPath = dir->_name + '/' + dirPath, dir = dir->_parent);
-	return dirPath.substr(1) + name + '.' + extension; // ignore the first character ('/')
+	return dirPath + name; // ignore the first character ('/')
 }
 
 
@@ -52,50 +51,39 @@ RezDirectory::RezDirectory(uint32_t size, const string& name, RezDirectory* pare
 	: _size(size), _name(name), _parent(parent)
 {
 }
-const RezFile* RezDirectory::getFile(string filePath) const
+const RezFile* RezDirectory::getFile(const string& filePath) const
 {
-	auto getChildFile = [](const RezDirectory* srcdir, const string& filename) {
-		return srcdir->_files.count(filename) ? srcdir->_files.at(filename).get() : nullptr;
-	};
+	const RezFile* file = nullptr;
 
-	RezFile* file;
 	size_t fileNamePos = filePath.find_last_of('/');
-	if (fileNamePos == string::npos)
-	{
-		// in case `filePath` is only filename
-		file = getChildFile(this, filePath);
-	}
-	else
-	{
-		// try to retrieve file from its directory
-		file = getChildFile(getDirectory(filePath.substr(0, fileNamePos)), filePath.substr(fileNamePos + 1));
-	}
+	if (fileNamePos == string::npos) // in case `filePath` is only filename
+		file = getChildFile(filePath);
+	else // try to retrieve file from its directory
+		file = getDirectory(filePath.substr(0, fileNamePos))->getChildFile(filePath.substr(fileNamePos + 1));
 
 	if (file == nullptr)
-	{
-		throw Exception(__FUNCTION__ ": file not found. filePath=" + filePath);
-	}
+		throw Exception("file not found. filePath=" + filePath);
+	
 	return file;
 }
-const RezDirectory* RezDirectory::getDirectory(string dirPath) const
+const RezDirectory* RezDirectory::getDirectory(const string& dirPath) const
 {
 	const RezDirectory* currDir = this;
 	for (const string& dirname : splitStringIntoTokens(dirPath, '/'))
 	{
 		if (currDir->_directories.count(dirname))
-		{
 			currDir = currDir->_directories.at(dirname).get();
-		}
 		else
-		{
-			throw Exception(__FUNCTION__ ": directory not found. dirPath=" + dirPath);
-		}
+			throw Exception("directory not found. dirPath=" + dirPath);
 	}
 	return currDir;
 }
+const RezFile* RezDirectory::getChildFile(const string& filename) const
+{
+	return _files.count(filename) ? _files.at(filename).get() : nullptr;
+}
 
-
-RezArchive::RezArchive(string filename)
+RezArchive::RezArchive(const string& filename)
 	: _rezFileStream(filename, ifstream::binary)
 {
 	if (!_rezFileStream.is_open())
@@ -103,7 +91,7 @@ RezArchive::RezArchive(string filename)
 		throw Exception("unable to open \"" + filename + '"');
 	}
 
-	uint32_t offset, size;
+	uint32_t offset = 0, size = 0;
 	_rezFileStream.ignore(131); // 127 header + 4 version
 	fileRead(offset); // read offset of first directory
 	fileRead(size); // read size of first directory
@@ -135,7 +123,8 @@ string fixFileName(const string& filename)
 void RezArchive::readRezDirectory(unique_ptr<RezDirectory>& dir, uint32_t dirOffset)
 {
 	string name;
-	uint32_t currentOffset = dirOffset, remainingBytes = dir->_size, bytesRead = 0, isDirectory, offset, size;
+	uint32_t currentOffset = dirOffset, remainingBytes = dir->_size;
+	uint32_t bytesRead = 0, isDirectory = 0, offset = 0, size = 0;
 	char ext[4] = {};
 
 	while (0 < remainingBytes)
@@ -164,7 +153,9 @@ void RezArchive::readRezDirectory(unique_ptr<RezDirectory>& dir, uint32_t dirOff
 			if (strcmp(ext, "PID") == 0)
 				newName = fixFileName(name);
 
-			dir->_files[newName + '.' + ext].reset(DBG_NEW RezFile(size, offset, newName, ext, dir.get(), &_rezFileStream));
+			newName = newName + '.' + ext;
+
+			dir->_files[newName].reset(DBG_NEW RezFile(size, offset, newName, dir.get(), &_rezFileStream));
 			bytesRead = 13;
 		}
 

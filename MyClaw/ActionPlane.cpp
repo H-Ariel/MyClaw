@@ -115,8 +115,7 @@ ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int level
 		{
 			// an exception may be thrown if the path is invalid or if we don't impleted the logic of object
 #ifdef _DEBUG
-			//OutputDebugStringA((__FUNCTION__ ": " + ex.what() + '\n').c_str());
-			cout << __FUNCTION__ ": " << ex.what() << endl;
+			cout << "Error while adding object \"" << obj.logic << "\": message: " << ex.what() << endl;
 #endif
 		}
 	}

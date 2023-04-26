@@ -52,30 +52,6 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 #endif
 
-// throw exception of the last winapi error (if it exists)
-#define THROW_WINAPI_EXCEPTION { \
-	int errId = GetLastError(); \
-	if (errId != NO_ERROR) { \
-		char buf[512]; \
-		sprintf_s(buf, "WINAPI failed at:\nfile %s, line: %d, error id: %d", __FILE__, __LINE__, errId); \
-		throw Exception(buf); \
-	} \
-}
-
-// throw the last winapi error if `x` is `nullptr`
-#define WINAPI_THROW_IF_NULL(x)		if ((x) == nullptr) THROW_WINAPI_EXCEPTION
-
-// throw if `x` faild. `x` should be HRESULT object or function with HRESULT return type
-#define HRESULT_THROW_IF_FAILED(x)	if (FAILED(x)) { \
-	char buf[512]; \
-	sprintf_s(buf, "HRESULT failed at:\nfile %s, line %d", __FILE__, __LINE__); \
-	throw Exception(buf); \
-}
-
-// throw exception if the value of `var` is `nullptr`
-#define THROW_IF_NULL(var)			if (var == nullptr) throw Exception(__FUNCTION__ " - " #var " = null");
-
-
 
 enum class MouseButtons
 {
@@ -137,8 +113,11 @@ inline void SafeRelease(T*& p)
 template <class T>
 inline void SafeDelete(T*& p)
 {
-	delete p;
-	p = nullptr;
+	if (p)
+	{
+		delete p;
+		p = nullptr;
+	}
 }
 
 

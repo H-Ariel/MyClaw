@@ -41,7 +41,7 @@ public:
 			if (memcmp(_data + _idx, data, dataSize) == 0)
 				return;
 		}
-		throw Exception(__FUNCTION__ " - not found");
+		throw Exception("data not found");
 	}
 
 	const uint8_t* getPointer() const { return _data + _idx; }

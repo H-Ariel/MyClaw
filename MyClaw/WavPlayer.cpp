@@ -93,7 +93,7 @@ void WavPlayer::WavError(MMRESULT mmResult)
 	char text[512];
 	waveOutGetErrorTextA(mmResult, text, sizeof(text));
 	//throw Exception(text);
-	cout << "Error - " __FUNCTION__ ": " << text << endl;
+	cout << "WaveError: " << text << endl;
 }
 
 void WavPlayer::waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)

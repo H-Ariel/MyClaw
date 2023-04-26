@@ -11,7 +11,7 @@ public:
 	~ImagesManager();
 
 	void setPalette(shared_ptr<PidPalette> palette) { _palette = palette; }
-	shared_ptr<UIBaseImage> loadImage(string path);
+	shared_ptr<UIBaseImage> loadImage(const string& path);
 	
 	void clearLevelImages(const string& prefix);
 

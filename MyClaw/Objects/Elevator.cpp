@@ -215,7 +215,7 @@ PathElevator::PathElevator(const WwdObject& obj, Player* player)
 	if (obj.clipRect.left != 0) _paths.push_back({ obj.clipRect.left, obj.clipRect.top });
 	if (obj.clipRect.right != 0) _paths.push_back({ obj.clipRect.right, obj.clipRect.bottom });
 
-	if (_paths.size() == 0) throw Exception(__FUNCTION__ " - no paths");
+	if (_paths.size() == 0) throw Exception("PathElevator - no paths");
 
 	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
 

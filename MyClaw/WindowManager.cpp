@@ -11,18 +11,21 @@ IWICImagingFactory* WindowManager::_wicImagingFactory = nullptr;
 const D2D1_POINT_2F* WindowManager::_windowOffset = &defaultWindowOffset;
 ColorF WindowManager::_backgroundColor(0);
 
+// throw exception if `func` failed
+#define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
+
 
 void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
 {
 	_hWnd = CreateWindow(WindowClassName, L"", WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
-	WINAPI_THROW_IF_NULL(_hWnd);
+	if (!_hWnd) throw Exception("Failed to create window");
 	ShowWindow(_hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(_hWnd);
 	D2D1_SIZE_F wndSz = getRealSize();
-	HRESULT_THROW_IF_FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_d2dFactory));
-	HRESULT_THROW_IF_FAILED(_d2dFactory->CreateHwndRenderTarget(RenderTargetProperties(), HwndRenderTargetProperties(_hWnd, { (UINT32)wndSz.width, (UINT32)wndSz.height }, D2D1_PRESENT_OPTIONS_NONE), &_renderTarget));
-	HRESULT_THROW_IF_FAILED(CoInitialize(nullptr));
-	HRESULT_THROW_IF_FAILED(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)(&_wicImagingFactory)));
+	TRY_HRESULT(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_d2dFactory), "Failed to create D2D1 factory");
+	TRY_HRESULT(_d2dFactory->CreateHwndRenderTarget(RenderTargetProperties(), HwndRenderTargetProperties(_hWnd, { (UINT32)wndSz.width, (UINT32)wndSz.height }, D2D1_PRESENT_OPTIONS_NONE), &_renderTarget), "Failed to create render target");
+	TRY_HRESULT(CoInitialize(nullptr), "Failed to initialize COM");
+	TRY_HRESULT(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)(&_wicImagingFactory)), "Failed to create WIC imaging factory");
 }
 void WindowManager::Finalize()
 {
@@ -157,15 +160,12 @@ ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uin
 	ID2D1Bitmap* bitmap = nullptr;
 	IWICBitmap* wicBitmap = nullptr;
 
-	HRESULT_THROW_IF_FAILED(_wicImagingFactory->CreateBitmapFromMemory(
-		width, height,
-		GUID_WICPixelFormat32bppPRGBA,
-		width * 4,
-		width * height * 4,
-		(BYTE*)buffer,
-		&wicBitmap));
+	TRY_HRESULT(_wicImagingFactory->CreateBitmapFromMemory(
+		width, height, GUID_WICPixelFormat32bppPRGBA,
+		width * 4, width * height * 4, (BYTE*)buffer,
+		&wicBitmap), "Failed to create WIC bitmap from buffer");
 
-	HRESULT_THROW_IF_FAILED(_renderTarget->CreateBitmapFromWicBitmap(wicBitmap, &bitmap));
+	TRY_HRESULT(_renderTarget->CreateBitmapFromWicBitmap(wicBitmap, &bitmap), "Failed to create D2D bitmap from WIC bitmap");
 
 	SafeRelease(wicBitmap);
 

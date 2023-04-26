@@ -52,7 +52,7 @@ Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string
 
 	if (imageSetPath.empty())
 	{
-		throw Exception(__FUNCTION__ ": imageSetPath is empty. aniPath=" + aniPath);
+		throw Exception("empty imageSetPath at " + aniPath);
 	}
 
 	for (uint32_t i = 0; i < framesCount; i++, soundFilePath = "")

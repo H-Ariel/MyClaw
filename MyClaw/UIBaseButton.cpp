@@ -82,7 +82,8 @@ LRESULT UIBaseButton::UIButtonBase_WndProc(HWND hwnd, UINT msg, WPARAM wPrm, LPA
 void UIBaseButton::CreateWnd()
 {
 	RegisterMyButtonClass();
-	WINAPI_THROW_IF_NULL(_btnWnd = CreateWindow(MY_BUTTON_CLASS_NAME, L"", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, WindowManager::getHwnd(), nullptr, HINST_THISCOMPONENT, nullptr));
+	_btnWnd = CreateWindow(MY_BUTTON_CLASS_NAME, L"", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, WindowManager::getHwnd(), nullptr, HINST_THISCOMPONENT, nullptr);
+	if (!_btnWnd) throw Exception("Failed to create button");
 	ShowWindow(_btnWnd, SW_NORMAL);
 	_allButtons[_btnWnd] = this;
 	Logic(0); // set up window's position and size

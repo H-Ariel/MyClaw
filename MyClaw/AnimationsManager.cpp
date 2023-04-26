@@ -42,9 +42,9 @@ shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, co
 			}
 			_loadedAnimations[k] = ani;
 		}
-		catch (Exception ex)
+		catch (Exception& ex)
 		{
-			throw Exception(__FUNCTION__ ": " + ex.what() + '\n');
+			throw Exception("Error while loading animation \"" + aniPath + "\". message: " + ex.what());
 		}
 	}
 	return _loadedAnimations[k];
@@ -58,12 +58,14 @@ map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirector
 		const RezDirectory* dir = _rezArchive->getDirectory(dirPath);
 		if (dir)
 		{
+			string path;
 			for (auto& i : dir->_files)
 			{
-				string path = i.second->getFullPath();
+				path = i.second->getFullPath();
 				if (endsWith(path, ".ANI"))
 				{
-					anis[i.second->name] = loadAnimation(path, imageSetPath, false);
+					// get the animation's name (without the extension) and load it
+					anis[i.second->name.substr(0, i.second->name.length() - 4)] = loadAnimation(path, imageSetPath, false);
 				}
 			}
 		}
@@ -110,7 +112,7 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const stri
 		const RezDirectory* dir = _rezArchive->getDirectory(dirPath);
 		if (!dir || dir->_files.size() == 0)
 		{
-			throw Exception(__FUNCTION__": dir=null. path=" + dirPath);
+			throw Exception("dir=null. path=" + dirPath);
 		}
 
 		for (auto& i : dir->_files)

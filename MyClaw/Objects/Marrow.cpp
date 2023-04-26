@@ -12,21 +12,32 @@ enum class GlobalState : int8_t
 	ParrotAttackClaw = 0,
 	ParrotReturnToMarrow = 1, AddFloor = 1,
 	ClawAttackMarrow = 2, ParrotIdle = 2,
-	ParrotTakeMarrow = 0, RemoveFloor = 0,
+	ParrotTakeMarrow = 3, RemoveFloor = 3
 };
 
-static GlobalState globalState = GlobalState::RemoveFloor;
+static GlobalState globalState = GlobalState::ParrotAttackClaw;
 static int floorCounter = 0; // use to sync floors
+static bool firstFloorsRemove = true;
 
-#define MARROW_ANIMATION_BLOCK _animations["BLOCK"]
+#define MARROW_ANIMATION_BLOCK	_animations["BLOCK"]
+#define MARROW_ANIMATION_HOME	_animations["HOME"]
+#define MARROW_ANIMATION_HAND_UP	_animations["IDLE1"]
+#define MARROW_ANIMATION_HAND_DOWN	_animations["IDLE4"]
 
+/*
+HOME - just stand
+IDLE1 - raise his hand up
+IDLE2 - wait with hand up (eyes open)
+IDLE3 - wait with hand up (eyes closed)
+IDLE4 - get hand down back
+*/
 
 Marrow::Marrow(const WwdObject& obj, Player* player)
 	: BaseBoss(obj, player, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS")
 {
 	_health = 100;
-	_ani = _animations["HOME"];
+	_ani = MARROW_ANIMATION_HOME;
 	_forward = false;
 }
 
@@ -37,7 +48,7 @@ void Marrow::Logic(uint32_t elapsedTime)
 	{
 		if (_ani->isFinishAnimation())
 		{
-			_ani = _animations["HOME"];
+			_ani = MARROW_ANIMATION_HOME;
 		}
 		else
 		{
@@ -58,19 +69,24 @@ void Marrow::Logic(uint32_t elapsedTime)
 			// TODO: open floor and move side (using parrot)
 
 			globalState = GlobalState::RemoveFloor;
+
+			_ani = MARROW_ANIMATION_HAND_UP;
+			_ani->reset();
+			_ani->loopAni = false;
 		}
 	}
 	
 
 	if (!_isAttack)
 	{
-		makeAttack();
+		if (globalState == GlobalState::ClawAttackMarrow)
+			makeAttack();
 	}
 	else
 	{
 		if (_ani->isFinishAnimation())
 		{
-			_ani = _animations["HOME"];
+			_ani = MARROW_ANIMATION_HOME;
 			_ani->reset();
 			_isAttack = false;
 			_forward = false;
@@ -99,6 +115,9 @@ pair<Rectangle2D, int> Marrow::GetAttackRect()
 
 bool Marrow::checkForHurts()
 {
+	if (globalState != GlobalState::ClawAttackMarrow)
+		return false;
+
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
 		if (isClawProjectile(p))
@@ -288,16 +307,24 @@ void MarrowFloor::Logic(uint32_t elapsedTime)
 			globalState = GlobalState::ClawAttackMarrow;
 		}
 	}
-	else if (globalState == GlobalState::RemoveFloor)
+	else if (globalState == GlobalState::RemoveFloor || firstFloorsRemove)
 	{
 		position.x += _speedX * elapsedTime;
 		if (position.x < _minX)
 		{
 			position.x = _minX;
+			floorCounter += 1;
 		}
 		else if (position.x > _maxX)
 		{
 			position.x = _maxX;
+			floorCounter += 1;
+		}
+
+		if (floorCounter == 2)
+		{
+			floorCounter = 0;
+			firstFloorsRemove = false;
 		}
 	}
 	

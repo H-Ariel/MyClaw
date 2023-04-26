@@ -129,7 +129,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 	}
 	else
 	{
-		throw Exception(__FUNCTION__ ": `(flags & WwdFlag_Compress)` is false");
+		throw Exception("WWD file is not compressed");
 	}
 
 	if (flags & WwdFlag_UseZCoords)
@@ -219,8 +219,8 @@ void WapWorld::readPlanes(BufferReader& reader, vector<WwdPlaneData>& planesData
 		reader.read(tilePixelWidth);
 		reader.read(tilePixelHeight);
 
-		if (tilePixelWidth != 64 && tilePixelHeight != 64)
-			throw Exception(__FUNCTION__ ": invalid tile's size");
+		if (tilePixelWidth != TILE_SIZE && tilePixelHeight != TILE_SIZE)
+			throw Exception("invalid size of tile");
 
 		reader.read(pln.tilesOnAxisX);
 		reader.read(pln.tilesOnAxisY);
@@ -354,8 +354,8 @@ void WapWorld::readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& 
 		reader.read(width);
 		reader.read(height);
 
-		if (width != 64 && height != 64)
-			throw Exception(__FUNCTION__ ": invalid size");
+		if (width != TILE_SIZE && height != TILE_SIZE)
+			throw Exception("invalid size");
 
 		switch (tileDesc.type)
 		{
@@ -367,13 +367,15 @@ void WapWorld::readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& 
 			reader.read(tileDesc.outsideAttrib);
 			reader.read(tileDesc.insideAttrib);
 			reader.read(tileDesc.rect);
-			if (tileDesc.rect.left > 63 || tileDesc.rect.top > 63 || tileDesc.rect.right > 63 || tileDesc.rect.bottom > 63 ||
-				tileDesc.rect.left < 0 || tileDesc.rect.top < 0 || tileDesc.rect.right < 0 || tileDesc.rect.bottom < 0)
-				throw Exception(__FUNCTION__ ": invalid rect");
+			if (tileDesc.rect.left < 0 || TILE_SIZE < tileDesc.rect.left ||
+				tileDesc.rect.top < 0 || TILE_SIZE < tileDesc.rect.top ||
+				tileDesc.rect.right < 0 || TILE_SIZE < tileDesc.rect.right ||
+				tileDesc.rect.bottom < 0 || TILE_SIZE < tileDesc.rect.bottom)
+				throw Exception("invalid rect");
 			break;
 
 		default:
-			throw Exception(__FUNCTION__ ": invalid type");
+			throw Exception("invalid type");
 		}
 	}
 

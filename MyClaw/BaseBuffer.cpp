@@ -40,7 +40,7 @@ void BaseBuffer::skip(int64_t n)
 {
 	if (n < 0 && _idx + n < 0)
 	{
-		throw Exception(__FUNCTION__ ": invalid index");
+		throw Exception("invalid buffer index");
 	}
 	setIndex(_idx + n);
 }

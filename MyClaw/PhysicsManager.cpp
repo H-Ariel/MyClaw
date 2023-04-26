@@ -13,12 +13,6 @@
 
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
-// TODO: delete this ?
-// if stay move to "framework.h"
-#define assert(b) if (!(b)){\
-	char buf[256]; sprintf(buf, "%d [%d]: %s", __LINE__, plane->tiles[i][j], #b);\
-	throw Exception(buf); }
-
 
 PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Player * player, int levelNumber)
 	: _player(player)
@@ -50,9 +44,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 			abs(last.first.bottom - curr.first.bottom) <= 2 &&
 			abs(last.first.right - curr.first.left) <= 2)
 		{
-			Rectangle2D newRc(last.first.left, last.first.top,
-				curr.first.right, last.first.bottom);
-			last.first = newRc;
+			last.first = Rectangle2D(last.first.left, last.first.top, curr.first.right, last.first.bottom);
 		}
 		else
 		{
@@ -110,6 +102,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 		}
 	}
 
+	cout << "rects amount: " << _rects.size() << endl;
+
 	// this loop combines rectangles that are next to each other (according to x axis)
 	for (i = 0; i < _rects.size(); i++)
 	{
@@ -120,10 +114,8 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 				abs(_rects[i].first.bottom - _rects[j].first.bottom) <= 2 &&
 				abs(_rects[i].first.right - _rects[j].first.left) <= 2)
 			{
-				Rectangle2D newRc(_rects[i].first.left, _rects[i].first.top,
-					_rects[j].first.right, _rects[i].first.bottom);
+				_rects[i].first = Rectangle2D(_rects[i].first.left, _rects[i].first.top, _rects[j].first.right, _rects[i].first.bottom);
 				_rects.erase(_rects.begin() + j);
-				_rects[i].first = newRc;
 				j--;
 			}
 		}
@@ -139,14 +131,14 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 				abs(_rects[i].first.right - _rects[j].first.right) <= 1 &&
 				abs(_rects[i].first.bottom - _rects[j].first.top) <= 1)
 			{
-				Rectangle2D newRc(_rects[i].first.left, _rects[i].first.top,
-					_rects[i].first.right, _rects[j].first.bottom);
+				_rects[i].first = Rectangle2D(_rects[i].first.left, _rects[i].first.top, _rects[i].first.right, _rects[j].first.bottom);
 				_rects.erase(_rects.begin() + j);
-				_rects[i].first = newRc;
 				j--;
 			}
 		}
 	}
+
+	cout << "rects amount: " << _rects.size() << endl;
 }
 
 void PhysicsManager::Draw()

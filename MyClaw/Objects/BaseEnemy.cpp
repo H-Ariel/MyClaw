@@ -399,7 +399,8 @@ BaseBoss::~BaseBoss()
 }
 bool BaseBoss::checkForHurts()
 {
-	throw Exception(__FUNCTION__ ": Write Me!");
+	//throw Exception(__FUNCTION__ ": Write Me!");
+	throw Exception("not implemented");
 //	return checkForHurt(_player->GetAttackRect());
 
 	// TODO: maybe- `if BaseEnemy::checkForHurts(): block`

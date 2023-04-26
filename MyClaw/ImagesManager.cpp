@@ -24,7 +24,7 @@ ImagesManager::~ImagesManager()
 	}
 }
 
-shared_ptr<UIBaseImage> ImagesManager::loadImage(string path)
+shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 {
 	shared_ptr<UIBaseImage> img;
 
@@ -48,7 +48,8 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(string path)
 		catch (Exception& ex)
 		{
 			img = allocNewSharedPtr<UIBaseImage>(nullptr); // empty image
-			cout << __FUNCTION__ ": WARNING: a blank image has been inserted. image path = \"" << path << '"' << endl;
+			//cout << "WARNING: error while loading image \"" << path << "\". message: " << ex.what() << endl;
+			cout << "WARNING: a blank image has been inserted. image path: \"" << path << '"' << endl;
 		}
 
 		_loadedBitmaps[path] = { img->_bitmap, img->offset };
@@ -276,8 +277,6 @@ shared_ptr<UIBaseImage> ImagesManager::loadPidImage(const string& pidPath)
 		pidFileReader.setIndex(currPos);
 		*/
 	}
-
-	THROW_IF_NULL(imagePalette);
 
 	/********************** PID PIXELS **********************/
 
