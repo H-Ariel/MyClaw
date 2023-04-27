@@ -476,10 +476,7 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 				x += 0.02f;
 			}
 
-			/*
-			TODO: now it <IMG> <amount>
-			need continue to: <IMG> <amount> OF <total> X<score> = <total_treasure_score>
-			*/
+			// TODO: now it <IMG> <amount>. need continue to: <IMG> <amount> OF <total> X<score> = <total_treasure_score>
 		}
 
 		break;

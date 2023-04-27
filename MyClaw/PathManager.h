@@ -4,12 +4,14 @@
 #include <map>
 
 using std::string;
+using std::map;
 
 
 class PathManager
 {
 public:
-	static void setLevelRoot(int lvlNo);
+	static void setRoots(string prefix[4], string imageSet[4]);
+
 	static void resetPaths();
 
 	static string getImageSetPath(const string& imageSet);
@@ -19,6 +21,6 @@ public:
 	static string getBackgroundMusicFilePath(const string& xmiPath);
 
 private:
-	static std::map<string, string> data[5];
-	static string _levelRoot;
+	static map<string, string> imageSetMap; // [prefix]=imageSet
+	static map<string, string> data[5];
 };

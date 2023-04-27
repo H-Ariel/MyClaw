@@ -103,11 +103,10 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 	uint32_t mainBlockLength = wwdFileReader->read<uint32_t>();
 	wwdFileReader->skip(136); // 4 checksum + 4 unk + 128 launch app
 
-	vector<string> prefix, imageSet;
-	for (int8_t i = 0; i < 4; i++, imageSet.push_back(replaceString(wwdFileReader->ReadString(128), '\\', '/')));
-	for (int8_t i = 0; i < 4; i++, prefix.push_back(replaceString(wwdFileReader->ReadString(32), '\\', '/')));
-	// TODO: add `prefix`/`imageSet` to `PathManager`
-	PathManager::setLevelRoot(levelNumber); // for now, levelNumber is used as level root
+	string prefix[4], imageSet[4];
+	for (int8_t i = 0; i < 4; imageSet[i++] = replaceString(wwdFileReader->ReadString(128), '\\', '/'));
+	for (int8_t i = 0; i < 4; prefix[i++] = replaceString(wwdFileReader->ReadString(32), '\\', '/'));
+	PathManager::setRoots(prefix, imageSet);
 
 	if (flags & WwdFlag_Compress)
 	{

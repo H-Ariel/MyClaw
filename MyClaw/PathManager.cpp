@@ -1,9 +1,16 @@
 #include "framework.h"
 
+enum Types
+{
+	IMAGE_SET,
+	ANIMATION_SET,
+	ANIMATION,
+	SOUND,
+	BACKGROUND_MUSIC
+};
 
-string PathManager::_levelRoot;
-map<string, string> PathManager::data[5];
-
+map<string, string> PathManager::data[5]; // [type][path]=result
+map<string, string> PathManager::imageSetMap;
 
 
 string replaceFirst(string str, const string& src, const string& dst)
@@ -13,54 +20,64 @@ string replaceFirst(string str, const string& src, const string& dst)
 	return str;
 }
 
-
-void PathManager::setLevelRoot(int lvlNo)
+void PathManager::setRoots(string prefix[], string imageSet[])
 {
-	_levelRoot = "LEVEL" + to_string(lvlNo);
+	for (int8_t i = 0; i < 4; i++)
+		if (!prefix[i].empty())
+			imageSetMap[prefix[i]] = imageSet[i];
 }
 
 void PathManager::resetPaths()
 {
 	for (auto& m : data)
 		m.clear();
+	imageSetMap.clear();
 }
 
 string PathManager::getImageSetPath(const string& _imageSet)
 {
-	if (data[0].count(_imageSet) == 0)
+	if (data[IMAGE_SET].count(_imageSet) == 0)
 	{
 		string imageSet(_imageSet);
-		if (!contains(imageSet, "IMAGES"))
-		{
-			imageSet = replaceFirst(imageSet, "GAME_", "GAME_IMAGES_");
-			imageSet = replaceFirst(imageSet, "LEVEL_", "LEVEL_IMAGES_");
-		}
-		if (startsWith(imageSet, "LEVEL_"))
-		{
-			imageSet = replaceFirst(imageSet, "LEVEL", _levelRoot);
-		}
+
+		for (auto& i : imageSetMap)
+			if (!contains(imageSet, "IMAGES"))
+				if (startsWith(imageSet, i.first + '_'))
+				{
+					imageSet = replaceFirst(imageSet, i.first, i.second);
+					break;
+				}
+		
 		imageSet = replaceString(imageSet, '_', '/');
-		data[0][_imageSet] = imageSet;
+		data[IMAGE_SET][_imageSet] = imageSet;
 	}
 
-	return data[0][_imageSet];
+	return data[IMAGE_SET][_imageSet];
 }
 string PathManager::getAnimationSetPath(const string& _aniSet)
 {
-	if (data[1].count(_aniSet) == 0)
+	if (data[ANIMATION_SET].count(_aniSet) == 0)
 	{
 		string aniSet(_aniSet);
+
+		for (auto& i : imageSetMap)
+		{
+			if (startsWith(aniSet, i.first + '_'))
+			{
+				aniSet = replaceFirst(aniSet, i.first, replaceFirst(i.second, "IMAGES", "ANIS"));
+				break;
+			}
+		}
+
 		aniSet = replaceString(aniSet, '_', '/');
-		aniSet = replaceFirst(aniSet, "GAME", "GAME/ANIS");
-		aniSet = replaceFirst(aniSet, "LEVEL", _levelRoot + "/ANIS");
-		data[1][_aniSet] = aniSet;
+		data[ANIMATION_SET][_aniSet] = aniSet;
 	}
 
-	return data[1][_aniSet];
+	return data[ANIMATION_SET][_aniSet];
 }
 string PathManager::getAnimationPath(const string& _path)
 {
-	if (data[2].count(_path) == 0)
+	if (data[ANIMATION].count(_path) == 0)
 	{
 		string path(_path);
 		path = getAnimationSetPath(path);
@@ -71,22 +88,23 @@ string PathManager::getAnimationPath(const string& _path)
 			path = "LEVEL1/ANIS/MANICLES/MANICAL.ANI";
 		}
 
-		data[2][_path] = path;
+		data[ANIMATION][_path] = path;
 	}
 
-	return data[2][_path];
+	return data[ANIMATION][_path];
 }
 string PathManager::getSoundFilePath(const string& _path)
 {
-	if (data[3].count(_path) == 0)
+	if (data[SOUND].count(_path) == 0)
 	{
 		string path(_path);
 
-		if (_levelRoot == "LEVEL1" && path == "LEVEL_AMBIENT_ANGVIL")
+		// TODO: hack - something else
+		if (imageSetMap["LEVEL"] == "LEVEL1" && path == "LEVEL_AMBIENT_ANGVIL")
 		{
 			path = "LEVEL_AMBIENT_ANVIL";
 		}
-		else if (_levelRoot == "LEVEL3")
+		else if (imageSetMap["LEVEL"] == "LEVEL3")
 		{
 			if (path == "LEVEL_TRIGGER_1013")
 			{
@@ -98,25 +116,37 @@ string PathManager::getSoundFilePath(const string& _path)
 			}
 		}
 
-		path = replaceString(path, '_', '/');
-		path = replaceFirst(path, "GAME", "GAME/SOUNDS");
 		path = replaceFirst(path, "CLAW", "CLAW/SOUNDS");
-		path = replaceFirst(path, "LEVEL", _levelRoot + "/SOUNDS");
-		data[3][_path] = path + ".WAV";
+		
+		for (auto& i : imageSetMap)
+			if (startsWith(path, i.first + '_'))
+			{
+				path = replaceFirst(path, i.first, replaceFirst(i.second, "IMAGES", "SOUNDS"));
+				break;
+			}
+
+		path = replaceString(path, '_', '/');
+		data[SOUND][_path] = path + ".WAV";
 	}
 
-	return data[3][_path];
+	return data[SOUND][_path];
 }
 string PathManager::getBackgroundMusicFilePath(const string& _path)
 {
-	if (data[4].count(_path) == 0)
+	if (data[BACKGROUND_MUSIC].count(_path) == 0)
 	{
 		string path(_path);
+
+		for (auto& i : imageSetMap)
+			if (startsWith(path, i.first + '_'))
+			{
+				path = replaceFirst(path, i.first, replaceFirst(i.second, "IMAGES", "MUSIC"));
+				break;
+			}
+
 		path = replaceString(path, '_', '/');
-		path = replaceFirst(path, "GAME", "GAME/MUSIC");
-		path = replaceFirst(path, "LEVEL", _levelRoot + "/MUSIC");
-		data[4][_path] = path + ".XMI";
+		data[BACKGROUND_MUSIC][_path] = path + ".XMI";
 	}
 
-	return data[4][_path];
+	return data[BACKGROUND_MUSIC][_path];
 }

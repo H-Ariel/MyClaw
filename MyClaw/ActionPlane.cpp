@@ -391,13 +391,13 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	}
 	else if (obj.logic == "BreakPlank")
 	{
-		WwdRect rc = {};
-		if (levelNumber == 5) rc = wwd->tilesDescription[509].rect;
-		else if (levelNumber == 11) rc = wwd->tilesDescription[39].rect;
+		int32_t topOffset = 0;
+		if (levelNumber == 5) topOffset = wwd->tilesDescription[509].rect.top;
+		else if (levelNumber == 11) topOffset = wwd->tilesDescription[39].rect.top;
 
 		for (int32_t i = 0; i < obj.width; i++)
 		{
-			_objects.push_back(DBG_NEW BreakPlank(obj, _player, rc));
+			_objects.push_back(DBG_NEW BreakPlank(obj, _player, (float)topOffset));
 			//obj.x += TILE_SIZE;
 			myMemCpy(obj.x, obj.x + TILE_SIZE);
 		}

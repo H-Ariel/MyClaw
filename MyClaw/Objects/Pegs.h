@@ -39,5 +39,5 @@ private:
 class BreakPlank : public CrumblingPeg
 {
 public:
-	BreakPlank(const WwdObject& obj, Player* player, WwdRect tileRc);
+	BreakPlank(const WwdObject& obj, Player* player, float topOffset); // topOffset is the offset from the top of the image to the top of the plank
 };

@@ -248,7 +248,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 		}
 
 
-		if (_hitsCounter == 3) // todo: change to 3
+		if (_hitsCounter == 3)
 		{
 			_hitsCounter = 0;
 			// TODO: return to initial position

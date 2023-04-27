@@ -174,10 +174,10 @@ void CrumblingPeg::Reset()
 	_draw = true;
 }
 
-BreakPlank::BreakPlank(const WwdObject& obj, Player* player, WwdRect tileRc)
+BreakPlank::BreakPlank(const WwdObject& obj, Player* player, float topOffset)
 	: CrumblingPeg(obj, player)
 {
 	Rectangle2D rc(_objRc);
-	rc.top += tileRc.top;
+	rc.top += topOffset;
 	myMemCpy(_objRc, rc);
 }
