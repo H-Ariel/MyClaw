@@ -167,6 +167,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 		WwdTileDescription& t509 = tilesDescription[509];
 		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[519].rect.bottom += 2;
 	}
 	else if (levelNumber == 11)
 	{
