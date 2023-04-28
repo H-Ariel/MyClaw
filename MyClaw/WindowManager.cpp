@@ -3,7 +3,7 @@
 
 static D2D1_POINT_2F defaultWindowOffset = {};
 
-float WindowManager::PixelSize = 1+1; // min value: 1
+float WindowManager::PixelSize = 1; // min value: 1
 HWND WindowManager::_hWnd = nullptr;
 ID2D1Factory* WindowManager::_d2dFactory = nullptr;
 ID2D1HwndRenderTarget* WindowManager::_renderTarget = nullptr;

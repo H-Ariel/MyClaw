@@ -140,6 +140,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 	
 	// minor change to tiles so they will be more accurate for reduce rectangles (in PhysicsManager)
 	// in levels 5,11 it is necessary to change the tiles for "BreakPlanks"
+	// TODO: levels 5,11: connect the planks to the tiles
 	// TODO: continue for all levels (if needed)
 	if (levelNumber == 1)
 	{

@@ -21,12 +21,11 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 
 	Rectangle2D tileRc, originalTileRc;
 	uint32_t i, j;
+	float x1, x2, y1, y2;
 
 	// add rectangle to list and merge it with previous rectangle if possible
 	auto addRect = [&](const Rectangle2D& rc, uint32_t attrib) {
-
-		if (attrib == WwdTileDescription::TileAttribute_Clear ||
-			rc.left == rc.right || rc.top == rc.bottom)
+		if (attrib == WwdTileDescription::TileAttribute_Clear || rc.left == rc.right || rc.top == rc.bottom)
 			return;
 
 		pair<Rectangle2D, uint32_t> curr = { rc, attrib };
@@ -34,25 +33,24 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 		if (_rects.empty())
 		{
 			_rects.push_back(curr);
-			return;
-		}
-
-		pair<Rectangle2D, uint32_t>& last = _rects.back();
-
-		if (last.second == curr.second &&
-			abs(last.first.top - curr.first.top) <= 2 &&
-			abs(last.first.bottom - curr.first.bottom) <= 2 &&
-			abs(last.first.right - curr.first.left) <= 2)
-		{
-			last.first = Rectangle2D(last.first.left, last.first.top, curr.first.right, last.first.bottom);
 		}
 		else
 		{
-			_rects.push_back(curr);
+			pair<Rectangle2D, uint32_t>& last = _rects.back();
+
+			if (last.second == curr.second &&
+				abs(last.first.top - curr.first.top) <= 2 &&
+				abs(last.first.bottom - curr.first.bottom) <= 2 &&
+				abs(last.first.right - curr.first.left) <= 2)
+			{
+				last.first = Rectangle2D(last.first.left, last.first.top, curr.first.right, last.first.bottom);
+			}
+			else
+			{
+				_rects.push_back(curr);
+			}
 		}
 	};
-
-	float x1, x2, y1, y2;
 
 	for (i = 0; i < plane->tilesOnAxisY; i++)
 	{
@@ -96,13 +94,11 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 				addRect({ x1, y2, x2, tileRc.bottom }, tileDesc.outsideAttrib);
 				addRect({ x2, y2, tileRc.right, tileRc.bottom }, tileDesc.outsideAttrib);
 				break;
-
-			default: break;
 			}
 		}
 	}
 
-	cout << "rects amount: " << _rects.size() << endl;
+//	cout << "rects amount: " << _rects.size() << endl;
 
 	// this loop combines rectangles that are next to each other (according to x axis)
 	for (i = 0; i < _rects.size(); i++)
@@ -138,7 +134,7 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Playe
 		}
 	}
 
-	cout << "rects amount: " << _rects.size() << endl;
+//	cout << "rects amount: " << _rects.size() << endl;
 }
 
 void PhysicsManager::Draw()

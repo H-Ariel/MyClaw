@@ -147,18 +147,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 {
 	if (_player->isFinishLevel()) return;
 
-	auto _update_position = [&] {
-		// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
-		const D2D1_SIZE_F wndSize = WindowManager::getSize();
-		position.x = _player->position.x - wndSize.width / 2.0f;
-		position.y = _player->position.y - wndSize.height / 2.0f;
-
-		if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
-		if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;
-		if (position.y < MIN_OFFSET_Y) position.y = MIN_OFFSET_Y;
-		if (position.y > MAX_OFFSET_Y) position.y = MAX_OFFSET_Y;
-	};
-
 	if (_deathAniWait)
 	{
 		switch (_state)
@@ -169,7 +157,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			{
 				_state = States::Open;
 				_player->backToLife();
-				_update_position();
+				updatePosition();
 
 				for (BasePlaneObject* obj : _objects)
 				{
@@ -225,7 +213,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		_physicsManager->checkCollides(_player, [&] { _player->loseLife(); });
 	}
 
-	_update_position();
+	updatePosition();
 
 	if (_needSort)
 	{
@@ -574,4 +562,17 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	}
 
 	//	throw Exception("TODO: logic=" + obj.logic);
+}
+
+void ActionPlane::updatePosition()
+{
+	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
+	const D2D1_SIZE_F wndSize = WindowManager::getSize();
+	position.x = _player->position.x - wndSize.width / 2.0f;
+	position.y = _player->position.y - wndSize.height / 2.0f;
+
+	if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
+	if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;
+	if (position.y < MIN_OFFSET_Y) position.y = MIN_OFFSET_Y;
+	if (position.y > MAX_OFFSET_Y) position.y = MAX_OFFSET_Y;
 }

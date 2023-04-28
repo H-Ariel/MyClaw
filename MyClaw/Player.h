@@ -83,7 +83,7 @@ private:
 	bool isWeaponAnimation() const;
 	void calcRect(); // calculate the player rectangle and save in `_saveCurrRect`
 	void calcAttackRect(); // calculate the player attack rectangle and save in `_saveCurrAttackRect`
-
+	void shootSwordProjectile();
 
 	string _aniName;
 	vector<string> AttackAnimations, NoLoopAnimations;

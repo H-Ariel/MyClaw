@@ -534,24 +534,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 			if (endsWith(_aniName, "SWIPE") && _currPowerup != PowerupType::None)
 			{
-				auto shootSwordProjectile = [&](ClawProjectile::Types type) {
-					WwdObject obj;
-					calcAttackRect();
-					Rectangle2D atkRc = GetAttackRect().first;
-					obj.x = (int32_t)position.x;
-					obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
-					obj.z = ZCoord;
-					obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
-					obj.damage = 25;
-					ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
-				};
-
-				switch (_currPowerup)
-				{
-				case PowerupType::FireSword: shootSwordProjectile(ClawProjectile::Types::FireSword); break;
-				case PowerupType::IceSword: shootSwordProjectile(ClawProjectile::Types::IceSword); break;
-				case PowerupType::LightningSword: shootSwordProjectile(ClawProjectile::Types::LightningSword); break;
-				}
+				shootSwordProjectile();
 			}
 		}
 	}
@@ -585,8 +568,6 @@ Rectangle2D Player::GetRect() { return _saveCurrRect; }
 pair<Rectangle2D, int> Player::GetAttackRect() { return _saveCurrAttackRect; }
 void Player::calcRect()
 {
-	// calculate _saveCurrRect
-
 	_saveCurrRect.left = -7.f + 15 * _isMirrored;
 	_saveCurrRect.right = _saveCurrRect.left + 44;
 
@@ -618,8 +599,6 @@ void Player::calcRect()
 }
 void Player::calcAttackRect()
 {
-	// calculate _saveCurrAttackRect
-
 	Rectangle2D rc;
 	int damage = 0;
 
@@ -1052,6 +1031,28 @@ void Player::loseLife()
 		_powerupSparkles.clear();
 		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
 	}
+}
+
+void Player::shootSwordProjectile()
+{
+	ClawProjectile::Types type;
+	switch (_currPowerup)
+	{
+	case PowerupType::FireSword: type = ClawProjectile::Types::FireSword; break;
+	case PowerupType::IceSword: type = ClawProjectile::Types::IceSword; break;
+	case PowerupType::LightningSword: type = ClawProjectile::Types::LightningSword; break;
+	default: return;
+	}
+
+	WwdObject obj;
+	calcAttackRect();
+	Rectangle2D atkRc = GetAttackRect().first;
+	obj.x = (int32_t)position.x;
+	obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
+	obj.z = ZCoord;
+	obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
+	obj.damage = 25;
+	ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
 }
 
 void Player::keyUp(int key)

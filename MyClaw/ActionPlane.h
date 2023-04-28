@@ -34,6 +34,7 @@ public:
 	static const vector<Laser*>& getLasers() { return _lasers; }
 
 private:
+	void updatePosition();
 	void addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd);
 
 	// TODO: make non-static
