@@ -355,7 +355,7 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 #endif
 	if (endsWith(obj.logic, "Elevator"))
 	{
-		_objects.push_back(Elevator::create(obj, _player));
+		_objects.push_back(Elevator::create(obj, _player, levelNumber));
 	}
 	else if (endsWith(obj.logic, "Checkpoint"))
 	{

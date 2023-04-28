@@ -34,16 +34,31 @@ private:
 };
 
 
-Elevator* Elevator::create(const WwdObject& obj, Player* player)
+Elevator* Elevator::create(const WwdObject& obj, Player* player, int levelNumber)
 {
-	if (obj.logic == "PathElevator")
-		return DBG_NEW PathElevator(obj, player);
-	if (contains(obj.logic, "Trigger"))
-		return DBG_NEW TriggerElevator(obj, player);
-	if (contains(obj.logic, "Start"))
-		return DBG_NEW StartElevator(obj, player);
+	Elevator* elevator = nullptr;
 
-	return DBG_NEW Elevator(obj, player);
+	if (obj.logic == "PathElevator")
+		elevator = DBG_NEW PathElevator(obj, player);
+	else if (contains(obj.logic, "Trigger"))
+		elevator = DBG_NEW TriggerElevator(obj, player);
+	else if (contains(obj.logic, "Start"))
+		elevator = DBG_NEW StartElevator(obj, player);
+	else
+		elevator = DBG_NEW Elevator(obj, player);
+
+
+	// TODO: hack- fit offset to level elevator. need to find a better way
+	switch (levelNumber)
+	{
+	case 2: elevator->_offsetY = -72; break;
+	case 3:
+	case 4: elevator->_offsetY = -80; break;
+	case 7: elevator->_offsetY = 0; break;
+	default: elevator->_offsetY = -64; break;
+	}
+
+	return elevator;
 }
 
 
@@ -52,7 +67,7 @@ Elevator::Elevator(const WwdObject& obj, Player* player)
 	_minPos({ (float)obj.minX, (float)obj.minY }), _maxPos({ (float)obj.maxX, (float)obj.maxY }),
 	_initialPos({ (float)obj.x, (float)obj.y }), _initialSpeed({}),
 	_isOneWayElevator(contains(obj.logic, "OneWay")),
-	_operateElevator(true)
+	_operateElevator(true), _offsetY(-64)
 {
 	_ani = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
 
@@ -143,7 +158,7 @@ void Elevator::mainLogic(uint32_t elapsedTime) // logic for every elevator
 		else
 		{
 			_player->position.x += deltaX;
-			_player->position.y = position.y - 64; // TODO: fit offset to level elevator
+			_player->position.y = position.y + _offsetY;
 		}
 	}
 	else
