@@ -166,6 +166,12 @@ void Elevator::mainLogic(uint32_t elapsedTime) // logic for every elevator
 		tryCatchPlayer();
 	}
 }
+Rectangle2D Elevator::GetRect()
+{
+	Rectangle2D rc = BaseDynamicPlaneObject::GetRect();
+	rc.top = rc.bottom - 20;
+	return rc;
+}
 void Elevator::Reset()
 {
 	position = _initialPos;

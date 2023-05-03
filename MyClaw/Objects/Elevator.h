@@ -9,6 +9,7 @@ public:
 	static Elevator* create(const WwdObject& obj, Player* player, int levelNumber);
 
 	void Logic(uint32_t elapsedTime) override;
+	Rectangle2D GetRect() override;
 	void Reset() override;
 
 protected:
