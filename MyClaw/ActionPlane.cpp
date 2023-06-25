@@ -127,9 +127,7 @@ ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int level
 ActionPlane::~ActionPlane()
 {
 	for (BasePlaneObject* i : _objects)
-	{
 		delete i;
-	}
 
 	// because it static member and we don't want recycle objects...
 	SafeDelete(_physicsManager);

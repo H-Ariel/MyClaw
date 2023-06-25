@@ -28,6 +28,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <list>
 #include <map>
 #include <cmath>
 #include <functional>
