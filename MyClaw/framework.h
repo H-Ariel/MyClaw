@@ -100,6 +100,15 @@ inline bool FindInArray(ArrT arr, ValT val)
 	return find(begin(arr), arrEnd, val) != arrEnd;
 }
 
+// reverses the bytes order of `obj`
+template <class T>
+inline T reverseBytes(T t)
+{
+	uint8_t* ptr = (uint8_t*)(&t);
+	std::reverse(ptr, ptr + sizeof(T));
+	return t;
+}
+
 // safe release for COM objects
 template <class T>
 inline void SafeRelease(T*& p)
