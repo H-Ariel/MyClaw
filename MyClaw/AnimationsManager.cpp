@@ -42,7 +42,7 @@ shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, co
 			}
 			_loadedAnimations[k] = ani;
 		}
-		catch (Exception& ex)
+		catch (const Exception& ex)
 		{
 			throw Exception("Error while loading animation \"" + aniPath + "\". message: " + ex.what());
 		}

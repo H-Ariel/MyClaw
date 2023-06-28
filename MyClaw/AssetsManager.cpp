@@ -122,7 +122,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int32_t volume, b
 		id = _audioManager->playWavFile(wavFilePath, infinite);
 		_audioManager->setVolume(id, volume);
 	}
-	catch (Exception& ex)
+	catch (const Exception& ex)
 	{
 		cout << __FUNCTION__ " - Error for wavFilePath=\"" << wavFilePath << "\": " << ex.what() << endl;
 	}

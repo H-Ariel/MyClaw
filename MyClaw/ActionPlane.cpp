@@ -111,7 +111,7 @@ ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int level
 		{
 			addObject(obj, levelNumber, wwd);
 		}
-		catch (Exception& ex)
+		catch (const Exception& ex)
 		{
 			// an exception may be thrown if the path is invalid or if we don't impleted the logic of object
 #ifdef _DEBUG

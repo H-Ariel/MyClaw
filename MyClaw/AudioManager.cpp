@@ -88,7 +88,7 @@ void AudioManager::setBackgroundMusic(BackgroundMusicType type, bool reset)
 			try {
 				_midiPlayers[BackgroundMusicType::Boss] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(PathManager::getBackgroundMusicFilePath("LEVEL_BOSS")));
 			}
-			catch (Exception&) {}
+			catch (const Exception&) {}
 		}
 
 		_currBgMusicType = type;

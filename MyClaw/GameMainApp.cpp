@@ -41,7 +41,7 @@ void GameMainApp::run()
 				AssetsManager::loadLevelWwdFile(i);
 				cout << "finish load level " << i << endl;
 			}
-			catch (Exception& e) {
+			catch (const Exception& e) {
 				cout << "failed to load level " << i << endl;
 				cout << e.what() << endl;
 			}
@@ -56,7 +56,7 @@ void GameMainApp::run()
 
 	runApp = true;
 	//_pEngine = allocNewSharedPtr<MenuEngine>();
-	_pEngine = allocNewSharedPtr<LevelLoadingEngine>(1);
+	_pEngine = allocNewSharedPtr<LevelLoadingEngine>(10);
 	runEngine();
 }
 
