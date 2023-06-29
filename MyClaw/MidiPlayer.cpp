@@ -74,7 +74,6 @@ void MidiPlayer::stop()
 
 void MidiPlayer::play(bool infinite)
 {
-	// TODO: use `infinite` to loop the MIDI file
 	reset();
 	_isPlaying = true;
 	thread(&MidiPlayer::play_sync, this, infinite).detach();
@@ -104,27 +103,40 @@ void MidiPlayer::reset()
 void MidiPlayer::play_sync(bool infinite)
 {
 	MidiEvent evt;
-	uint32_t current_time = 0, time, bytesread, msg, len;
+	uint32_t current_time, time, bytesread, msg, len;
 	uint8_t c;
 
 #ifdef MIDI_NO_PRINT
 	printf("Track, length: %d\n", reverseBytes(track.track->length));
 #endif
 
-	while (true)
+start:
+	current_time = 0;
+
+	while (_isPlaying)
 	{
 		time = -1;
 		bytesread = 0;
 		evt = get_next_event();
 
 		if (is_track_end(evt) || evt.absolute_time > time)
-			stop();
+		{
+			if (infinite)
+			{
+				reset();
+				_isPlaying = true;
+				goto start;
+			}
+			else 
+			{
+				stop();
+			}
+		}
 		else
 			time = evt.absolute_time;
 
 		if (!_isPlaying)
 		{
-			_isPlaying = false;
 			break;
 		}
 
