@@ -1,4 +1,5 @@
 #include "AssetsManager.h"
+#include "MidiPlayer.h"
 #include "Objects/Item.h"
 
 

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "WavPlayer.h"
-#include "MidiPlayer.h"
+
+
+class MidiPlayer;
 
 
 class AudioManager

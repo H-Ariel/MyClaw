@@ -4,7 +4,6 @@
 
 #include "framework.h"
 
-//#define MIDI_NO_PRINT // comment this line to print MIDI events
 
 // MIDI player class
 class MidiPlayer
@@ -23,11 +22,12 @@ public:
 
 	// reset the track of current midi-player
 	void reset();
-	
+
 private:
 #pragma pack(push, 1)
 
-	struct MidiHeader {
+	struct MidiHeader
+	{
 		uint32_t id; // identifier "MThd"
 		uint32_t size; // always 6 in big-endian format
 		uint16_t format; // big-endian format
@@ -35,20 +35,25 @@ private:
 		uint16_t ticks; // number of ticks per quarter note, big-endian
 	};
 
-	struct MidiTrackData {
+	struct MidiTrackData
+	{
 		uint32_t id; // identifier "MTrk"
 		uint32_t length; // track length, big-endian
 	};
 
 #pragma pack(pop)
 
-	struct MidiEvent {
+	struct MidiEvent
+	{
 		uint32_t absolute_time;
 		uint8_t* data;
 		uint8_t event;
+
+		void print() const; // print the event data to the console
 	};
 
-	struct MidiTrack {
+	struct MidiTrack
+	{
 		MidiTrackData* track;
 		uint8_t* buf;
 		MidiEvent last_event;
@@ -59,17 +64,11 @@ private:
 	void play_sync(bool infinite);
 
 	// get the next event from the track
-	MidiEvent get_next_event() const;
+	MidiEvent getNextEvent() const;
 
-	// check if the event is the end of the track
-	static bool is_track_end(const MidiEvent& e);
+	// sleep for waitTime microseconds (better than Sleep() which sleeps for milliseconds)
+	static void usleep(int waitTime);
 
-#ifdef MIDI_NO_PRINT
-	// print the event to the console
-	static void print_event(const MidiEvent& evt);
-#endif
-
-private:
 	vector<uint8_t> _midiData;
 	MidiTrack track; // in our MIDI data we know there's only one track
 	uint32_t PPQN_CLOCK;
@@ -78,5 +77,5 @@ private:
 
 	static HMIDIOUT _midiOut; // MIDI device handle (static because it's shared between instances)
 	static int _objCount; // number of instances of this class
-
+	static LARGE_INTEGER PerformanceFrequency;
 };

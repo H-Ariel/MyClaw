@@ -1,4 +1,5 @@
 #include "AudioManager.h"
+#include "MidiPlayer.h"
 
 
 AudioManager::AudioManager(RezArchive* rezArchive)
