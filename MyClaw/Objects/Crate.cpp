@@ -124,7 +124,7 @@ StackedCrates::StackedCrates(const WwdObject& obj, Player* player)
 }
 void StackedCrates::Logic(uint32_t elapsedTime)
 {
-	removeObject = crates.size() == 0;
+	removeObject = crates.empty();
 
 	if (!removeObject)
 	{
@@ -166,7 +166,6 @@ vector<Item*> StackedCrates::getItems()
 		}
 		if (crates[i]->removeObject)
 		{
-		//	delete crates[i];
 			crates.erase(crates.begin() + i);
 			i--; // cancel `i++`
 		}

@@ -437,18 +437,15 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 	switch (_state)
 	{
-	case Start:
-		break;
-
 	case DrawScore:
 		delete _bgImg;
 		_elementsList.clear();
 		_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(getBGImgPath2(_lvlNum)));
 		_state += 1;
 
-		// TODO: draw all treasures and their points
+		// draw all treasures and their points
 
-		int digits[3]; // we have only 3 digits to display
+		uint8_t digits[3]; // we have only 3 digits to display
 		MenuItem* item;
 		float x, y;
 		int i, j;
@@ -481,15 +478,14 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 		break;
 
-	case Wait:
-		// nop
-		break;
-
 	case End:
 		playNextLevel();
 		break;
 
+	case Start:
+	case Wait:
 	default:
+		// do nothing
 		break;
 	}
 }

@@ -218,16 +218,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		sort(_objects.begin(), _objects.end(), [](BasePlaneObject* a, BasePlaneObject* b) { return a->ZCoord < b->ZCoord; });
 	}
 
-	_player->Logic(elapsedTime);
-
 	BasePlaneObject* obj;
 
 	for (size_t i = 0; i < _objects.size(); i++)
 	{
 		obj = _objects[i];
-
-		if (obj == _player) continue;
-
 		obj->Logic(elapsedTime);
 
 		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
