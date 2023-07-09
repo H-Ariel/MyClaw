@@ -22,7 +22,7 @@ enum WwdPlaneFlags
 // Single-call decompression.
 // Returns MZ_OK on success, or one of the error codes from mz_inflate() on failure.
 // impleted in Miniz.cpp
-int mz_uncompress(uint8_t* pDest, uint32_t pDest_len, const uint8_t* const pSource, uint32_t source_len);
+int mz_uncompress(uint8_t* pDest, uint32_t* pDest_len, const uint8_t* pSource, uint32_t source_len);
 
 
 
@@ -122,7 +122,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 		memcpy(decompressedMainBlock, wwdFileReader->getCData(), planesOffset);
 
 		// Inflate compressed WWD file payload
-		mz_uncompress(decompressedMainBlock + planesOffset, mainBlockLength, wwdFileReader->getCData() + planesOffset, (uint32_t)wwdFileReader->getSize() - planesOffset);
+		mz_uncompress(decompressedMainBlock + planesOffset, &mainBlockLength, wwdFileReader->getCData() + planesOffset, (uint32_t)wwdFileReader->getSize() - planesOffset);
 
 		BufferReader wwdFileStreamInflated(decompressedMainBlock, decompressedMainBlockLength, false);
 		wwdFileStreamInflated.setIndex(planesOffset);
