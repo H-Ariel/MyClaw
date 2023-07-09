@@ -225,7 +225,6 @@
     <ClInclude Include="LevelPlane.h" />
     <ClInclude Include="MenuEngine.h" />
     <ClInclude Include="MidiPlayer.h" />
-    <ClInclude Include="Miniz.h" />
     <ClInclude Include="Objects\BaseEnemy.h" />
     <ClInclude Include="Objects\BearSailor.h" />
     <ClInclude Include="Objects\Cannon.h" />

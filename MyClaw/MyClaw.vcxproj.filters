@@ -311,9 +311,6 @@
     <ClInclude Include="MidiPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Miniz.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PathManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>

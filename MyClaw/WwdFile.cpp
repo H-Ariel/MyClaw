@@ -1,5 +1,4 @@
 #include "WwdFile.h"
-#include "Miniz.h"
 #include "AssetsManager.h"
 #include "WindowManager.h"
 #include "ActionPlane.h"
@@ -18,6 +17,13 @@ enum WwdPlaneFlags
 	WwdPlaneFlags_YWrapping = 1 << 3,
 	WwdPlaneFlags_AutoTileSize = 1 << 4
 };
+
+
+// Single-call decompression.
+// Returns MZ_OK on success, or one of the error codes from mz_inflate() on failure.
+// impleted in Miniz.cpp
+int mz_uncompress(uint8_t* pDest, uint32_t pDest_len, const uint8_t* const pSource, uint32_t source_len);
+
 
 
 WwdObject::WwdObject()
