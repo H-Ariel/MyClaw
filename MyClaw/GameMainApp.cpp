@@ -30,7 +30,7 @@ GameMainApp::~GameMainApp()
 
 void GameMainApp::run()
 {
-	if (0) // TODO: delete this `if` block
+	if (01) // TODO: delete this `if` block
 	{
 		// try load all levels
 		for (int i = 1; i <= 14; i++)
