@@ -45,6 +45,7 @@ void GameMainApp::run()
 				cout << "failed to load level " << i << endl;
 				cout << e.what() << endl;
 			}
+			AssetsManager::clearLevelAssets(i);
 			cout << "----------------------------------" << endl;
 		}
 

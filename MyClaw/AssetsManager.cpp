@@ -157,10 +157,10 @@ void AssetsManager::clearLevelAssets(int lvl)
 {
 	if (_runApp)
 	{
-		const string prefix = "LEVEL" + to_string(lvl);
+		const string prefix = "/LEVEL" + to_string(lvl);
 		_imagesManager->clearLevelImages(prefix);
 		_animationsManager->clearLevelAnimations(prefix);
-		_audioManager->clearLevelSounds(prefix);
+		_audioManager->clearLevelSounds();
 		Item::resetItemsPaths();
 		PathManager::resetPaths();
 	}

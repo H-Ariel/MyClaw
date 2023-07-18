@@ -28,6 +28,9 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 {
 	shared_ptr<UIBaseImage> img;
 
+	if (path[0] != '/') // TODO: remove this and add it to the caller
+		(string&)path = '/' + path;
+
 	if (_loadedBitmaps.count(path))
 	{
 		img = allocNewSharedPtr<UIBaseImage>(_loadedBitmaps[path].first, _loadedBitmaps[path].second);
@@ -59,18 +62,12 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 }
 void ImagesManager::clearLevelImages(const string& prefix)
 {
-	vector<string> keysToRemove;
-	for (auto& a : _loadedBitmaps)
+	for (auto it = _loadedBitmaps.begin(); it != _loadedBitmaps.end();)
 	{
-		if (startsWith(a.first, prefix))
-		{
-			keysToRemove.push_back(a.first);
-		}
-	}
-
-	for (const string& k : keysToRemove)
-	{
-		_loadedBitmaps.erase(k);
+		if (startsWith(it->first, prefix))
+			it = _loadedBitmaps.erase(it);
+		else
+			++it;
 	}
 
 	// this palette is from "STATES/BOOTY/SCREENS/001MAP.PCX" (all PCX of map has the same palette)
@@ -368,12 +365,12 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 	ColorRGBA pcxPalette[256] = {};
 	shared_ptr<BufferReader> pcxReader = _rezArchive->getFileBufferReader(pcxPath);
 	vector<ColorRGBA> pixels; // list of RGBA pixels
-	uint32_t width, height, maxXPadding, plane, x, y;
+	uint32_t width, height, maxXPadding, plane = 0, x = 0, y = 0;
 	uint16_t startX, startY, endX, endY, bytesPerLine;
-	uint8_t pcxVer, pcxId, pcxReserved1, numBitPlanes, runCount, runValue, i, byteValue, u8;
+	uint8_t pcxVer, pcxId, pcxReserved1, numBitPlanes, runCount=0, runValue, i, byteValue, u8;
 	uint8_t pcxEnc; // encoding: 0 = raw; 1 = RLE
 	uint8_t bpp; // bits per pixel (or: plane)
-	int8_t bit;
+	int8_t bit=0;
 
 
 	pcxReader->read(pcxId);
@@ -398,6 +395,7 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 	pcxReader->read(pcxReserved1);
 	pcxReader->read(numBitPlanes);
 	pcxReader->read(bytesPerLine);
+	pcxReader->skip(60);
 
 
 	if (pcxId != 0x0a || pcxVer != 5 || pcxVer == 1 || pcxEnc > 1 || endX <= startX || endY <= startY || pcxReserved1 || numBitPlanes != 1)
@@ -410,7 +408,6 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 	pixels.resize((size_t)width * height);
 	maxXPadding = bytesPerLine * 8 / bpp;
 
-	pcxReader->skip(60);
 
 	if (bpp > 4)
 	{
@@ -435,13 +432,8 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 	pcxPalette[0].a = 0; // first pixel in palette is transparent
 
 
-	plane = 0;
-	x = 0;
-	y = 0;
-	bit = 0;
-	runCount = 0;
-
-	do {
+	while (y < height) 
+	{
 		u8 = pcxReader->read<uint8_t>();
 
 		if (pcxEnc == 1) // is RLE
@@ -507,7 +499,7 @@ shared_ptr<UIBaseImage> ImagesManager::loadPcxImage(const string& pcxPath)
 				pixels[(size_t)width * y + x++] = pcxPalette[byteValue];
 			} while (bit != 0);
 		}
-	} while (y < height);
+	}
 
 	return allocNewSharedPtr<UIBaseImage>(WindowManager::createBitmapFromBuffer(pixels.data(), width, height));
 }

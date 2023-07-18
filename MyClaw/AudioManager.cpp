@@ -59,7 +59,7 @@ void AudioManager::setVolume(uint32_t wavFileId, int32_t volume)
 		_wavPlayers[wavFileId]->setVolume(volume);
 }
 
-void AudioManager::clearLevelSounds(string prefix)
+void AudioManager::clearLevelSounds()
 {
 	_wavPlayers.clear();
 	_midiPlayers.clear();

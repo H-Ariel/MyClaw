@@ -17,7 +17,7 @@ public:
 	uint32_t getWavFileDuration(uint32_t wavFileId);
 	void setVolume(uint32_t wavFileId, int32_t volume); // set the volume. value range is [0,100]
 
-	void clearLevelSounds(string prefix);
+	void clearLevelSounds();
 
 	void checkForRestart();
 

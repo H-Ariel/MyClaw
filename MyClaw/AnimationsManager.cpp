@@ -30,6 +30,9 @@ AnimationsManager::AnimationsManager(RezArchive* rezArchive)
 
 shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, const string& imageSetPath, bool save)
 {
+	if (aniPath[0] != '/') // TODO: remove this and add it to the caller
+		(string&)aniPath = '/' + aniPath;
+
 	const string k = aniPath + '+' + imageSetPath;
 	if (_loadedAnimations.count(k) == 0)
 	{
@@ -51,6 +54,9 @@ shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, co
 }
 map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath)
 {
+	if (dirPath[0] != '/') // TODO: remove this and add it to the caller
+		(string&)dirPath = '/' + dirPath;
+
 	map<string, shared_ptr<Animation>> anis;
 
 	if (_savedAniDirs.count(dirPath) == 0)
@@ -104,6 +110,9 @@ map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirector
 }
 shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder)
 {
+	if (dirPath[0] != '/') // TODO: remove this and add it to the caller
+		(string&)dirPath = '/' + dirPath;
+
 	const string k = dirPath + '+' + to_string(duration) + '+' + to_string(reversedOrder);
 	if (_loadedAnimations.count(k) == 0)
 	{
@@ -135,6 +144,9 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const stri
 }
 shared_ptr<Animation> AnimationsManager::createAnimationFromFromPidImage(const string& pidPath)
 {
+	if (pidPath[0] != '/') // TODO: remove this and add it to the caller
+		(string&)pidPath = '/' + pidPath;
+
 	if (_loadedAnimations.count(pidPath) == 0)
 	{
 		vector<Animation::FrameData*> images = { DBG_NEW Animation::FrameData(pidPath) };
@@ -154,17 +166,19 @@ void AnimationsManager::callAnimationsLogic(uint32_t elapsedTime)
 
 void AnimationsManager::clearLevelAnimations(const string& prefix)
 {
-	vector<string> keysToRemove;
-	for (auto& a : _loadedAnimations)
+	for (auto it = _loadedAnimations.begin(); it != _loadedAnimations.end();)
 	{
-		if (startsWith(a.first, prefix))
-		{
-			keysToRemove.push_back(a.first);
-		}
+		if (startsWith(it->first, prefix))
+			it = _loadedAnimations.erase(it);
+		else
+			++it;
 	}
-
-	for (const string& k : keysToRemove)
+	
+	for (auto it = _savedAniDirs.begin(); it != _savedAniDirs.end();)
 	{
-		_loadedAnimations.erase(k);
+		if (startsWith(it->first, prefix))
+			it = _savedAniDirs.erase(it);
+		else
+			++it;
 	}
 }
