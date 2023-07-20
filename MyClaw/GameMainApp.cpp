@@ -32,33 +32,30 @@ void GameMainApp::run()
 {
 	if (01) // TODO: delete this `if` block
 	{
+		set<int> badLevels;
 		// try load all levels
 		for (int i = 1; i <= 14; i++)
 		{
 			try
 			{
-				cout << "start load level " << i << endl;
-				AssetsManager::loadLevelWwdFile(i);
-				cout << "finish load level " << i << endl;
+				cout << "load level " << i << endl;
+				auto wwd = AssetsManager::loadLevelWwdFile(i);
+				for (auto& p : wwd->planes) delete p; // do not forget free allocated memory
+				cout << endl;
 			}
 			catch (const Exception& e) {
-				cout << "failed to load level " << i << endl;
-				cout << e.what() << endl;
+				cout << " - failed: " << e.what() << endl;
 			}
 			AssetsManager::clearLevelAssets(i);
-			cout << "----------------------------------" << endl;
 		}
-
-		cout << "succes to load all levels" << endl;
-		cout << "press any key to continue" << endl;
-		cin.get();
-		// now we can exit from this program :)
 	}
-
-	runApp = true;
-	//_pEngine = allocNewSharedPtr<MenuEngine>();
-	_pEngine = allocNewSharedPtr<LevelLoadingEngine>(1);
-	runEngine();
+	else
+	{
+		runApp = true;
+		//_pEngine = allocNewSharedPtr<MenuEngine>();
+		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(1);
+		runEngine();
+	}
 }
 
 void GameMainApp::runEngine()

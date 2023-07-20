@@ -3,6 +3,7 @@
 
 
 BaseEngine::BaseEngine() : mousePosition({}), StopEngine(false) {}
+BaseEngine::~BaseEngine() {}
 
 void BaseEngine::OnKeyUp(int key) {}
 void BaseEngine::OnKeyDown(int key) {}

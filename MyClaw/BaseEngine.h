@@ -7,6 +7,7 @@ class BaseEngine
 {
 public:
 	BaseEngine();
+	virtual ~BaseEngine();
 
 	virtual void OnKeyUp(int key);
 	virtual void OnKeyDown(int key);

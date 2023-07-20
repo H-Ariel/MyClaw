@@ -22,8 +22,7 @@ enum WwdPlaneFlags
 // Single-call decompression.
 // Returns MZ_OK on success, or one of the error codes from mz_inflate() on failure.
 // impleted in Miniz.cpp
-int mz_uncompress(uint8_t* pDest, uint32_t* pDest_len, const uint8_t* pSource, uint32_t source_len);
-
+void mz_uncompress(uint8_t* pDest, uint32_t* pDestLen, const uint8_t* pSource, uint32_t source_len);
 
 
 WwdObject::WwdObject()

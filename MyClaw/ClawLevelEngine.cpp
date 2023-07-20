@@ -130,6 +130,10 @@ void ClawLevelEngine::OnKeyUp(int key)
 			WindowManager::setBackgroundColor(ColorF::Black);
 			_state = State::Help;
 		}
+		else if (key == VK_ESCAPE)
+		{
+			// TODO: pause menu
+		}
 		else if (key == VK_ADD)
 		{
 			if (WindowManager::PixelSize <= 3.5f)

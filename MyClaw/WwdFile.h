@@ -169,7 +169,7 @@ class WapWorld // in short: WWD
 public:
 	WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber = 0);
 
-	vector<LevelPlane*> planes;
+	vector<LevelPlane*> planes; // we should delete them manually. TODO: shared_ptr
 	map<int32_t, WwdTileDescription> tilesDescription; // [id]=description
 	int32_t startX, startY;
 
