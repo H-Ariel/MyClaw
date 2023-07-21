@@ -57,7 +57,7 @@
 // TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#ifndef _DEBUG
-//#undef LOW_DETAILS
+#undef LOW_DETAILS
 #define USE_ENEMIES
 //#endif
 
@@ -301,7 +301,7 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 }
 
 
-#define ADD_ENEMY(p) { BaseEnemy* enemy=p; _objects.push_back(enemy); _enemies.push_back(enemy); }
+#define ADD_ENEMY(p) { BaseEnemy* enemy = DBG_NEW p; _objects.push_back(enemy); _enemies.push_back(enemy); }
 
 void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd)
 {
@@ -424,27 +424,27 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	}
 	else if (obj.logic == "Officer")
 	{
-		ADD_ENEMY(DBG_NEW Officer(obj, _player));
+		ADD_ENEMY(Officer(obj, _player));
 	}
 	else if (obj.logic == "Soldier")
 	{
-		ADD_ENEMY(DBG_NEW Soldier(obj, _player));
+		ADD_ENEMY(Soldier(obj, _player));
 	}
 	else if (obj.logic == "Rat")
 	{
-		ADD_ENEMY(DBG_NEW Rat(obj, _player));
+		ADD_ENEMY(Rat(obj, _player));
 	}
 	else if (obj.logic == "PunkRat")
 	{
-		ADD_ENEMY(DBG_NEW PunkRat(obj, _player));
+		ADD_ENEMY(PunkRat(obj, _player));
 	}
 	else if (obj.logic == "RobberThief")
 	{
-		ADD_ENEMY(DBG_NEW RobberThief(obj, _player));
+		ADD_ENEMY(RobberThief(obj, _player));
 	}
 	else if (obj.logic == "CutThroat")
 	{
-		ADD_ENEMY(DBG_NEW CutThroat(obj, _player));
+		ADD_ENEMY(CutThroat(obj, _player));
 	}
 	else if (startsWith(obj.logic, "FloorSpike"))
 	{
@@ -453,27 +453,27 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	}
 	else if (obj.logic == "Seagull")
 	{
-		ADD_ENEMY(DBG_NEW Seagull(obj, _player));
+		ADD_ENEMY(Seagull(obj, _player));
 	}
 	else if (obj.logic == "TownGuard1" || obj.logic == "TownGuard2")
 	{
-		ADD_ENEMY(DBG_NEW TownGuard(obj, _player));
+		ADD_ENEMY(TownGuard(obj, _player));
 	}
 	else if (obj.logic == "RedTailPirate")
 	{
-		ADD_ENEMY(DBG_NEW RedTailPirate(obj, _player));
+		ADD_ENEMY(RedTailPirate(obj, _player));
 	}
 	else if (obj.logic == "BearSailor")
 	{
-		ADD_ENEMY(DBG_NEW BearSailor(obj, _player));
+		ADD_ENEMY(BearSailor(obj, _player));
 	}
 	else if (obj.logic == "CrazyHook")
 	{
-		ADD_ENEMY(DBG_NEW CrazyHook(obj, _player));
+		ADD_ENEMY(CrazyHook(obj, _player));
 	}
 	else if (obj.logic == "HermitCrab")
 	{
-		ADD_ENEMY(DBG_NEW HermitCrab(obj, _player));
+		ADD_ENEMY(HermitCrab(obj, _player));
 	}
 	else if (obj.logic == "CrabNest")
 	{
@@ -494,40 +494,40 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	}
 	else if (obj.logic == "PegLeg")
 	{
-		ADD_ENEMY(DBG_NEW PegLeg(obj, _player));
+		ADD_ENEMY(PegLeg(obj, _player));
 	}
 	else if (obj.logic == "Mercat")
 	{
-		ADD_ENEMY(DBG_NEW Mercat(obj, _player));
+		ADD_ENEMY(Mercat(obj, _player));
 	}
 	else if (obj.logic == "Siren")
 	{
-		ADD_ENEMY(DBG_NEW Siren(obj, _player));
+		ADD_ENEMY(Siren(obj, _player));
 	}
 	else if (obj.logic == "Fish")
 	{
-		ADD_ENEMY(DBG_NEW Fish(obj, _player));
+		ADD_ENEMY(Fish(obj, _player));
 	}
 #endif
 	else if (obj.logic == "Chameleon")
 	{
-		ADD_ENEMY(DBG_NEW Chameleon(obj, _player));
+		ADD_ENEMY(Chameleon(obj, _player));
 	}
 	else if (obj.logic == "Raux")
 	{
-		ADD_ENEMY(DBG_NEW LeRauxe(obj, _player));
+		ADD_ENEMY(LeRauxe(obj, _player));
 	}
 	else if (obj.logic == "Katherine")
 	{
-		ADD_ENEMY(DBG_NEW Katherine(obj, _player));
+		ADD_ENEMY(Katherine(obj, _player));
 	}
 	else if (obj.logic == "Wolvington")
 	{
-		ADD_ENEMY(DBG_NEW Wolvington(obj, _player));
+		ADD_ENEMY(Wolvington(obj, _player));
 	}
 	else if (obj.logic == "Gabriel")
 	{
-		ADD_ENEMY(DBG_NEW Gabriel(obj, _player));
+		ADD_ENEMY(Gabriel(obj, _player));
 	}
 	else if (obj.logic == "GabrielCannon")
 	{
@@ -543,11 +543,11 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	}
 	else if (obj.logic == "Marrow")
 	{
-		ADD_ENEMY(DBG_NEW Marrow(obj, _player));
+		ADD_ENEMY(Marrow(obj, _player));
 	}
 	else if (obj.logic == "Parrot")
 	{
-		ADD_ENEMY(DBG_NEW MarrowParrot(obj, _player));
+		ADD_ENEMY(MarrowParrot(obj, _player));
 	}
 	else if (obj.logic == "MarrowFloor")
 	{

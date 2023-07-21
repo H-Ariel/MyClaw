@@ -23,8 +23,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, Player* player)
 	}
 
 	char frame[9]; sprintf(frame, "/%03d.PID", obj.userValue1);
-	_ani = AssetsManager::createAnimationFromFromPidImage(
-		PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
+	_ani = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
 
 	myMemCpy(_objRc, Rectangle2D((float)obj.minX, (float)obj.minY, (float)obj.maxX, (float)obj.maxY));
 }
