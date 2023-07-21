@@ -19,10 +19,8 @@ enum WwdPlaneFlags
 };
 
 
-// Single-call decompression.
-// Returns MZ_OK on success, or one of the error codes from mz_inflate() on failure.
 // impleted in Miniz.cpp
-void mz_uncompress(uint8_t* pDest, uint32_t* pDestLen, const uint8_t* pSource, uint32_t source_len);
+void mz_uncompress(uint8_t pDest[], uint32_t pDestLen, const uint8_t pSource[], uint32_t sourceLen);
 
 
 WwdObject::WwdObject()
@@ -85,13 +83,7 @@ WwdPlaneData::WwdPlaneData()
 
 WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 {
-	// signature holds WWD header size, if size does not match then it is not supported WWD file
-	if (wwdFileReader->read<uint32_t>() != 1524)
-	{
-		throw Exception("invlaid WWD file");
-	}
-
-	wwdFileReader->skip(4);
+	wwdFileReader->skip(8);
 	uint32_t flags = wwdFileReader->read<uint32_t>();
 	wwdFileReader->skip(4);
 	WindowManager::setTitle(wwdFileReader->ReadString(64));
@@ -121,7 +113,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 		memcpy(decompressedMainBlock, wwdFileReader->getCData(), planesOffset);
 
 		// Inflate compressed WWD file payload
-		mz_uncompress(decompressedMainBlock + planesOffset, &mainBlockLength, wwdFileReader->getCData() + planesOffset, (uint32_t)wwdFileReader->getSize() - planesOffset);
+		mz_uncompress(decompressedMainBlock + planesOffset, mainBlockLength, wwdFileReader->getCData() + planesOffset, (uint32_t)wwdFileReader->getSize() - planesOffset);
 
 		BufferReader wwdFileStreamInflated(decompressedMainBlock, decompressedMainBlockLength, false);
 		wwdFileStreamInflated.setIndex(planesOffset);

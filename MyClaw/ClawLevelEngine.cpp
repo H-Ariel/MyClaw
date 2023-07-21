@@ -128,7 +128,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 			_saveBgColor = WindowManager::getBackgroundColor();
 			WindowManager::setWindowOffset(nullptr);
 			WindowManager::setBackgroundColor(ColorF::Black);
-			_state = State::Help;
+			_state = State::Pause;
 		}
 		else if (key == VK_ESCAPE)
 		{
@@ -149,7 +149,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 			_player->keyUp(key);
 		}
 	}
-	else // if (_state == State::Help)
+	else // if (_state == State::Pause)
 	{
 		_elementsList.clear();
 		for (LevelPlane* p : _wwd->planes)
@@ -162,5 +162,6 @@ void ClawLevelEngine::OnKeyUp(int key)
 }
 void ClawLevelEngine::OnKeyDown(int key)
 {
-	_player->keyDown(key);
+	if (_state == State::Play)
+		_player->keyDown(key);
 }

@@ -18,7 +18,7 @@ public:
 
 
 private:
-	enum class State : int8_t { Play, Help };
+	enum class State : int8_t { Play, Pause };
 
 	shared_ptr<WapWorld> _wwd;
 	LevelPlane* _mainPlane;
