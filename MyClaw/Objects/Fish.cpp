@@ -47,7 +47,7 @@ void Fish::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_WALK;
 			_ani->reset();
 			_isAttack = false;
-			_forward = _speed.x > 0;
+			_isMirrored = _speed.x < 0;
 		}
 	}
 
@@ -63,18 +63,18 @@ void Fish::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
 	_speed.x = ENEMY_PATROL_SPEED;
-	_forward = true;
+	_isMirrored = false;
 }
 void Fish::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
 	_speed.x = -ENEMY_PATROL_SPEED;
-	_forward = false;
+	_isMirrored = true;
 }
 
 void Fish::makeAttack()
 {
-	if ((_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x))
+	if (enemySeeClaw())
 	{
 		if (abs(_player->position.x - position.x) < 96 && abs(_player->position.y - position.y) < 32)
 		{
@@ -86,7 +86,7 @@ void Fish::makeAttack()
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_forward = _player->position.x > position.x;
+			_isMirrored = _player->position.x < position.x;
 		}
 	}
 }

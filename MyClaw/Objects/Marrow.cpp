@@ -48,7 +48,7 @@ Marrow::Marrow(const WwdObject& obj, Player* player)
 {
 	_health = 100;
 	_ani = MARROW_ANIMATION_HOME;
-	_forward = false;
+	_isMirrored = !false;
 }
 
 void Marrow::Logic(uint32_t elapsedTime)
@@ -90,7 +90,7 @@ void Marrow::Logic(uint32_t elapsedTime)
 		if (_ani == MARROW_ANIMATION_HAND_UP && _ani->isFinishAnimation())
 		{
 			_speed.x = marrowSise == MarrowSise::Left ? -0.4f : 0.4f;
-			_forward = marrowSise == MarrowSise::Left ? false : true;
+			_isMirrored = marrowSise != MarrowSise::Left ? false : true;
 			position.y -= 128;
 			_ani = MARROW_ANIMATION_WAIT_HAND_UP;
 			_ani->reset();
@@ -100,7 +100,7 @@ void Marrow::Logic(uint32_t elapsedTime)
 		{
 			position.y += 128;
 			marrowSise = marrowSise == MarrowSise::Left ? MarrowSise::Right : MarrowSise::Left;
-			_forward = marrowSise == MarrowSise::Left ? false : true;
+			_isMirrored = marrowSise != MarrowSise::Left ? false : true;
 			globalState = GlobalState::AddFloor;
 			_ani = MARROW_ANIMATION_HOME;
 			_ani->reset();
@@ -137,7 +137,7 @@ void Marrow::makeAttack()
 		_ani = _animations["STRIKE2"]; // knife attack
 		_ani->reset();
 		_isAttack = true;
-		_forward = _player->position.x > position.x;
+		_isMirrored = _player->position.x < position.x;
 	}
 }
 
@@ -186,13 +186,13 @@ void Marrow::stopMovingLeft(float collisionSize)
 {
 	BaseBoss::stopMovingLeft(collisionSize);
 	_speed = {};
-	_forward = false;
+	_isMirrored = !false;
 }
 void Marrow::stopMovingRight(float collisionSize)
 {
 	BaseBoss::stopMovingRight(collisionSize);
 	_speed = {};
-	_forward = true;
+	_isMirrored = !true;
 }
 
 
@@ -206,7 +206,7 @@ MarrowParrot::MarrowParrot(const WwdObject& obj, Player* player)
 	_flyRect((float)obj.minX, (float)obj.minY - 32.f, (float)obj.maxX, (float)obj.maxY - 32.f)
 {
 	myMemCpy(_initialPosition, position);
-	_forward = false;
+	_isMirrored = !false;
 	_speed = { 0, MARROW_PARROT_SPEED };
 }
 
@@ -275,7 +275,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	
 	
 
-	_forward = _speed.x > 0;
+	_isMirrored = _speed.x < 0;
 
 	PostLogic(elapsedTime);
 }

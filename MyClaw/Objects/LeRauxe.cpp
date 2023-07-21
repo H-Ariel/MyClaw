@@ -70,13 +70,13 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 	{
 		_ani = ANIMATION_WALK;
 		_isAttack = false;
-		_forward = _speed.x > 0;
+		_isMirrored = _speed.x < 0;
 	}
 	
 	if (_ani != ANIMATION_JUMPBACK && abs(_player->position.x - position.x) > 64)
 	{
-		_forward = _player->position.x > position.x;
-		if (_forward) _speed.x = abs(_speed.x);
+		_isMirrored = _player->position.x < position.x;
+		if (!_isMirrored) _speed.x = abs(_speed.x);
 		else _speed.x = -abs(_speed.x);
 	}
 
@@ -90,23 +90,13 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 }
 Rectangle2D LeRauxe::GetRect()
 {
-	Rectangle2D rc;
+	_saveCurrRect.left = -7.f + 15 * _isMirrored;
+	_saveCurrRect.right = _saveCurrRect.left + 50;
+	_saveCurrRect.top = 5;
+	_saveCurrRect.bottom = 115;
 
-	rc.left = -7.f + 15 * (!_forward);
-	rc.right = rc.left + 50;
-	rc.top = 5;
-	rc.bottom = 115;
-
-	// set rectangle by center
-	const float addX = position.x - (rc.right - rc.left) / 2, addY = position.y - (rc.bottom - rc.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	_saveCurrRect = rc;
-
-	return rc;
+	_saveCurrRect = setRectByCenter(_saveCurrRect);
+	return _saveCurrRect;
 }
 pair<Rectangle2D, int> LeRauxe::GetAttackRect()
 {
@@ -117,15 +107,15 @@ pair<Rectangle2D, int> LeRauxe::GetAttackRect()
 		rc.top = 60;
 		rc.bottom = 80;
 
-		if (_forward)
-		{
-			rc.left = 50;
-			rc.right = 130;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -80;
 			rc.right = 0;
+		}
+		else
+		{
+			rc.left = 50;
+			rc.right = 130;
 		}
 	}
 	else if (_ani == ANIMATION_STAB)
@@ -133,27 +123,20 @@ pair<Rectangle2D, int> LeRauxe::GetAttackRect()
 		rc.top = 30;
 		rc.bottom = 50;
 
-		if (_forward)
-		{
-			rc.left = 50;
-			rc.right = 130;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -80;
 			rc.right = 0;
 		}
+		else
+		{
+			rc.left = 50;
+			rc.right = 130;
+		}
 	}
 	else return {};
 
-	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	return { rc, _damage };
+	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }
 
 void LeRauxe::stopFalling(float collisionSize)
@@ -172,14 +155,14 @@ void LeRauxe::stopMovingLeft(float collisionSize)
 	position.x += collisionSize;
 	_speed.x = ENEMY_PATROL_SPEED;
 	_speed.y = 0;
-	_forward = true;
+	_isMirrored = false;
 }
 void LeRauxe::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
 	_speed.x = -ENEMY_PATROL_SPEED;
 	_speed.y = 0;
-	_forward = false;
+	_isMirrored = true;
 }
 
 bool LeRauxe::PreLogic(uint32_t elapsedTime)
@@ -227,9 +210,7 @@ bool LeRauxe::PreLogic(uint32_t elapsedTime)
 }
 void LeRauxe::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (isInRange)
+	if (enemySeeClaw())
 	{
 		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
 		if (deltaX < 96 && deltaY < 16) // CC is close to LR
@@ -238,7 +219,7 @@ void LeRauxe::makeAttack()
 			else _ani = ANIMATION_STAB;
 			_ani->reset();
 			_isAttack = true;
-			_forward = _player->position.x > position.x;
+			_isMirrored = _player->position.x < position.x;
 
 			_attackRest = 600;
 		}

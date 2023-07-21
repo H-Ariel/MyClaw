@@ -58,14 +58,20 @@ void Katherine::Logic(uint32_t elapsedTime)
 	{
 		_ani = ANIMATION_WALK;
 		_isAttack = false;
-		_forward = _speed.x > 0;
+		if (_speed.x == 0)
+		{
+			if (_isMirrored) _speed.x = -ENEMY_PATROL_SPEED;
+			else _speed.x = ENEMY_PATROL_SPEED;
+		}
+		else
+			_isMirrored = _speed.x < 0;
 	}
 
 	if (_ani != ANIMATION_FLIP && abs(_player->position.x - position.x) > 64)
 	{
-		_forward = _player->position.x > position.x;
-		if (_forward) _speed.x = abs(_speed.x);
-		else _speed.x = -abs(_speed.x);
+		_isMirrored = _player->position.x < position.x;
+		if (_isMirrored) _speed.x = -abs(_speed.x);
+		else _speed.x = abs(_speed.x);
 	}
 
 	if (_ani != prevAni)
@@ -78,23 +84,16 @@ void Katherine::Logic(uint32_t elapsedTime)
 }
 Rectangle2D Katherine::GetRect()
 {
-	Rectangle2D rc = _ani->GetRect();
+	Rectangle2D rc;
 
-	rc.left = -7.f + 15 * (!_forward);
+	rc.left = -7.f + 15 * _isMirrored;
 	rc.right = rc.left + 50;
 	rc.top = 5;
 	rc.bottom = 115;
 
-	// set rectangle by center
-	const float addX = position.x - (rc.right - rc.left) / 2, addY = position.y - (rc.bottom - rc.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
+	_saveCurrRect = setRectByCenter(rc);
 
-	_saveCurrRect = rc;
-
-	return rc;
+	return _saveCurrRect;
 }
 pair<Rectangle2D, int> Katherine::GetAttackRect()
 {
@@ -105,15 +104,15 @@ pair<Rectangle2D, int> Katherine::GetAttackRect()
 		rc.top = 50;
 		rc.bottom = 70;
 
-		if (_forward)
-		{
-			rc.left = 182;
-			rc.right = 202;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -148;
 			rc.right = -128;
+		}
+		else
+		{
+			rc.left = 182;
+			rc.right = 202;
 		}
 	}
 	else if (_ani == ANIMATION_STRIKE2)
@@ -121,27 +120,20 @@ pair<Rectangle2D, int> Katherine::GetAttackRect()
 		rc.top = 10;
 		rc.bottom = 40;
 
-		if (_forward)
-		{
-			rc.left = 50;
-			rc.right = 75;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -25;
 			rc.right = 0;
 		}
+		else
+		{
+			rc.left = 50;
+			rc.right = 75;
+		}
 	}
 	else return {};
 
-	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	return { rc, _damage };
+	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }
 
 void Katherine::stopFalling(float collisionSize)
@@ -160,14 +152,14 @@ void Katherine::stopMovingLeft(float collisionSize)
 	position.x += collisionSize;
 	_speed.x = ENEMY_PATROL_SPEED;
 	_speed.y = 0;
-	_forward = true;
+	_isMirrored = false;
 }
 void Katherine::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
 	_speed.x = -ENEMY_PATROL_SPEED;
 	_speed.y = 0;
-	_forward = false;
+	_isMirrored = true;
 }
 
 bool Katherine::PreLogic(uint32_t elapsedTime)
@@ -215,9 +207,7 @@ bool Katherine::PreLogic(uint32_t elapsedTime)
 }
 void Katherine::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (isInRange)
+	if (enemySeeClaw())
 	{
 		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
 		if (deltaX < 48 && deltaY < 16) // CC is close to K
@@ -225,7 +215,7 @@ void Katherine::makeAttack()
 			_ani = ANIMATION_STRIKE2;
 			_ani->reset();
 			_isAttack = true;
-			_forward = _player->position.x > position.x;
+			_isMirrored = _player->position.x < position.x;
 
 			_attackRest = 800;
 		}
@@ -234,7 +224,7 @@ void Katherine::makeAttack()
 			_ani = ANIMATION_STRIKE1;
 			_ani->reset();
 			_isAttack = true;
-			_forward = _player->position.x > position.x;
+			_isMirrored = _player->position.x < position.x;
 
 			_attackRest = 1200;
 		}

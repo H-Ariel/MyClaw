@@ -22,15 +22,15 @@ pair<Rectangle2D, int> RedTailPirate::GetAttackRect()
 
 	Rectangle2D rc;
 
-	if (_forward)
-	{
-		rc.left = 30;
-		rc.right = 110;
-	}
-	else
+	if (_isMirrored)
 	{
 		rc.left = -60;
 		rc.right = 20;
+	}
+	else
+	{
+		rc.left = 30;
+		rc.right = 110;
 	}
 
 	if (_ani == _animations["STRIKE1"]) // strike high
@@ -44,12 +44,5 @@ pair<Rectangle2D, int> RedTailPirate::GetAttackRect()
 		rc.bottom = 100;
 	}
 
-	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	return { rc, _damage };
+	return { setRectByCenter(rc,_saveCurrRect), _damage };
 }

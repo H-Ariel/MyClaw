@@ -30,9 +30,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 		_attackRest -= elapsedTime;
 
 		// if CC close to enemy - dive
-		if (_attackRest <= 0 &&
-			((_forward && _player->position.x > position.x) ||
-				(!_forward && _player->position.x < position.x)) &&
+		if (_attackRest <= 0 && enemySeeClaw() &&
 			(_minX <= _player->position.x && _player->position.x <= _maxX) &&
 			(_minY <= _player->position.y && _player->position.y <= _maxY))
 		{
@@ -49,7 +47,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 		{
 			_state = States::DiveOut;
 			_isAttack = false;
-			_speed.x = calcSpeed(position.x, _forward ? _maxX : _minX); // TODO: find better `dstPos`
+			_speed.x = calcSpeed(position.x, _isMirrored ? _minX : _maxX); // TODO: find better `dstPos`
 			_speed.y = calcSpeed(position.y, _minY);
 
 			_ani = _animations["HOME"];
@@ -60,7 +58,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 		if (position.y < _minY)
 		{
 			position.y = _minY;
-			_speed.x = _forward ? -ENEMY_PATROL_SPEED : ENEMY_PATROL_SPEED;
+			_speed.x = _isMirrored ? ENEMY_PATROL_SPEED : -ENEMY_PATROL_SPEED;
 			_speed.y = 0;
 			_attackRest = 1000;
 

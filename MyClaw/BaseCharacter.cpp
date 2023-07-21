@@ -20,3 +20,18 @@ void BaseCharacter::Draw()
 bool BaseCharacter::isStanding() const { return false; }
 bool BaseCharacter::isDuck() const { return false; }
 bool BaseCharacter::isTakeDamage() const { return false; }
+
+Rectangle2D BaseCharacter::setRectByCenter(Rectangle2D rc, Rectangle2D rcCenter) const
+{
+	float addX = position.x - (rcCenter.right - rcCenter.left) / 2;
+	float addY = position.y - (rcCenter.bottom - rcCenter.top) / 2;
+	rc.top += addY;
+	rc.bottom += addY;
+	rc.left += addX;
+	rc.right += addX;
+	return rc;
+}
+Rectangle2D BaseCharacter::setRectByCenter(Rectangle2D rc) const
+{
+	return setRectByCenter(rc, rc);
+}

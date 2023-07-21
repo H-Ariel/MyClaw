@@ -37,9 +37,7 @@ void HermitCrab::Logic(uint32_t elapsedTime)
 
 void HermitCrab::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (_isStanding || isInRange)
+	if (_isStanding || enemySeeClaw())
 	{
 		const float deltaX = abs(_player->position.x - position.x);
 		const float deltaY = abs(_player->position.y - position.y);
@@ -50,13 +48,13 @@ void HermitCrab::makeAttack()
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_forward = _player->position.x > position.x;
+			_isMirrored = _player->position.x < position.x;
 
 			WwdObject obj;
-			obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+			obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
 			obj.y = (int32_t)position.y - 24;
 			obj.z = ZCoord;
-			obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+			obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
 			ActionPlane::addPlaneObject(DBG_NEW CrabBomb(obj));
 

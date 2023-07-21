@@ -17,9 +17,7 @@ Rat::Rat(const WwdObject& obj, Player* player)
 
 void Rat::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (_isStanding || isInRange)
+	if (_isStanding || enemySeeClaw())
 	{
 		if (abs(_player->position.x - position.x) < 352 && abs(_player->position.y - position.y) < 42)
 		{
@@ -27,13 +25,13 @@ void Rat::makeAttack()
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_forward = _player->position.x > position.x;
+			_isMirrored = _player->position.x < position.x;
 
 			WwdObject obj;
-			obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 			obj.y = (int32_t)position.y - 32;
 			obj.z = ZCoord;
-			obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 15;
 			ActionPlane::addPlaneObject(DBG_NEW RatBomb(obj));
 		}

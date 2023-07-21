@@ -20,6 +20,9 @@ public:
 
 
 protected:
+	Rectangle2D setRectByCenter(Rectangle2D rc) const;
+	Rectangle2D setRectByCenter(Rectangle2D rc, Rectangle2D rcCenter) const;
+
 	map<string, shared_ptr<Animation>> _animations; // map of all animations of this character. format: [name]=animation
 	Rectangle2D _lastAttackRect; // the player/enemy attackRect (that this character get, e.g. officer use it after player hit him)
 	Rectangle2D _saveCurrRect;

@@ -83,13 +83,14 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
 	int health, int damage, string walkAni, string hit1, string hit2,
 	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
 	string projectileAniDir, float walkingSpeed, bool noTreasures)
-	: BaseCharacter(obj, player), _damage(damage), _forward(true),
-	_isStanding(false), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni),
+	: BaseCharacter(obj, player), _damage(damage),
+	_isStanding(false), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni), 
 	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
 	_shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir),
 	_hit1AniName(hit1), _hit2AniName(hit2), _fallDeadAniName(fallDead), _minX((float)obj.minX),
 	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0)
 {
+	_isMirrored = false;
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
 	_health = health;
 
@@ -201,7 +202,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_WALK;
 			_ani->reset();
 			_isAttack = false;
-			_forward = _speed.x > 0;
+			_isMirrored = _speed.x < 0;
 		}
 	}
 
@@ -209,9 +210,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 }
 void BaseEnemy::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (_isStanding || isInRange)
+	if (_isStanding || enemySeeClaw())
 	{
 		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
 
@@ -223,7 +222,7 @@ void BaseEnemy::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_forward = _player->position.x > position.x;
+				_isMirrored = _player->position.x < position.x;
 			}
 			if (_canStrikeDuck && _player->isDuck())
 			{
@@ -231,7 +230,7 @@ void BaseEnemy::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_forward = _player->position.x > position.x;
+				_isMirrored = _player->position.x < position.x;
 			}
 		}
 		else if (deltaX < 256) // CC is far from enemy
@@ -242,13 +241,13 @@ void BaseEnemy::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_forward = _player->position.x > position.x;
+				_isMirrored = _player->position.x < position.x;
 
 				WwdObject obj;
-				obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 				obj.y = (int32_t)position.y - 20;
 				obj.z = ZCoord;
-				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+				obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 				obj.damage = 10;
 				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 			}
@@ -258,13 +257,13 @@ void BaseEnemy::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_forward = _player->position.x > position.x;
+				_isMirrored = _player->position.x < position.x;
 
 				WwdObject obj;
-				obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 				obj.y = (int32_t)position.y + 10;
 				obj.z = ZCoord;
-				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+				obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 				obj.damage = 10;
 				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 			}
@@ -285,7 +284,7 @@ bool BaseEnemy::PreLogic(uint32_t elapsedTime)
 		_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
 		_ani->reset();
 		_ani->loopAni = false;
-		_ani->mirrored = _forward;
+		_ani->mirrored = !_isMirrored;
 		_ani->position = position;
 		_isAttack = false;
 		_isStanding = true;
@@ -297,7 +296,7 @@ bool BaseEnemy::PreLogic(uint32_t elapsedTime)
 }
 void BaseEnemy::PostLogic(uint32_t elapsedTime)
 {
-	_ani->mirrored = _forward;
+	_ani->mirrored = !_isMirrored;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
 }
@@ -316,14 +315,14 @@ void BaseEnemy::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
 	_speed.x = -_speed.x;
-	_forward = true;
+	_isMirrored = false;
 	_isStanding = true;
 }
 void BaseEnemy::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
 	_speed.x = -_speed.x;
-	_forward = false;
+	_isMirrored = true;
 	_isStanding = true;
 }
 bool BaseEnemy::checkForHurt(pair<Rectangle2D, int> hurtData)
@@ -373,6 +372,10 @@ bool BaseEnemy::checkForHurts() // TODO: combine all `checkForHurts` methods fro
 	return false;
 }
 
+bool BaseEnemy::enemySeeClaw() const
+{
+	return (!_isMirrored && _player->position.x > position.x) || (_isMirrored && _player->position.x < position.x);
+}
 
 // TODO: maybe this c'tor don't need get parameters...
 BaseBoss::BaseBoss(const WwdObject& obj, Player* player,

@@ -27,32 +27,23 @@ pair<Rectangle2D, int> Chameleon::GetAttackRect()
 	rc.top = 10;
 	rc.bottom = 30;
 
-	if (_forward)
-	{
-		rc.left = 30;
-		rc.right = 130;
-	}
-	else
+	if (_isMirrored)
 	{
 		rc.left = -90;
 		rc.right = 10;
 	}
+	else
+	{
+		rc.left = 30;
+		rc.right = 130;
+	}
 
-	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	return { rc, _damage };
+	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }
 
 void Chameleon::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (_isStanding || isInRange)
+	if (_isStanding || enemySeeClaw())
 	{
 		if (abs(_player->position.x - position.x) < 128 && abs(_player->position.y - position.y) < 32) // CC is close to enemy
 		{
@@ -60,7 +51,7 @@ void Chameleon::makeAttack()
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_forward = _player->position.x > position.x;
+			_isMirrored = _player->position.x < position.x;
 		}
 	}
 }

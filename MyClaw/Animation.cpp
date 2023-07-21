@@ -169,8 +169,8 @@ void Animation::reset()
 	_currImgIdx = 0;
 	_isFinishAnimation = false;
 	mirrored = false;
-	updateFrames = (_images.size() > 1); // true;
-	loopAni = (_images.size() > 1); // true;
+	updateFrames = true; // TODO: use (_images.size() > 1) ? (its stop Katherine when she blocks CC)
+	loopAni = true; // TODO: use (_images.size() > 1) ?
 	for (FrameData* i : _images)
 	{
 		i->elapsedTime = 0;

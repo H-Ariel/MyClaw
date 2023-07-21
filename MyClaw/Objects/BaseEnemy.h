@@ -40,6 +40,7 @@ protected:
 	bool checkForHurt(pair<Rectangle2D, int> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
 	virtual bool checkForHurts();
 
+	bool enemySeeClaw() const;
 
 	const string _walkAniName, _hit1AniName, _hit2AniName,
 		_fallDeadAniName, _strikeAniName, _strikeDuckAniName,
@@ -49,7 +50,6 @@ protected:
 	int32_t _attackRest; // rest time between attack. NOTE: not all enemies used that
 	int _damage; // the amount of health that enemy took when he hit Claw
 	bool _isStanding;
-	bool _forward; // TODO use `_isMirrored`
 	const bool _canStrike, _canStrikeDuck, _canShoot, _canShootDuck;
 	const bool _isStaticEnemy; // it always idle
 };

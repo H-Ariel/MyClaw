@@ -30,7 +30,7 @@ Gabriel::Gabriel(const WwdObject& obj, Player* player)
 	, _throwBombsTime(THROW_BOMBS_TIME), _canThrowBombs(true)
 	, _sendPiratesTime(SEND_PIRATES_TIME), _canSendPirates(true)
 {
-	_forward = false;
+	_isMirrored = true;
 	_ani = _animations["IDLE"];
 	_health = 5; // we need hurt Gabriel only 5 times to win
 }
@@ -71,7 +71,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_THROW_BOMBS;
 			_ani->reset();
 			_ani->loopAni = false;
-			_forward = false;
+			_isMirrored = true;
 			_canThrowBombs = false;
 		}
 	}
@@ -87,7 +87,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_SEND_PIRATES;
 			_ani->reset();
 			_ani->loopAni = false;
-			_forward = false;
+			_isMirrored = true;
 			_canSendPirates = false;
 		}
 	}
@@ -97,7 +97,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		_ani = ANIMATION_ACTION_CANNON;
 		_ani->reset();
 		_ani->loopAni = false;
-		_forward = true;
+		_isMirrored = false;
 		GabrielChangeSwitch = false;
 		_throwBombsTime = THROW_BOMBS_TIME; // throw bombs after `THROW_BOMBS_TIME` ms
 		_canThrowBombs = true;
@@ -110,7 +110,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		_ani = ANIMATION_HITLOW;
 		_ani->reset();
 		_ani->loopAni = false;
-		_forward = false;
+		_isMirrored = true;
 		makeGabrielHurt = false;
 		_health -= 1;
 		removeObject = (_health <= 0);
@@ -119,7 +119,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 	if (_ani != _animations["IDLE"] && _ani->isFinishAnimation())
 	{
 		_ani = _animations["IDLE"];
-		_forward = false;
+		_isMirrored = true;
 	}
 
 	PostLogic(elapsedTime);

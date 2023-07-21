@@ -62,7 +62,7 @@ void BearSailor::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_WALK;
 			_ani->reset();
 			_isAttack = false;
-			_forward = _speed.x > 0;
+			_isMirrored = _speed.x < 0;
 		}
 	}
 
@@ -71,9 +71,7 @@ void BearSailor::Logic(uint32_t elapsedTime)
 
 void BearSailor::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (isInRange)
+	if (enemySeeClaw())
 	{
 		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
 
@@ -88,7 +86,7 @@ void BearSailor::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_forward = _player->position.x > position.x;
+				_isMirrored = _player->position.x < position.x;
 			}
 			else if (deltaX < 96) // CC is little far from enemy
 			{
@@ -96,7 +94,7 @@ void BearSailor::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_forward = _player->position.x > position.x;
+				_isMirrored = _player->position.x < position.x;
 			}
 		}
 	}
@@ -119,15 +117,15 @@ pair<Rectangle2D, int> BearSailor::GetAttackRect()
 
 	if (_ani == ANIMATION_STRIKE)
 	{
-		if (_forward)
-		{
-			rc.left = 30;
-			rc.right = 110;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = -60;
 			rc.right = 20;
+		}
+		else
+		{
+			rc.left = 30;
+			rc.right = 110;
 		}
 
 		rc.top = 25;
@@ -138,12 +136,5 @@ pair<Rectangle2D, int> BearSailor::GetAttackRect()
 		// TODO
 	}
 
-	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	return { rc, _damage };
+	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }

@@ -59,13 +59,13 @@ void Wolvington::Logic(uint32_t elapsedTime)
 	{
 		_ani = ANIMATION_WALK;
 		_isAttack = false;
-		_forward = _speed.x > 0;
+		_isMirrored = _speed.x < 0;
 	}
 
 	if (_ani != ANIMATION_JUMPBACK && abs(_player->position.x - position.x) > 64)
 	{
-		_forward = _player->position.x > position.x;
-		if (_forward) _speed.x = abs(_speed.x);
+		_isMirrored = _player->position.x < position.x;
+		if (!_isMirrored) _speed.x = abs(_speed.x);
 		else _speed.x = -abs(_speed.x);
 	}
 
@@ -79,23 +79,12 @@ void Wolvington::Logic(uint32_t elapsedTime)
 }
 Rectangle2D Wolvington::GetRect()
 {
-	Rectangle2D rc;
-
-	rc.left = -7.f + 15 * (!_forward);
-	rc.right = rc.left + 50;
-	rc.top = 5;
-	rc.bottom = 115;
-
-	// set rectangle by center
-	const float addX = position.x - (rc.right - rc.left) / 2, addY = position.y - (rc.bottom - rc.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	_saveCurrRect = rc;
-
-	return rc;
+	_saveCurrRect.left = -7.f + 15 * (_isMirrored);
+	_saveCurrRect.right = _saveCurrRect.left + 50;
+	_saveCurrRect.top = 5;
+	_saveCurrRect.bottom = 115;
+	_saveCurrRect = setRectByCenter(_saveCurrRect);
+	return _saveCurrRect;
 }
 pair<Rectangle2D, int> Wolvington::GetAttackRect()
 {
@@ -103,7 +92,7 @@ pair<Rectangle2D, int> Wolvington::GetAttackRect()
 
 	if (_ani == ANIMATION_STRIKE1 || _ani == ANIMATION_STRIKE2)
 	{
-		if (_forward)
+		if (!_isMirrored)
 		{
 			rc.left = 40;
 			rc.right = 70;
@@ -123,12 +112,7 @@ pair<Rectangle2D, int> Wolvington::GetAttackRect()
 			rc.bottom -= 60;
 		}
 
-		// set rectangle by center
-		const float addX = position.x - (rc.right - rc.left) / 2, addY = position.y - (rc.bottom - rc.top) / 2;
-		rc.top += addY;
-		rc.bottom += addY;
-		rc.left += addX;
-		rc.right += addX;
+		rc = setRectByCenter(rc);
 	}
 	else return {};
 
@@ -153,14 +137,14 @@ void Wolvington::stopMovingLeft(float collisionSize)
 	position.x += collisionSize;
 	_speed.x = ENEMY_PATROL_SPEED;
 	_speed.y = 0;
-	_forward = true;
+	_isMirrored = !true;
 }
 void Wolvington::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
 	_speed.x = -ENEMY_PATROL_SPEED;
 	_speed.y = 0;
-	_forward = false;
+	_isMirrored = !false;
 }
 
 bool Wolvington::PreLogic(uint32_t elapsedTime)
@@ -208,9 +192,7 @@ bool Wolvington::PreLogic(uint32_t elapsedTime)
 }
 void Wolvington::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (isInRange)
+	if (enemySeeClaw())
 	{
 		const float deltaX = abs(_player->position.x - position.x);
 		if (deltaX < 64) // CC is close to W
@@ -219,7 +201,7 @@ void Wolvington::makeAttack()
 			else _ani = ANIMATION_STRIKE2;
 			_ani->reset();
 			_isAttack = true;
-			_forward = _player->position.x > position.x;
+			_isMirrored = _player->position.x < position.x;
 
 			_attackRest = 700;
 
@@ -230,10 +212,10 @@ void Wolvington::makeAttack()
 			if (_magicAttackCuonter < 3)
 			{
 				WwdObject obj;
-				obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 				obj.y = (int32_t)position.y - 20;
 				obj.z = ZCoord;
-				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+				obj.speedX = (!_isMirrored) ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 				obj.damage = 20;
 
 				if (_player->isDuck()) {
@@ -245,7 +227,7 @@ void Wolvington::makeAttack()
 				
 				_ani->reset();
 				_isAttack = true;
-				_forward = _player->position.x > position.x;
+				_isMirrored = _player->position.x < position.x;
 
 				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL6/IMAGES/WOLVINGTONMAGIC"));
 

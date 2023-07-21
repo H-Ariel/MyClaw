@@ -26,15 +26,15 @@ Rectangle2D TownGuard::GetRect()
 		rc.top = position.y - 50;
 		rc.bottom = position.y + 70;
 
-		if (_forward)
-		{
-			rc.left = position.x - 30;
-			rc.right = position.x + 10;
-		}
-		else
+		if (_isMirrored)
 		{
 			rc.left = position.x - 10;
 			rc.right = position.x + 30;
+		}
+		else
+		{
+			rc.left = position.x - 30;
+			rc.right = position.x + 10;
 		}
 	}
 
@@ -48,15 +48,15 @@ pair<Rectangle2D, int> TownGuard::GetAttackRect()
 
 	Rectangle2D rc;
 
-	if (_forward)
-	{
-		rc.left = 30;
-		rc.right = 110;
-	}
-	else
+	if (_isMirrored)
 	{
 		rc.left = -60;
 		rc.right = 20;
+	}
+	else
+	{
+		rc.left = 30;
+		rc.right = 110;
 	}
 
 	if (_ani == _animations["STRIKE2"]) // strike high
@@ -70,12 +70,5 @@ pair<Rectangle2D, int> TownGuard::GetAttackRect()
 		rc.bottom = 100;
 	}
 
-	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	return { rc, _damage };
+	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }

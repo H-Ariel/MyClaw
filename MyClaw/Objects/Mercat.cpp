@@ -25,7 +25,7 @@ pair<Rectangle2D, int> Mercat::GetAttackRect()
 
 	Rectangle2D rc;
 
-	if (_forward)
+	if (!_isMirrored)
 	{
 		rc.left = 30;
 		rc.right = 110;
@@ -39,21 +39,12 @@ pair<Rectangle2D, int> Mercat::GetAttackRect()
 	rc.top = 40;
 	rc.bottom = 60;
 
-	// set rectangle by center
-	const float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2, addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
-
-	return { rc, _damage };
+	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }
 
 void Mercat::makeAttack()
 {
-	const bool isInRange = (_forward && _player->position.x > position.x) || (!_forward && _player->position.x < position.x);
-
-	if (_isStanding || isInRange)
+	if (_isStanding || enemySeeClaw())
 	{
 		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
 
@@ -70,10 +61,10 @@ void Mercat::makeAttack()
 				strike = true;
 
 				WwdObject obj;
-				obj.x = (int32_t)(position.x + (_forward ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+				obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
 				obj.y = (int32_t)position.y;
 				obj.z = ZCoord;
-				obj.speedX = _forward ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+				obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
 				obj.damage = 10;
 				ActionPlane::addPlaneObject(DBG_NEW MercatTrident(obj));
 			}
@@ -84,7 +75,7 @@ void Mercat::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_forward = _player->position.x > position.x;
+				_isMirrored = _player->position.x < position.x;
 
 				_attackRest = 250;
 			}

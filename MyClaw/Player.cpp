@@ -589,13 +589,7 @@ void Player::calcRect()
 		_saveCurrRect.bottom = 115;
 	}
 
-	// set rectangle by center
-	float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2;
-	float addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	_saveCurrRect.top += addY;
-	_saveCurrRect.bottom += addY;
-	_saveCurrRect.left += addX;
-	_saveCurrRect.right += addX;
+	_saveCurrRect = setRectByCenter(_saveCurrRect);
 }
 void Player::calcAttackRect()
 {
@@ -712,13 +706,7 @@ void Player::calcAttackRect()
 	}
 	else { _saveCurrAttackRect = {}; return; }
 
-	// set rectangle by center
-	float addX = position.x - (_saveCurrRect.right - _saveCurrRect.left) / 2;
-	float addY = position.y - (_saveCurrRect.bottom - _saveCurrRect.top) / 2;
-	rc.top += addY;
-	rc.bottom += addY;
-	rc.left += addX;
-	rc.right += addX;
+	rc = setRectByCenter(rc, _saveCurrRect);
 
 	_saveCurrAttackRect = { rc, (_currPowerup == PowerupType::Catnip
 		|| _currPowerup == PowerupType::FireSword
