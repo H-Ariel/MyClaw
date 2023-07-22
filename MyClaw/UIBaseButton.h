@@ -20,7 +20,7 @@ public:
 
 private:
 	static void RegisterMyButtonClass();
-	static LRESULT UIButtonBase_WndProc(HWND, UINT, WPARAM, LPARAM);
+	static LRESULT CALLBACK UIButtonBase_WndProc(HWND, UINT, WPARAM, LPARAM);
 
 	static map<HWND, UIBaseButton*> _allButtons;
 

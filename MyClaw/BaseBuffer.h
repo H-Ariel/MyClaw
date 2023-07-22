@@ -12,7 +12,7 @@ public:
 	virtual ~BaseBuffer();
 
 	void skip(int64_t n); // skip `n` bytes. if `n<0` it goes back.
-	void setIndex(int64_t newIdx) { _idx = newIdx; }
+	void setIndex(int64_t newIdx);
 	int64_t getIndex() const { return _idx; }
 	const uint8_t* getCData() const { return _data; }
 	vector<uint8_t> getData() const { return vector<uint8_t>(_data, _data + _size); }

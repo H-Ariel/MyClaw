@@ -156,7 +156,7 @@ void PhysicsManager::Draw()
 #endif
 }
 
-void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath)
+void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath) const
 {
 	const Rectangle2D objRc = obj->GetRect();
 	Rectangle2D collisions[9];

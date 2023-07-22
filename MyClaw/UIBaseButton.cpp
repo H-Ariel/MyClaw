@@ -57,7 +57,7 @@ void UIBaseButton::RegisterMyButtonClass()
 	doesClassRegistered = true;
 }
 
-LRESULT UIBaseButton::UIButtonBase_WndProc(HWND hwnd, UINT msg, WPARAM wPrm, LPARAM lPrm)
+LRESULT CALLBACK UIBaseButton::UIButtonBase_WndProc(HWND hwnd, UINT msg, WPARAM wPrm, LPARAM lPrm)
 {
 	UIBaseButton* btn = _allButtons.count(hwnd) ? _allButtons[hwnd] : nullptr;
 

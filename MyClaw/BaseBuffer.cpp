@@ -44,3 +44,9 @@ void BaseBuffer::skip(int64_t n)
 	}
 	setIndex(_idx + n);
 }
+
+void BaseBuffer::setIndex(int64_t newIdx)
+{
+	if (newIdx < 0) throw Exception(__FUNCTION__ ": newIdx < 0");
+	_idx = (size_t)newIdx;
+}

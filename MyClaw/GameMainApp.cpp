@@ -30,7 +30,7 @@ GameMainApp::~GameMainApp()
 
 void GameMainApp::run()
 {
-	if (0) // TODO: delete this `if` block
+	if (01) // TODO: delete this `if` block
 	{
 		set<int> badLevels;
 		// try load all levels
@@ -53,7 +53,7 @@ void GameMainApp::run()
 	{
 		runApp = true;
 		//_pEngine = allocNewSharedPtr<MenuEngine>();
-		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(8);
+		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(1);
 		runEngine();
 	}
 }

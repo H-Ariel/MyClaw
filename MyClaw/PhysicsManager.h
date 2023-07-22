@@ -11,7 +11,7 @@ public:
 
 	PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber);
 
-	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath);
+	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath) const;
 
 	pair<float, float> getEnemyRange(D2D1_POINT_2F enemyPos, const float minX, const float maxX) const;
 
