@@ -18,7 +18,7 @@ public:
 
 	static D2D1_SIZE_F getSize(); // get screen size and consider PixelSize
 	static D2D1_SIZE_F getRealSize();
-	static HWND getHwnd() { return _hWnd; }
+	static const HWND& getHwnd() { return _hWnd; }
 
 	static void BeginDraw() { _renderTarget->BeginDraw(); _renderTarget->Clear(_backgroundColor); }
 	static void EndDraw() { _renderTarget->EndDraw(); }

@@ -49,6 +49,8 @@ string PathManager::getImageSetPath(const string& _imageSet)
 				}
 		
 		imageSet = replaceString(imageSet, '_', '/');
+		if (imageSet[0] != '/')
+			imageSet = '/' + imageSet;
 		data[IMAGE_SET][_imageSet] = imageSet;
 	}
 
@@ -70,6 +72,8 @@ string PathManager::getAnimationSetPath(const string& _aniSet)
 		}
 
 		aniSet = replaceString(aniSet, '_', '/');
+		if (aniSet[0] != '/')
+			aniSet = '/' + aniSet;
 		data[ANIMATION_SET][_aniSet] = aniSet;
 	}
 
@@ -83,11 +87,13 @@ string PathManager::getAnimationPath(const string& _path)
 		path = getAnimationSetPath(path);
 		path += ".ANI";
 		// TODO: hack - something else
-		if (path == "LEVEL1/ANIS/MANICALS/MANICAL.ANI" || path == "LEVEL1/ANIS/MANICALS/M.ANI")
+		if (path == "/LEVEL1/ANIS/MANICALS/MANICAL.ANI" || path == "/LEVEL1/ANIS/MANICALS/M.ANI")
 		{
-			path = "LEVEL1/ANIS/MANICLES/MANICAL.ANI";
+			path = "/LEVEL1/ANIS/MANICLES/MANICAL.ANI";
 		}
 
+		if (path[0] != '/')
+			path = '/' + path;
 		data[ANIMATION][_path] = path;
 	}
 

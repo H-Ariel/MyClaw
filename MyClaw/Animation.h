@@ -1,12 +1,9 @@
 #pragma once
 
 #include "UIBaseImage.h"
+#include "RezArchive.h"
 
 
-class RezArchive;
-
-
-// display claw animation
 class Animation : public UIBaseElement
 {
 public:

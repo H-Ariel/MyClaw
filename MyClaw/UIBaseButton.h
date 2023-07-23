@@ -1,8 +1,6 @@
 #pragma once
 
-#include "UIBaseElement.h"
-
-class BaseEngine;
+#include "BaseEngine.h"
 
 
 class UIBaseButton : public UIBaseElement

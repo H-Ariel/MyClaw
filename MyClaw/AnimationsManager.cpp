@@ -23,16 +23,10 @@ static inline bool isEnemyAniations(string dirPath)
 	// TODO: add all of them
 }
 
-AnimationsManager::AnimationsManager(RezArchive* rezArchive)
-	: _rezArchive(rezArchive)
-{
-}
+AnimationsManager::AnimationsManager(RezArchive* rezArchive) : _rezArchive(rezArchive) {}
 
 shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, const string& imageSetPath, bool save)
 {
-	if (aniPath[0] != '/') // TODO: remove this and add it to the caller
-		(string&)aniPath = '/' + aniPath;
-
 	const string k = aniPath + '+' + imageSetPath;
 	if (_loadedAnimations.count(k) == 0)
 	{
@@ -54,9 +48,6 @@ shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, co
 }
 map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath)
 {
-	if (dirPath[0] != '/') // TODO: remove this and add it to the caller
-		(string&)dirPath = '/' + dirPath;
-
 	map<string, shared_ptr<Animation>> anis;
 
 	if (_savedAniDirs.count(dirPath) == 0)
@@ -110,9 +101,6 @@ map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirector
 }
 shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder)
 {
-	if (dirPath[0] != '/') // TODO: remove this and add it to the caller
-		(string&)dirPath = '/' + dirPath;
-
 	const string k = dirPath + '+' + to_string(duration) + '+' + to_string(reversedOrder);
 	if (_loadedAnimations.count(k) == 0)
 	{
@@ -144,9 +132,6 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const stri
 }
 shared_ptr<Animation> AnimationsManager::createAnimationFromFromPidImage(const string& pidPath)
 {
-	if (pidPath[0] != '/') // TODO: remove this and add it to the caller
-		(string&)pidPath = '/' + pidPath;
-
 	if (_loadedAnimations.count(pidPath) == 0)
 	{
 		vector<Animation::FrameData*> images = { DBG_NEW Animation::FrameData(pidPath) };

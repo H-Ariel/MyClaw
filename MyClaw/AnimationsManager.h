@@ -1,9 +1,7 @@
 #pragma once
 
-#include "RezArchive.h"
 #include "Animation.h"
 
-// TODO: make singleton ?
 
 class AnimationsManager
 {

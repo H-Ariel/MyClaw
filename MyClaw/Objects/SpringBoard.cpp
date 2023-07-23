@@ -11,7 +11,7 @@ SpringBoard::SpringBoard(const WwdObject& obj, Player* player)
 	{
 		string lvlNumber = PathManager::getImageSetPath("LEVEL_");
 
-		if (lvlNumber == "LEVEL13/IMAGES/")
+		if (lvlNumber == "/LEVEL13/IMAGES/")
 		{
 			anisPath = PathManager::getAnimationSetPath(obj.imageSet);
 		}

@@ -57,7 +57,7 @@ public:
 
 	PowerupSparkle()
 	{
-		_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/GLITTER1.ANI");
+		_ani = AssetsManager::loadCopyAnimation("/GAME/ANIS/GLITTER1.ANI");
 		init();
 	}
 	void init()
@@ -92,7 +92,7 @@ Rectangle2D* PowerupSparkle::playerRc = nullptr;
 Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	: BaseCharacter(obj), _planeSize(planeSize), _currWeapon(ClawProjectile::Types::Pistol), _finishLevel(false)
 {
-	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
+	_animations = AssetsManager::loadAnimationsFromDirectory("/CLAW/ANIS");
 	_weaponsAmount[ClawProjectile::Types::Pistol] = 10;
 	_weaponsAmount[ClawProjectile::Types::Magic] = 5;
 	_weaponsAmount[ClawProjectile::Types::Dynamite] = 3;
@@ -113,8 +113,8 @@ Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT"};
 
-	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 125, false);
-	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromFromPidImage("CLAW/IMAGES/100.PID");
+	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("/GAME/IMAGES/EXCLAMATION", 125, false);
+	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromFromPidImage("/CLAW/IMAGES/100.PID");
 
 	PowerupSparkle::playerRc = &_saveCurrRect;
 }
@@ -397,20 +397,20 @@ void Player::Logic(uint32_t elapsedTime)
 					obj.z = ZCoord;
 					obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 
-					if (_currWeapon == ClawProjectile::Types::Pistol)
+					switch (_currWeapon)
 					{
+					case ClawProjectile::Types::Pistol:
 						obj.y = (int32_t)(position.y - (duck ? -12 : 16));
 						obj.damage = 8;
-					}
-					else if (_currWeapon == ClawProjectile::Types::Magic)
-					{
+						break;
+
+					case ClawProjectile::Types::Magic:
 						obj.y = (int32_t)(position.y + (duck ? 18 : -6));
 						obj.damage = 25;
-					}
-					else if (_currWeapon == ClawProjectile::Types::Dynamite)
-					{
-						// TODO: find and calculate perfect speed
-						// (don't forget `if (_holdAltTime < 1050) ...`
+						break;
+
+					case ClawProjectile::Types::Dynamite:
+						// TODO: find and calculate perfect speed (don't forget `if (_holdAltTime < 1050) ...`
 
 						obj.x = (int32_t)position.x;
 						obj.y = (int32_t)position.y;
@@ -429,8 +429,12 @@ void Player::Logic(uint32_t elapsedTime)
 								obj.speedX = min(obj.speedX * _holdAltTime / 1000, MAX_DYNAMITE_SPEED);
 							obj.speedY = min(obj.speedY * _holdAltTime / 1000, -MAX_DYNAMITE_SPEED);
 						}
+
+						break;
+
+					default:
+						throw Exception("no more weapons...");
 					}
-					else throw Exception("no more weapons...");
 
 					amount -= 1;
 					if (inAir) obj.y += 10;

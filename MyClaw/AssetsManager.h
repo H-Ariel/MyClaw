@@ -37,9 +37,16 @@ public:
 	static void clearLevelAssets(int lvl);
 
 private:
-	static RezArchive* _rezArchive;
-	static ImagesManager* _imagesManager;
-	static AnimationsManager* _animationsManager;
-	static AudioManager* _audioManager;
-	static bool _runApp;
+	static AssetsManager* instance;
+
+
+	AssetsManager();
+	~AssetsManager();
+
+	
+	RezArchive* _rezArchive;
+	ImagesManager* _imagesManager;
+	AnimationsManager* _animationsManager;
+	AudioManager* _audioManager;
+	bool _runApp;
 };

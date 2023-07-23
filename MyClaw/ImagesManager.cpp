@@ -28,9 +28,6 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 {
 	shared_ptr<UIBaseImage> img;
 
-	if (path[0] != '/') // TODO: remove this and add it to the caller
-		(string&)path = '/' + path;
-
 	if (_loadedBitmaps.count(path))
 	{
 		img = allocNewSharedPtr<UIBaseImage>(_loadedBitmaps[path].first, _loadedBitmaps[path].second);
@@ -167,12 +164,6 @@ void ImagesManager::clearLevelImages(const string& prefix)
 void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 {
 	// hack- todo: edit the files?
-
-	if (pidPath[0] != '/')
-	{
-		pidPath = "/" + pidPath;
-	}
-
 	// NOTE: number-filenames are according to `fixFileName` at `RezArchive.cpp`
 
 
@@ -190,7 +181,7 @@ void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 	{
 		offsetX -= 2;
 	}
-	// Claw magic
+	// MagicClaw
 	else if (pidPath == "/CLAW/IMAGES/165.PID")
 	{
 		offsetX += 15;
@@ -204,7 +195,8 @@ void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 		offsetX += 10;
 	}
 	// Claw swipe
-	else if (pidPath == "/CLAW/IMAGES/024.PID" || pidPath == "/CLAW/IMAGES/025.PID" || pidPath == "/CLAW/IMAGES/026.PID" || pidPath == "/CLAW/IMAGES/027.PID")
+	else if (pidPath == "/CLAW/IMAGES/024.PID" || pidPath == "/CLAW/IMAGES/025.PID" ||
+		pidPath == "/CLAW/IMAGES/026.PID" || pidPath == "/CLAW/IMAGES/027.PID")
 	{
 		offsetX += 22;
 	}
@@ -214,7 +206,7 @@ void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 		offsetX += 2;
 	}
 	// Tower Cannon
-	if (pidPath == "/LEVEL2/IMAGES/TOWERCANNONLEFT/002.PID" ||
+	else if (pidPath == "/LEVEL2/IMAGES/TOWERCANNONLEFT/002.PID" ||
 		pidPath == "/LEVEL2/IMAGES/TOWERCANNONLEFT/004.PID" ||
 		pidPath == "/LEVEL2/IMAGES/TOWERCANNONLEFT/005.PID")
 	{

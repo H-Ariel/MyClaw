@@ -1,7 +1,5 @@
 #include "UIBaseButton.h"
-#include "AssetsManager.h"
 #include "WindowManager.h"
-#include "BaseEngine.h"
 
 
 #define MY_BUTTON_CLASS_NAME L"my_button"
