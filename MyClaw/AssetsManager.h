@@ -48,5 +48,4 @@ private:
 	ImagesManager* _imagesManager;
 	AnimationsManager* _animationsManager;
 	AudioManager* _audioManager;
-	bool _runApp;
 };

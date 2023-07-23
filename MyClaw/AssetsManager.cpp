@@ -22,12 +22,10 @@ AssetsManager::AssetsManager()
 	_imagesManager = DBG_NEW ImagesManager(_rezArchive);
 	_animationsManager = DBG_NEW AnimationsManager(_rezArchive);
 	_audioManager = DBG_NEW AudioManager(_rezArchive);
-	_runApp = true;
 	srand((unsigned int)time(nullptr));
 }
 AssetsManager::~AssetsManager()
 {
-	_runApp = false;
 	SafeDelete(_imagesManager);
 	SafeDelete(_animationsManager);
 	SafeDelete(_audioManager);
@@ -165,7 +163,7 @@ void AssetsManager::callLogics(uint32_t elapsedTime)
 
 void AssetsManager::clearLevelAssets(int lvl)
 {
-	if (instance && instance->_runApp)
+	if (instance)
 	{
 		const string prefix = "/LEVEL" + to_string(lvl);
 		instance->_imagesManager->clearLevelImages(prefix);

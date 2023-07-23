@@ -28,8 +28,8 @@ static bool firstFloorsRemove = true;
 static MarrowSise marrowSise = MarrowSise::Left;
 
 
-#define MARROW_ANIMATION_BLOCK	_animations["BLOCK"]
-#define MARROW_ANIMATION_HOME	_animations["HOME"]
+#define MARROW_ANIMATION_BLOCK			_animations["BLOCK"]
+#define MARROW_ANIMATION_HOME			_animations["HOME"]
 #define MARROW_ANIMATION_HAND_UP		_animations["IDLE1"]
 #define MARROW_ANIMATION_WAIT_HAND_UP	_animations["IDLE2"]
 #define MARROW_ANIMATION_HAND_DOWN		_animations["IDLE4"]
@@ -256,7 +256,10 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 			globalState = GlobalState::AddFloor;
 		}
 	}
-
+	else if (globalState == GlobalState::ClawAttackMarrow)
+	{
+		position = this->_initialPosition;
+	}
 
 	if (_speed.x < 0)
 	{

@@ -379,8 +379,8 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 		for (int32_t i = 0; i < obj.width; i++)
 		{
 			_objects.push_back(DBG_NEW BreakPlank(obj, _player, (float)topOffset));
-			//obj.x += TILE_SIZE;
-			myMemCpy(obj.x, obj.x + TILE_SIZE);
+			(int32_t&)obj.x += TILE_SIZE;
+			//myMemCpy(obj.x, obj.x + TILE_SIZE);
 		}
 	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
@@ -508,11 +508,11 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	{
 		ADD_ENEMY(Fish(obj, _player));
 	}
-#endif
 	else if (obj.logic == "Chameleon")
 	{
 		ADD_ENEMY(Chameleon(obj, _player));
 	}
+#endif
 	else if (obj.logic == "Raux")
 	{
 		ADD_ENEMY(LeRauxe(obj, _player));
