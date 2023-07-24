@@ -25,41 +25,36 @@ public:
 
 	// TODO: make non-static
 	static void addPlaneObject(BasePlaneObject* obj);
-	static const PhysicsManager& getPhysicsManager() { return *_physicsManager; }
-	static const vector<PowderKeg*>& getPowderKegs() { return _powderKegs; }
-	static const vector<BaseEnemy*>& getEnemies() { return _enemies; }
-	static const vector<Projectile*>& getProjectiles() { return _projectiles; }
-	static const vector<FloorSpike*>& getFloorSpikes() { return _floorSpikes; }
-	static const vector<GooVent*>& getGooVents() { return _gooVents; }
-	static const vector<Laser*>& getLasers() { return _lasers; }
+	static const PhysicsManager& getPhysicsManager() { return *(_instance->_physicsManager); }
+	static const vector<PowderKeg*>& getPowderKegs() { return _instance->_powderKegs; }
+	static const vector<BaseEnemy*>& getEnemies() { return _instance->_enemies; }
+	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }
+	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
 
 private:
 	void updatePosition();
 	void addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd);
-
-	// TODO: make non-static
-	static PhysicsManager* _physicsManager;
-	static vector<BasePlaneObject*> _objects;
-	static vector<PowderKeg*> _powderKegs;
-	static vector<BaseEnemy*> _enemies;
-	static vector<Projectile*> _projectiles;
-	static vector<FloorSpike*> _floorSpikes;
-	static vector<GooVent*> _gooVents;
-	static vector<Laser*> _lasers;
-	static bool _needSort;
-
+	
 	enum class States : int8_t {
-		Play,
+		Play, // normal gameplay
 		Fall, // CC falls out the window
 		Close, // close the screen
 		Open // open the screen
 	};
 
+	PhysicsManager* _physicsManager;
+	vector<BasePlaneObject*> _objects;
+	vector<PowderKeg*> _powderKegs;
+	vector<BaseEnemy*> _enemies;
+	vector<Projectile*> _projectiles;
+	vector<BaseDamageObject*> _damageObjects;
 	Player* _player;
 	const D2D1_SIZE_F _planeSize;
-	
-	// the next variables used when CC died and the screen is closing
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish
+	bool _needSort;
 	States _state;
+
+
+	static ActionPlane* _instance;
 };

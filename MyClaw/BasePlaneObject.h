@@ -6,7 +6,7 @@
 
 class Player;
 
-
+// the base class for all objects that are used in the game
 class BasePlaneObject : public UIBaseElement
 {
 public:
@@ -67,4 +67,19 @@ protected:
 	// the speed units are pixels per milliseconds
 	// example for usage: `position.x = speed.x * elapsedTime`
 	D2D1_POINT_2F _speed;
+};
+
+
+// an object that can damage the player`
+class BaseDamageObject : public BaseStaticPlaneObject 
+{
+public:
+	BaseDamageObject(const WwdObject& obj, Player* player, int damage);
+
+	virtual bool isDamage() const = 0;
+
+	int getDamage() const { return isDamage() ? _damage : 0; }
+
+protected:
+	const int _damage;
 };

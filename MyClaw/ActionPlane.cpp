@@ -73,21 +73,17 @@ public:
 };
 
 
-PhysicsManager* ActionPlane::_physicsManager = nullptr;
-vector<BasePlaneObject*> ActionPlane::_objects;
-vector<PowderKeg*> ActionPlane::_powderKegs;
-vector<BaseEnemy*> ActionPlane::_enemies;
-vector<Projectile*> ActionPlane::_projectiles;
-vector<FloorSpike*> ActionPlane::_floorSpikes;
-vector<GooVent*> ActionPlane::_gooVents;
-vector<Laser*> ActionPlane::_lasers;
-bool ActionPlane::_needSort = true;
-
+ActionPlane* ActionPlane::_instance = nullptr;
 
 ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int levelNumber)
 	: LevelPlane(planeData), _state(States::Play), _deathAniWait(false),
 	_planeSize({ (float)TILE_SIZE * planeData.tilesOnAxisX, (float)TILE_SIZE * planeData.tilesOnAxisY })
-{	
+{
+	if (_instance != nullptr)
+		throw Exception("ActionPlane already exists");
+	else
+		_instance = this;
+
 	WwdObject playerData;
 	playerData.x = wwd->startX;
 	playerData.y = wwd->startY;
@@ -129,16 +125,10 @@ ActionPlane::~ActionPlane()
 	for (BasePlaneObject* i : _objects)
 		delete i;
 
-	// because it static member and we don't want recycle objects...
 	SafeDelete(_physicsManager);
-	_objects.clear();
-	_powderKegs.clear();
-	_enemies.clear();
-	_projectiles.clear();
-	_floorSpikes.clear();
-	_gooVents.clear();
-	_lasers.clear();
-	_needSort = true;
+
+	// because it static member and we don't want recycle objects...
+	_instance = nullptr;
 }
 
 void ActionPlane::Logic(uint32_t elapsedTime)
@@ -219,10 +209,16 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	}
 
 	BasePlaneObject* obj;
-
+	
 	for (size_t i = 0; i < _objects.size(); i++)
 	{
 		obj = _objects[i];
+	
+		if (1.3 < _player->getSpeedY() && _player->getSpeedY() < 1.4f)
+			cout << "";
+		else if (_player->getSpeedY() == 0)
+			cout << "";
+
 		obj->Logic(elapsedTime);
 
 		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
@@ -294,14 +290,15 @@ void ActionPlane::Draw()
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 {
 	// TODO? if (obj == nullptr) return; 
-	_objects.push_back(obj);
-	_needSort = true;
-	if (isProjectile(obj)) _projectiles.push_back((Projectile*)obj);
-	else if (isbaseinstance<BaseEnemy>(obj)) _enemies.push_back((BaseEnemy*)obj); // TODO: make sure we need this
+	_instance->_objects.push_back(obj);
+	_instance->_needSort = true;
+	if (isProjectile(obj)) _instance->_projectiles.push_back((Projectile*)obj);
+	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj); // TODO: make sure we need this
 }
 
 
 #define ADD_ENEMY(p) { BaseEnemy* enemy = DBG_NEW p; _objects.push_back(enemy); _enemies.push_back(enemy); }
+#define ADD_DAMAGE_OBJECT(p) { BaseDamageObject* dObj = DBG_NEW p; _objects.push_back(dObj); _damageObjects.push_back(dObj); }
 
 void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd)
 {
@@ -408,19 +405,37 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 		_objects.push_back(DBG_NEW ConveyorBelt(obj, _player));
 	}
 #ifdef USE_ENEMIES
-	else if (obj.logic == "Laser")
-	{
-		Laser* l = DBG_NEW Laser(obj, _player);
-		_lasers.push_back(l); _objects.push_back(l);
-	}
-	else if (obj.logic == "GooVent")
-	{
-		GooVent* g = DBG_NEW GooVent(obj, _player);
-		_objects.push_back(g); _gooVents.push_back(g);
-	}
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
 	{
 		_objects.push_back(DBG_NEW TowerCannon(obj, _player));
+	}
+	else if (obj.logic == "GooVent")
+	{
+		ADD_DAMAGE_OBJECT(GooVent(obj, _player));
+	}
+	else if (startsWith(obj.logic, "FloorSpike"))
+	{
+		ADD_DAMAGE_OBJECT(FloorSpike(obj, _player));
+	}
+	else if (obj.logic == "CrabNest")
+	{
+		_objects.push_back(DBG_NEW CrabNest(obj, _player));
+	}
+	else if (startsWith(obj.logic, "SawBlade"))
+	{
+		ADD_DAMAGE_OBJECT(SawBlade(obj, _player));
+	}
+	else if (obj.logic == "TProjectile")
+	{
+		_objects.push_back(DBG_NEW TProjectilesShooter(obj, _player));
+	}
+	else if (obj.logic == "SkullCannon")
+	{
+		_objects.push_back(DBG_NEW SkullCannon(obj, _player));
+	}
+	else if (obj.logic == "Laser")
+	{
+		ADD_DAMAGE_OBJECT(Laser(obj, _player));
 	}
 	else if (obj.logic == "Officer")
 	{
@@ -446,11 +461,6 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	{
 		ADD_ENEMY(CutThroat(obj, _player));
 	}
-	else if (startsWith(obj.logic, "FloorSpike"))
-	{
-		FloorSpike* s = DBG_NEW FloorSpike(obj, _player);
-		_objects.push_back(s); _floorSpikes.push_back(s);
-	}
 	else if (obj.logic == "Seagull")
 	{
 		ADD_ENEMY(Seagull(obj, _player));
@@ -474,23 +484,6 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	else if (obj.logic == "HermitCrab")
 	{
 		ADD_ENEMY(HermitCrab(obj, _player));
-	}
-	else if (obj.logic == "CrabNest")
-	{
-		_objects.push_back(DBG_NEW CrabNest(obj, _player));
-	}
-	else if (startsWith(obj.logic, "SawBlade"))
-	{
-		SawBlade* s = DBG_NEW SawBlade(obj, _player);
-		_objects.push_back(s); _floorSpikes.push_back(s);
-	}
-	else if (obj.logic == "TProjectile")
-	{
-		_objects.push_back(DBG_NEW TProjectilesShooter(obj, _player));
-	}
-	else if (obj.logic == "SkullCannon")
-	{
-		_objects.push_back(DBG_NEW SkullCannon(obj, _player));
 	}
 	else if (obj.logic == "PegLeg")
 	{

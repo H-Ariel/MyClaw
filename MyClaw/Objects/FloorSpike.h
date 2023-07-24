@@ -3,14 +3,13 @@
 #include "../BasePlaneObject.h"
 
 
-class FloorSpike : public BaseStaticPlaneObject
+class FloorSpike : public BaseDamageObject
 {
 public:
 	FloorSpike(const WwdObject& obj, Player* player);
 
 	void Logic(uint32_t elapsedTime) override;
-
-	int getDamage() const;
+	bool isDamage() const override;
 
 protected:
 	shared_ptr<Animation> _aniAppear, _aniDisappear;

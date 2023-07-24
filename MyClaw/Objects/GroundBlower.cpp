@@ -24,6 +24,7 @@ void GroundBlower::Logic(uint32_t elapsedTime)
 	if (_ani->getFrameNumber() == 0 && tryCatchPlayer())
 	{
 		_player->jump(_force);
+		// TODO: something get wrong: player speed is set to 0
 	}
 }
 

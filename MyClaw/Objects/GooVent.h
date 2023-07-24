@@ -3,14 +3,9 @@
 #include "../BasePlaneObject.h"
 
 
-class GooVent : public BaseStaticPlaneObject
+class GooVent : public BaseDamageObject
 {
 public:
 	GooVent(const WwdObject& obj, Player* player);
-
-	int getDamage() const;
-
-private:
-	const int _damage;
+	bool isDamage() const override;
 };
-

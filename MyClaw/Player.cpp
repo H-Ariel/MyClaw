@@ -213,6 +213,8 @@ void Player::Logic(uint32_t elapsedTime)
 		if (_ani->isFinishAnimation())
 			_damageRest = 250;
 
+		calcRect();
+		calcAttackRect();
 		return;
 	}
 
@@ -580,7 +582,7 @@ void Player::calcRect()
 		_saveCurrRect.top = 30;
 		_saveCurrRect.bottom = 90;
 	}
-	else if (_aniName == "LIFT" || _aniName == "THROW")
+	else if (_aniName == "LIFT" || _aniName == "THROW" || startsWith(_aniName, "DAMAGE"))
 	{
 		// this cause that CC doesn't hover when he lifts or throws
 		Rectangle2D aniRc = _ani->GetRect();
@@ -773,7 +775,7 @@ void Player::jump()
 
 bool Player::checkForHurts()
 {
-	return false; // TODO: change this! let CC hurt!
+//	return false; // TODO: change this! let CC hurt!
 
 	if (isTakeDamage() || _damageRest > 0) return false;
 
@@ -826,30 +828,10 @@ bool Player::checkForHurts()
 		}
 	}
 	
-	for (FloorSpike* s : ActionPlane::getFloorSpikes())
+	for (BaseDamageObject* obj : ActionPlane::getDamageObjects())
 	{
-		if ((damage = s->getDamage()) > 0)
-			if (_saveCurrRect.intersects(s->GetRect()))
-			{
-				_health -= damage;
-				return true;
-			}
-	}
-	
-	for (GooVent* g : ActionPlane::getGooVents())
-	{
-		if ((damage = g->getDamage()) > 0)
-			if (_saveCurrRect.intersects(g->GetRect()))
-			{
-				_health -= damage;
-				return true;
-			}
-	}
-	
-	for (Laser* l : ActionPlane::getLasers())
-	{
-		if ((damage = l->getDamage()) > 0)
-			if (_saveCurrRect.intersects(l->GetRect()))
+		if ((damage = obj->getDamage()) > 0)
+			if (_saveCurrRect.intersects(obj->GetRect()))
 			{
 				_health -= damage;
 				return true;
@@ -1005,6 +987,9 @@ void Player::backToLife()
 	_damageRest = 0;
 	_isMirrored = false;
 	_freezeTime = 0;
+
+	calcRect();
+	//calcAttackRect();
 
 	Logic(0); // update position and animation
 }

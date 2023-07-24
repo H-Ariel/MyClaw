@@ -4,8 +4,8 @@
 
 
 Laser::Laser(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _timeCounter(0), _isActive(false),
-	_damage(obj.damage ? obj.damage : 1), _swapTime(obj.counter > 0 ? obj.counter : 1500)
+	: BaseDamageObject(obj, player, obj.damage ? obj.damage : 1), _timeCounter(0),
+	_isActive(false), _swapTime(obj.counter > 0 ? obj.counter : 1500)
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 60, true);
 	setObjectRectangle();
@@ -36,7 +36,7 @@ void Laser::Logic(uint32_t elapsedTime)
 	}
 }
 
-int Laser::getDamage()
+bool Laser::isDamage() const
 {
-	return _isActive ? _damage : 0;
+	return _isActive;
 }

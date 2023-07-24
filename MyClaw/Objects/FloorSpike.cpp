@@ -6,7 +6,7 @@
 // This functions are same to TogglePeg. maybe we can combine them
 
 FloorSpike::FloorSpike(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _state(States::WaitAppear),
+	: BaseDamageObject(obj, player, 10), _state(States::WaitAppear),
 	_totalTime(0), _startTimeDelay(0), _timeOn(0), _timeOff(0)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
@@ -104,12 +104,11 @@ void FloorSpike::Logic(uint32_t elapsedTime)
 	_ani->Logic(elapsedTime);
 }
 
-int FloorSpike::getDamage() const
+bool FloorSpike::isDamage() const
 {
-	if ((_state == States::Disappear && !_ani->isPassedHalf()) ||
+	return ((_state == States::Disappear && !_ani->isPassedHalf()) ||
 		(_state == States::Appear && _ani->isPassedHalf()) ||
-		_state == States::WaitAppear) return 10;
-	return 0;
+		_state == States::WaitAppear);
 }
 
 
