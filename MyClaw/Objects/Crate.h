@@ -10,7 +10,7 @@ it can fall down after lower crate is broken
 class Crate : public BaseStaticPlaneObject
 {
 public:
-	Crate(const WwdObject& obj, Player* player);
+	Crate(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	bool isBreaking() const { return _ani->updateFrames; }
 	virtual vector<Item*> getItems();
@@ -25,7 +25,7 @@ private:
 class StackedCrates : public BaseStaticPlaneObject
 {
 public:
-	StackedCrates(const WwdObject& obj, Player* player);
+	StackedCrates(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 

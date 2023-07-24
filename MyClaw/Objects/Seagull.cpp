@@ -8,11 +8,12 @@ inline float calcSpeed(float srcPos, float dstPos, int msTime = 500)
 }
 
 
-Seagull::Seagull(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 1, 10, "FLYING", "FEATHEREXPLODE",
+Seagull::Seagull(const WwdObject& obj)
+	: BaseEnemy(obj, 1, 10, "FLYING", "FEATHEREXPLODE",
 		"FEATHERFLOAT", "KILLFALL", "", "", "", "", "", ENEMY_PATROL_SPEED),
 	_state(States::Fly), _minY((float)obj.y), _maxY((float)obj.y + 192)
 {
+	// TODO: some of them has no treasure
 }
 
 void Seagull::Logic(uint32_t elapsedTime)
@@ -31,19 +32,19 @@ void Seagull::Logic(uint32_t elapsedTime)
 
 		// if CC close to enemy - dive
 		if (_attackRest <= 0 && enemySeeClaw() &&
-			(_minX <= _player->position.x && _player->position.x <= _maxX) &&
-			(_minY <= _player->position.y && _player->position.y <= _maxY))
+			(_minX <= player->position.x && player->position.x <= _maxX) &&
+			(_minY <= player->position.y && player->position.y <= _maxY))
 		{
 			_state = States::DiveIn;
 			_isAttack = true;
-			_speed.x = calcSpeed(position.x, _player->position.x);
-			_speed.y = calcSpeed(position.y, _player->position.y);
+			_speed.x = calcSpeed(position.x, player->position.x);
+			_speed.y = calcSpeed(position.y, player->position.y);
 			_ani = _animations["DIVE" + to_string(getRandomInt(1, 4))];
 		}
 		break;
 
 	case States::DiveIn:
-		if (position.y >= _player->position.y || GetRect().intersects(_player->GetRect()))
+		if (position.y >= player->position.y || GetRect().intersects(player->GetRect()))
 		{
 			_state = States::DiveOut;
 			_isAttack = false;

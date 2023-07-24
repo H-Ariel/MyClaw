@@ -11,8 +11,8 @@
 #define ANIMATION_JUMPBACK	_animations.at("JUMPBACK")
 
 
-LeRauxe::LeRauxe(const WwdObject& obj, Player* player)
-	: BaseBoss(obj, player, 10, "ADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "")
+LeRauxe::LeRauxe(const WwdObject& obj)
+	: BaseBoss(obj, 10, "ADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "")
 {
 }
 
@@ -40,7 +40,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		...
 		*/
 		_speed.y = -(0.64f - 75 * GRAVITY);
-		_speed.x = (position.x < _player->position.x) ? -0.35f : 0.35f;
+		_speed.x = (position.x < player->position.x) ? -0.35f : 0.35f;
 
 		_isAttack = false;
 		_canJump = false;
@@ -73,9 +73,9 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		_isMirrored = _speed.x < 0;
 	}
 	
-	if (_ani != ANIMATION_JUMPBACK && abs(_player->position.x - position.x) > 64)
+	if (_ani != ANIMATION_JUMPBACK && abs(player->position.x - position.x) > 64)
 	{
-		_isMirrored = _player->position.x < position.x;
+		_isMirrored = player->position.x < position.x;
 		if (!_isMirrored) _speed.x = abs(_speed.x);
 		else _speed.x = -abs(_speed.x);
 	}
@@ -212,14 +212,14 @@ void LeRauxe::makeAttack()
 {
 	if (enemySeeClaw())
 	{
-		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
+		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
 		if (deltaX < 96 && deltaY < 16) // CC is close to LR
 		{
-			if (_player->isDuck()) _ani = ANIMATION_STRIKE;
+			if (player->isDuck()) _ani = ANIMATION_STRIKE;
 			else _ani = ANIMATION_STAB;
 			_ani->reset();
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 
 			_attackRest = 600;
 		}
@@ -233,7 +233,7 @@ bool LeRauxe::checkForHurts()
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{
-				if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+				if (player->isDuck()) _ani = ANIMATION_BLOCKLOW;
 				else _ani = ANIMATION_BLOCKHIGH;
 				_ani->reset();
 				return false;
@@ -241,11 +241,11 @@ bool LeRauxe::checkForHurts()
 		}
 	}
 
-	if (checkForHurt(_player->GetAttackRect()))
+	if (checkForHurt(player->GetAttackRect()))
 	{
 		if (_blockClaw)
 		{
-			if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+			if (player->isDuck()) _ani = ANIMATION_BLOCKLOW;
 			else _ani = ANIMATION_BLOCKHIGH;
 			return false;
 		}

@@ -5,8 +5,8 @@
 #include "../ActionPlane.h"
 
 
-Cannon::Cannon(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _timeCounter(0), _shootDirection(NotShoot), _ballOffset(0)
+Cannon::Cannon(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _timeCounter(0), _shootDirection(NotShoot), _ballOffset(0)
 {
 	const string anisPath = PathManager::getAnimationSetPath(obj.imageSet);
 
@@ -25,10 +25,10 @@ void Cannon::Logic(uint32_t elapsedTime)
 {
 	_timeCounter += elapsedTime;
 
-	if ((_shootDirection == ToLeft && position.x > _player->position.x ||
-		_shootDirection == ToRight && position.x < _player->position.x)
-		&& abs(position.x - _player->position.x) <= 512
-		&& abs(position.y - _player->position.y) <= 256
+	if ((_shootDirection == ToLeft && position.x > player->position.x ||
+		_shootDirection == ToRight && position.x < player->position.x)
+		&& abs(position.x - player->position.x) <= 512
+		&& abs(position.y - player->position.y) <= 256
 		&& _ani != _firing && _timeCounter >= 2000) // shoot new bullet each 2 seconds
 	{
 		_ani = _firing;
@@ -53,8 +53,8 @@ void Cannon::Logic(uint32_t elapsedTime)
 }
 
 
-TowerCannon::TowerCannon(const WwdObject& obj, Player* player)
-	: Cannon(obj, player)
+TowerCannon::TowerCannon(const WwdObject& obj)
+	: Cannon(obj)
 {
 	if (endsWith(obj.logic, "Left")) _shootDirection = ToLeft;
 	else if (endsWith(obj.logic, "Right")) _shootDirection = ToRight;
@@ -63,8 +63,8 @@ TowerCannon::TowerCannon(const WwdObject& obj, Player* player)
 }
 
 
-SkullCannon::SkullCannon(const WwdObject& obj, Player* player)
-	: Cannon(obj, player)
+SkullCannon::SkullCannon(const WwdObject& obj)
+	: Cannon(obj)
 {
 	if (_isMirrored) _shootDirection = ToLeft;
 	else _shootDirection = ToRight;

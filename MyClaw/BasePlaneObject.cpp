@@ -2,9 +2,10 @@
 #include "Player.h"
 
 
-// TODO: get ActionPlane as function parameter (?)
-BasePlaneObject::BasePlaneObject(const WwdObject& obj, Player* player)
-	: UIBaseElement({ (float)obj.x, (float)obj.y }), _player(player),
+Player* BasePlaneObject::player = nullptr;
+
+BasePlaneObject::BasePlaneObject(const WwdObject& obj)
+	: UIBaseElement({ (float)obj.x, (float)obj.y }),
 	ZCoord(obj.z), removeObject(false), _ani(nullptr),
 	_isMirrored(obj.drawFlags & WwdObject::Mirror), // TODO: parse all flags
 	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)) {}
@@ -32,35 +33,32 @@ Rectangle2D BasePlaneObject::GetRect()
 void BasePlaneObject::Reset() {}
 bool BasePlaneObject::tryCatchPlayer()
 {
-	if (_player->isFalling())
+	if (player->isFalling())
 	{
-		Rectangle2D colRc = _player->GetRect().getCollision(GetRect());
+		Rectangle2D colRc = player->GetRect().getCollision(GetRect());
 		if ((colRc.right > 0 || colRc.left > 0) && colRc.getSmallest().bottom > 0)
 		{
 			// if player is falling/going to this object - catch him
-			_player->stopFalling(colRc.bottom);
+			player->stopFalling(colRc.bottom);
 			return true;
 		}
 	}
 	return false;
 }
 
-BaseStaticPlaneObject::BaseStaticPlaneObject(const WwdObject& obj, Player* player)
-	: BasePlaneObject(obj, player) {}
+BaseStaticPlaneObject::BaseStaticPlaneObject(const WwdObject& obj)
+	: BasePlaneObject(obj) {}
 void BaseStaticPlaneObject::Logic(uint32_t elapsedTime) {}
 Rectangle2D BaseStaticPlaneObject::GetRect() { return _objRc; }
 void BaseStaticPlaneObject::setObjectRectangle() { myMemCpy(_objRc, BasePlaneObject::GetRect()); }
 
-BaseDynamicPlaneObject::BaseDynamicPlaneObject(const WwdObject& obj, Player* player)
-	: BasePlaneObject(obj, player), _speed({}) {}
+BaseDynamicPlaneObject::BaseDynamicPlaneObject(const WwdObject& obj)
+	: BasePlaneObject(obj), _speed({}) {}
 bool BaseDynamicPlaneObject::isFalling() const { return _speed.y > 0; }
-void BaseDynamicPlaneObject::stopFalling(float collisionSize) { 
-	if (this == _player && _speed.y > 0)
-		return;
-	_speed.y = 0; position.y -= collisionSize; }
+void BaseDynamicPlaneObject::stopFalling(float collisionSize) { _speed.y = 0; position.y -= collisionSize; }
 void BaseDynamicPlaneObject::stopMovingLeft(float collisionSize) { _speed.x = 0; position.x += collisionSize; }
 void BaseDynamicPlaneObject::stopMovingRight(float collisionSize) { _speed.x = 0; position.x -= collisionSize; }
 void BaseDynamicPlaneObject::bounceTop() { _speed.y = abs(_speed.y); }
 
-BaseDamageObject::BaseDamageObject(const WwdObject& obj, Player* player, int damage)
-	: BaseStaticPlaneObject(obj, player), _damage(damage) {}
+BaseDamageObject::BaseDamageObject(const WwdObject& obj, int damage)
+	: BaseStaticPlaneObject(obj), _damage(damage) {}

@@ -6,7 +6,7 @@
 class CutThroat : public BaseEnemy
 {
 public:
-	CutThroat(const WwdObject& obj, Player* player);
+	CutThroat(const WwdObject& obj);
 
 	pair<Rectangle2D, int> GetAttackRect() override;
 };

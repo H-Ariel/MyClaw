@@ -10,7 +10,7 @@ class Player;
 class BasePlaneObject : public UIBaseElement
 {
 public:
-	BasePlaneObject(const WwdObject& obj, Player* player = nullptr);
+	BasePlaneObject(const WwdObject& obj);
 	virtual void Logic(uint32_t elapsedTime) override = 0;
 	virtual void Draw() override;
 	virtual Rectangle2D GetRect() override;
@@ -19,10 +19,11 @@ public:
 	const uint32_t ZCoord;
 	bool removeObject;
 
+	static Player* player;
+
 protected:
 	bool tryCatchPlayer(); // returns if successfully caught the player
 
-	Player* const _player;
 	shared_ptr<Animation> _ani;
 	bool _isMirrored, _isVisible;
 };
@@ -31,7 +32,7 @@ protected:
 class BaseStaticPlaneObject : public BasePlaneObject
 {
 public:
-	BaseStaticPlaneObject(const WwdObject& obj, Player* player = nullptr);
+	BaseStaticPlaneObject(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	Rectangle2D GetRect() override;
 
@@ -48,7 +49,7 @@ protected:
 class BaseDynamicPlaneObject : public BasePlaneObject
 {
 public:
-	BaseDynamicPlaneObject(const WwdObject& obj, Player* player = nullptr);
+	BaseDynamicPlaneObject(const WwdObject& obj);
 
 	float getSpeedX() const { return _speed.x; }
 	float getSpeedY() const { return _speed.y; }
@@ -74,7 +75,7 @@ protected:
 class BaseDamageObject : public BaseStaticPlaneObject 
 {
 public:
-	BaseDamageObject(const WwdObject& obj, Player* player, int damage);
+	BaseDamageObject(const WwdObject& obj, int damage);
 
 	virtual bool isDamage() const = 0;
 

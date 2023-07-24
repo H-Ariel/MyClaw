@@ -7,8 +7,8 @@
 #define CRATE_HEIGHT 43
 
 
-Crate::Crate(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _itemsTaken(false)
+Crate::Crate(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _itemsTaken(false)
 {
 	if (obj.powerup				> 0) _itemsTypes.push_back(obj.powerup);
 	if (obj.userRect1.left		> 0) _itemsTypes.push_back(obj.userRect1.left);
@@ -32,7 +32,7 @@ void Crate::Logic(uint32_t elapsedTime)
 	_ani->Logic(elapsedTime);
 
 
-	if (_player->isAttack() && _objRc.intersects(_player->GetAttackRect().first))
+	if (player->isAttack() && _objRc.intersects(player->GetAttackRect().first))
 	{
 		_ani->updateFrames = true;
 	}
@@ -82,7 +82,7 @@ vector<Item*> Crate::getItems()
 
 		for (int8_t t : _itemsTypes)
 		{
-			Item* itm = Item::getItem(newObj, _player, t);
+			Item* itm = Item::getItem(newObj, t);
 			itm->setSpeedY(-0.6f);
 			items.push_back(itm);
 		}
@@ -93,7 +93,7 @@ vector<Item*> Crate::getItems()
 	return items;
 }
 
-StackedCrates::StackedCrates(const WwdObject& obj, Player* player)
+StackedCrates::StackedCrates(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
 	int32_t height = obj.height;
@@ -119,7 +119,7 @@ StackedCrates::StackedCrates(const WwdObject& obj, Player* player)
 		*/
 		*(&newObj.userRect1.left + crateIdx) = *(&obj.userRect1.left + crateIdx); // match treasure by index
 
-		crates.push_back(allocNewSharedPtr<Crate>(newObj, player));
+		crates.push_back(allocNewSharedPtr<Crate>(newObj));
 	}
 }
 void StackedCrates::Logic(uint32_t elapsedTime)

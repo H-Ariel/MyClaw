@@ -3,8 +3,8 @@
 #include "../AssetsManager.h"
 
 
-Checkpoint::Checkpoint(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _state(States::Down),
+Checkpoint::Checkpoint(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _state(States::Down),
 	_imageSetPath(PathManager::getImageSetPath(obj.imageSet)), _isSuperCheckpoint(contains(obj.logic, "Super"))
 {
 	_ani = AssetsManager::createCopyAnimationFromFromPidImage(_imageSetPath + "/001.PID");
@@ -16,12 +16,12 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 	{
 	case States::Down:
 		// check if Claw touch the flag
-		if (_objRc.intersects(_player->GetRect()))
+		if (_objRc.intersects(player->GetRect()))
 		{
 			_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/CHECKPOINT/RISE.ANI", _imageSetPath);
 			_ani->position = position;
 			_state = States::Rise;
-			_player->startPosition = position;
+			player->startPosition = position;
 
 			if (_isSuperCheckpoint)
 			{

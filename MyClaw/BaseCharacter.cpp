@@ -2,8 +2,8 @@
 #include "WindowManager.h"
 
 
-BaseCharacter::BaseCharacter(const WwdObject& obj, Player* player)
-	: BaseDynamicPlaneObject(obj, player), _health(obj.health), _isAttack(false)
+BaseCharacter::BaseCharacter(const WwdObject& obj)
+	: BaseDynamicPlaneObject(obj), _health(obj.health), _isAttack(false)
 {
 }
 

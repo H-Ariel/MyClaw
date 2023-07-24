@@ -6,7 +6,7 @@
 class Wolvington : public BaseBoss
 {
 public:
-	Wolvington(const WwdObject& obj, Player* player);
+	Wolvington(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 

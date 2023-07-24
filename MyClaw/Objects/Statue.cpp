@@ -1,8 +1,8 @@
 #include "Statue.h"
 
 
-Statue::Statue(const WwdObject& obj, Player* player)
-	: Crate(obj, player)
+Statue::Statue(const WwdObject& obj)
+	: Crate(obj)
 {
 }
 void Statue::Logic(uint32_t elapsedTime)

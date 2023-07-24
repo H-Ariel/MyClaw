@@ -11,8 +11,8 @@
 #define ANIMATION_FLIP		_animations.at("FLIP3")
 
 
-Katherine::Katherine(const WwdObject& obj, Player* player)
-	: BaseBoss(obj, player, 10, "WALK", "HITHIGH", "HITLOW", "FALL", "", "", "")
+Katherine::Katherine(const WwdObject& obj)
+	: BaseBoss(obj, 10, "WALK", "HITHIGH", "HITLOW", "FALL", "", "", "")
 {
 }
 
@@ -67,9 +67,9 @@ void Katherine::Logic(uint32_t elapsedTime)
 			_isMirrored = _speed.x < 0;
 	}
 
-	if (_ani != ANIMATION_FLIP && abs(_player->position.x - position.x) > 64)
+	if (_ani != ANIMATION_FLIP && abs(player->position.x - position.x) > 64)
 	{
-		_isMirrored = _player->position.x < position.x;
+		_isMirrored = player->position.x < position.x;
 		if (_isMirrored) _speed.x = -abs(_speed.x);
 		else _speed.x = abs(_speed.x);
 	}
@@ -209,13 +209,13 @@ void Katherine::makeAttack()
 {
 	if (enemySeeClaw())
 	{
-		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
+		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
 		if (deltaX < 48 && deltaY < 16) // CC is close to K
 		{
 			_ani = ANIMATION_STRIKE2;
 			_ani->reset();
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 
 			_attackRest = 800;
 		}
@@ -224,7 +224,7 @@ void Katherine::makeAttack()
 			_ani = ANIMATION_STRIKE1;
 			_ani->reset();
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 
 			_attackRest = 1200;
 		}
@@ -238,7 +238,7 @@ bool Katherine::checkForHurts()
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{
-				if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+				if (player->isDuck()) _ani = ANIMATION_BLOCKLOW;
 				else _ani = ANIMATION_BLOCKHIGH;
 				_ani->reset();
 				return false;
@@ -246,11 +246,11 @@ bool Katherine::checkForHurts()
 		}
 	}
 
-	if (checkForHurt(_player->GetAttackRect()))
+	if (checkForHurt(player->GetAttackRect()))
 	{
 		if (_blockClaw)
 		{
-			if (_player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+			if (player->isDuck()) _ani = ANIMATION_BLOCKLOW;
 			else _ani = ANIMATION_BLOCKHIGH;
 			return false;
 		}

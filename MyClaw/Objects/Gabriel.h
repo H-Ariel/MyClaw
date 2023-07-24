@@ -6,7 +6,7 @@
 class Gabriel : public BaseBoss
 {
 public:
-	Gabriel(const WwdObject& obj, Player* player);
+	Gabriel(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	pair<Rectangle2D, int> GetAttackRect() override;
 
@@ -20,7 +20,7 @@ private:
 class GabrielCannon : public BaseStaticPlaneObject
 {
 public:
-	GabrielCannon(const WwdObject& obj, Player* player);
+	GabrielCannon(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:
@@ -30,7 +30,7 @@ private:
 class GabrielCannonSwitch : public BaseStaticPlaneObject
 {
 public:
-	GabrielCannonSwitch(const WwdObject& obj, Player* player);
+	GabrielCannonSwitch(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:
@@ -40,7 +40,7 @@ private:
 class GabrielCannonButton : public BaseStaticPlaneObject
 {
 public:
-	GabrielCannonButton(const WwdObject& obj, Player* player);
+	GabrielCannonButton(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

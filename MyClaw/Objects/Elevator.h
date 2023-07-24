@@ -6,14 +6,14 @@
 class Elevator : public BaseDynamicPlaneObject
 {
 public:
-	static Elevator* create(const WwdObject& obj, Player* player, int levelNumber);
+	static Elevator* create(const WwdObject& obj, int levelNumber);
 
 	void Logic(uint32_t elapsedTime) override;
 	Rectangle2D GetRect() override;
 	void Reset() override;
 
 protected:
-	Elevator(const WwdObject& obj, Player* player); // protected ctor to prevent direct instantiation
+	Elevator(const WwdObject& obj);
 	void mainLogic(uint32_t elapsedTime);
 
 	const D2D1_POINT_2F _initialPos, _initialSpeed;

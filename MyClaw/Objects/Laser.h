@@ -6,7 +6,7 @@
 class Laser : public BaseDamageObject
 {
 public:
-	Laser(const WwdObject& obj, Player* player);
+	Laser(const WwdObject& obj);
 	
 	void Logic(uint32_t elapsedTime) override;
 	bool isDamage() const override;

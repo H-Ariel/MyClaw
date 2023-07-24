@@ -6,7 +6,7 @@
 class TProjectilesShooter : public BaseStaticPlaneObject
 {
 public:
-	TProjectilesShooter(const WwdObject& obj, Player* player);
+	TProjectilesShooter(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;

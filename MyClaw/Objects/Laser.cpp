@@ -3,8 +3,8 @@
 #include "../Player.h"
 
 
-Laser::Laser(const WwdObject& obj, Player* player)
-	: BaseDamageObject(obj, player, obj.damage ? obj.damage : 1), _timeCounter(0),
+Laser::Laser(const WwdObject& obj)
+	: BaseDamageObject(obj, obj.damage ? obj.damage : 1), _timeCounter(0),
 	_isActive(false), _swapTime(obj.counter > 0 ? obj.counter : 1500)
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 60, true);

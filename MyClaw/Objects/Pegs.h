@@ -6,7 +6,7 @@
 class TogglePeg : public BaseStaticPlaneObject
 {
 public:
-	TogglePeg(const WwdObject& obj, Player* player);
+	TogglePeg(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:
@@ -22,7 +22,7 @@ private:
 class CrumblingPeg : public BaseStaticPlaneObject
 {
 public:
-	CrumblingPeg(const WwdObject& obj, Player* player);
+	CrumblingPeg(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 	void Reset() override;
@@ -39,5 +39,5 @@ private:
 class BreakPlank : public CrumblingPeg
 {
 public:
-	BreakPlank(const WwdObject& obj, Player* player, float topOffset); // topOffset is the offset from the top of the image to the top of the plank
+	BreakPlank(const WwdObject& obj, float topOffset); // topOffset is the offset from the top of the image to the top of the plank
 };

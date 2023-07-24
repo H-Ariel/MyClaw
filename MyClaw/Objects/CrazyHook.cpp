@@ -1,8 +1,8 @@
 #include "CrazyHook.h"
 
 
-CrazyHook::CrazyHook(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 12, 10, "FASTADVANCE", "HITHIGH",
+CrazyHook::CrazyHook(const WwdObject& obj)
+	: BaseEnemy(obj, 12, 10, "FASTADVANCE", "HITHIGH",
 		"HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "", "", "", 0.15f)
 {
 }

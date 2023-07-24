@@ -6,7 +6,7 @@
 class GroundBlower : public BaseStaticPlaneObject
 {
 public:
-	GroundBlower(const WwdObject& obj, Player* player);
+	GroundBlower(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;

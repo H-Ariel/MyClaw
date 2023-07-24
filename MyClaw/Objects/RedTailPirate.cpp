@@ -1,8 +1,8 @@
 #include "RedTailPirate.h"
 
 
-RedTailPirate::RedTailPirate(const WwdObject& obj, Player* player, bool noTreasures)
-	: BaseEnemy(obj, player, 12, 10, "FASTADVANCE", "HITHIGH",
+RedTailPirate::RedTailPirate(const WwdObject& obj, bool noTreasures)
+	: BaseEnemy(obj, 12, 10, "FASTADVANCE", "HITHIGH",
 		"HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "", "", "", 0.2f, noTreasures)
 {
 }

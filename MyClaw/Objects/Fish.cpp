@@ -7,8 +7,8 @@
 #define ANIMATION_STRIKE	_animations.at("STRIKE1")
 
 
-Fish::Fish(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 1, 10, "SWIM", "HIT", "HIT",
+Fish::Fish(const WwdObject& obj)
+	: BaseEnemy(obj, 1, 10, "SWIM", "HIT", "HIT",
 		"KILLFALL", "", "", "", "", "", 0.1f, true), _yPos((float)obj.y)
 {
 }
@@ -76,7 +76,7 @@ void Fish::makeAttack()
 {
 	if (enemySeeClaw())
 	{
-		if (abs(_player->position.x - position.x) < 96 && abs(_player->position.y - position.y) < 32)
+		if (abs(player->position.x - position.x) < 96 && abs(player->position.y - position.y) < 32)
 		{
 			_ani = ANIMATION_STRIKE;
 
@@ -86,7 +86,7 @@ void Fish::makeAttack()
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 		}
 	}
 }

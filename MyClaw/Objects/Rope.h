@@ -6,7 +6,7 @@
 class Rope : public BasePlaneObject
 {
 public:
-	Rope(const WwdObject& obj, Player* player);
+	Rope(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 	Rectangle2D GetRect() override;

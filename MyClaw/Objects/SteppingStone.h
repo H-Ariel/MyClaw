@@ -6,7 +6,7 @@
 class SteppingStone : public BaseStaticPlaneObject
 {
 public:
-	SteppingStone(const WwdObject& obj, Player* player);
+	SteppingStone(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:
@@ -22,7 +22,7 @@ private:
 class StartSteppingStone : public BaseStaticPlaneObject
 {
 public:
-	StartSteppingStone(const WwdObject& obj, Player* player);
+	StartSteppingStone(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

@@ -4,9 +4,6 @@
 #include "Player.h"
 #include "PhysicsManager.h"
 #include "Objects/PowderKeg.h"
-#include "Objects/FloorSpike.h"
-#include "Objects/GooVent.h"
-#include "Objects/Laser.h"
 
 
 class BaseEnemy;
@@ -21,8 +18,6 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 
-	Player* getPlayer() const { return _player; }
-
 	// TODO: make non-static
 	static void addPlaneObject(BasePlaneObject* obj);
 	static const PhysicsManager& getPhysicsManager() { return *(_instance->_physicsManager); }
@@ -30,6 +25,7 @@ public:
 	static const vector<BaseEnemy*>& getEnemies() { return _instance->_enemies; }
 	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }
 	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
+	static void playerEnterToBoss();
 
 private:
 	void updatePosition();
@@ -43,12 +39,11 @@ private:
 	};
 
 	PhysicsManager* _physicsManager;
-	vector<BasePlaneObject*> _objects;
+	vector<BasePlaneObject*> _objects, _bossObjects;
 	vector<PowderKeg*> _powderKegs;
 	vector<BaseEnemy*> _enemies;
 	vector<Projectile*> _projectiles;
 	vector<BaseDamageObject*> _damageObjects;
-	Player* _player;
 	const D2D1_SIZE_F _planeSize;
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish

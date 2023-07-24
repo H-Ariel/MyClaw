@@ -1,6 +1,7 @@
 #include "Item.h"
 #include "../AssetsManager.h"
 #include "../Player.h"
+#include "../ActionPlane.h"
 
 
 static const initializer_list<Item::Type> UpdateFramesTypes = {
@@ -117,16 +118,16 @@ string getItemPath(Item::Type type, const string& imageSet)
 }
 
 
-Item::Item(const WwdObject& obj, Player* player, int8_t type)
-	: BaseDynamicPlaneObject(obj, player), _type((Type)type), _useGlitter(false), _glitterAnimation(nullptr)
+Item::Item(const WwdObject& obj, int8_t type)
+	: BaseDynamicPlaneObject(obj), _type((Type)type), _useGlitter(false), _glitterAnimation(nullptr)
 {
 	if (_type == Type::Default)
 	{
-		_type = Type::Treasure_Coins;
+		(Type&)_type = Type::Treasure_Coins;
 	}
 	else if (_type == Type::None)
 	{
-		_type = ItemsMap.at(obj.imageSet);
+		(Type&)_type = ItemsMap.at(obj.imageSet);
 	}
 
 #ifndef LOW_DETAILS
@@ -165,10 +166,10 @@ void Item::Logic(uint32_t elapsedTime)
 {
 	if (_speed.x == 0 && _speed.y == 0)
 	{
-		if (GetRect().intersects(_player->GetRect()))
+		if (GetRect().intersects(player->GetRect()))
 		{
 			// if the player collect the item it will be removed
-			removeObject = _player->collectItem(this);
+			removeObject = player->collectItem(this);
 		}
 	}
 
@@ -200,7 +201,7 @@ void Item::stopFalling(float collisionSize)
 	position.y -= collisionSize;
 }
 
-Item* Item::getItem(const WwdObject& obj, Player* player, int8_t type)
+Item* Item::getItem(const WwdObject& obj, int8_t type)
 {
 	Type _type((Type)type);
 	if (_type == Type::Default)
@@ -214,10 +215,10 @@ Item* Item::getItem(const WwdObject& obj, Player* player, int8_t type)
 
 	if (_type == Type::Warp || _type == Type::BossWarp)
 	{
-		return DBG_NEW ::Warp(obj, player, type);
+		return DBG_NEW ::Warp(obj, type);
 	}
 
-	return DBG_NEW Item(obj, player, type);
+	return DBG_NEW Item(obj, type);
 }
 void Item::resetItemsPaths()
 {
@@ -282,17 +283,24 @@ uint32_t Item::getTreasureScore(Type type)
 	throw Exception("invalid treasure type");
 }
 
-Warp::Warp(const WwdObject& obj, Player* player, int8_t type)
-	: Item(obj, player, type), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)
+Warp::Warp(const WwdObject& obj, int8_t type)
+	: Item(obj, type), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)
 {
 }
 void Warp::Logic(uint32_t elapsedTime)
 {
-	if (GetRect().intersects(_player->GetRect()))
+	if (GetRect().intersects(player->GetRect()))
 	{
-		_player->position = _destination;
-		_player->stopFalling(0);
+		player->position = _destination;
+		player->stopFalling(0);
 		removeObject = _oneTimeWarp;
+
+		if (_type == Type::BossWarp)
+		{
+			ActionPlane::playerEnterToBoss();
+			player->startPosition = _destination;
+		}
+
 		// TODO: cool animation
 	}
 }

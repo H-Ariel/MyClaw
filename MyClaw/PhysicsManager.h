@@ -9,7 +9,7 @@ class PhysicsManager
 public:
 	static const float myGRAVITY;
 
-	PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, Player* player, int levelNumber);
+	PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, int levelNumber);
 
 	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath) const;
 
@@ -19,5 +19,4 @@ public:
 
 private:
 	vector<pair<Rectangle2D, uint32_t>> _rects; // { rc, WwdTileDescription::WwdTileAttributeFlags }
-	Player* _player;
 };

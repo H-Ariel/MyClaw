@@ -40,6 +40,9 @@
 #include "Objects/Gabriel.h"
 #include "Objects/Marrow.h"
 #include "Objects/Chameleon.h"
+#include "Objects/FloorSpike.h"
+#include "Objects/GooVent.h"
+#include "Objects/Laser.h"
 
 
 #define EMPTY_TILE -1
@@ -53,6 +56,7 @@
 #define MAX_OFFSET_Y (_planeSize.height - wndSize.height)
 
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
+#define player BasePlaneObject::player
 
 // TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
@@ -61,17 +65,17 @@
 #define USE_ENEMIES
 //#endif
 
+/*
 class SimpleObject : public BasePlaneObject
 {
 public:
 	SimpleObject(const WwdObject& obj) : BasePlaneObject(obj) {}
 	void Logic(uint32_t elapsedTime) override {}
-	void Draw() override {
-		WindowManager::drawRect(Rectangle2D(position.x - 32, position.y - 32, position.x + 32, position.y + 32), ColorF::Green);
-	}
+	void Draw() override { WindowManager::drawRect(Rectangle2D(position.x - 32,
+		position.y - 32, position.x + 32, position.y + 32), ColorF::Green); }
 	Rectangle2D GetRect() override { return Rectangle2D(); }
 };
-
+*/
 
 ActionPlane* ActionPlane::_instance = nullptr;
 
@@ -88,14 +92,14 @@ ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int level
 	playerData.x = wwd->startX;
 	playerData.y = wwd->startY;
 	playerData.z = 4000;
-	_objects.push_back(_player = DBG_NEW Player(playerData, _planeSize));
+	_objects.push_back(player = DBG_NEW Player(playerData, _planeSize));
 
 #ifdef SAVE_LOGICS
 	set<string> allLogics;
 #endif
 
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
-	_physicsManager = DBG_NEW PhysicsManager(&_planeData, wwd, _player, levelNumber); // must be after WWD map loaded and before objects added
+	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
+	_physicsManager = DBG_NEW PhysicsManager(&_planeData, wwd, levelNumber); // must be after WWD map loaded and before objects added
 
 	for (const WwdObject& obj : planeData.objects)
 	{
@@ -124,6 +128,8 @@ ActionPlane::~ActionPlane()
 {
 	for (BasePlaneObject* i : _objects)
 		delete i;
+	for (BasePlaneObject* i : _bossObjects)
+		delete i;
 
 	SafeDelete(_physicsManager);
 
@@ -133,7 +139,7 @@ ActionPlane::~ActionPlane()
 
 void ActionPlane::Logic(uint32_t elapsedTime)
 {
-	if (_player->isFinishLevel()) return;
+	if (player->isFinishLevel()) return;
 
 	if (_deathAniWait)
 	{
@@ -144,7 +150,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			if (_holeRadius <= 0)
 			{
 				_state = States::Open;
-				_player->backToLife();
+				player->backToLife();
 				updatePosition();
 
 				for (BasePlaneObject* obj : _objects)
@@ -156,7 +162,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 		case States::Open:
 			_holeRadius += RECT_SPEED * elapsedTime;
-			if (_player->position.x - position.x < _holeRadius)
+			if (player->position.x - position.x < _holeRadius)
 			{
 				_deathAniWait = false;
 				_state = States::Play;
@@ -164,11 +170,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			break;
 
 		case States::Fall:
-			_player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
-			_player->Logic(0); // update position of animation
-			if (_player->position.y - position.y > WindowManager::getSize().height)
+			player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
+			player->Logic(0); // update position of animation
+			if (player->position.y - position.y > WindowManager::getSize().height)
 			{
-				_player->loseLife();
+				player->loseLife();
 				_state = States::Close;
 				_deathAniWait = true;
 				auto wndSz = WindowManager::getSize();
@@ -179,15 +185,15 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		return;
 	}
 
-	if (_player->isFinishDeathAnimation() && _player->hasLives() && _state == States::Play)
+	if (player->isFinishDeathAnimation() && player->hasLives() && _state == States::Play)
 	{
-		if (_player->isSpikeDeath())
+		if (player->isSpikeDeath())
 		{
 			_state = States::Close;
 			auto wndSz = WindowManager::getSize();
 			_holeRadius = max(wndSz.width, wndSz.height) / 2;
 		}
-		else //if (_player->isFallDeath())
+		else //if (player->isFallDeath())
 		{
 			_state = States::Fall;
 		}
@@ -196,9 +202,9 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		return;
 	}
 
-	if (!_player->isInDeathAnimation())
+	if (!player->isInDeathAnimation())
 	{
-		_physicsManager->checkCollides(_player, [&] { _player->loseLife(); });
+		_physicsManager->checkCollides(player, [&] { player->loseLife(); });
 	}
 
 	updatePosition();
@@ -214,9 +220,9 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	{
 		obj = _objects[i];
 	
-		if (1.3 < _player->getSpeedY() && _player->getSpeedY() < 1.4f)
+		if (1.3 < player->getSpeedY() && player->getSpeedY() < 1.4f)
 			cout << "";
-		else if (_player->getSpeedY() == 0)
+		else if (player->getSpeedY() == 0)
 			cout << "";
 
 		obj->Logic(elapsedTime);
@@ -272,10 +278,10 @@ void ActionPlane::Draw()
 	{
 		const D2D1_SIZE_F wndSz = WindowManager::getSize();
 		const float wp = wndSz.width + position.x, hp = wndSz.height + position.y;
-		const Rectangle2D rc1(position.x, position.y, _player->position.x - _holeRadius, hp);
-		const Rectangle2D rc2(rc1.right, position.y, wp, _player->position.y - _holeRadius);
-		const Rectangle2D rc3(rc1.right, _player->position.y + _holeRadius, wp, hp);
-		const Rectangle2D rc4(_player->position.x + _holeRadius, rc2.bottom, wp, rc3.top);
+		const Rectangle2D rc1(position.x, position.y, player->position.x - _holeRadius, hp);
+		const Rectangle2D rc2(rc1.right, position.y, wp, player->position.y - _holeRadius);
+		const Rectangle2D rc3(rc1.right, player->position.y + _holeRadius, wp, hp);
+		const Rectangle2D rc4(player->position.x + _holeRadius, rc2.bottom, wp, rc3.top);
 
 		WindowManager::fillRect(rc1, ColorF::Black);
 		WindowManager::fillRect(rc2, ColorF::Black);
@@ -283,8 +289,32 @@ void ActionPlane::Draw()
 		WindowManager::fillRect(rc4, ColorF::Black);
 
 		// TODO: draw circle, not 4 rectangles
-		//WindowManager::drawCircle(_player->position, _holeRadius, ColorF::Black, 20);
+		//WindowManager::drawCircle(player->position, _holeRadius, ColorF::Black, 20);
 	}
+}
+
+void ActionPlane::playerEnterToBoss()
+{
+	// clear all objects that we don't need in boss
+	for (auto& i : _instance->_powderKegs) i->removeObject = true;
+	for (auto& i : _instance->_enemies) i->removeObject = true;
+	for (auto& i : _instance->_projectiles) i->removeObject = true;
+	for (auto& i : _instance->_damageObjects) i->removeObject = true;
+
+	// move all objects that we need in boss to the objects' list
+	for (auto& i : _instance->_bossObjects) {
+		_instance->_objects.push_back(i);
+
+		if (isbaseinstance<BaseEnemy>(i))
+			_instance->_enemies.push_back((BaseEnemy*)i);
+		else if (isProjectile(i))
+			_instance->_projectiles.push_back((Projectile*)i);
+
+	}
+	_instance->_bossObjects.clear();
+	_instance->_needSort = true;
+
+	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Boss);
 }
 
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
@@ -299,6 +329,7 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 
 #define ADD_ENEMY(p) { BaseEnemy* enemy = DBG_NEW p; _objects.push_back(enemy); _enemies.push_back(enemy); }
 #define ADD_DAMAGE_OBJECT(p) { BaseDamageObject* dObj = DBG_NEW p; _objects.push_back(dObj); _damageObjects.push_back(dObj); }
+#define ADD_BOSS_OBJECT(p) { BasePlaneObject* bObj = DBG_NEW p; _bossObjects.push_back(bObj); }
 
 void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd)
 {
@@ -313,59 +344,59 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	}
 	else if (obj.logic == "GlobalAmbientSound")
 	{
-		_objects.push_back(DBG_NEW GlobalAmbientSound(obj, _player));
+		_objects.push_back(DBG_NEW GlobalAmbientSound(obj));
 	}
 	else if (obj.logic == "AmbientSound" || obj.logic == "SpotAmbientSound")
 	{
-		_objects.push_back(DBG_NEW AmbientSound(obj, _player));
+		_objects.push_back(DBG_NEW AmbientSound(obj));
 	}
 	else if (contains(obj.logic, "SoundTrigger"))
 	{
-		_objects.push_back(DBG_NEW SoundTrigger(obj, _player));
+		_objects.push_back(DBG_NEW SoundTrigger(obj));
 	}
 	else if (obj.logic == "BehindCrate" || obj.logic == "FrontCrate")
 	{
-		_objects.push_back(DBG_NEW Crate(obj, _player));
+		_objects.push_back(DBG_NEW Crate(obj));
 	}
 	else if (obj.logic == "FrontStackedCrates" || obj.logic == "BackStackedCrates")
 	{
-		_objects.push_back(DBG_NEW StackedCrates(obj, _player));
+		_objects.push_back(DBG_NEW StackedCrates(obj));
 	}
 	else if (obj.logic == "FrontStatue" || obj.logic == "BehindStatue")
 	{
-		_objects.push_back(DBG_NEW Statue(obj, _player));
+		_objects.push_back(DBG_NEW Statue(obj));
 	}
 	else 
 		if (obj.logic == "PowderKeg")
 	{
-		PowderKeg* p = DBG_NEW PowderKeg(obj, _player);
+		PowderKeg* p = DBG_NEW PowderKeg(obj);
 		_objects.push_back(p); _powderKegs.push_back(p);
 	}
 	else
 #endif
 	if (endsWith(obj.logic, "Elevator"))
 	{
-		_objects.push_back(Elevator::create(obj, _player, levelNumber));
+		_objects.push_back(Elevator::create(obj, levelNumber));
 	}
 	else if (endsWith(obj.logic, "Checkpoint"))
 	{
-		_objects.push_back(DBG_NEW Checkpoint(obj, _player));
+		_objects.push_back(DBG_NEW Checkpoint(obj));
 	}
 	else if (startsWith(obj.logic, "TogglePeg"))
 	{
-		_objects.push_back(DBG_NEW TogglePeg(obj, _player));
+		_objects.push_back(DBG_NEW TogglePeg(obj));
 	}
 	else if (obj.logic == "StartSteppingStone")
 	{
-		_objects.push_back(DBG_NEW StartSteppingStone(obj, _player));
+		_objects.push_back(DBG_NEW StartSteppingStone(obj));
 	}
 	else if (startsWith(obj.logic, "SteppingStone"))
 	{
-		_objects.push_back(DBG_NEW SteppingStone(obj, _player));
+		_objects.push_back(DBG_NEW SteppingStone(obj));
 	}
 	else if (obj.logic == "CrumblingPeg")
 	{
-		_objects.push_back(DBG_NEW CrumblingPeg(obj, _player));
+		_objects.push_back(DBG_NEW CrumblingPeg(obj));
 	}
 	else if (obj.logic == "BreakPlank")
 	{
@@ -375,7 +406,7 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 
 		for (int32_t i = 0; i < obj.width; i++)
 		{
-			_objects.push_back(DBG_NEW BreakPlank(obj, _player, (float)topOffset));
+			_objects.push_back(DBG_NEW BreakPlank(obj, (float)topOffset));
 			(int32_t&)obj.x += TILE_SIZE;
 			//myMemCpy(obj.x, obj.x + TILE_SIZE);
 		}
@@ -386,165 +417,165 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 		|| obj.logic == "EndOfLevelPowerup" || obj.logic == "MagicPowerup"
 		/*|| obj.logic == "CursePowerup"*/)
 	{
-		_objects.push_back(Item::getItem(obj, _player));
+		_objects.push_back(Item::getItem(obj));
 	}
 	else if (obj.logic == "AniRope")
 	{
-		_objects.push_back(DBG_NEW Rope(obj, _player));
+		_objects.push_back(DBG_NEW Rope(obj));
 	}
 	else if (obj.logic == "SpringBoard" || obj.logic == "WaterRock")
 	{
-		_objects.push_back(DBG_NEW SpringBoard(obj, _player));
+		_objects.push_back(DBG_NEW SpringBoard(obj));
 	}
 	else if (obj.logic == "GroundBlower")
 	{
-		_objects.push_back(DBG_NEW GroundBlower(obj, _player));
+		_objects.push_back(DBG_NEW GroundBlower(obj));
 	}
 	else if (obj.logic == "ConveyorBelt")
 	{
-		_objects.push_back(DBG_NEW ConveyorBelt(obj, _player));
+		_objects.push_back(DBG_NEW ConveyorBelt(obj));
 	}
 #ifdef USE_ENEMIES
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
 	{
-		_objects.push_back(DBG_NEW TowerCannon(obj, _player));
+		_objects.push_back(DBG_NEW TowerCannon(obj));
 	}
 	else if (obj.logic == "GooVent")
 	{
-		ADD_DAMAGE_OBJECT(GooVent(obj, _player));
+		ADD_DAMAGE_OBJECT(GooVent(obj));
 	}
 	else if (startsWith(obj.logic, "FloorSpike"))
 	{
-		ADD_DAMAGE_OBJECT(FloorSpike(obj, _player));
+		ADD_DAMAGE_OBJECT(FloorSpike(obj));
 	}
 	else if (obj.logic == "CrabNest")
 	{
-		_objects.push_back(DBG_NEW CrabNest(obj, _player));
+		_objects.push_back(DBG_NEW CrabNest(obj));
 	}
 	else if (startsWith(obj.logic, "SawBlade"))
 	{
-		ADD_DAMAGE_OBJECT(SawBlade(obj, _player));
+		ADD_DAMAGE_OBJECT(SawBlade(obj));
 	}
 	else if (obj.logic == "TProjectile")
 	{
-		_objects.push_back(DBG_NEW TProjectilesShooter(obj, _player));
+		_objects.push_back(DBG_NEW TProjectilesShooter(obj));
 	}
 	else if (obj.logic == "SkullCannon")
 	{
-		_objects.push_back(DBG_NEW SkullCannon(obj, _player));
+		_objects.push_back(DBG_NEW SkullCannon(obj));
 	}
 	else if (obj.logic == "Laser")
 	{
-		ADD_DAMAGE_OBJECT(Laser(obj, _player));
+		ADD_DAMAGE_OBJECT(Laser(obj));
 	}
 	else if (obj.logic == "Officer")
 	{
-		ADD_ENEMY(Officer(obj, _player));
+		ADD_ENEMY(Officer(obj));
 	}
 	else if (obj.logic == "Soldier")
 	{
-		ADD_ENEMY(Soldier(obj, _player));
+		ADD_ENEMY(Soldier(obj));
 	}
 	else if (obj.logic == "Rat")
 	{
-		ADD_ENEMY(Rat(obj, _player));
+		ADD_ENEMY(Rat(obj));
 	}
 	else if (obj.logic == "PunkRat")
 	{
-		ADD_ENEMY(PunkRat(obj, _player));
+		ADD_ENEMY(PunkRat(obj));
 	}
 	else if (obj.logic == "RobberThief")
 	{
-		ADD_ENEMY(RobberThief(obj, _player));
+		ADD_ENEMY(RobberThief(obj));
 	}
 	else if (obj.logic == "CutThroat")
 	{
-		ADD_ENEMY(CutThroat(obj, _player));
+		ADD_ENEMY(CutThroat(obj));
 	}
 	else if (obj.logic == "Seagull")
 	{
-		ADD_ENEMY(Seagull(obj, _player));
+		ADD_ENEMY(Seagull(obj));
 	}
 	else if (obj.logic == "TownGuard1" || obj.logic == "TownGuard2")
 	{
-		ADD_ENEMY(TownGuard(obj, _player));
+		ADD_ENEMY(TownGuard(obj));
 	}
 	else if (obj.logic == "RedTailPirate")
 	{
-		ADD_ENEMY(RedTailPirate(obj, _player));
+		ADD_ENEMY(RedTailPirate(obj));
 	}
 	else if (obj.logic == "BearSailor")
 	{
-		ADD_ENEMY(BearSailor(obj, _player));
+		ADD_ENEMY(BearSailor(obj));
 	}
 	else if (obj.logic == "CrazyHook")
 	{
-		ADD_ENEMY(CrazyHook(obj, _player));
+		ADD_ENEMY(CrazyHook(obj));
 	}
 	else if (obj.logic == "HermitCrab")
 	{
-		ADD_ENEMY(HermitCrab(obj, _player));
+		ADD_ENEMY(HermitCrab(obj));
 	}
 	else if (obj.logic == "PegLeg")
 	{
-		ADD_ENEMY(PegLeg(obj, _player));
+		ADD_ENEMY(PegLeg(obj));
 	}
 	else if (obj.logic == "Mercat")
 	{
-		ADD_ENEMY(Mercat(obj, _player));
+		ADD_ENEMY(Mercat(obj));
 	}
 	else if (obj.logic == "Siren")
 	{
-		ADD_ENEMY(Siren(obj, _player));
+		ADD_ENEMY(Siren(obj));
 	}
 	else if (obj.logic == "Fish")
 	{
-		ADD_ENEMY(Fish(obj, _player));
+		ADD_ENEMY(Fish(obj));
 	}
 	else if (obj.logic == "Chameleon")
 	{
-		ADD_ENEMY(Chameleon(obj, _player));
+		ADD_ENEMY(Chameleon(obj));
 	}
 #endif
 	else if (obj.logic == "Raux")
 	{
-		ADD_ENEMY(LeRauxe(obj, _player));
+		ADD_BOSS_OBJECT(LeRauxe(obj));
 	}
 	else if (obj.logic == "Katherine")
 	{
-		ADD_ENEMY(Katherine(obj, _player));
+		ADD_BOSS_OBJECT(Katherine(obj));
 	}
 	else if (obj.logic == "Wolvington")
 	{
-		ADD_ENEMY(Wolvington(obj, _player));
+		ADD_BOSS_OBJECT(Wolvington(obj));
 	}
 	else if (obj.logic == "Gabriel")
 	{
-		ADD_ENEMY(Gabriel(obj, _player));
+		ADD_BOSS_OBJECT(Gabriel(obj));
 	}
 	else if (obj.logic == "GabrielCannon")
 	{
-		_objects.push_back(DBG_NEW GabrielCannon(obj, _player));
+		ADD_BOSS_OBJECT(GabrielCannon(obj));
 	}
 	else if (obj.logic == "CannonSwitch")
 	{
-		_objects.push_back(DBG_NEW GabrielCannonSwitch(obj, _player));
+		ADD_BOSS_OBJECT(GabrielCannonSwitch(obj));
 	}
 	else if (obj.logic == "CannonButton")
 	{
-		_objects.push_back(DBG_NEW GabrielCannonButton(obj, _player));
+		ADD_BOSS_OBJECT(GabrielCannonButton(obj));
 	}
 	else if (obj.logic == "Marrow")
 	{
-		ADD_ENEMY(Marrow(obj, _player));
+		ADD_BOSS_OBJECT(Marrow(obj));
 	}
 	else if (obj.logic == "Parrot")
 	{
-		ADD_ENEMY(MarrowParrot(obj, _player));
+		ADD_BOSS_OBJECT(MarrowParrot(obj));
 	}
 	else if (obj.logic == "MarrowFloor")
 	{
-		_objects.push_back(DBG_NEW MarrowFloor(obj, _player));
+		ADD_BOSS_OBJECT(MarrowFloor(obj));
 	}
 
 	//	throw Exception("TODO: logic=" + obj.logic);
@@ -554,8 +585,8 @@ void ActionPlane::updatePosition()
 {
 	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
 	const D2D1_SIZE_F wndSize = WindowManager::getSize();
-	position.x = _player->position.x - wndSize.width / 2.0f;
-	position.y = _player->position.y - wndSize.height / 2.0f;
+	position.x = player->position.x - wndSize.width / 2.0f;
+	position.y = player->position.y - wndSize.height / 2.0f;
 
 	if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
 	if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;

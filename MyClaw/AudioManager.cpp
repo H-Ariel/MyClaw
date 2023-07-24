@@ -76,7 +76,7 @@ void AudioManager::checkForRestart()
 	}
 }
 
-void AudioManager::setBackgroundMusic(BackgroundMusicType type, bool reset)
+void AudioManager::setBackgroundMusic(BackgroundMusicType type)
 {
 	static mutex myMutex;
 	myMutex.lock();
@@ -97,13 +97,9 @@ void AudioManager::setBackgroundMusic(BackgroundMusicType type, bool reset)
 		if (_currBgMusic != nullptr)
 			_currBgMusic->stop();
 		_currBgMusic = _midiPlayers[type];
-		if (reset)
-			_currBgMusic->reset();
 
 		if (!_currBgMusic->isPlaying())
 			_currBgMusic->play(true);
-
-		// TODO: if we continue the music (e.g. after powerup end) sometimes it play wrong
 	}
 	myMutex.unlock();
 }

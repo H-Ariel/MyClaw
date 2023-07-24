@@ -6,7 +6,7 @@
 class HermitCrab : public BaseEnemy
 {
 public:
-	HermitCrab(const WwdObject& obj, Player* player, bool isFromNest = false);
+	HermitCrab(const WwdObject& obj, bool isFromNest = false);
 
 	void Logic(uint32_t elapsedTime) override;
 	void stopFalling(float collisionSize) override;

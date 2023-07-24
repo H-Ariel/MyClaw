@@ -11,10 +11,10 @@
 class BaseEnemy : public BaseCharacter
 {
 public:
-	BaseEnemy(const WwdObject& obj, Player* player, int health,
-		int damage, string walkAni, string hit1, string hit2,
-		string fallDead, string strikeAni, string strikeDuckAni,
-		string shootAni, string shootDuckAni, string projectileAniDir,
+	BaseEnemy(const WwdObject& obj, int health, int damage,
+		string walkAni, string hit1, string hit2, string fallDead,
+		string strikeAni, string strikeDuckAni, string shootAni,
+		string shootDuckAni, string projectileAniDir,
 		float walkingSpeed, bool noTreasures = false);
 	~BaseEnemy();
 
@@ -59,9 +59,8 @@ class BaseBoss : public BaseEnemy
 {
 public:
 	// same ot BaseEnemy c'tor
-	BaseBoss(const WwdObject& obj, Player* player,
-		int damage, string walkAni, string hit1,
-		string hit2, string fallDead, string strikeAni,
+	BaseBoss(const WwdObject& obj, int damage, string walkAni,
+		string hit1, string hit2, string fallDead, string strikeAni,
 		string shootAni, string projectileAniDir);
 	~BaseBoss();
 
@@ -93,7 +92,7 @@ public:
 class BossGem : public Item
 {
 public:
-	BossGem(const WwdObject& obj, Player* player);
+	BossGem(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

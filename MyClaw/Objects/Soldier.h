@@ -6,7 +6,7 @@
 class Soldier : public BaseEnemy
 {
 public:
-	Soldier(const WwdObject& obj, Player* player);
+	Soldier(const WwdObject& obj);
 
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;

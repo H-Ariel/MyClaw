@@ -6,7 +6,7 @@
 class Fish : public BaseEnemy
 {
 public:
-	Fish(const WwdObject& obj, Player* player);
+	Fish(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 	pair<Rectangle2D, int> GetAttackRect() override;

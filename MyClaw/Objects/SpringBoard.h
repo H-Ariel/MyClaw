@@ -6,7 +6,7 @@
 class SpringBoard : public BaseStaticPlaneObject
 {
 public:
-	SpringBoard(const WwdObject& obj, Player* player);
+	SpringBoard(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 

@@ -36,7 +36,7 @@
 		return true; \
 	} break;
 #define SET_POWERUP(type) \
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Powerup, true); \
+	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Powerup); \
 	if (_currPowerup != PowerupType:: type) _powerupLeftTime = 0; \
 	_powerupLeftTime += item->getDuration(); \
 	_currPowerup = PowerupType:: type; \
@@ -165,7 +165,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_powerupLeftTime = 0;
 		_currPowerup = PowerupType::None;
 		_powerupSparkles.clear();
-		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
+		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	}
 
 	float speedX = SpeedX_Normal, speedYClimb = SpeedY_Climb;
@@ -775,7 +775,9 @@ void Player::jump()
 
 bool Player::checkForHurts()
 {
-//	return false; // TODO: change this! let CC hurt!
+#ifdef _DEBUG
+	return false; // TODO: change this! let CC hurt!
+#endif
 
 	if (isTakeDamage() || _damageRest > 0) return false;
 
@@ -1006,7 +1008,7 @@ void Player::loseLife()
 		_powerupLeftTime = 0;
 		_currPowerup = PowerupType::None;
 		_powerupSparkles.clear();
-		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level, false);
+		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	}
 }
 

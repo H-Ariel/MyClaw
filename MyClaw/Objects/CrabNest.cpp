@@ -4,8 +4,8 @@
 #include "../Player.h"
 
 
-CrabNest::CrabNest(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player)
+CrabNest::CrabNest(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj)
 {
 	_ani = AssetsManager::loadCopyAnimation("/LEVEL7/ANIS/HATCHNEST.ANI", PathManager::getImageSetPath(obj.imageSet));
 	_ani->position = position;
@@ -31,7 +31,7 @@ CrabNest::CrabNest(const WwdObject& obj, Player* player)
 	{
 		crabObj.powerup = treasuresList[i];
 		crabObj.speedX = getRandomInt(-250, 250);
-		_crabs.push_back(DBG_NEW HermitCrab(crabObj, _player, true));
+		_crabs.push_back(DBG_NEW HermitCrab(crabObj, true));
 	}
 }
 CrabNest::~CrabNest()
@@ -42,7 +42,7 @@ CrabNest::~CrabNest()
 
 void CrabNest::Logic(uint32_t elapsedTime)
 {
-	if (_crabs.size() > 0 && _player->GetRect().intersects(_objRc))
+	if (_crabs.size() > 0 && player->GetRect().intersects(_objRc))
 	{
 		_ani->updateFrames = true;
 

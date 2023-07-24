@@ -8,8 +8,8 @@
 #define ANIMATION_IDLE		_animations.at(_idleAniName)
 
 
-HermitCrab::HermitCrab(const WwdObject& obj, Player* player, bool isFromNest)
-	: BaseEnemy(obj, player, 1, 10, "FASTADVANCE", "HIT", "HIT", "KILLFALL",
+HermitCrab::HermitCrab(const WwdObject& obj, bool isFromNest)
+	: BaseEnemy(obj, 1, 10, "FASTADVANCE", "HIT", "HIT", "KILLFALL",
 		"STRIKE1", "", "STRIKE1", "", "", 0.1f), _isFromNest(isFromNest)
 {
 	if (isFromNest)
@@ -39,8 +39,8 @@ void HermitCrab::makeAttack()
 {
 	if (_isStanding || enemySeeClaw())
 	{
-		const float deltaX = abs(_player->position.x - position.x);
-		const float deltaY = abs(_player->position.y - position.y);
+		const float deltaX = abs(player->position.x - position.x);
+		const float deltaY = abs(player->position.y - position.y);
 
 		if (deltaX < 256 && deltaY < 42)
 		{
@@ -48,7 +48,7 @@ void HermitCrab::makeAttack()
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));

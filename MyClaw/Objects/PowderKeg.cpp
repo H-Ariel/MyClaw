@@ -5,8 +5,8 @@
 #include "../ActionPlane.h"
 
 
-PowderKeg::PowderKeg(const WwdObject& obj, Player* player)
-	: BaseDynamicPlaneObject(obj, player), _imageSet(obj.imageSet), _state(State::Stand)
+PowderKeg::PowderKeg(const WwdObject& obj)
+	: BaseDynamicPlaneObject(obj), _imageSet(obj.imageSet), _state(State::Stand)
 {
 	_ani = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath(_imageSet) + "/001.PID")->getCopy();
 }

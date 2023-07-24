@@ -14,8 +14,7 @@
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
 
-PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, Player * player, int levelNumber)
-	: _player(player)
+PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, int levelNumber)
 {
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
@@ -188,18 +187,18 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(vo
 		// check if object is at the top of the ladder, so it should stay here (and not fall)
 		bool isOnLadderTop = collisionRc.bottom < 32;
 		if (isPlayer)
-			isOnLadderTop = !_player->isClimbing() && isOnLadderTop;
+			isOnLadderTop = !BasePlaneObject::player->isClimbing() && isOnLadderTop;
 
 		if (isOnLadderTop)
 			_onGround(); // ladder top behaves like ground
 
 		if (isPlayer) // let Captain Claw climb
 		{
-			_player->setLadderFlags(isOnLadderTop);
-			if (_player->isClimbing())
+			BasePlaneObject::player->setLadderFlags(isOnLadderTop);
+			if (BasePlaneObject::player->isClimbing())
 			{
 				// set the player position on the ladder easily for the user
-				_player->position.x = (tileRc.left + tileRc.right) / 2;
+				BasePlaneObject::player->position.x = (tileRc.left + tileRc.right) / 2;
 			}
 		}
 	};

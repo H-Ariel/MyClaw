@@ -6,7 +6,7 @@
 class LeRauxe : public BaseBoss
 {
 public:
-	LeRauxe(const WwdObject& obj, Player* player);
+	LeRauxe(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 

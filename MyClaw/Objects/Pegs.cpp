@@ -2,8 +2,8 @@
 #include "../AssetsManager.h"
 
 
-TogglePeg::TogglePeg(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _state(States::WaitAppear),
+TogglePeg::TogglePeg(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _state(States::WaitAppear),
 	_totalTime(0), _startTimeDelay(0), _timeOn(0), _timeOff(0)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
@@ -122,8 +122,8 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 	}
 }
 
-CrumblingPeg::CrumblingPeg(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _delayTime(obj.counter)
+CrumblingPeg::CrumblingPeg(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _delayTime(obj.counter)
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
 	_ani->position = position;
@@ -174,8 +174,8 @@ void CrumblingPeg::Reset()
 	_draw = true;
 }
 
-BreakPlank::BreakPlank(const WwdObject& obj, Player* player, float topOffset)
-	: CrumblingPeg(obj, player)
+BreakPlank::BreakPlank(const WwdObject& obj, float topOffset)
+	: CrumblingPeg(obj)
 {
 	Rectangle2D rc(_objRc);
 	rc.top += topOffset;

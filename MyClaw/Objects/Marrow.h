@@ -6,7 +6,7 @@
 class Marrow : public BaseBoss
 {
 public:
-	Marrow(const WwdObject& obj, Player* player);
+	Marrow(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -24,7 +24,7 @@ private:
 class MarrowParrot : public BaseEnemy
 {
 public:
-	MarrowParrot(const WwdObject& obj, Player* player);
+	MarrowParrot(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 	
@@ -48,7 +48,7 @@ private:
 class MarrowFloor : public BaseStaticPlaneObject
 {
 public:
-	MarrowFloor(const WwdObject& obj, Player* player);
+	MarrowFloor(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	Rectangle2D GetRect() override;
 

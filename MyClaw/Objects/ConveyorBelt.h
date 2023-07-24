@@ -6,7 +6,7 @@
 class ConveyorBelt : public BaseStaticPlaneObject
 {
 public:
-	ConveyorBelt(const WwdObject& obj, Player* player);
+	ConveyorBelt(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

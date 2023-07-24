@@ -6,7 +6,7 @@
 class PowderKeg : public BaseDynamicPlaneObject
 {
 public:
-	PowderKeg(const WwdObject& obj, Player* player);
+	PowderKeg(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	int getDamage() const;
 

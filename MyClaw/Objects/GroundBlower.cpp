@@ -6,8 +6,8 @@
 #define BLOWHOLE_OFFSET_Y 120 // offset for the blowhole
 
 
-GroundBlower::GroundBlower(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
+GroundBlower::GroundBlower(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
 {
 	_ani = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_GROUNDBLOWER"));
 	_blowhole = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_BLOW1"), 125, false);
@@ -23,7 +23,7 @@ void GroundBlower::Logic(uint32_t elapsedTime)
 {
 	if (_ani->getFrameNumber() == 0 && tryCatchPlayer())
 	{
-		_player->jump(_force);
+		player->jump(_force);
 		// TODO: something get wrong: player speed is set to 0
 	}
 }

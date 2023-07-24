@@ -8,8 +8,8 @@
 #define OFFSET_Y 64.f
 
 
-TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
+TProjectilesShooter::TProjectilesShooter(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
 	_damage(obj.damage > 0 ? obj.damage : 5), _speed({ obj.speedX / 1000.f, obj.speedY / 1000.f }),
 	_restTime(0), _offset({})
 {
@@ -33,7 +33,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 	if (_restTime > 0)
 		_restTime -= elapsedTime;
 
-	if (_restTime <= 0 && _objRc.intersects(_player->GetRect()))
+	if (_restTime <= 0 && _objRc.intersects(player->GetRect()))
 	{
 		ActionPlane::addPlaneObject(DBG_NEW TProjectile(_ani, _damage,
 			_speed, { position.x + _offset.x, position.y + _offset.y }));

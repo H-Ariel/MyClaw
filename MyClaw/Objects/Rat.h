@@ -7,7 +7,7 @@
 class Rat : public BaseEnemy
 {
 public:
-	Rat(const WwdObject& obj, Player* player);
+	Rat(const WwdObject& obj);
 
 	void makeAttack() override;
 	pair<Rectangle2D, int> GetAttackRect() override;
@@ -21,7 +21,7 @@ public:
 class PunkRat : public BaseEnemy
 {
 public:
-	PunkRat(const WwdObject& obj, Player* player);
+	PunkRat(const WwdObject& obj);
 	~PunkRat();
 
 	void Logic(uint32_t elapsedTime) override;

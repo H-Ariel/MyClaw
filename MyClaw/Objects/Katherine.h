@@ -6,7 +6,7 @@
 class Katherine : public BaseBoss
 {
 public:
-	Katherine(const WwdObject& obj, Player* player);
+	Katherine(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 

@@ -28,7 +28,7 @@ public:
 		Powerup,
 		Boss
 	};
-	void setBackgroundMusic(BackgroundMusicType type, bool reset);
+	void setBackgroundMusic(BackgroundMusicType type);
 
 
 private:

@@ -6,7 +6,7 @@
 class Checkpoint : public BaseStaticPlaneObject
 {
 public:
-	Checkpoint(const WwdObject& obj, Player* player);
+	Checkpoint(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

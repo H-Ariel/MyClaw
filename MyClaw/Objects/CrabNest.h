@@ -6,7 +6,7 @@
 class CrabNest : public BaseStaticPlaneObject
 {
 public:
-	CrabNest(const WwdObject& obj, Player* player);
+	CrabNest(const WwdObject& obj);
 	~CrabNest();
 
 	void Logic(uint32_t elapsedTime) override;

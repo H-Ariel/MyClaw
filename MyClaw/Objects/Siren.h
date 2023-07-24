@@ -6,7 +6,7 @@
 class Siren : public BaseEnemy
 {
 public:
-	Siren(const WwdObject& obj, Player* player);
+	Siren(const WwdObject& obj);
 
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;

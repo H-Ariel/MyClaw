@@ -7,8 +7,8 @@
 // [ SoundObjectBase | SoundTrigger | AmbientSound | GlobalAmbientSound ]
 
 
-SoundObjectBase::SoundObjectBase(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player),
+SoundObjectBase::SoundObjectBase(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj),
 	_wavPath(PathManager::getSoundFilePath(obj.animation)), _wavPlayerId(-1)
 {
 	// These objects are invisible so no need to animate them
@@ -71,8 +71,8 @@ SoundObjectBase::SoundObjectBase(const WwdObject& obj, Player* player)
 	myMemCpy(_objRc, newRc);
 }
 
-SoundTrigger::SoundTrigger(const WwdObject& obj, Player* player)
-	: SoundObjectBase(obj, player), _timesToPlay(0), _isClawDialog(startsWith(obj.logic, "ClawDialog"))
+SoundTrigger::SoundTrigger(const WwdObject& obj)
+	: SoundObjectBase(obj), _timesToPlay(0), _isClawDialog(startsWith(obj.logic, "ClawDialog"))
 {
 	int32_t timesToPlay = 0;
 
@@ -97,7 +97,7 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 {
 	if (!_isInCollision)
 	{
-		if (_player->GetRect().intersects(_objRc))
+		if (player->GetRect().intersects(_objRc))
 		{
 			_isInCollision = true;
 			if (_timesCounter == -1 || _timesCounter > 0)
@@ -111,14 +111,14 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 
 				if (_isClawDialog)
 				{
-					_player->activateDialog(AssetsManager::getWavFileDuration(_wavPlayerId));
+					player->activateDialog(AssetsManager::getWavFileDuration(_wavPlayerId));
 				}
 			}
 		}
 	}
 	else
 	{
-		_isInCollision = _player->GetRect().intersects(_objRc);
+		_isInCollision = player->GetRect().intersects(_objRc);
 	}
 }
 void SoundTrigger::Reset()
@@ -127,13 +127,13 @@ void SoundTrigger::Reset()
 	_isInCollision = false;
 }
 
-AmbientSound::AmbientSound(const WwdObject& obj, Player* player)
-	: SoundObjectBase(obj, player), _isPlaying(false)
+AmbientSound::AmbientSound(const WwdObject& obj)
+	: SoundObjectBase(obj), _isPlaying(false)
 {
 }
 void AmbientSound::Logic(uint32_t elapsedTime)
 {
-	if (_player->GetRect().intersects(_objRc))
+	if (player->GetRect().intersects(_objRc))
 	{
 		if (!_isPlaying)
 		{
@@ -152,14 +152,10 @@ void AmbientSound::Logic(uint32_t elapsedTime)
 	}
 }
 
-GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj, Player* player)
-	: SoundObjectBase(obj, player),
-	_minTimeOn(obj.moveRect.left),
-	_maxTimeOn(obj.moveRect.top),
-	_minTimeOff(obj.moveRect.right),
-	_maxTimeOff(obj.moveRect.bottom),
-	_isLooping(obj.moveRect.left == 0),
-	_currentTime(0), _soundDurationMs(0)
+GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj)
+	: SoundObjectBase(obj), _minTimeOn(obj.moveRect.left), _maxTimeOn(obj.moveRect.top),
+	_minTimeOff(obj.moveRect.right), _maxTimeOff(obj.moveRect.bottom),
+	_isLooping(obj.moveRect.left == 0), _currentTime(0), _soundDurationMs(0)
 {
 	_timeOff = getRandomInt(_minTimeOff, _maxTimeOff);
 

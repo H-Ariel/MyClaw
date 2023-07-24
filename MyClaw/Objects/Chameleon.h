@@ -6,7 +6,7 @@
 class Chameleon : public BaseEnemy
 {
 public:
-	Chameleon(const WwdObject& obj, Player* player);
+	Chameleon(const WwdObject& obj);
 
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;

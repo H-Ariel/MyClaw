@@ -6,7 +6,7 @@
 class Mercat : public BaseEnemy
 {
 public:
-	Mercat(const WwdObject& obj, Player* player);
+	Mercat(const WwdObject& obj);
 
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;

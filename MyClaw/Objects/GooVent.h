@@ -6,6 +6,6 @@
 class GooVent : public BaseDamageObject
 {
 public:
-	GooVent(const WwdObject& obj, Player* player);
+	GooVent(const WwdObject& obj);
 	bool isDamage() const override;
 };

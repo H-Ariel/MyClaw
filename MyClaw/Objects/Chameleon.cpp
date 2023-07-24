@@ -5,8 +5,8 @@
 // TODO: let it disapper (no animation for this. should use effect)
 
 
-Chameleon::Chameleon(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 1, 10, "FASTADVANCE", "HIT",
+Chameleon::Chameleon(const WwdObject& obj)
+	: BaseEnemy(obj, 1, 10, "FASTADVANCE", "HIT",
 		"HIT", "KILLFALL", "STRIKE1", "", "", "", "", 0.1f)
 {
 }
@@ -45,13 +45,13 @@ void Chameleon::makeAttack()
 {
 	if (_isStanding || enemySeeClaw())
 	{
-		if (abs(_player->position.x - position.x) < 128 && abs(_player->position.y - position.y) < 32) // CC is close to enemy
+		if (abs(player->position.x - position.x) < 128 && abs(player->position.y - position.y) < 32) // CC is close to enemy
 		{
 			_ani = _animations["STRIKE1"];
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 		}
 	}
 }

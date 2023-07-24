@@ -5,8 +5,8 @@
 
 // This functions are same to TogglePeg. maybe we can combine them
 
-FloorSpike::FloorSpike(const WwdObject& obj, Player* player)
-	: BaseDamageObject(obj, player, 10), _state(States::WaitAppear),
+FloorSpike::FloorSpike(const WwdObject& obj)
+	: BaseDamageObject(obj, 10), _state(States::WaitAppear),
 	_totalTime(0), _startTimeDelay(0), _timeOn(0), _timeOff(0)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
@@ -112,8 +112,8 @@ bool FloorSpike::isDamage() const
 }
 
 
-SawBlade::SawBlade(const WwdObject& obj, Player* player)
-	: FloorSpike(obj, player)
+SawBlade::SawBlade(const WwdObject& obj)
+	: FloorSpike(obj)
 {
 	_aniAppear = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_UP"));
 	_aniDisappear = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_DOWN"));

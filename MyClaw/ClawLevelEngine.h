@@ -23,7 +23,6 @@ private:
 	shared_ptr<WapWorld> _wwd;
 	LevelPlane* _mainPlane;
 	LevelHUD* _hud;
-	Player* _player;
 	MenuBackgroundImage _helpImage;
 	ColorF _saveBgColor;
 	State _state;

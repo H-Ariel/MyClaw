@@ -16,8 +16,8 @@ STRIKE4 - I couldn't figure it out
 #define ANIMATION_HUG			_animations.at("STRIKE3")
 
 
-BearSailor::BearSailor(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 14, 20, "FASTADVANCE", "HITHIGH",
+BearSailor::BearSailor(const WwdObject& obj)
+	: BaseEnemy(obj, 14, 20, "FASTADVANCE", "HITHIGH",
 		"HITLOW", "KILLFALL", "STRIKE1", "", "", "", "", 0.1f)
 {
 }
@@ -73,7 +73,7 @@ void BearSailor::makeAttack()
 {
 	if (enemySeeClaw())
 	{
-		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
+		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
 
 		if (deltaY < 24)
 		{
@@ -86,7 +86,7 @@ void BearSailor::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_isMirrored = _player->position.x < position.x;
+				_isMirrored = player->position.x < position.x;
 			}
 			else if (deltaX < 96) // CC is little far from enemy
 			{
@@ -94,7 +94,7 @@ void BearSailor::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_isMirrored = _player->position.x < position.x;
+				_isMirrored = player->position.x < position.x;
 			}
 		}
 	}

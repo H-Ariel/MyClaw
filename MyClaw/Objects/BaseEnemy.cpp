@@ -35,8 +35,8 @@ void DeadEnemy::Logic(uint32_t elapsedTime)
 	removeObject = !WindowManager::isInScreen(_ani->GetRect());
 }
 
-BossGem::BossGem(const WwdObject& obj, Player* player)
-	: Item(obj, player, Item::Type::NineLivesGem), _destination({ (float)obj.minX, (float)obj.minY })
+BossGem::BossGem(const WwdObject& obj)
+	: Item(obj, Item::Type::NineLivesGem), _destination({ (float)obj.minX, (float)obj.minY })
 {
 	float alpha = atan((position.y - _destination.y) / (position.x - _destination.x));
 
@@ -58,9 +58,9 @@ void BossGem::Logic(uint32_t elapsedTime)
 {
 	if (_speed.x == 0 && _speed.y == 0)
 	{
-		if (GetRect().intersects(_player->GetRect()))
+		if (GetRect().intersects(player->GetRect()))
 		{
-			_player->collectItem(this);
+			player->collectItem(this);
 		}
 	}
 
@@ -79,16 +79,17 @@ void BossGem::Logic(uint32_t elapsedTime)
 // TODO: fit 'hithigh' and 'hitlow' to CC attack
 // TODO: fix the shoot to CC height
 
-BaseEnemy::BaseEnemy(const WwdObject& obj, Player* player,
-	int health, int damage, string walkAni, string hit1, string hit2,
-	string fallDead, string strikeAni, string strikeDuckAni, string shootAni, string shootDuckAni,
+BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage,
+	string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
+	string strikeDuckAni, string shootAni, string shootDuckAni,
 	string projectileAniDir, float walkingSpeed, bool noTreasures)
-	: BaseCharacter(obj, player), _damage(damage),
-	_isStanding(false), _strikeAniName(strikeAni), _strikeDuckAniName(strikeDuckAni), 
-	_canStrike(!strikeAni.empty()), _canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni), _canShoot(!shootAni.empty()),
-	_shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()), _projectileAniDir(projectileAniDir),
-	_hit1AniName(hit1), _hit2AniName(hit2), _fallDeadAniName(fallDead), _minX((float)obj.minX),
-	_maxX((float)obj.maxX), _isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0)
+	: BaseCharacter(obj), _damage(damage), _isStanding(false), _strikeAniName(strikeAni),
+	_strikeDuckAniName(strikeDuckAni), _canStrike(!strikeAni.empty()),
+	_canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni),
+	_canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()),
+	_projectileAniDir(projectileAniDir), _hit1AniName(hit1), _hit2AniName(hit2),
+	_fallDeadAniName(fallDead), _minX((float)obj.minX), _maxX((float)obj.maxX),
+	_isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0)
 {
 	_isMirrored = false;
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
@@ -140,14 +141,14 @@ BaseEnemy::~BaseEnemy()
 		// add items
 		for (int8_t t : _itemsTypes)
 		{
-			Item* i = Item::getItem(obj, _player, t);
+			Item* i = Item::getItem(obj, t);
 			i->setSpeedY(-0.6f);
 			i->setSpeedX(getRandomFloat(-0.25f, 0.25f));
 			ActionPlane::addPlaneObject(i);
 		}
 
 		// add dead enemy
-		obj.speedX = position.x < _player->position.x ? -250 : 250;
+		obj.speedX = position.x < player->position.x ? -250 : 250;
 		obj.speedY = -500;
 		ActionPlane::addPlaneObject(DBG_NEW DeadEnemy(obj, _animations[_fallDeadAniName]));
 	}
@@ -212,7 +213,7 @@ void BaseEnemy::makeAttack()
 {
 	if (_isStanding || enemySeeClaw())
 	{
-		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
+		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
 
 		if (deltaX < 96 && deltaY < 16) // CC is close to enemy
 		{
@@ -222,15 +223,15 @@ void BaseEnemy::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_isMirrored = _player->position.x < position.x;
+				_isMirrored = player->position.x < position.x;
 			}
-			if (_canStrikeDuck && _player->isDuck())
+			if (_canStrikeDuck && player->isDuck())
 			{
 				_ani = ANIMATION_STRIKE_LOW;
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_isMirrored = _player->position.x < position.x;
+				_isMirrored = player->position.x < position.x;
 			}
 		}
 		else if (deltaX < 256) // CC is far from enemy
@@ -241,7 +242,7 @@ void BaseEnemy::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_isMirrored = _player->position.x < position.x;
+				_isMirrored = player->position.x < position.x;
 
 				WwdObject obj;
 				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
@@ -251,13 +252,13 @@ void BaseEnemy::makeAttack()
 				obj.damage = 10;
 				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 			}
-			else if (_canShootDuck && deltaY < 128 && _player->isDuck())
+			else if (_canShootDuck && deltaY < 128 && player->isDuck())
 			{
 				_ani = ANIMATION_SHOOTDUCK;
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_isMirrored = _player->position.x < position.x;
+				_isMirrored = player->position.x < position.x;
 
 				WwdObject obj;
 				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
@@ -344,7 +345,7 @@ bool BaseEnemy::checkForHurt(pair<Rectangle2D, int> hurtData)
 }
 bool BaseEnemy::checkForHurts() // TODO: combine all `checkForHurts` methods from all enemies
 {
-	if (checkForHurt(_player->GetAttackRect()))
+	if (checkForHurt(player->GetAttackRect()))
 		return true;
 
 	for (Projectile* p : ActionPlane::getProjectiles())
@@ -374,14 +375,14 @@ bool BaseEnemy::checkForHurts() // TODO: combine all `checkForHurts` methods fro
 
 bool BaseEnemy::enemySeeClaw() const
 {
-	return (!_isMirrored && _player->position.x > position.x) || (_isMirrored && _player->position.x < position.x);
+	return (!_isMirrored && player->position.x > position.x) || (_isMirrored && player->position.x < position.x);
 }
 
 // TODO: maybe this c'tor don't need get parameters...
-BaseBoss::BaseBoss(const WwdObject& obj, Player* player,
+BaseBoss::BaseBoss(const WwdObject& obj,
 	int damage, string walkAni, string hit1, string hit2, string fallDead,
 	string strikeAni, string shootAni, string projectileAniDir)
-	: BaseEnemy(obj, player, obj.health, damage, walkAni, hit1, hit2, fallDead,
+	: BaseEnemy(obj, obj.health, damage, walkAni, hit1, hit2, fallDead,
 		strikeAni, "", shootAni, "", projectileAniDir, 0, true),
 	_hitsCuonter(1), _blockClaw(false), _canJump(true), _gemPos({ obj.speedX, obj.speedY })
 {
@@ -397,7 +398,7 @@ BaseBoss::~BaseBoss()
 		obj.minY = _gemPos.y;
 		obj.z = ZCoord;
 		obj.imageSet = "LEVEL_GEM";
-		ActionPlane::addPlaneObject(DBG_NEW BossGem(obj, _player));
+		ActionPlane::addPlaneObject(DBG_NEW BossGem(obj));
 	}
 }
 bool BaseBoss::checkForHurts()

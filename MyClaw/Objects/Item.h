@@ -82,16 +82,17 @@ public:
 	Type getType() { return _type; }
 	int32_t getDuration() const { return _duration; }
 
-	static Item* getItem(const WwdObject& obj, Player* player, int8_t type = Type::None);
+	static Item* getItem(const WwdObject& obj, int8_t type = Type::None);
 	static void resetItemsPaths();
 	static uint32_t getTreasureScore(Type type);
 
 protected:
-	Item(const WwdObject& obj, Player* player, int8_t type);
+	Item(const WwdObject& obj, int8_t type);
+
+	const Type _type;
 
 private:
 	shared_ptr<Animation> _glitterAnimation;
-	Type _type;
 	int32_t _duration; // (in milliseconds). used in Catnip, Fire-Sword, etc.
 	// TODO: use `obj.damage` - [not] respawning (see "Logics.pdf" 2.170)
 	bool _useGlitter;
@@ -101,7 +102,7 @@ private:
 class Warp : public Item
 {
 public:
-	Warp(const WwdObject& obj, Player* player, int8_t type);
+	Warp(const WwdObject& obj, int8_t type);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

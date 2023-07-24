@@ -42,8 +42,8 @@ IDLE3 - wait with hand up (eyes closed)
 IDLE4 - get hand down back
 */
 
-Marrow::Marrow(const WwdObject& obj, Player* player)
-	: BaseBoss(obj, player, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
+Marrow::Marrow(const WwdObject& obj)
+	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS")
 {
 	_health = 100;
@@ -132,12 +132,12 @@ void Marrow::Logic(uint32_t elapsedTime)
 }
 void Marrow::makeAttack()
 {
-	if (abs(_player->position.x - position.x) < 96 && abs(_player->position.y - position.y) < 16)
+	if (abs(player->position.x - position.x) < 96 && abs(player->position.y - position.y) < 16)
 	{
 		_ani = _animations["STRIKE2"]; // knife attack
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = _player->position.x < position.x;
+		_isMirrored = player->position.x < position.x;
 	}
 }
 
@@ -164,7 +164,7 @@ bool Marrow::checkForHurts()
 		}
 	}
 
-	if (checkForHurt(_player->GetAttackRect()))
+	if (checkForHurt(player->GetAttackRect()))
 	{
 		if (_blockClaw)
 		{
@@ -200,8 +200,8 @@ void Marrow::stopMovingRight(float collisionSize)
 #define PARROT_ANIMATION_STRIKE _animations["STRIKE1"]
 #define MARROW_PARROT_SPEED 0.3f
 
-MarrowParrot::MarrowParrot(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 3, 10, "FLY", "HIT", "HIT", "KILLFALL", "STRIKE1", "",
+MarrowParrot::MarrowParrot(const WwdObject& obj)
+	: BaseEnemy(obj, 3, 10, "FLY", "HIT", "HIT", "KILLFALL", "STRIKE1", "",
 		"", "", "", MARROW_PARROT_SPEED, true), _hitsCounter(0), _initialPosition({}),
 	_flyRect((float)obj.minX, (float)obj.minY - 32.f, (float)obj.maxX, (float)obj.maxY - 32.f)
 {
@@ -242,7 +242,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 			position.x = _flyRect.right;
 			_speed = { 0, MARROW_PARROT_SPEED };
 		}
-		else if (_player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
+		else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
 		{
 			_speed = { 0, -MARROW_PARROT_SPEED };
 		}
@@ -321,8 +321,8 @@ bool MarrowParrot::checkForHurts()
 
 
 
-MarrowFloor::MarrowFloor(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player),
+MarrowFloor::MarrowFloor(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj),
 	_minX((float)obj.minX), _maxX((float)obj.maxX),
 	_speedX((obj.direction ? obj.speedX : -obj.speedX) / 1000.f)
 {

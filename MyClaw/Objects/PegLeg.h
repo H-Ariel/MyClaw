@@ -6,7 +6,7 @@
 class PegLeg : public BaseEnemy
 {
 public:
-	PegLeg(const WwdObject& obj, Player* player);
+	PegLeg(const WwdObject& obj);
 	
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;

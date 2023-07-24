@@ -6,7 +6,7 @@
 class BaseCharacter : public BaseDynamicPlaneObject
 {
 public:
-	BaseCharacter(const WwdObject& obj, Player* player = nullptr);
+	BaseCharacter(const WwdObject& obj);
 
 	virtual void Logic(uint32_t elapsedTime) override = 0;
 	virtual void Draw() override;

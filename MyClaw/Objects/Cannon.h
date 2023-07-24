@@ -6,7 +6,7 @@
 class Cannon : public BaseStaticPlaneObject
 {
 public:
-	Cannon(const WwdObject& obj, Player* player);
+	Cannon(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -27,12 +27,12 @@ private:
 class TowerCannon : public Cannon
 {
 public:
-	TowerCannon(const WwdObject& obj, Player* player);
+	TowerCannon(const WwdObject& obj);
 };
 
 
 class SkullCannon : public Cannon
 {
 public:
-	SkullCannon(const WwdObject& obj, Player* player);
+	SkullCannon(const WwdObject& obj);
 };

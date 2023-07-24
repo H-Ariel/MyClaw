@@ -6,7 +6,7 @@
 class SoundObjectBase : public BaseStaticPlaneObject
 {
 public:
-	SoundObjectBase(const WwdObject& obj, Player* player);
+	SoundObjectBase(const WwdObject& obj);
 
 protected:
 	const string _wavPath; // the sound file
@@ -18,7 +18,7 @@ protected:
 class SoundTrigger : public SoundObjectBase
 {
 public:
-	SoundTrigger(const WwdObject& obj, Player* player);
+	SoundTrigger(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	void Reset() override;
 
@@ -34,7 +34,7 @@ private:
 class AmbientSound : public SoundObjectBase
 {
 public:
-	AmbientSound(const WwdObject& obj, Player* player);
+	AmbientSound(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:
@@ -44,7 +44,7 @@ private:
 class GlobalAmbientSound : public SoundObjectBase
 {
 public:
-	GlobalAmbientSound(const WwdObject& obj, Player* player);
+	GlobalAmbientSound(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

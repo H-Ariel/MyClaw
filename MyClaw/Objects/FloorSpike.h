@@ -6,7 +6,7 @@
 class FloorSpike : public BaseDamageObject
 {
 public:
-	FloorSpike(const WwdObject& obj, Player* player);
+	FloorSpike(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 	bool isDamage() const override;
@@ -24,7 +24,7 @@ protected:
 class SawBlade : public FloorSpike
 {
 public:
-	SawBlade(const WwdObject& obj, Player* player);
+	SawBlade(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 

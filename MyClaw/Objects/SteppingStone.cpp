@@ -5,8 +5,8 @@
 // TODO: looks same to TogglePeg ... (NOTE: the times in the ctor are different!)
 // TODO: more over, SteppingStone same to StartSteppingStone !
 
-SteppingStone::SteppingStone(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _state(States::WaitAppear),
+SteppingStone::SteppingStone(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _state(States::WaitAppear),
 	_totalTime(0), _startTimeDelay(0), _timeOn(0), _timeOff(0)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
@@ -114,8 +114,8 @@ void SteppingStone::Logic(uint32_t elapsedTime)
 }
 
 
-StartSteppingStone::StartSteppingStone(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _state(States::WaitAppear),
+StartSteppingStone::StartSteppingStone(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _state(States::WaitAppear),
 	_totalTime(0), _timeOn(0), _timeOff(0)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));

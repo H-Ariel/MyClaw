@@ -1,8 +1,8 @@
 #include "Soldier.h"
 
 
-Soldier::Soldier(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL", "STRIKE1",
+Soldier::Soldier(const WwdObject& obj)
+	: BaseEnemy(obj, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL", "STRIKE1",
 		"", "STRIKE", "STRIKE2", PathManager::getImageSetPath("LEVEL_MUSKETBALL"), 0.1f)
 {
 }

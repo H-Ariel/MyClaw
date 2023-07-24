@@ -6,7 +6,7 @@
 class Seagull : public BaseEnemy
 {
 public:
-	Seagull(const WwdObject& obj, Player* player);
+	Seagull(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 	pair<Rectangle2D, int> GetAttackRect() override;

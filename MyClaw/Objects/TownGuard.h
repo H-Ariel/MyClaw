@@ -6,7 +6,7 @@
 class TownGuard : public BaseEnemy
 {
 public:
-	TownGuard(const WwdObject& obj, Player* player);
+	TownGuard(const WwdObject& obj);
 
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;

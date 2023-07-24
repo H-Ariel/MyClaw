@@ -6,7 +6,7 @@
 class CrazyHook : public BaseEnemy
 {
 public:
-	CrazyHook(const WwdObject& obj, Player* player);
+	CrazyHook(const WwdObject& obj);
 
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;

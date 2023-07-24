@@ -9,8 +9,8 @@
 
 
 // the rat has its own Logic so we don't need pass all arguments
-Rat::Rat(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 1, 0, "WALK", "DEAD", "DEAD",
+Rat::Rat(const WwdObject& obj)
+	: BaseEnemy(obj, 1, 0, "WALK", "DEAD", "DEAD",
 		"DEAD", "", "", "THROWEASTWEST", "", "", 0.1f, true)
 {
 }
@@ -19,13 +19,13 @@ void Rat::makeAttack()
 {
 	if (_isStanding || enemySeeClaw())
 	{
-		if (abs(_player->position.x - position.x) < 352 && abs(_player->position.y - position.y) < 42)
+		if (abs(player->position.x - position.x) < 352 && abs(player->position.y - position.y) < 42)
 		{
 			_ani = ANIMATION_SHOOT;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
@@ -52,13 +52,13 @@ bool Rat::isTakeDamage() const { return false; }
 #define PUNKRAT_WALK	_animations.at("WALK")
 
 //TODO: use all animation
-PunkRat::PunkRat(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 1, 0, "WALK", "IDLE",
+PunkRat::PunkRat(const WwdObject& obj)
+	: BaseEnemy(obj, 1, 0, "WALK", "IDLE",
 		"IDLE", "IDLE", "", "", "", "", "", 0.07f, true)
 {
 	WwdObject cannonData(obj);
 	cannonData.imageSet = "LEVEL_CANNON";
-	_cannon = DBG_NEW Cannon(cannonData, player);
+	_cannon = DBG_NEW Cannon(cannonData);
 	_cannon->position.y += 20;
 	_cannon->_ballOffset = 12;
 	if (_isMirrored) _cannon->_shootDirection = Cannon::ToLeft;

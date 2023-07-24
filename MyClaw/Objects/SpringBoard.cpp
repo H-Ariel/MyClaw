@@ -3,8 +3,8 @@
 #include "../AssetsManager.h"
 
 
-SpringBoard::SpringBoard(const WwdObject& obj, Player* player)
-	: BaseStaticPlaneObject(obj, player), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
+SpringBoard::SpringBoard(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
 {
 	string anisPath;
 	if (obj.imageSet == "LEVEL_WATERROCK") // level 7,13. TODO: something else
@@ -43,7 +43,7 @@ void SpringBoard::Logic(uint32_t elapsedTime)
 	{
 		_ani = _spring;
 		_ani->reset();
-		_player->jump(_force);
+		player->jump(_force);
 	}
 
 	if (_ani == _spring)

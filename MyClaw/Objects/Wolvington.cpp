@@ -12,8 +12,8 @@
 #define ANIMATION_JUMPBACK	_animations.at("JUMP")
 
 
-Wolvington::Wolvington(const WwdObject& obj, Player* player)
-	: BaseBoss(obj, player, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", ""),
+Wolvington::Wolvington(const WwdObject& obj)
+	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", ""),
 	_magicAttackCuonter(0)
 {
 }
@@ -30,7 +30,7 @@ void Wolvington::Logic(uint32_t elapsedTime)
 		_ani = ANIMATION_JUMPBACK;
 
 		_speed.y = -(0.64f - 75 * GRAVITY); // see LeRauex ...
-		_speed.x = (position.x < _player->position.x) ? -0.35f : 0.35f;
+		_speed.x = (position.x < player->position.x) ? -0.35f : 0.35f;
 
 		_isAttack = false;
 		_canJump = false;
@@ -62,9 +62,9 @@ void Wolvington::Logic(uint32_t elapsedTime)
 		_isMirrored = _speed.x < 0;
 	}
 
-	if (_ani != ANIMATION_JUMPBACK && abs(_player->position.x - position.x) > 64)
+	if (_ani != ANIMATION_JUMPBACK && abs(player->position.x - position.x) > 64)
 	{
-		_isMirrored = _player->position.x < position.x;
+		_isMirrored = player->position.x < position.x;
 		if (!_isMirrored) _speed.x = abs(_speed.x);
 		else _speed.x = -abs(_speed.x);
 	}
@@ -194,14 +194,14 @@ void Wolvington::makeAttack()
 {
 	if (enemySeeClaw())
 	{
-		const float deltaX = abs(_player->position.x - position.x);
+		const float deltaX = abs(player->position.x - position.x);
 		if (deltaX < 64) // CC is close to W
 		{
-			if (_player->isDuck()) _ani = ANIMATION_STRIKE1;
+			if (player->isDuck()) _ani = ANIMATION_STRIKE1;
 			else _ani = ANIMATION_STRIKE2;
 			_ani->reset();
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 
 			_attackRest = 700;
 
@@ -218,7 +218,7 @@ void Wolvington::makeAttack()
 				obj.speedX = (!_isMirrored) ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 				obj.damage = 20;
 
-				if (_player->isDuck()) {
+				if (player->isDuck()) {
 					_ani = ANIMATION_STRIKE4;
 					obj.y += 30;
 				}
@@ -227,7 +227,7 @@ void Wolvington::makeAttack()
 				
 				_ani->reset();
 				_isAttack = true;
-				_isMirrored = _player->position.x < position.x;
+				_isMirrored = player->position.x < position.x;
 
 				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL6/IMAGES/WOLVINGTONMAGIC"));
 
@@ -254,7 +254,7 @@ bool Wolvington::checkForHurts()
 		}
 	}
 
-	if (checkForHurt(_player->GetAttackRect()))
+	if (checkForHurt(player->GetAttackRect()))
 	{
 		// jump every 2 hits
 		_hitsCuonter = (_hitsCuonter + 1) % 2;

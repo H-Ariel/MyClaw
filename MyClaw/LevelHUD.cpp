@@ -3,8 +3,8 @@
 #include "WindowManager.h"
 
 
-LevelHUD::LevelHUD(const Player* player, const D2D1_POINT_2F& offset)
-	: _player(player), _offset(offset)
+LevelHUD::LevelHUD(const D2D1_POINT_2F& offset)
+	: _offset(offset)
 {
 	_chest = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/TREASURECHEST", 125, false);
 	_health = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/HEALTHHEART", 150, false);
@@ -36,7 +36,7 @@ void LevelHUD::Draw()
 	_chest->updateImageData();
 	_chest->Draw();
 	
-	float powerupLeftTime = _player->getPowerupLeftTime() / 1000.f;
+	float powerupLeftTime = BasePlaneObject::player->getPowerupLeftTime() / 1000.f;
 	if (powerupLeftTime > 0)
 	{
 		_stopwatch->position = { 20 + _offset.x, pos.y + 30 };
@@ -45,7 +45,7 @@ void LevelHUD::Draw()
 		drawNumbers((uint32_t)powerupLeftTime, 3, _scoreNumbers, { 50 + _offset.x, 50 }, true);
 	}
 
-	for (shared_ptr<Animation> ani : { _health, _weaponAni[_player->getCurrentWeapon()], _lives })
+	for (shared_ptr<Animation> ani : { _health, _weaponAni[BasePlaneObject::player->getCurrentWeapon()], _lives })
 	{
 		Rectangle2D rc = ani->GetRect();
 		ani->position = { winWidth - (rc.right - rc.left) / 2 + _offset.x, pos.y };
@@ -55,10 +55,10 @@ void LevelHUD::Draw()
 	}
 
 	pos.x = winWidth - 35 + _offset.x;
-	pos.y = 17; drawNumbers(_player->getHealthAmount(), 3, _healthNumbers, pos);
-	pos.y = 52; drawNumbers(_player->getWeaponAmount(), 2, _smallNumbers, pos);
-	pos.y = 81; drawNumbers(_player->getLivesAmount(), 1, _smallNumbers, pos);
-	drawNumbers(_player->getScore(), 8, _scoreNumbers, { 50 + _offset.x, 20 }, true);
+	pos.y = 17; drawNumbers(BasePlaneObject::player->getHealthAmount(), 3, _healthNumbers, pos);
+	pos.y = 52; drawNumbers(BasePlaneObject::player->getWeaponAmount(), 2, _smallNumbers, pos);
+	pos.y = 81; drawNumbers(BasePlaneObject::player->getLivesAmount(), 1, _smallNumbers, pos);
+	drawNumbers(BasePlaneObject::player->getScore(), 8, _scoreNumbers, { 50 + _offset.x, 20 }, true);
 }
 
 void LevelHUD::drawNumbers(uint32_t amount, int numOfDigits, shared_ptr<UIBaseImage> const numArr[], D2D1_POINT_2F pos, bool isScore) const

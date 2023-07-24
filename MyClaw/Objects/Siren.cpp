@@ -3,8 +3,8 @@
 #include "../ActionPlane.h"
 
 
-Siren::Siren(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 10, 0, "FASTADVANCE", "HITHIGH",
+Siren::Siren(const WwdObject& obj)
+	: BaseEnemy(obj, 10, 0, "FASTADVANCE", "HITHIGH",
 		"HITLOW", "KILLFALL", "", "", "", "", "", 0.1f)
 {
 }
@@ -27,15 +27,15 @@ void Siren::makeAttack()
 {
 	// that ugly... but works fine :)
 	// TODO: rewrite this (?)
-	if (!_player->isFreeze() && _isStanding && enemySeeClaw())
+	if (!player->isFreeze() && _isStanding && enemySeeClaw())
 	{
-		if (abs(_player->position.x - position.x) < 128 && abs(_player->position.y - position.y) < 24)
+		if (abs(player->position.x - position.x) < 128 && abs(player->position.y - position.y) < 24)
 		{
 			_ani = _animations["STRIKE1"];
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = _player->position.x < position.x;
+			_isMirrored = player->position.x < position.x;
 
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));

@@ -30,7 +30,7 @@ public:
 	static uint32_t playWavFile(const string& wavFilePath, int32_t volume = 100, bool infinite = false); // volume range is [0,100]. return wav player id
 	static void stopWavFile(uint32_t wavFileId);
 	static uint32_t getWavFileDuration(uint32_t wavFileId);
-	static void setBackgroundMusic(AudioManager::BackgroundMusicType type, bool reset);
+	static void setBackgroundMusic(AudioManager::BackgroundMusicType type);
 
 	static void callLogics(uint32_t elapsedTime);
 

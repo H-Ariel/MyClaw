@@ -3,8 +3,8 @@
 // TODO (?): add ability to block CC attacks
 // TODO (?): add ability to jump back (escape from CC attacks)
 
-TownGuard::TownGuard(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
+TownGuard::TownGuard(const WwdObject& obj)
+	: BaseEnemy(obj, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "STRIKE2", "STRIKE1", "", "", "", 0.1f),
 	_type((Type)(obj.logic[obj.logic.length() - 1] - '1'))
 {

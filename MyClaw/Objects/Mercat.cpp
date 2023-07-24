@@ -4,8 +4,8 @@
 
 // TODO: jump back when CC try to attack
 
-Mercat::Mercat(const WwdObject& obj, Player* player)
-	: BaseEnemy(obj, player, 15, 10, "FASTADVANCE", "HITHIGH",
+Mercat::Mercat(const WwdObject& obj)
+	: BaseEnemy(obj, 15, 10, "FASTADVANCE", "HITHIGH",
 		"HITLOW", "KILLFALL", "", "", "", "", "", 0.1f)
 {
 }
@@ -46,7 +46,7 @@ void Mercat::makeAttack()
 {
 	if (_isStanding || enemySeeClaw())
 	{
-		const float deltaX = abs(_player->position.x - position.x), deltaY = abs(_player->position.y - position.y);
+		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
 
 		if (deltaY < 24)
 		{
@@ -75,7 +75,7 @@ void Mercat::makeAttack()
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
-				_isMirrored = _player->position.x < position.x;
+				_isMirrored = player->position.x < position.x;
 
 				_attackRest = 250;
 			}

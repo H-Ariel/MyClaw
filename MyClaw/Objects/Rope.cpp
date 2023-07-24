@@ -35,8 +35,8 @@ static D2D1_POINT_2F ropeFrameIndexToRopeHandleOffset[] = {
 };
 
 
-Rope::Rope(const WwdObject& obj, Player* player)
-	: BasePlaneObject(obj, player)
+Rope::Rope(const WwdObject& obj)
+	: BasePlaneObject(obj)
 {
 	int32_t speed = obj.speedX / 60;
 	if (speed == 0)
@@ -49,15 +49,15 @@ void Rope::Logic(uint32_t elapsedTime)
 {
 	Rectangle2D thisRc = GetRect();
 
-	if (!_player->isJumping() && _player->GetRect().intersects(thisRc))
+	if (!player->isJumping() && player->GetRect().intersects(thisRc))
 	{
-		_player->rope = this;
+		player->rope = this;
 	}
 
-	if (_player->rope == this)
+	if (player->rope == this)
 	{
-		_player->position.x = thisRc.left + RECT_OFFSET;
-		_player->position.y = thisRc.top + RECT_OFFSET;
+		player->position.x = thisRc.left + RECT_OFFSET;
+		player->position.y = thisRc.top + RECT_OFFSET;
 	}
 }
 Rectangle2D Rope::GetRect()
