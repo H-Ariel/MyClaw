@@ -66,7 +66,7 @@ void GameMainApp::runEngine()
 
 #ifdef _DEBUG
 	// for FPS
-	WCHAR fpsText[14] = {};
+	char fpsText[14] = {};
 	uint32_t framesTime = 0, frames = 0;
 #endif
 
@@ -81,7 +81,7 @@ void GameMainApp::runEngine()
 		frames++;
 		if (framesTime > 1000)
 		{
-			swprintf(fpsText, 14, L"Game: %d FPS", frames);
+			sprintf(fpsText, "Game: %d FPS", frames);
 			WindowManager::setTitle(fpsText);
 			frames = 0;
 			framesTime = 0;
@@ -158,7 +158,6 @@ LRESULT CALLBACK GameMainApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 	case WM_MBUTTONDOWN:	if (engine) engine->OnMouseButtonDown(MouseButtons::Middle); break;
 	case WM_RBUTTONUP:		if (engine) engine->OnMouseButtonUp(MouseButtons::Right); break;
 	case WM_RBUTTONDOWN:	if (engine) engine->OnMouseButtonDown(MouseButtons::Right); break;
-	//case WM_MOUSEWHEEL:		if (engine) engine->OnMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam)); break;
 	case WM_SIZE: WindowManager::resizeRenderTarget(SizeU(LOWORD(lParam), HIWORD(lParam)));
 		if (engine) engine->OnResize(); break;
 	default: return DefWindowProc(hwnd, message, wParam, lParam);

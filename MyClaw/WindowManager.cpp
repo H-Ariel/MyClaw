@@ -10,6 +10,7 @@ ID2D1HwndRenderTarget* WindowManager::_renderTarget = nullptr;
 IWICImagingFactory* WindowManager::_wicImagingFactory = nullptr;
 const D2D1_POINT_2F* WindowManager::_windowOffset = &defaultWindowOffset;
 ColorF WindowManager::_backgroundColor(0);
+D2D1_SIZE_F WindowManager::realSize = { 800, 600 };
 
 // throw exception if `func` failed
 #define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
@@ -17,13 +18,12 @@ ColorF WindowManager::_backgroundColor(0);
 
 void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
 {
-	_hWnd = CreateWindow(WindowClassName, L"", WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
+	_hWnd = CreateWindow(WindowClassName, L"", WS_OVERLAPPEDWINDOW, 100, 100, (int)realSize.width, (int)realSize.height, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
 	if (!_hWnd) throw Exception("Failed to create window");
 	ShowWindow(_hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(_hWnd);
-	D2D1_SIZE_F wndSz = getRealSize();
 	TRY_HRESULT(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_d2dFactory), "Failed to create D2D1 factory");
-	TRY_HRESULT(_d2dFactory->CreateHwndRenderTarget(RenderTargetProperties(), HwndRenderTargetProperties(_hWnd, { (UINT32)wndSz.width, (UINT32)wndSz.height }, D2D1_PRESENT_OPTIONS_NONE), &_renderTarget), "Failed to create render target");
+	TRY_HRESULT(_d2dFactory->CreateHwndRenderTarget(RenderTargetProperties(), HwndRenderTargetProperties(_hWnd, { (UINT32)realSize.width, (UINT32)realSize.height }, D2D1_PRESENT_OPTIONS_NONE), &_renderTarget), "Failed to create render target");
 	TRY_HRESULT(CoInitialize(nullptr), "Failed to initialize COM");
 	TRY_HRESULT(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)(&_wicImagingFactory)), "Failed to create WIC imaging factory");
 }
@@ -35,13 +35,6 @@ void WindowManager::Finalize()
 	CoUninitialize();
 };
 
-void WindowManager::setSize(D2D1_SIZE_F size)
-{
-	RECT rc = {};
-	GetWindowRect(_hWnd, &rc);
-	SetWindowPos(_hWnd, NULL, rc.left, rc.top, (int)size.width, (int)size.height, SWP_NOMOVE);
-}
-
 void WindowManager::setWindowOffset(const D2D1_POINT_2F* offset)
 {
 	if (offset)
@@ -50,22 +43,11 @@ void WindowManager::setWindowOffset(const D2D1_POINT_2F* offset)
 		_windowOffset = &defaultWindowOffset;
 }
 
-D2D1_SIZE_F WindowManager::getSize()
-{
-	D2D1_SIZE_F size = getRealSize();
-	return { size.width / PixelSize, size.height / PixelSize };
-}
-D2D1_SIZE_F WindowManager::getRealSize()
-{
-	RECT rc = {};
-	GetWindowRect(_hWnd, &rc);
-	return SizeF((float)(rc.right - rc.left), (float)(rc.bottom - rc.top));
-}
-
 void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
 {
 	if (_renderTarget)
 	{
+		realSize = { (float)newSize.width, (float)newSize.height };
 		_renderTarget->Resize(newSize);
 	}
 }

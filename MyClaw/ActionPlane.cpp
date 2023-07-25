@@ -79,9 +79,9 @@ public:
 
 ActionPlane* ActionPlane::_instance = nullptr;
 
-ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int levelNumber)
-	: LevelPlane(planeData), _state(States::Play), _deathAniWait(false),
-	_planeSize({ (float)TILE_SIZE * planeData.tilesOnAxisX, (float)TILE_SIZE * planeData.tilesOnAxisY })
+ActionPlane::ActionPlane(WapWorld* wwd, int levelNumber)
+	: _state(States::Play), _deathAniWait(false), _wwd(wwd),
+	_needSort(true), _holeRadius(0), _physicsManager(nullptr)
 {
 	if (_instance != nullptr)
 		throw Exception("ActionPlane already exists");
@@ -89,40 +89,11 @@ ActionPlane::ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int level
 		_instance = this;
 
 	WwdObject playerData;
-	playerData.x = wwd->startX;
-	playerData.y = wwd->startY;
+	playerData.x = _wwd->startX;
+	playerData.y = _wwd->startY;
 	playerData.z = 4000;
 	_objects.push_back(player = DBG_NEW Player(playerData, _planeSize));
 
-#ifdef SAVE_LOGICS
-	set<string> allLogics;
-#endif
-
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
-	_physicsManager = DBG_NEW PhysicsManager(&_planeData, wwd, levelNumber); // must be after WWD map loaded and before objects added
-
-	for (const WwdObject& obj : planeData.objects)
-	{
-#ifdef SAVE_LOGICS
-		allLogics.insert(obj.logic);
-#endif
-
-		try
-		{
-			addObject(obj, levelNumber, wwd);
-		}
-		catch (const Exception& ex)
-		{
-			// an exception may be thrown if the path is invalid or if we don't impleted the logic of object
-#ifdef _DEBUG
-			cout << "Error while adding object \"" << obj.logic << "\": message: " << ex.what() << endl;
-#endif
-		}
-	}
-#ifdef SAVE_LOGICS
-	ofstream of(SAVE_LOGICS);
-	for (auto& i : allLogics) of << i << endl;
-#endif
 }
 ActionPlane::~ActionPlane()
 {
@@ -135,6 +106,43 @@ ActionPlane::~ActionPlane()
 
 	// because it static member and we don't want recycle objects...
 	_instance = nullptr;
+}
+
+void ActionPlane::init()
+{
+	_planeSize.width = (float)TILE_SIZE * tilesOnAxisX;
+	_planeSize.height = (float)TILE_SIZE * tilesOnAxisY;
+
+
+#ifdef SAVE_LOGICS
+	set<string> allLogics;
+#endif
+
+	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
+	_physicsManager = DBG_NEW PhysicsManager(_wwd); // must be after WWD map loaded and before objects added
+
+	for (const WwdObject& obj : objects)
+	{
+#ifdef SAVE_LOGICS
+		allLogics.insert(obj.logic);
+#endif
+
+		try
+		{
+			addObject(obj);
+		}
+		catch (const Exception& ex)
+		{
+			// an exception may be thrown if the path is invalid or if we don't impleted the logic of object
+#ifdef _DEBUG
+			cout << "Error while adding object \"" << obj.logic << "\": message: " << ex.what() << endl;
+#endif
+		}
+}
+#ifdef SAVE_LOGICS
+	ofstream of(SAVE_LOGICS);
+	for (auto& i : allLogics) of << i << endl;
+#endif
 }
 
 void ActionPlane::Logic(uint32_t elapsedTime)
@@ -331,7 +339,7 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 #define ADD_DAMAGE_OBJECT(p) { BaseDamageObject* dObj = DBG_NEW p; _objects.push_back(dObj); _damageObjects.push_back(dObj); }
 #define ADD_BOSS_OBJECT(p) { BasePlaneObject* bObj = DBG_NEW p; _bossObjects.push_back(bObj); }
 
-void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd)
+void ActionPlane::addObject(const WwdObject& obj)
 {
 #ifndef LOW_DETAILS
 	if (obj.logic == "FrontCandy" || obj.logic == "BehindCandy" ||
@@ -376,7 +384,7 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 #endif
 	if (endsWith(obj.logic, "Elevator"))
 	{
-		_objects.push_back(Elevator::create(obj, levelNumber));
+		_objects.push_back(Elevator::create(obj, _wwd->levelNumber));
 	}
 	else if (endsWith(obj.logic, "Checkpoint"))
 	{
@@ -401,8 +409,8 @@ void ActionPlane::addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd
 	else if (obj.logic == "BreakPlank")
 	{
 		int32_t topOffset = 0;
-		if (levelNumber == 5) topOffset = wwd->tilesDescription[509].rect.top;
-		else if (levelNumber == 11) topOffset = wwd->tilesDescription[39].rect.top;
+		if (_wwd->levelNumber == 5) topOffset = _wwd->tilesDescription[509].rect.top;
+		else if (_wwd->levelNumber == 11) topOffset = _wwd->tilesDescription[39].rect.top;
 
 		for (int32_t i = 0; i < obj.width; i++)
 		{

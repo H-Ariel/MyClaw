@@ -78,10 +78,6 @@ map<string, shared_ptr<Animation>> AssetsManager::loadAnimationsFromDirectory(co
 {
 	return instance->_animationsManager->loadAnimationsFromDirectory(dirPath, imageSetPath);
 }
-shared_ptr<WapWorld> AssetsManager::loadWwdFile(const string& wwdPath)
-{
-	return allocNewSharedPtr<WapWorld>(instance->_rezArchive->getFileBufferReader(wwdPath));
-}
 shared_ptr<WapWorld> AssetsManager::loadLevelWwdFile(int levelNumber)
 {
 	char path[25];

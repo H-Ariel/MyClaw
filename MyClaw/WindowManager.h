@@ -9,15 +9,13 @@ public:
 	static void Initialize(const TCHAR WindowClassName[], void* lpParam);
 	static void Finalize();
 
-	static void setTitle(string title) { setTitle(wstring(title.begin(), title.end())); }
-	static void setTitle(wstring title) { SetWindowText(_hWnd, title.c_str()); }
-	static void setSize(D2D1_SIZE_F size);
+	static void setTitle(const string& title) { SetWindowText(_hWnd, wstring(title.begin(), title.end()).c_str()); }
 	static void setBackgroundColor(ColorF bgColor) { _backgroundColor = bgColor; }
 	static ColorF getBackgroundColor() { return _backgroundColor; }
 	static void setWindowOffset(const D2D1_POINT_2F* offset);
 
-	static D2D1_SIZE_F getSize(); // get screen size and consider PixelSize
-	static D2D1_SIZE_F getRealSize();
+	static D2D1_SIZE_F getSize() { return { realSize.width / PixelSize, realSize.height / PixelSize }; } // get screen size and consider PixelSize
+	static D2D1_SIZE_F getRealSize() { return realSize; }
 	static const HWND& getHwnd() { return _hWnd; }
 
 	static void BeginDraw() { _renderTarget->BeginDraw(); _renderTarget->Clear(_backgroundColor); }
@@ -50,4 +48,5 @@ private:
 	static IWICImagingFactory* _wicImagingFactory;
 	static const D2D1_POINT_2F* _windowOffset;
 	static ColorF _backgroundColor;
+	static D2D1_SIZE_F realSize;
 };

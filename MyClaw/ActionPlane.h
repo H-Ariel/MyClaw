@@ -12,8 +12,10 @@ class BaseEnemy;
 class ActionPlane : public LevelPlane
 {
 public:
-	ActionPlane(const WwdPlaneData& planeData, WapWorld* wwd, int levelNumber);
+	ActionPlane(WapWorld* wwd, int levelNumber);
 	~ActionPlane();
+
+	void init() override;
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
@@ -29,7 +31,7 @@ public:
 
 private:
 	void updatePosition();
-	void addObject(const WwdObject& obj, int levelNumber, WapWorld* wwd);
+	void addObject(const WwdObject& obj);
 	
 	enum class States : int8_t {
 		Play, // normal gameplay
@@ -44,7 +46,8 @@ private:
 	vector<BaseEnemy*> _enemies;
 	vector<Projectile*> _projectiles;
 	vector<BaseDamageObject*> _damageObjects;
-	const D2D1_SIZE_F _planeSize;
+	D2D1_SIZE_F _planeSize;
+	WapWorld* _wwd;
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish
 	bool _needSort;

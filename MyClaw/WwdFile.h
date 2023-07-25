@@ -147,34 +147,19 @@ struct WwdTileDescription
 	WwdRect rect;
 };
 
-struct WwdPlaneData
-{
-	WwdPlaneData();
-
-	string name;
-	vector<vector<int32_t>> tiles; // tiles[y][x] = id
-	vector<WwdObject> objects;
-	map<int32_t, shared_ptr<UIBaseImage>> tilesImages; // [id]=image
-	ColorF fillColor;
-	uint32_t tilesOnAxisX, tilesOnAxisY;
-	int32_t ZCoord;
-	float movementPercentX, movementPercentY;
-	bool isWrappedX, isWrappedY, isMainPlane;
-};
-
 class LevelPlane;
 
 class WapWorld // in short: WWD
 {
 public:
-	WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber = 0);
+	WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber);
 
 	vector<LevelPlane*> planes; // we should delete them manually. TODO: shared_ptr
 	map<int32_t, WwdTileDescription> tilesDescription; // [id]=description
 	int32_t startX, startY;
+	const int levelNumber;
 
 private:
-	void readPlanes(BufferReader& reader, vector<WwdPlaneData>& planesData, const ColorRGBA colors[], const string& imageDirectoryPath);
-	void readPlaneObjects(BufferReader& reader, WwdPlaneData& planeData);
-	void readTileDescriptions(BufferReader& reader, vector<WwdPlaneData>& planesData);
+	void readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath, uint32_t numOfPlanes);
+	void readTileDescriptions(BufferReader& reader);
 };

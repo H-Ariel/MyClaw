@@ -13,7 +13,6 @@ public:
 	virtual void OnKeyDown(int key);
 	virtual void OnMouseButtonUp(MouseButtons btn);
 	virtual void OnMouseButtonDown(MouseButtons btn);
-	virtual void OnMouseWheel(int delta);
 	virtual void OnResize(); // This method is called after the window is resized
 
 	virtual void Logic(uint32_t elapsedTime); // in milliseconds

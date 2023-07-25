@@ -1,6 +1,7 @@
 #include "PhysicsManager.h"
 #include "Player.h"
 #include "WindowManager.h"
+#include "LevelPlane.h"
 
 
 #define _checkCollides_define1(x) if (cumulatedCollision.x == 0) cumulatedCollision.x += collisions[collisionsNumber].x;
@@ -14,8 +15,10 @@
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
 
-PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, int levelNumber)
+PhysicsManager::PhysicsManager(WapWorld* wwd)
 {
+	const LevelPlane* plane = *find_if(wwd->planes.begin(), wwd->planes.end(), [](LevelPlane* p) { return p->isMainPlane(); });
+
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
 	Rectangle2D tileRc, originalTileRc;
@@ -97,8 +100,6 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, int l
 		}
 	}
 
-//	cout << "rects amount: " << _rects.size() << endl;
-
 	// this loop combines rectangles that are next to each other (according to x axis)
 	for (i = 0; i < _rects.size(); i++)
 	{
@@ -132,8 +133,6 @@ PhysicsManager::PhysicsManager(const WwdPlaneData * plane, WapWorld * wwd, int l
 			}
 		}
 	}
-
-//	cout << "rects amount: " << _rects.size() << endl;
 }
 
 void PhysicsManager::Draw()

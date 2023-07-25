@@ -9,7 +9,7 @@ class PhysicsManager
 public:
 	static const float myGRAVITY;
 
-	PhysicsManager(const WwdPlaneData* plane, WapWorld* wwd, int levelNumber);
+	PhysicsManager(WapWorld* wwd);
 
 	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath) const;
 

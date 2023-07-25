@@ -9,7 +9,6 @@ void BaseEngine::OnKeyUp(int key) {}
 void BaseEngine::OnKeyDown(int key) {}
 void BaseEngine::OnMouseButtonUp(MouseButtons btn) {}
 void BaseEngine::OnMouseButtonDown(MouseButtons btn) {}
-void BaseEngine::OnMouseWheel(int delta) {}
 void BaseEngine::OnResize() {}
 
 void BaseEngine::Logic(uint32_t elapsedTime)
