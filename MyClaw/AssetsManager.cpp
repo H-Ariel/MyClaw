@@ -161,7 +161,7 @@ void AssetsManager::clearLevelAssets(int lvl)
 {
 	if (instance)
 	{
-		const string prefix = "/LEVEL" + to_string(lvl);
+		const string prefix = "LEVEL" + to_string(lvl);
 		instance->_imagesManager->clearLevelImages(prefix);
 		instance->_animationsManager->clearLevelAnimations(prefix);
 		instance->_audioManager->clearLevelSounds();

@@ -62,7 +62,7 @@
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#ifndef _DEBUG
 //#undef LOW_DETAILS
-#define USE_ENEMIES
+//#define USE_ENEMIES
 //#endif
 
 /*
@@ -227,12 +227,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	for (size_t i = 0; i < _objects.size(); i++)
 	{
 		obj = _objects[i];
-	
-		if (1.3 < player->getSpeedY() && player->getSpeedY() < 1.4f)
-			cout << "";
-		else if (player->getSpeedY() == 0)
-			cout << "";
-
 		obj->Logic(elapsedTime);
 
 		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)

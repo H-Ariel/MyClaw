@@ -59,9 +59,10 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 }
 void ImagesManager::clearLevelImages(const string& prefix)
 {
+	string prefix2 = '/' + prefix;
 	for (auto it = _loadedBitmaps.begin(); it != _loadedBitmaps.end();)
 	{
-		if (startsWith(it->first, prefix))
+		if (startsWith(it->first, prefix) || startsWith(it->first, prefix2))
 			it = _loadedBitmaps.erase(it);
 		else
 			++it;
@@ -166,59 +167,62 @@ void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 	// hack- todo: edit the files?
 	// NOTE: number-filenames are according to `fixFileName` at `RezArchive.cpp`
 
+	if (pidPath[0] == '/')
+		pidPath = pidPath.substr(1);
+
 
 	// HUD pistol
-	if (pidPath == "/GAME/IMAGES/INTERFACE/WEAPONS/PISTOL/001.PID")
+	if (pidPath == "GAME/IMAGES/INTERFACE/WEAPONS/PISTOL/001.PID")
 	{
 		offsetY += 1;
 	}
 	// HUD magic
-	else if (pidPath == "/GAME/IMAGES/INTERFACE/WEAPONS/MAGIC/001.PID")
+	else if (pidPath == "GAME/IMAGES/INTERFACE/WEAPONS/MAGIC/001.PID")
 	{
 		offsetY += 2;
 	}
-	else if (pidPath == "/LEVEL7/IMAGES/SANDHOLE/005.PID")
+	else if (pidPath == "LEVEL7/IMAGES/SANDHOLE/005.PID")
 	{
 		offsetX -= 2;
 	}
 	// MagicClaw
-	else if (pidPath == "/CLAW/IMAGES/165.PID")
+	else if (pidPath == "CLAW/IMAGES/165.PID")
 	{
 		offsetX += 15;
 	}
-	else if (pidPath == "/CLAW/IMAGES/166.PID")
+	else if (pidPath == "CLAW/IMAGES/166.PID")
 	{
 		offsetX += -5;
 	}
-	else if (pidPath == "/CLAW/IMAGES/167.PID")
+	else if (pidPath == "CLAW/IMAGES/167.PID")
 	{
 		offsetX += 10;
 	}
 	// Claw swipe
-	else if (pidPath == "/CLAW/IMAGES/024.PID" || pidPath == "/CLAW/IMAGES/025.PID" ||
-		pidPath == "/CLAW/IMAGES/026.PID" || pidPath == "/CLAW/IMAGES/027.PID")
+	else if (pidPath == "CLAW/IMAGES/024.PID" || pidPath == "CLAW/IMAGES/025.PID" ||
+		pidPath == "CLAW/IMAGES/026.PID" || pidPath == "CLAW/IMAGES/027.PID")
 	{
 		offsetX += 22;
 	}
 	// Cursor
-	else if (pidPath == "/GAME/IMAGES/CURSOR/CURSOR04.PID")
+	else if (pidPath == "GAME/IMAGES/CURSOR/004.PID")
 	{
 		offsetX += 2;
 	}
 	// Tower Cannon
-	else if (pidPath == "/LEVEL2/IMAGES/TOWERCANNONLEFT/002.PID" ||
-		pidPath == "/LEVEL2/IMAGES/TOWERCANNONLEFT/004.PID" ||
-		pidPath == "/LEVEL2/IMAGES/TOWERCANNONLEFT/005.PID")
+	else if (pidPath == "LEVEL2/IMAGES/TOWERCANNONLEFT/002.PID" ||
+		pidPath == "LEVEL2/IMAGES/TOWERCANNONLEFT/004.PID" ||
+		pidPath == "LEVEL2/IMAGES/TOWERCANNONLEFT/005.PID")
 	{
 		offsetX -= 2;
 	}
-	else if (pidPath == "/LEVEL2/IMAGES/TOWERCANNONRIGHT/002.PID"
-		|| pidPath == "/LEVEL2/IMAGES/TOWERCANNONRIGHT/004.PID"
-		|| pidPath == "/LEVEL2/IMAGES/TOWERCANNONRIGHT/005.PID")
+	else if (pidPath == "LEVEL2/IMAGES/TOWERCANNONRIGHT/002.PID"
+		|| pidPath == "LEVEL2/IMAGES/TOWERCANNONRIGHT/004.PID"
+		|| pidPath == "LEVEL2/IMAGES/TOWERCANNONRIGHT/005.PID")
 	{
 		offsetX += 2;
 	}
-	else if (pidPath == "/LEVEL8/IMAGES/CANNONSWITCH/002.PID")
+	else if (pidPath == "LEVEL8/IMAGES/CANNONSWITCH/002.PID")
 	{
 		offsetX -= 2;
 		offsetY -= 1;

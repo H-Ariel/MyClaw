@@ -57,7 +57,7 @@ public:
 
 	PowerupSparkle()
 	{
-		_ani = AssetsManager::loadCopyAnimation("/GAME/ANIS/GLITTER1.ANI");
+		_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/GLITTER1.ANI");
 		init();
 	}
 	void init()
@@ -92,7 +92,7 @@ Rectangle2D* PowerupSparkle::playerRc = nullptr;
 Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	: BaseCharacter(obj), _planeSize(planeSize), _currWeapon(ClawProjectile::Types::Pistol), _finishLevel(false)
 {
-	_animations = AssetsManager::loadAnimationsFromDirectory("/CLAW/ANIS");
+	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_weaponsAmount[ClawProjectile::Types::Pistol] = 10;
 	_weaponsAmount[ClawProjectile::Types::Magic] = 5;
 	_weaponsAmount[ClawProjectile::Types::Dynamite] = 3;
@@ -113,8 +113,8 @@ Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT"};
 
-	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("/GAME/IMAGES/EXCLAMATION", 125, false);
-	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromFromPidImage("/CLAW/IMAGES/100.PID");
+	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 125, false);
+	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromFromPidImage("CLAW/IMAGES/100.PID");
 
 	PowerupSparkle::playerRc = &_saveCurrRect;
 }
@@ -299,7 +299,7 @@ void Player::Logic(uint32_t elapsedTime)
 		// update position based on speed, but make sure we don't go outside the level
 		position.x += _speed.x * elapsedTime;
 		position.y += _speed.y * elapsedTime;
-		
+
 		/*
 		// TODO: Delete after we are sure we are not using it
 		if (position.x < 0) position.x = 0;

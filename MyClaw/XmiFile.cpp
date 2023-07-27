@@ -194,7 +194,7 @@ vector<uint8_t> xmiToMidi(vector<uint8_t> xmiFileData)
 
 	tokenTime = 0;
 	tokenType = 0;
-	endLoop = false;
+	endLoop = false; // TODO: we don't must use `endLoop` in the next loop
 
 	for (MidiToken& tok : tokensList)
 	{

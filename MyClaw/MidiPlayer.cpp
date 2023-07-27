@@ -245,7 +245,7 @@ start:
 			MidiEvent last = track.last_event;
 
 #ifdef MIDI_NO_PRINT
-			last.data = new uint8_t[4];
+			last.data = DBG_NEW uint8_t[4];
 			last.data[0] = last.event;
 			last.data[1] = evt.data[0];
 			last.data[2] = evt.data[1];

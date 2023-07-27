@@ -32,7 +32,6 @@ void GameMainApp::run()
 {
 	if (0) // TODO: delete this `if` block
 	{
-		set<int> badLevels;
 		// try load all levels
 		for (int i = 1; i <= 14; i++)
 		{
@@ -53,7 +52,7 @@ void GameMainApp::run()
 	{
 		runApp = true;
 		//_pEngine = allocNewSharedPtr<MenuEngine>();
-		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(8);
+		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(3);
 		runEngine();
 	}
 }

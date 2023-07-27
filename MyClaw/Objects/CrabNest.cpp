@@ -7,7 +7,7 @@
 CrabNest::CrabNest(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
-	_ani = AssetsManager::loadCopyAnimation("/LEVEL7/ANIS/HATCHNEST.ANI", PathManager::getImageSetPath(obj.imageSet));
+	_ani = AssetsManager::loadCopyAnimation("LEVEL7/ANIS/HATCHNEST.ANI", PathManager::getImageSetPath(obj.imageSet));
 	_ani->position = position;
 	_ani->updateFrames = false;
 	_ani->loopAni = false;

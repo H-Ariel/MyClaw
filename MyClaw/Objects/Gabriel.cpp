@@ -127,9 +127,9 @@ void Gabriel::Logic(uint32_t elapsedTime)
 pair<Rectangle2D, int> Gabriel::GetAttackRect() { return {}; }
 bool Gabriel::checkForHurts()
 {
-	// block all CC attacks
+	// Gabriel blocks all CC attacks
 
-	int health = _health; // save health value
+	int health = _health;
 
 	if (BaseEnemy::checkForHurts())
 	{
@@ -138,7 +138,6 @@ bool Gabriel::checkForHurts()
 		_ani->loopAni = false;
 	}
 
-	// make sure value did not changed
 	_health = health;
 	removeObject = false;
 
@@ -306,7 +305,7 @@ void GabrielRedTailPirate::stopFalling(float collisionSize)
 		obj.minX = 42560;
 		obj.maxX = 43200;
 		obj.imageSet = "LEVEL_REDTAILPIRATE";
-		ActionPlane::addPlaneObject(new RedTailPirate(obj, true));
+		ActionPlane::addPlaneObject(DBG_NEW RedTailPirate(obj, true));
 
 		removeObject = true;
 	}

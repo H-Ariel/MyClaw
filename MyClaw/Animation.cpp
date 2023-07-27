@@ -23,24 +23,13 @@ Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string
 	uint16_t triggeredEventFlag, imageFileId, duration;
 	bool useSoundFile;
 
-	/********************** ANI HEADER/PROPERTIES **********************/
+	if (aniPath[0] == '/') 
+		(string&)aniPath = aniPath.substr(1);
 
-	if (aniFileReader->read<uint8_t>() != 0x20) // file signature
-	{
-		throw Exception("invalid ANI file. path=" + aniPath);
-	}
-	aniFileReader->skip(11);
+	aniFileReader->skip(12);
 	aniFileReader->read(framesCount);
 	aniFileReader->read(imageSetPathLength);
 	aniFileReader->skip(12);
-
-
-	// Check if loaded file at least resembles ANI file format since there is no checksum
-	if (framesCount == 0 || (size_t)framesCount * 20 + imageSetPathLength > aniFileReader->getSize())
-	{
-		throw Exception("I'm here!");
-		// todo: delete this condition
-	}
 
 	imageSetPath = aniFileReader->ReadString(imageSetPathLength);
 	if (!_imageSetPath.empty())
@@ -58,7 +47,7 @@ Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string
 	for (uint32_t i = 0; i < framesCount; i++, soundFilePath = "")
 	{
 		aniFileReader->read(triggeredEventFlag);
-		useSoundFile = aniFileReader->read<uint8_t>();// != 1; todo: unremark
+		useSoundFile = aniFileReader->read<uint8_t>();// != 0; todo: unremark
 		aniFileReader->skip(5);
 		aniFileReader->read(imageFileId);
 		aniFileReader->read(duration);
@@ -84,14 +73,14 @@ Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string
 
 
 		// TODO: hack - something else
-		if (startsWith(aniPath, "/LEVEL2/ANIS/RAUX/BLOCK")) duration /= 2;
-		else if (startsWith(aniPath, "/LEVEL6/ANIS/WOLVINGTON/BLOCK")) duration /= 2;
-		else if (aniPath == "/LEVEL8/ANIS/GABRIELCANNON/HORZFIRE.ANI") duration *= 8;
-		else if (aniPath == "/LEVEL8/ANIS/GABRIELCANNON/VERTIFIRE.ANI") duration *= 8;
-		else if (imageSetPath == "/LEVEL8/IMAGES/GABRIELCANNON" && imageFileId == 0) imageFileId = 1;
-		else if (aniPath == "/LEVEL8/ANIS/CANNONSWITCH/SWITCH.ANI") duration *= 2;
-		else if (aniPath == "/LEVEL9/ANIS/SAWBLADE/SPIN.ANI") duration *= 4;
-		else if (imageSetPath == "/LEVEL10/IMAGES/MARROW" && imageFileId == 0) imageFileId = 1;
+		if (startsWith(aniPath, "LEVEL2/ANIS/RAUX/BLOCK")) duration /= 2;
+		else if (startsWith(aniPath, "LEVEL6/ANIS/WOLVINGTON/BLOCK")) duration /= 2;
+		else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/HORZFIRE.ANI") duration *= 8;
+		else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/VERTIFIRE.ANI") duration *= 8;
+		else if (imageSetPath == "LEVEL8/IMAGES/GABRIELCANNON" && imageFileId == 0) imageFileId = 1;
+		else if (aniPath == "LEVEL8/ANIS/CANNONSWITCH/SWITCH.ANI") duration *= 2;
+		else if (aniPath == "LEVEL9/ANIS/SAWBLADE/SPIN.ANI") duration *= 4;
+		else if (imageSetPath == "LEVEL10/IMAGES/MARROW" && imageFileId == 0) imageFileId = 1;
 
 		sprintf(imgName, "/%03d.PID", imageFileId); // according to `fixFileName` at `RezArchive.cpp`
 
