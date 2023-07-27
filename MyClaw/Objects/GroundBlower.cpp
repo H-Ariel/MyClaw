@@ -25,6 +25,7 @@ void GroundBlower::Logic(uint32_t elapsedTime)
 	{
 		player->jump(_force);
 		// TODO: something get wrong: player speed is set to 0
+		// i think it's because of the Physics-Manager (it sets the speed to 0 when the player is on the ground)
 	}
 }
 

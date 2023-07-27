@@ -12,4 +12,7 @@ public:
 	Rectangle2D GetRect() override;
 
 	bool isPassedHalf() const { return _ani->isPassedHalf(); }
+
+private:
+	D2D1_POINT_2F _edgePos;
 };

@@ -16,6 +16,8 @@ public:
 	virtual Rectangle2D GetRect() override;
 	virtual void Reset(); // this method is called after Captain Claw is dead. It can be used to reset the object
 
+	bool isMirrored() const { return _isMirrored; }
+
 	const uint32_t ZCoord;
 	bool removeObject;
 

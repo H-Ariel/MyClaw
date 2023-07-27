@@ -3,12 +3,11 @@
 #include "../Player.h"
 
 
-#define RECT_OFFSET 15
+#define RECT_OFFSET 5
 
 
 // based on OpenClaw
-// TODO: improve these values OR player rect (check who is responsible for this)
-static D2D1_POINT_2F ropeFrameIndexToRopeHandleOffset[] = {
+static D2D1_POINT_2F ropeFrameIndexToRopeHandleOffset[120] = {
 	{ -173,  22 }, { -172,  23 }, { -172,  24 }, { -170,  27 }, { -169,  29 },
 	{ -168,  31 }, { -166,  35 }, { -164,  39 }, { -163,  44 }, { -162,  47 },
 	{ -161,  52 }, { -155,  57 }, { -149,  63 }, { -144,  71 }, { -139,  76 },
@@ -37,7 +36,7 @@ static D2D1_POINT_2F ropeFrameIndexToRopeHandleOffset[] = {
 
 
 Rope::Rope(const WwdObject& obj)
-	: BasePlaneObject(obj)
+	: BasePlaneObject(obj), _edgePos({})
 {
 	myMemCpy(this->ZCoord, player->ZCoord + 1);
 	int32_t speed = obj.speedX / 60;
@@ -49,31 +48,36 @@ Rope::Rope(const WwdObject& obj)
 
 void Rope::Logic(uint32_t elapsedTime)
 {
-	Rectangle2D thisRc = GetRect();
+	size_t idx = _ani->getFrameNumber();
+	_edgePos.x = position.x + ropeFrameIndexToRopeHandleOffset[idx].x;
+	_edgePos.y = position.y + ropeFrameIndexToRopeHandleOffset[idx].y;
 
-	if (!player->isJumping() && player->GetRect().intersects(thisRc))
+	if (!player->isJumping() && player->GetRect().intersects(GetRect()))
 	{
 		player->rope = this;
 	}
 
 	if (player->rope == this)
 	{
-		player->position.x = thisRc.left + RECT_OFFSET;
-		player->position.y = thisRc.top + RECT_OFFSET;
+		player->position.x = _edgePos.x;
+		player->position.y = _edgePos.y;
+
+		if (player->isMirrored())
+		{
+			player->position.x -= 2 * RECT_OFFSET;
+		}
+		else
+		{
+			player->position.x += 2 * RECT_OFFSET;
+		}
 	}
 }
 Rectangle2D Rope::GetRect()
 {
-	size_t idx = _ani->getFrameNumber();
-	D2D1_POINT_2F edgePos = {
-		position.x + ropeFrameIndexToRopeHandleOffset[idx].x,
-		position.y + ropeFrameIndexToRopeHandleOffset[idx].y
-	};
-
 	return Rectangle2D(
-		edgePos.x - RECT_OFFSET,
-		edgePos.y - RECT_OFFSET,
-		edgePos.x + RECT_OFFSET,
-		edgePos.y + RECT_OFFSET
+		_edgePos.x - RECT_OFFSET,
+		_edgePos.y - RECT_OFFSET,
+		_edgePos.x + RECT_OFFSET,
+		_edgePos.y + RECT_OFFSET
 	);
 }

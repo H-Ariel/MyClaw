@@ -47,7 +47,7 @@
 
 #define EMPTY_TILE -1
 
-#define RECT_SPEED			0.5f // speed of the rect that shows when player is died
+#define RECT_SPEED			0.5f // speed of the rect that shows when CC is died
 #define CC_FALLDEATH_SPEED	0.7f // speed of CC when he falls out the window
 
 #define MIN_OFFSET_X 0
@@ -57,6 +57,11 @@
 
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 #define player BasePlaneObject::player
+
+#define ADD_ENEMY(p) { BaseEnemy* enemy = DBG_NEW p; _objects.push_back(enemy); _enemies.push_back(enemy); }
+#define ADD_DAMAGE_OBJECT(p) { BaseDamageObject* dObj = DBG_NEW p; _objects.push_back(dObj); _damageObjects.push_back(dObj); }
+#define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
+
 
 // TODO: make sure we impleted all the logics
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
@@ -327,11 +332,6 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 	if (isProjectile(obj)) _instance->_projectiles.push_back((Projectile*)obj);
 	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj); // TODO: make sure we need this
 }
-
-
-#define ADD_ENEMY(p) { BaseEnemy* enemy = DBG_NEW p; _objects.push_back(enemy); _enemies.push_back(enemy); }
-#define ADD_DAMAGE_OBJECT(p) { BaseDamageObject* dObj = DBG_NEW p; _objects.push_back(dObj); _damageObjects.push_back(dObj); }
-#define ADD_BOSS_OBJECT(p) { BasePlaneObject* bObj = DBG_NEW p; _bossObjects.push_back(bObj); }
 
 void ActionPlane::addObject(const WwdObject& obj)
 {

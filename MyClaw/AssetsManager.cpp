@@ -151,6 +151,7 @@ uint32_t AssetsManager::getWavFileDuration(uint32_t wavFileId)
 	return instance->_audioManager->getWavFileDuration(wavFileId);
 }
 
+// calls logics for all animations and sounds
 void AssetsManager::callLogics(uint32_t elapsedTime)
 {
 	instance->_animationsManager->callAnimationsLogic(elapsedTime);
