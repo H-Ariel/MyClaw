@@ -21,10 +21,11 @@ private:
 	enum class State : int8_t { Play, Pause };
 
 	shared_ptr<WapWorld> _wwd;
-	LevelPlane* _mainPlane;
+	D2D1_POINT_2F* _mainPlanePosition;
 	LevelHUD* _hud;
 	MenuBackgroundImage _helpImage;
 	ColorF _saveBgColor;
-	State _state;
+	float _savePixelSize;
 	const int _levelNumber;
+	State _state;
 };

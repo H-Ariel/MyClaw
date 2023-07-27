@@ -184,6 +184,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 	_nextEngine = nullptr;
 	WindowManager::setTitle("Claw");
 	WindowManager::setWindowOffset(nullptr);
+	WindowManager::PixelSize = 1;
 
 	if (!allocChildren)
 	{

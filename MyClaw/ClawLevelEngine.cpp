@@ -6,20 +6,20 @@
 
 ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	: _state(State::Play), _saveBgColor(0), _levelNumber(levelNumber),
-	_mainPlane(nullptr), _helpImage("/STATES/HELP/SCREENS/HELP.PCX")
+	_mainPlanePosition(nullptr), _helpImage("/STATES/HELP/SCREENS/HELP.PCX")
 {
 	_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
 	for (LevelPlane* pln : _wwd->planes)
 	{
 		if (pln->isMainPlane())
-			_mainPlane = pln;
+			_mainPlanePosition = &pln->position;
 		_elementsList.push_back(pln);
 	}
 
-	if (_mainPlane == nullptr) throw Exception("no main plane found");
+	if (_mainPlanePosition == nullptr) throw Exception("no main plane found");
 
-	_elementsList.push_back(_hud = DBG_NEW LevelHUD(_mainPlane->position));
-	WindowManager::setWindowOffset(&_mainPlane->position);
+	_elementsList.push_back(_hud = DBG_NEW LevelHUD(*_mainPlanePosition));
+	WindowManager::setWindowOffset(_mainPlanePosition);
 
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
@@ -94,7 +94,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	BaseEngine::Logic(elapsedTime);
 
 	for (LevelPlane* p : _wwd->planes)
-		p->position = _mainPlane->position;
+		p->position = *_mainPlanePosition;
 
 	if (_state == State::Play)
 	{
@@ -127,6 +127,8 @@ void ClawLevelEngine::OnKeyUp(int key)
 			_saveBgColor = WindowManager::getBackgroundColor();
 			WindowManager::setWindowOffset(nullptr);
 			WindowManager::setBackgroundColor(ColorF::Black);
+			_savePixelSize = WindowManager::PixelSize;
+			WindowManager::PixelSize = 1;
 			_state = State::Pause;
 		}
 		else if (key == VK_ESCAPE)
@@ -154,8 +156,9 @@ void ClawLevelEngine::OnKeyUp(int key)
 		for (LevelPlane* p : _wwd->planes)
 			_elementsList.push_back(p);
 		_elementsList.push_back(_hud);
-		WindowManager::setWindowOffset(&_mainPlane->position);
+		WindowManager::setWindowOffset(_mainPlanePosition);
 		WindowManager::setBackgroundColor(_saveBgColor);
+		WindowManager::PixelSize = _savePixelSize;
 		_state = State::Play;
 	}
 }
