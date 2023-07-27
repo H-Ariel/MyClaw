@@ -60,7 +60,7 @@ private:
 		uint32_t absolute_time;
 	};
 
-	// play the MIDI file synchronously
+	// play the MIDI file synchronously (used only in thread)
 	void play_sync(bool infinite);
 
 	// get the next event from the track
@@ -69,6 +69,7 @@ private:
 	// sleep for waitTime microseconds (better than Sleep() which sleeps for milliseconds)
 	static void usleep(int waitTime);
 
+	mutex _mutex;
 	vector<uint8_t> _midiData;
 	MidiTrack track; // in our MIDI data we know there's only one track
 	uint32_t PPQN_CLOCK;

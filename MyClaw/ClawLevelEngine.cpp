@@ -2,7 +2,6 @@
 #include "AssetsManager.h"
 #include "WindowManager.h"
 #include "MenuEngine.h"
-#include "ActionPlane.h"
 
 
 ClawLevelEngine::ClawLevelEngine(int levelNumber)

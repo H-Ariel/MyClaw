@@ -61,13 +61,9 @@ Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string
 			{ // the rat use this sounds, and i hate it
 				soundFilePath = "";
 			}
-			else
+			else if (!soundFilePath.empty() && useSoundFile)
 			{
-				if (!soundFilePath.empty() && useSoundFile)
-				{
-					soundFilePath = replaceString(soundFilePath, '_', '/');
-					soundFilePath = PathManager::getSoundFilePath(soundFilePath);
-				}
+				soundFilePath = PathManager::getSoundFilePath(soundFilePath);
 			}
 		}
 

@@ -156,8 +156,10 @@ MidiPlayer::~MidiPlayer()
 
 void MidiPlayer::stop()
 {
+	_mutex.lock();
 	_isPlaying = false;
 	midiOutReset(_midiOut); // turn off all notes and reset the MIDI device
+	_mutex.unlock();
 }
 
 void MidiPlayer::play(bool infinite)
@@ -228,6 +230,8 @@ start:
 			break;
 		}
 
+		_mutex.lock();
+
 		evt = getNextEvent();
 
 		track.absolute_time = evt.absolute_time;
@@ -238,7 +242,13 @@ start:
 		printf("Track: ticks: %d: ", track.absolute_time);
 #endif
 
+		_mutex.unlock();
 		usleep(time * PPQN_CLOCK);
+		if (!_isPlaying)
+		{
+			break;
+		}
+		_mutex.lock();
 
 		if (!(evt.event & 0x80)) // running mode
 		{
@@ -316,6 +326,8 @@ start:
 
 			track.buf = evt.data + bytesread;
 		}
+
+		_mutex.unlock();
 	}
 }
 

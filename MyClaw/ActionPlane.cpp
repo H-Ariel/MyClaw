@@ -154,6 +154,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 {
 	if (player->isFinishLevel()) return;
 
+	const D2D1_SIZE_F wndSz = WindowManager::getSize();
+
 	if (_deathAniWait)
 	{
 		switch (_state)
@@ -167,9 +169,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 				updatePosition();
 
 				for (BasePlaneObject* obj : _objects)
-				{
 					obj->Reset();
-				}
 			}
 			break;
 
@@ -185,12 +185,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		case States::Fall:
 			player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
 			player->Logic(0); // update position of animation
-			if (player->position.y - position.y > WindowManager::getSize().height)
+			if (player->position.y - position.y > wndSz.height)
 			{
 				player->loseLife();
 				_state = States::Close;
 				_deathAniWait = true;
-				auto wndSz = WindowManager::getSize();
 				_holeRadius = max(wndSz.width, wndSz.height) / 2;
 			}
 			break;
@@ -203,7 +202,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		if (player->isSpikeDeath())
 		{
 			_state = States::Close;
-			auto wndSz = WindowManager::getSize();
 			_holeRadius = max(wndSz.width, wndSz.height) / 2;
 		}
 		else //if (player->isFallDeath())

@@ -11,7 +11,7 @@ struct MidiToken
 	const uint8_t* buf;
 	uint8_t type, data;
 
-	bool operator<(const MidiToken& oRight) { return time < oRight.time; }
+//	bool operator<(const MidiToken& oRight) { return time < oRight.time; }
 };
 
 class MidiTokensList : public vector<MidiToken>
@@ -186,7 +186,7 @@ vector<uint8_t> xmiToMidi(vector<uint8_t> xmiFileData)
 	if (tokensList.empty())
 		return {};
 
-	sort(tokensList.begin(), tokensList.end());
+	sort(tokensList.begin(), tokensList.end(), [](const MidiToken& a, const MidiToken& b) { return a.time < b.time; });
 
 	output.write("MThd\0\0\0\x06\0\0\0\x01", 12);
 	output.writeBigEndianUInt16(tempo * 3 / 25000);
@@ -194,12 +194,9 @@ vector<uint8_t> xmiToMidi(vector<uint8_t> xmiFileData)
 
 	tokenTime = 0;
 	tokenType = 0;
-	endLoop = false; // TODO: we don't must use `endLoop` in the next loop
 
 	for (MidiToken& tok : tokensList)
 	{
-		if (endLoop) break;
-
 		output.writeUIntVar(tok.time - tokenTime);
 		tokenTime = tok.time;
 		if (tok.type >= 0xF0)
@@ -208,7 +205,8 @@ vector<uint8_t> xmiToMidi(vector<uint8_t> xmiFileData)
 			if (tokenType == 0xFF)
 			{
 				output.write(tok.data);
-				endLoop = (tok.data == 0x2F);
+				if (tok.data == 0x2F)
+					break;
 			}
 			output.writeUIntVar(tok.len);
 			output.write(tok.buf, tok.len);
