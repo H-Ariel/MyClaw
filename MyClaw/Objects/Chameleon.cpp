@@ -7,7 +7,7 @@
 
 Chameleon::Chameleon(const WwdObject& obj)
 	: BaseEnemy(obj, 1, 10, "FASTADVANCE", "HIT",
-		"HIT", "KILLFALL", "STRIKE1", "", "", "", "", 0.1f)
+		"HIT", "KILLFALL", "STRIKE1", "", "", "", "", ENEMY_PATROL_SPEED)
 {
 }
 

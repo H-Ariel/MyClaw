@@ -8,9 +8,7 @@ LevelPlane::LevelPlane()
 {
 }
 
-void LevelPlane::init()
-{
-}
+void LevelPlane::init() {}
 
 void LevelPlane::Draw()
 {

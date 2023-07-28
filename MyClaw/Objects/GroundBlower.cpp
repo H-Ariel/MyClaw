@@ -15,17 +15,23 @@ GroundBlower::GroundBlower(const WwdObject& obj)
 	Rectangle2D rc;
 	rc.left = position.x - 24;
 	rc.right = position.x + 24;
-	rc.bottom = rc.top = position.y + BLOWHOLE_OFFSET_Y - 40;
+	rc.bottom = position.y + BLOWHOLE_OFFSET_Y - 40;
+	rc.top = rc.bottom - 1;
 	myMemCpy(_objRc, rc);
+	myMemCpy(ZCoord, player->ZCoord - 1); // we do that to avoid the affect of Physics-Manager on the player
 }
 
 void GroundBlower::Logic(uint32_t elapsedTime)
 {
-	if (_ani->getFrameNumber() == 0 && tryCatchPlayer())
+	if (_ani->getFrameNumber() == 0)
 	{
-		player->jump(_force);
-		// TODO: something get wrong: player speed is set to 0
-		// i think it's because of the Physics-Manager (it sets the speed to 0 when the player is on the ground)
+		Rectangle2D colRc = player->GetRect().getCollision(GetRect());
+		if (!colRc.isEmpty())
+		{
+			// if player is falling/going to this object - catch him and blow him up
+			player->stopFalling(colRc.bottom);
+			player->jump(_force);
+		}
 	}
 }
 

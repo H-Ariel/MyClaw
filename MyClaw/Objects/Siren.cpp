@@ -4,8 +4,7 @@
 
 
 Siren::Siren(const WwdObject& obj)
-	: BaseEnemy(obj, 10, 0, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "KILLFALL", "", "", "", "", "", 0.1f)
+	: BaseEnemy(obj, 10, 0, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "", "", "", ENEMY_PATROL_SPEED)
 {
 }
 

@@ -236,23 +236,7 @@ void BaseEnemy::makeAttack()
 		}
 		else if (deltaX < 256) // CC is far from enemy
 		{
-			if (_canShoot && deltaY < 16)
-			{
-				_ani = ANIMATION_SHOOT;
-				_ani->reset();
-				_isStanding = false;
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
-
-				WwdObject obj;
-				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
-				obj.y = (int32_t)position.y - 20;
-				obj.z = ZCoord;
-				obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
-				obj.damage = 10;
-				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
-			}
-			else if (_canShootDuck && deltaY < 128 && player->isDuck())
+			if (_canShootDuck && deltaY < 128 && player->isDuck())
 			{
 				_ani = ANIMATION_SHOOTDUCK;
 				_ani->reset();
@@ -263,6 +247,22 @@ void BaseEnemy::makeAttack()
 				WwdObject obj;
 				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 				obj.y = (int32_t)position.y + 10;
+				obj.z = ZCoord;
+				obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+				obj.damage = 10;
+				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
+			}
+			else if (_canShoot && deltaY < 16)
+			{
+				_ani = ANIMATION_SHOOT;
+				_ani->reset();
+				_isStanding = false;
+				_isAttack = true;
+				_isMirrored = player->position.x < position.x;
+
+				WwdObject obj;
+				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+				obj.y = (int32_t)position.y - 20;
 				obj.z = ZCoord;
 				obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 				obj.damage = 10;

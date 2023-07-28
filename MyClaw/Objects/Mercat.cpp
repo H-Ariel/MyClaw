@@ -5,8 +5,7 @@
 // TODO: jump back when CC try to attack
 
 Mercat::Mercat(const WwdObject& obj)
-	: BaseEnemy(obj, 15, 10, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "KILLFALL", "", "", "", "", "", 0.1f)
+	: BaseEnemy(obj, 15, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "", "", "", ENEMY_PATROL_SPEED)
 {
 }
 

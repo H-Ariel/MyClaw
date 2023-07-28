@@ -3,7 +3,7 @@
 
 CutThroat::CutThroat(const WwdObject& obj)
 	: BaseEnemy(obj, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL",
-		"STRIKE1", "", "STRIKE3", "STRIKE2", PathManager::getImageSetPath("LEVEL_KNIFE"), 0.1f)
+		"STRIKE1", "", "STRIKE3", "STRIKE2", PathManager::getImageSetPath("LEVEL_KNIFE"), ENEMY_PATROL_SPEED)
 {
 }
 

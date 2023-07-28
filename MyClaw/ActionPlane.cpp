@@ -67,7 +67,7 @@
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#ifndef _DEBUG
 //#undef LOW_DETAILS
-//#define USE_ENEMIES
+#define USE_ENEMIES
 //#endif
 
 /*
@@ -84,20 +84,19 @@ public:
 
 ActionPlane* ActionPlane::_instance = nullptr;
 
-ActionPlane::ActionPlane(WapWorld* wwd, int levelNumber)
+ActionPlane::ActionPlane(WapWorld* wwd)
 	: _state(States::Play), _deathAniWait(false), _wwd(wwd),
-	_needSort(true), _holeRadius(0), _physicsManager(nullptr)
+	_needSort(true), _holeRadius(0), _physicsManager(nullptr), _planeSize({})
 {
 	if (_instance != nullptr)
 		throw Exception("ActionPlane already exists");
-	else
-		_instance = this;
+	_instance = this;
 
 	WwdObject playerData;
 	playerData.x = _wwd->startX;
 	playerData.y = _wwd->startY;
 	playerData.z = 4000;
-	_objects.push_back(player = DBG_NEW Player(playerData, _planeSize));
+	_objects.push_back(player = DBG_NEW Player(playerData));
 
 }
 ActionPlane::~ActionPlane()

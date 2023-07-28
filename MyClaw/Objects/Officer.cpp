@@ -2,8 +2,7 @@
 
 
 Officer::Officer(const WwdObject& obj)
-	: BaseEnemy(obj, 9, 10, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "FALL", "STRIKE", "", "", "", "", 0.1f)
+	: BaseEnemy(obj, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL", "STRIKE", "", "", "", "", ENEMY_PATROL_SPEED)
 {
 }
 
@@ -13,8 +12,8 @@ Rectangle2D Officer::GetRect()
 	{
 		_saveCurrRect.left = 0;
 		_saveCurrRect.top = 0;
-		_saveCurrRect.right = _saveCurrRect.left + 50;
-		_saveCurrRect.bottom = _saveCurrRect.top + 110;
+		_saveCurrRect.right = 50;
+		_saveCurrRect.bottom = 110;
 	}
 	else if (_isAttack)
 	{
@@ -22,7 +21,7 @@ Rectangle2D Officer::GetRect()
 		else _saveCurrRect.left = 20;
 		_saveCurrRect.top = 0;
 		_saveCurrRect.right = _saveCurrRect.left + 50;
-		_saveCurrRect.bottom = _saveCurrRect.top + 110;
+		_saveCurrRect.bottom = 110;
 	}
 	else
 	{

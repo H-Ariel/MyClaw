@@ -89,8 +89,8 @@ public:
 Rectangle2D* PowerupSparkle::playerRc = nullptr;
 
 
-Player::Player(const WwdObject& obj, const D2D1_SIZE_F& planeSize)
-	: BaseCharacter(obj), _planeSize(planeSize), _currWeapon(ClawProjectile::Types::Pistol), _finishLevel(false)
+Player::Player(const WwdObject& obj)
+	: BaseCharacter(obj), _currWeapon(ClawProjectile::Types::Pistol), _finishLevel(false)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_weaponsAmount[ClawProjectile::Types::Pistol] = 10;
@@ -300,14 +300,6 @@ void Player::Logic(uint32_t elapsedTime)
 		position.x += _speed.x * elapsedTime;
 		position.y += _speed.y * elapsedTime;
 
-		/*
-		// TODO: Delete after we are sure we are not using it
-		if (position.x < 0) position.x = 0;
-		if (position.y < 0) position.y = 0;
-		if (position.x > _planeSize.width) position.x = _planeSize.width;
-		if (position.y > _planeSize.height) position.y = _planeSize.height;
-		*/
-
 		// select animation
 
 		const string prevAniName = _aniName;
@@ -381,8 +373,6 @@ void Player::Logic(uint32_t elapsedTime)
 			}
 			else
 			{
-				// TODO: better code here
-
 				switch (_currWeapon)
 				{
 				case ClawProjectile::Types::Pistol: _aniName = "PISTOL"; break;
@@ -390,9 +380,7 @@ void Player::Logic(uint32_t elapsedTime)
 				case ClawProjectile::Types::Dynamite: _aniName = "POSTDYNAMITE"; break;
 				}
 
-				int& amount = _weaponsAmount[_currWeapon];
-
-				if (amount > 0)
+				if (_weaponsAmount[_currWeapon] > 0)
 				{
 					WwdObject obj;
 					obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
@@ -438,7 +426,7 @@ void Player::Logic(uint32_t elapsedTime)
 						throw Exception("no more weapons...");
 					}
 
-					amount -= 1;
+					_weaponsAmount[_currWeapon] -= 1;
 					if (inAir) obj.y += 10;
 					ActionPlane::addPlaneObject(ClawProjectile::createNew(_currWeapon, obj));
 				}
@@ -451,7 +439,7 @@ void Player::Logic(uint32_t elapsedTime)
 				else if (inAir) _aniName = "JUMP" + _aniName;
 			}
 		}
-		else if (duck && !_altPressed)
+		else if (duck)
 		{
 			_aniName = "DUCK";
 		}
@@ -473,10 +461,6 @@ void Player::Logic(uint32_t elapsedTime)
 			{
 				_aniName = "WALK";
 			}
-		}
-		else if (_aniName != "DUCK" && isDuck() && _ani->isFinishAnimation())
-		{
-			_aniName = "DUCK";
 		}
 		else if (_aniName != "JUMP")
 		{
@@ -579,10 +563,19 @@ void Player::calcRect()
 
 	if (isDuck())
 	{
-		_saveCurrRect.top = 30;
-		_saveCurrRect.bottom = 90;
+		if (_aniName == "DUCKEMPTYPOSTDYNAMITE")
+		{
+			Rectangle2D aniRc = _ani->GetRect();
+			_saveCurrRect.top = position.y - aniRc.top;
+			_saveCurrRect.bottom = aniRc.bottom - position.y;
+		}
+		else
+		{
+			_saveCurrRect.top = 30;
+			_saveCurrRect.bottom = 90;
+		}
 	}
-	else if (_aniName == "LIFT" || _aniName == "THROW" || startsWith(_aniName, "DAMAGE"))
+	else if (_aniName == "LIFT" || _aniName == "THROW" || _aniName == "EMPTYPOSTDYNAMITE" || startsWith(_aniName, "DAMAGE"))
 	{
 		// this cause that CC doesn't hover when he lifts or throws
 		Rectangle2D aniRc = _ani->GetRect();

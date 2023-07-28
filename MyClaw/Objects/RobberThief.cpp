@@ -3,7 +3,7 @@
 
 RobberThief::RobberThief(const WwdObject& obj)
 	: BaseEnemy(obj, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "FALL",
-		"", "", "STRIKE1", "STRIKE2", PathManager::getImageSetPath("LEVEL_ARROW"), 0.1f)
+		"", "", "STRIKE1", "STRIKE2", PathManager::getImageSetPath("LEVEL_ARROW"), ENEMY_PATROL_SPEED)
 {
 }
 

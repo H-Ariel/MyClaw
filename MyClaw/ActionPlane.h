@@ -12,7 +12,7 @@ class BaseEnemy;
 class ActionPlane : public LevelPlane
 {
 public:
-	ActionPlane(WapWorld* wwd, int levelNumber);
+	ActionPlane(WapWorld* wwd);
 	~ActionPlane();
 
 	void init() override;

@@ -13,7 +13,13 @@ Seagull::Seagull(const WwdObject& obj)
 		"FEATHERFLOAT", "KILLFALL", "", "", "", "", "", ENEMY_PATROL_SPEED),
 	_state(States::Fly), _minY((float)obj.y), _maxY((float)obj.y + 192)
 {
-	// TODO: some of them has no treasure
+	// some of them has no treasure
+	if (obj.powerup == 0 && obj.userRect1.left == 0 && obj.userRect1.right == 0 &&
+		obj.userRect1.bottom == 0 && obj.userRect1.top == 0 && obj.userRect2.left == 0 &&
+		obj.userRect2.right == 0 && obj.userRect2.bottom == 0 && obj.userRect2.top == 0)
+	{
+		_itemsTypes.clear();
+	}
 }
 
 void Seagull::Logic(uint32_t elapsedTime)

@@ -95,7 +95,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 	wwdFileReader->read(startY);
 	wwdFileReader->skip(4);
 	uint32_t numOfPlanes = wwdFileReader->read<uint32_t>();
-	uint32_t planesOffset = wwdFileReader->read< uint32_t>();
+	uint32_t planesOffset = wwdFileReader->read<uint32_t>();
 	uint32_t tileDescriptionsOffset = wwdFileReader->read<uint32_t>();
 	uint32_t mainBlockLength = wwdFileReader->read<uint32_t>();
 	wwdFileReader->skip(136); // 4 checksum + 4 unk + 128 launch app
@@ -119,8 +119,6 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 	delete[] decompressedMainBlock;
 
 
-	for (auto& p : planes) p->init();
-
 	if (flags & WwdFlag_UseZCoords)
 	{
 		sort(planes.begin(), planes.end(), [](const LevelPlane* a, const LevelPlane* b) { return a->ZCoord < b->ZCoord; });
@@ -129,8 +127,9 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 	WindowManager::setBackgroundColor(planes[0]->fillColor);
 
 	// minor change to tiles so they will be more accurate for reduce rectangles (in PhysicsManager)
-	// in levels 5,11 it is necessary to change the tiles for "BreakPlanks"
-	// TODO: levels 5,11: connect the planks to the tiles
+	// in levels 5, 11 it's necessary to change the tiles for "BreakPlanks"
+	// in level 8 it's necessary to change the tiles for death blocks
+	// TODO: levels 5, 11: connect the planks to the tiles (in ActionPlane)
 	// TODO: continue for all levels (if needed)
 	if (levelNumber == 1)
 	{
@@ -160,6 +159,15 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 		tilesDescription[519].rect.bottom += 2;
 	}
+	else if (levelNumber == 8)
+	{
+		for (LevelPlane* pln : planes)
+			if (pln->_isMainPlane)
+			{
+				for (size_t i = 703; i < 720; pln->tiles[90][i++] = 184); // set death tiles behind Gabriel's ship
+				break;
+			}
+	}
 	else if (levelNumber == 11)
 	{
 		WwdTileDescription& t39 = tilesDescription[39];
@@ -172,6 +180,8 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 		tilesDescription[50].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		tilesDescription[54].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
+
+	for (auto& p : planes) p->init();
 
 	tilesDescription.clear();
 }
@@ -202,7 +212,7 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 
 		if (flags & WwdPlaneFlags_MainPlane)
 		{
-			pln = DBG_NEW ActionPlane(this, levelNumber);
+			pln = DBG_NEW ActionPlane(this);
 			pln->_isMainPlane = true;
 		}
 		else
