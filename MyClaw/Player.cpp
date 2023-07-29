@@ -132,7 +132,7 @@ void Player::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	if (_spacePressed && (_speed.y == 0 || _isOnLadder))
+	if (_spacePressed && (speed.y == 0 || _isOnLadder))
 	{
 		jump();
 		_spacePressed = false;
@@ -241,9 +241,9 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_leftPressed) _isMirrored = true;
 	else if (_rightPressed || isClimbing()) _isMirrored = false;
 
-	if (goLeft) _speed.x = -speedX;
-	else if (goRight) _speed.x = speedX;
-	else _speed.x = 0;
+	if (goLeft) speed.x = -speedX;
+	else if (goRight) speed.x = speedX;
+	else speed.x = 0;
 
 	if (inAir && _raisedPowderKeg)
 	{
@@ -260,25 +260,25 @@ void Player::Logic(uint32_t elapsedTime)
 
 		if (climbUp)
 		{
-			_speed.y = -speedYClimb;
+			speed.y = -speedYClimb;
 			_isOnLadder = true;
 			elevator = nullptr;
 		}
 		else if (climbDown)
 		{
-			_speed.y = speedYClimb;
+			speed.y = speedYClimb;
 			_isOnLadder = true;
 			elevator = nullptr;
 		}
 		else if (_isOnLadder)
 		{ // idle on ladder
-			_speed.y = 0;
+			speed.y = 0;
 		}
 		else
 		{
 			if (elevator == nullptr)
 			{
-				_speed.y += GRAVITY * elapsedTime;
+				speed.y += GRAVITY * elapsedTime;
 			}
 		}
 	}
@@ -287,18 +287,18 @@ void Player::Logic(uint32_t elapsedTime)
 		_isOnLadder = false;
 		if (!elevator && !rope)
 		{
-			_speed.y += GRAVITY * elapsedTime;
+			speed.y += GRAVITY * elapsedTime;
 		}
 	}
 
-	if (_speed.y > SpeedY_MAX)
-		_speed.y = SpeedY_MAX;
+	if (speed.y > SpeedY_MAX)
+		speed.y = SpeedY_MAX;
 
 	if (!isInDeathAnimation())
 	{
 		// update position based on speed, but make sure we don't go outside the level
-		position.x += _speed.x * elapsedTime;
-		position.y += _speed.y * elapsedTime;
+		position.x += speed.x * elapsedTime;
+		position.y += speed.y * elapsedTime;
 
 		// select animation
 
@@ -328,7 +328,7 @@ void Player::Logic(uint32_t elapsedTime)
 		{
 			_aniName = "SWING";
 			_isMirrored = rope->isPassedHalf();
-			_speed = {};
+			speed = {};
 		}
 		else if (_isAttack)
 		{
@@ -507,7 +507,7 @@ void Player::Logic(uint32_t elapsedTime)
 		if (_raisedPowderKeg)
 		{
 			if (isStanding())
-				_speed.y = 0;
+				speed.y = 0;
 			_raisedPowderKeg->position.x = position.x;
 			_raisedPowderKeg->position.y = position.y - 104;
 		}
@@ -716,7 +716,7 @@ void Player::calcAttackRect()
 void Player::stopFalling(float collisionSize)
 {
 	BaseCharacter::stopFalling(collisionSize);
-	if (_speed.x == 0 && !isDuck() && !isStanding() && !_isAttack && !isWeaponAnimation())
+	if (speed.x == 0 && !isDuck() && !isStanding() && !_isAttack && !isWeaponAnimation())
 	{
 		// If CC stopped falling (and he is not walking) he should stand
 		_ani = _animations[_aniName = "STAND"];
@@ -730,9 +730,9 @@ void Player::stopFalling(float collisionSize)
 void Player::stopMovingLeft(float collisionSize)
 {
 	if (isClimbing()) return;
-	if (_speed.x != 0)
+	if (speed.x != 0)
 	{
-		_speed.x = 0;
+		speed.x = 0;
 		position.x += collisionSize;
 		_leftCollision = true;
 	}
@@ -741,9 +741,9 @@ void Player::stopMovingLeft(float collisionSize)
 void Player::stopMovingRight(float collisionSize)
 {
 	if (isClimbing()) return;
-	if (_speed.x != 0)
+	if (speed.x != 0)
 	{
-		_speed.x = 0;
+		speed.x = 0;
 		position.x -= collisionSize;
 		_rightCollision = true;
 	}
@@ -756,7 +756,7 @@ void Player::jump(float force)
 	elevator = nullptr;
 	rope = nullptr;
 
-	_speed.y = -force;
+	speed.y = -force;
 }
 void Player::jump()
 {
@@ -926,7 +926,7 @@ bool Player::collectItem(Item* item)
 
 bool Player::isFalling() const
 {
-	return _speed.y > 0 && !_isOnLadder;
+	return speed.y > 0 && !_isOnLadder;
 }
 bool Player::isStanding() const
 {
@@ -969,7 +969,7 @@ void Player::backToLife()
 	_aniName = "STAND";
 	_ani = _animations["STAND"];
 	position = startPosition;
-	_speed = {};
+	speed = {};
 	_saveCurrRect = GetRect();
 	_powerupLeftTime = 0;
 	_dialogLeftTime = 0;

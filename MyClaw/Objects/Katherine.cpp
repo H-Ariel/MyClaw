@@ -27,8 +27,8 @@ void Katherine::Logic(uint32_t elapsedTime)
 	{
 		_ani = ANIMATION_FLIP;
 
-		_speed.y = -(0.512f + GRAVITY * 125);
-		_speed.x = (((position.x - _minX < _maxX - position.x) ? _maxX : _minX) - position.x) / 750;
+		speed.y = -(0.512f + GRAVITY * 125);
+		speed.x = (((position.x - _minX < _maxX - position.x) ? _maxX : _minX) - position.x) / 750;
 
 		_isAttack = false;
 		_canJump = false;
@@ -37,7 +37,7 @@ void Katherine::Logic(uint32_t elapsedTime)
 
 	if (!_isAttack)
 	{
-		position.x += _speed.x * elapsedTime;
+		position.x += speed.x * elapsedTime;
 		if (position.x < _minX)
 		{
 			stopMovingLeft(_minX - position.x);
@@ -47,8 +47,8 @@ void Katherine::Logic(uint32_t elapsedTime)
 			stopMovingRight(position.x - _maxX);
 		}
 	}
-	_speed.y += GRAVITY * elapsedTime;
-	position.y += _speed.y * elapsedTime;
+	speed.y += GRAVITY * elapsedTime;
+	position.y += speed.y * elapsedTime;
 
 	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_FLIP)
 	{
@@ -58,20 +58,20 @@ void Katherine::Logic(uint32_t elapsedTime)
 	{
 		_ani = ANIMATION_WALK;
 		_isAttack = false;
-		if (_speed.x == 0)
+		if (speed.x == 0)
 		{
-			if (_isMirrored) _speed.x = -ENEMY_PATROL_SPEED;
-			else _speed.x = ENEMY_PATROL_SPEED;
+			if (_isMirrored) speed.x = -ENEMY_PATROL_SPEED;
+			else speed.x = ENEMY_PATROL_SPEED;
 		}
 		else
-			_isMirrored = _speed.x < 0;
+			_isMirrored = speed.x < 0;
 	}
 
 	if (_ani != ANIMATION_FLIP && abs(player->position.x - position.x) > 64)
 	{
 		_isMirrored = player->position.x < position.x;
-		if (_isMirrored) _speed.x = -abs(_speed.x);
-		else _speed.x = abs(_speed.x);
+		if (_isMirrored) speed.x = -abs(speed.x);
+		else speed.x = abs(speed.x);
 	}
 
 	if (_ani != prevAni)
@@ -138,7 +138,7 @@ pair<Rectangle2D, int> Katherine::GetAttackRect()
 
 void Katherine::stopFalling(float collisionSize)
 {
-	_speed.y = 0;
+	speed.y = 0;
 	position.y -= collisionSize;
 
 	if (_ani == ANIMATION_FLIP)
@@ -150,15 +150,15 @@ void Katherine::stopFalling(float collisionSize)
 void Katherine::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
-	_speed.x = ENEMY_PATROL_SPEED;
-	_speed.y = 0;
+	speed.x = ENEMY_PATROL_SPEED;
+	speed.y = 0;
 	_isMirrored = false;
 }
 void Katherine::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
-	_speed.x = -ENEMY_PATROL_SPEED;
-	_speed.y = 0;
+	speed.x = -ENEMY_PATROL_SPEED;
+	speed.y = 0;
 	_isMirrored = true;
 }
 
@@ -177,9 +177,9 @@ bool Katherine::PreLogic(uint32_t elapsedTime)
 		}
 		else
 		{
-			position.x += _speed.x * elapsedTime;
-			_speed.y += GRAVITY * elapsedTime;
-			position.y += _speed.y * elapsedTime;
+			position.x += speed.x * elapsedTime;
+			speed.y += GRAVITY * elapsedTime;
+			position.y += speed.y * elapsedTime;
 
 			PostLogic(elapsedTime);
 			return false;

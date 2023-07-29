@@ -19,17 +19,17 @@ void Fish::Logic(uint32_t elapsedTime)
 
 	if (_ani == ANIMATION_JUMP)
 	{
-		_speed.y += GRAVITY * elapsedTime;
-		position.y += _speed.y * elapsedTime;
+		speed.y += GRAVITY * elapsedTime;
+		position.y += speed.y * elapsedTime;
 		if (_ani->isFinishAnimation())
 			_ani = ANIMATION_WALK;
 	}
 	else
 		position.y = _yPos;
 
-	position.x += _speed.x * elapsedTime;
+	position.x += speed.x * elapsedTime;
 	if (_isAttack) // duoble speed when it attack
-		position.x += _speed.x * elapsedTime;
+		position.x += speed.x * elapsedTime;
 	if (position.x < _minX) stopMovingLeft(_minX - position.x);
 	else if (position.x > _maxX) stopMovingRight(position.x - _maxX);
 
@@ -47,7 +47,7 @@ void Fish::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_WALK;
 			_ani->reset();
 			_isAttack = false;
-			_isMirrored = _speed.x < 0;
+			_isMirrored = speed.x < 0;
 		}
 	}
 
@@ -62,13 +62,13 @@ pair<Rectangle2D, int> Fish::GetAttackRect()
 void Fish::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
-	_speed.x = ENEMY_PATROL_SPEED;
+	speed.x = ENEMY_PATROL_SPEED;
 	_isMirrored = false;
 }
 void Fish::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
-	_speed.x = -ENEMY_PATROL_SPEED;
+	speed.x = -ENEMY_PATROL_SPEED;
 	_isMirrored = true;
 }
 
@@ -82,7 +82,7 @@ void Fish::makeAttack()
 
 			// TODO: jump if CC on land next to water
 		//	_ani = ANIMATION_JUMP;
-		//	_speed.y = -0.6f;
+		//	speed.y = -0.6f;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;

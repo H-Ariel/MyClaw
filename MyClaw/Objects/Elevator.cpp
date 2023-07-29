@@ -75,47 +75,47 @@ Elevator::Elevator(const WwdObject& obj)
 	{
 		if (obj.speedX > 0)
 		{
-			_speed.x = (float)obj.speedX;
+			speed.x = (float)obj.speedX;
 		}
 		else
 		{
-			_speed.x = 125;
+			speed.x = 125;
 		}
 	}
 	if (obj.minY > 0 && obj.maxY > 0)
 	{
 		if (obj.speedY > 0)
 		{
-			_speed.y = (float)obj.speedY;
+			speed.y = (float)obj.speedY;
 		}
 		else if (obj.speedX > 0)
 		{
-			_speed.y = (float)obj.speedX;
+			speed.y = (float)obj.speedX;
 		}
 		else
 		{
-			_speed.y = 125;
+			speed.y = 125;
 		}
 	}
 
 	switch (obj.direction)
 	{
-	case WwdObject::Direction_BottomLeft:	_speed = { -abs(_speed.x), abs(_speed.y) }; break;
-	case WwdObject::Direction_Down:			_speed = { 0, abs(_speed.y) }; break;
-	case WwdObject::Direction_BottomRight:	_speed = { abs(_speed.x), abs(_speed.y) }; break;
-	case WwdObject::Direction_Left:			_speed = { -abs(_speed.x), 0 }; break;
-	case WwdObject::Direction_NoMove:		_speed = { 0, 0 }; break;
-	case WwdObject::Direction_Right:		_speed = { abs(_speed.x), 0 }; break;
-	case WwdObject::Direction_TopLeft:		_speed = { -abs(_speed.x), -abs(_speed.y) }; break;
-	case WwdObject::Direction_Up:			_speed = { 0, -abs(_speed.y) }; break;
-	case WwdObject::Direction_TopRight:		_speed = { abs(_speed.x), -abs(_speed.y) }; break;
+	case WwdObject::Direction_BottomLeft:	speed = { -abs(speed.x), abs(speed.y) }; break;
+	case WwdObject::Direction_Down:			speed = { 0, abs(speed.y) }; break;
+	case WwdObject::Direction_BottomRight:	speed = { abs(speed.x), abs(speed.y) }; break;
+	case WwdObject::Direction_Left:			speed = { -abs(speed.x), 0 }; break;
+	case WwdObject::Direction_NoMove:		speed = { 0, 0 }; break;
+	case WwdObject::Direction_Right:		speed = { abs(speed.x), 0 }; break;
+	case WwdObject::Direction_TopLeft:		speed = { -abs(speed.x), -abs(speed.y) }; break;
+	case WwdObject::Direction_Up:			speed = { 0, -abs(speed.y) }; break;
+	case WwdObject::Direction_TopRight:		speed = { abs(speed.x), -abs(speed.y) }; break;
 	default: break;
 	}
 
-	_speed.x /= 1000;
-	_speed.y /= 1000;
+	speed.x /= 1000;
+	speed.y /= 1000;
 
-	myMemCpy(_initialSpeed, _speed);
+	myMemCpy(_initialSpeed, speed);
 }
 void Elevator::Logic(uint32_t elapsedTime)
 {
@@ -124,16 +124,16 @@ void Elevator::Logic(uint32_t elapsedTime)
 		return;
 	}
 
-	if ((_speed.x < 0 && position.x < _minPos.x) || (_speed.x > 0 && position.x > _maxPos.x))
+	if ((speed.x < 0 && position.x < _minPos.x) || (speed.x > 0 && position.x > _maxPos.x))
 	{
-		_speed.x = -_speed.x;
-		_speed.y = -_speed.y;
+		speed.x = -speed.x;
+		speed.y = -speed.y;
 		_arrivedToEdge = true;
 	}
 
-	if ((_speed.y < 0 && position.y < _minPos.y) || (_speed.y > 0 && position.y > _maxPos.y))
+	if ((speed.y < 0 && position.y < _minPos.y) || (speed.y > 0 && position.y > _maxPos.y))
 	{
-		_speed.y = -_speed.y;
+		speed.y = -speed.y;
 		_arrivedToEdge = true;
 	}
 
@@ -141,7 +141,7 @@ void Elevator::Logic(uint32_t elapsedTime)
 }
 void Elevator::mainLogic(uint32_t elapsedTime) // logic for every elevator
 {
-	const float deltaX = _speed.x * elapsedTime, deltaY = _speed.y * elapsedTime;
+	const float deltaX = speed.x * elapsedTime, deltaY = speed.y * elapsedTime;
 
 	position.x += deltaX;
 	position.y += deltaY;
@@ -175,7 +175,7 @@ Rectangle2D Elevator::GetRect()
 void Elevator::Reset()
 {
 	position = _initialPos;
-	_speed = _initialSpeed;
+	speed = _initialSpeed;
 	_arrivedToEdge = false;
 	if (_isOneWayElevator)
 		_operateElevator = false;
@@ -252,15 +252,15 @@ void PathElevator::Logic(uint32_t elapsedTime)
 		_timeCounter = int32_t(_paths[_pathIdx].second / _totalSpeed);
 		switch (_paths[_pathIdx].first)
 		{
-		case WwdObject::Direction_BottomLeft:	_speed = { -_totalSpeed, _totalSpeed }; break;
-		case WwdObject::Direction_Down:			_speed = { 0, _totalSpeed }; break;
-		case WwdObject::Direction_BottomRight:	_speed = { _totalSpeed, _totalSpeed }; break;
-		case WwdObject::Direction_Left:			_speed = { -_totalSpeed, 0 }; break;
-		case WwdObject::Direction_Right:		_speed = { _totalSpeed, 0 }; break;
-		case WwdObject::Direction_TopLeft:		_speed = { -_totalSpeed, -_totalSpeed }; break;
-		case WwdObject::Direction_Up:			_speed = { 0, -_totalSpeed }; break;
-		case WwdObject::Direction_TopRight:		_speed = { _totalSpeed, -_totalSpeed }; break;
-		default: _speed = {}; break;
+		case WwdObject::Direction_BottomLeft:	speed = { -_totalSpeed, _totalSpeed }; break;
+		case WwdObject::Direction_Down:			speed = { 0, _totalSpeed }; break;
+		case WwdObject::Direction_BottomRight:	speed = { _totalSpeed, _totalSpeed }; break;
+		case WwdObject::Direction_Left:			speed = { -_totalSpeed, 0 }; break;
+		case WwdObject::Direction_Right:		speed = { _totalSpeed, 0 }; break;
+		case WwdObject::Direction_TopLeft:		speed = { -_totalSpeed, -_totalSpeed }; break;
+		case WwdObject::Direction_Up:			speed = { 0, -_totalSpeed }; break;
+		case WwdObject::Direction_TopRight:		speed = { _totalSpeed, -_totalSpeed }; break;
+		default: speed = {}; break;
 		}
 	}
 

@@ -22,9 +22,9 @@ void PowderKeg::Logic(uint32_t elapsedTime)
 
 	if (_state == State::Thrown || _state == State::Stand)
 	{
-		position.x += _speed.x * elapsedTime;
-		_speed.y += GRAVITY * elapsedTime;
-		position.y += _speed.y * elapsedTime;
+		position.x += speed.x * elapsedTime;
+		speed.y += GRAVITY * elapsedTime;
+		position.y += speed.y * elapsedTime;
 	}
 	else if (_state == State::Explos)
 	{
@@ -43,7 +43,7 @@ int PowderKeg::getDamage() const
 
 bool PowderKeg::shouldMakeExplos()
 {
-	if (_state == State::Thrown && _speed.x == 0 && _speed.y == 0)
+	if (_state == State::Thrown && speed.x == 0 && speed.y == 0)
 	{
 		return true;
 	}
@@ -92,18 +92,18 @@ void PowderKeg::thrown(bool forward)
 	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI", _imageSet);
 	_ani->loopAni = false;
 
-	_speed.x = forward ? 0.35f : -0.35f;
-	_speed.y = -0.40f;
+	speed.x = forward ? 0.35f : -0.35f;
+	speed.y = -0.40f;
 }
 void PowderKeg::fall()
 {
 	_state = State::Thrown;
 	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI", _imageSet);
 	_ani->loopAni = false;
-	_speed.y = 0.01f; // almost no speed
+	speed.y = 0.01f; // almost no speed
 }
 
-void PowderKeg::stopFalling(float collisionSize) { _speed = {}; if (_state != State::Explos) position.y -= collisionSize; }
-void PowderKeg::stopMovingLeft(float collisionSize) { _speed = {}; if (_state != State::Explos) position.x += collisionSize; }
-void PowderKeg::stopMovingRight(float collisionSize) { _speed = {}; if (_state != State::Explos) position.x -= collisionSize; }
-void PowderKeg::bounceTop() { _speed.y = abs(_speed.y); }
+void PowderKeg::stopFalling(float collisionSize) { speed = {}; if (_state != State::Explos) position.y -= collisionSize; }
+void PowderKeg::stopMovingLeft(float collisionSize) { speed.x = -speed.x; speed.y = 0; if (_state != State::Explos) position.x += collisionSize; }
+void PowderKeg::stopMovingRight(float collisionSize) { speed.x = -speed.x; speed.y = 0; if (_state != State::Explos) position.x -= collisionSize; }
+void PowderKeg::bounceTop() { speed.y = abs(speed.y); }

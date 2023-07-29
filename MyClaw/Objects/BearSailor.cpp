@@ -46,7 +46,7 @@ void BearSailor::Logic(uint32_t elapsedTime)
 
 	if (!_isStanding && !_isAttack)
 	{
-		position.x += _speed.x * elapsedTime;
+		position.x += speed.x * elapsedTime;
 		if (position.x < _minX) { stopMovingLeft(_minX - position.x); }
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
@@ -62,7 +62,7 @@ void BearSailor::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_WALK;
 			_ani->reset();
 			_isAttack = false;
-			_isMirrored = _speed.x < 0;
+			_isMirrored = speed.x < 0;
 		}
 	}
 

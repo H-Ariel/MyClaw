@@ -13,24 +13,24 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 		_ani = AssetsManager::createCopyAnimationFromDirectory(aniDirPath, 100, false);
 	else
 		_ani = AssetsManager::createAnimationFromDirectory(aniDirPath, 75, false);
-	_speed.x = obj.speedX / 1000.f;
-	_speed.y = obj.speedY / 1000.f;
-	_isMirrored = _speed.x < 0;
+	speed.x = obj.speedX / 1000.f;
+	speed.y = obj.speedY / 1000.f;
+	_isMirrored = speed.x < 0;
 }
 Projectile::Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
 	: BaseDynamicPlaneObject({}), _damage(damage), _timeLeft(3000)
 {
 	_ani = ani;
-	_speed = speed;
+	speed = speed;
 	position = initialPosition;
 }
 void Projectile::Logic(uint32_t elapsedTime)
 {
 	if (!removeObject)
 	{
-		position.x += _speed.x * elapsedTime;
-		position.y += _speed.y * elapsedTime;
-		removeObject = _speed.x == 0 && _speed.y == 0;
+		position.x += speed.x * elapsedTime;
+		position.y += speed.y * elapsedTime;
+		removeObject = speed.x == 0 && speed.y == 0;
 	}
 	if (_timeLeft > 0)
 	{
@@ -39,7 +39,7 @@ void Projectile::Logic(uint32_t elapsedTime)
 			removeObject = true;
 	}
 }
-void Projectile::bounceTop() { _speed.y = 0; }
+void Projectile::bounceTop() { speed.y = 0; }
 void Projectile::stopFalling(float collisionSize) {}
 bool Projectile::isClawBullet() const 
 {
@@ -73,9 +73,9 @@ void ClawDynamite::Logic(uint32_t elapsedTime)
 	switch (_state)
 	{
 	case State::Fly:
-		position.x += elapsedTime * _speed.x;
-		position.y += elapsedTime * _speed.y;
-		_speed.y += elapsedTime * GRAVITY;
+		position.x += elapsedTime * speed.x;
+		position.y += elapsedTime * speed.y;
+		speed.y += elapsedTime * GRAVITY;
 		break;
 
 	case State::Wait:
@@ -101,26 +101,26 @@ void ClawDynamite::stopFalling(float collisionSize)
 {
 	if (_state == State::Explos) return;
 	position.y -= collisionSize;
-	_speed = {};
+	speed = {};
 	_ani->updateFrames = false;
 	_state = State::Wait;
 }
 void ClawDynamite::stopMovingLeft(float collisionSize)
 {
 	if (_state == State::Explos) return;
-	_speed.x = -_speed.x;
+	speed.x = -speed.x;
 	position.x += collisionSize;
 }
 void ClawDynamite::stopMovingRight(float collisionSize)
 {
 	if (_state == State::Explos) return;
-	_speed.x = -_speed.x;
+	speed.x = -speed.x;
 	position.x -= collisionSize;
 }
 void ClawDynamite::bounceTop()
 {
 	if (_state == State::Explos) return;
-	_speed.y = abs(_speed.y);
+	speed.y = abs(speed.y);
 }
 int ClawDynamite::getDamage() const
 {
@@ -201,7 +201,7 @@ GabrielBomb::~GabrielBomb()
 void GabrielBomb::Logic(uint32_t elapsedTime)
 {
 	if (!removeObject )
-		_speed.y += GRAVITY * elapsedTime;
+		speed.y += GRAVITY * elapsedTime;
 	Projectile::Logic(elapsedTime);
 }
 void GabrielBomb::stopFalling(float collisionSize)

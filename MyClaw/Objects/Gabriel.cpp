@@ -276,17 +276,17 @@ GabrielRedTailPirate::GabrielRedTailPirate(Player* player)
 {
 	position = { 43479, 5020 };
 	myMemCpy(ZCoord, 2000U);
-	_speed.x = -0.3f;
+	speed.x = -0.3f;
 	_ani = AssetsManager::loadCopyAnimation("LEVEL8/ANIS/REDTAILPIRATE/ADVANCE.ANI", "LEVEL8/IMAGES/REDTAILPIRATE");
 }
 void GabrielRedTailPirate::Logic(uint32_t elapsedTime)
 {
-	_speed.y += GRAVITY * elapsedTime;
-	position.x += _speed.x * elapsedTime;
-	position.y += _speed.y * elapsedTime;
+	speed.y += GRAVITY * elapsedTime;
+	position.x += speed.x * elapsedTime;
+	position.y += speed.y * elapsedTime;
 	if (position.x < 43200 && !_isJumping)
 	{
-		_speed.y = -0.7f;
+		speed.y = -0.7f;
 		_isJumping = true;
 		position.y -= 1;
 		_ani->updateFrames = false;

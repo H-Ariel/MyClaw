@@ -4,7 +4,7 @@
 
 
 ConveyorBelt::ConveyorBelt(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _speed(obj.speed / 1000.f),
+	: BaseStaticPlaneObject(obj), speed(obj.speed / 1000.f),
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
 	// TODO: better animationss (as sequence)
@@ -17,6 +17,6 @@ void ConveyorBelt::Logic(uint32_t elapsedTime)
 	// TODO: CC move faster in tiles limits
 	if (_canMoveCC && player->GetRect().intersects(_objRc))
 	{
-		player->position.x += _speed * elapsedTime;
+		player->position.x += speed * elapsedTime;
 	}
 }

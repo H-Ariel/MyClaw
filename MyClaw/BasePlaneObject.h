@@ -53,11 +53,6 @@ class BaseDynamicPlaneObject : public BasePlaneObject
 public:
 	BaseDynamicPlaneObject(const WwdObject& obj);
 
-	float getSpeedX() const { return _speed.x; }
-	float getSpeedY() const { return _speed.y; }
-	void setSpeedX(float speedX) { _speed.x = speedX; }
-	void setSpeedY(float speedY) { _speed.y = speedY; }
-
 	virtual bool isFalling() const;
 
 	virtual void stopFalling(float collisionSize);
@@ -65,11 +60,10 @@ public:
 	virtual void stopMovingRight(float collisionSize);
 	virtual void bounceTop();
 
-protected:
 	// speed.x -> speed of X-axis, speed.y -> speed of Y-axis
 	// the speed units are pixels per milliseconds
 	// example for usage: `position.x = speed.x * elapsedTime`
-	D2D1_POINT_2F _speed;
+	D2D1_POINT_2F speed;
 };
 
 

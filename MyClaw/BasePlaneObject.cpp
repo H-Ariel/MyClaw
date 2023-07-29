@@ -53,12 +53,12 @@ Rectangle2D BaseStaticPlaneObject::GetRect() { return _objRc; }
 void BaseStaticPlaneObject::setObjectRectangle() { myMemCpy(_objRc, BasePlaneObject::GetRect()); }
 
 BaseDynamicPlaneObject::BaseDynamicPlaneObject(const WwdObject& obj)
-	: BasePlaneObject(obj), _speed({}) {}
-bool BaseDynamicPlaneObject::isFalling() const { return _speed.y > 0; }
-void BaseDynamicPlaneObject::stopFalling(float collisionSize) { _speed.y = 0; position.y -= collisionSize; }
-void BaseDynamicPlaneObject::stopMovingLeft(float collisionSize) { _speed.x = 0; position.x += collisionSize; }
-void BaseDynamicPlaneObject::stopMovingRight(float collisionSize) { _speed.x = 0; position.x -= collisionSize; }
-void BaseDynamicPlaneObject::bounceTop() { _speed.y = abs(_speed.y); }
+	: BasePlaneObject(obj), speed({}) {}
+bool BaseDynamicPlaneObject::isFalling() const { return speed.y > 0; }
+void BaseDynamicPlaneObject::stopFalling(float collisionSize) { speed.y = 0; position.y -= collisionSize; }
+void BaseDynamicPlaneObject::stopMovingLeft(float collisionSize) { speed.x = 0; position.x += collisionSize; }
+void BaseDynamicPlaneObject::stopMovingRight(float collisionSize) { speed.x = 0; position.x -= collisionSize; }
+void BaseDynamicPlaneObject::bounceTop() { speed.y = abs(speed.y); }
 
 BaseDamageObject::BaseDamageObject(const WwdObject& obj, int damage)
 	: BaseStaticPlaneObject(obj), _damage(damage) {}

@@ -88,7 +88,7 @@ void PunkRat::Logic(uint32_t elapsedTime)
 
 	const shared_ptr<Animation> prevAni = _ani;
 
-	position.x += _speed.x * elapsedTime;
+	position.x += speed.x * elapsedTime;
 	if (position.x < _minX) { stopMovingLeft(_minX - position.x); _ani = PUNKRAT_STAND; }
 	else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); _ani = PUNKRAT_STAND; }
 

@@ -10,6 +10,6 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
-	float _speed;
+	float speed;
 	bool _canMoveCC;
 };

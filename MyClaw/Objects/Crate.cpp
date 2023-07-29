@@ -83,7 +83,7 @@ vector<Item*> Crate::getItems()
 		for (int8_t t : _itemsTypes)
 		{
 			Item* itm = Item::getItem(newObj, t);
-			itm->setSpeedY(-0.6f);
+			itm->speed.y = -0.6f;
 			items.push_back(itm);
 		}
 
@@ -159,7 +159,7 @@ vector<Item*> StackedCrates::getItems()
 
 			for (Item* i : tmp)
 			{
-				i->setSpeedX(getRandomFloat(-0.25f, 0.25f));
+				i->speed.x = getRandomFloat(-0.25f, 0.25f);
 			}
 
 			allItems.insert(allItems.end(), tmp.begin(), tmp.end());

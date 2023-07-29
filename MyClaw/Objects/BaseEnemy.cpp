@@ -21,15 +21,15 @@ DeadEnemy::DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni)
 	: BaseDynamicPlaneObject(obj)
 {
 	_ani = deadAni;
-	_speed.x = obj.speedX / 1000.f;
-	_speed.y = obj.speedY / 1000.f;
+	speed.x = obj.speedX / 1000.f;
+	speed.y = obj.speedY / 1000.f;
 	_isMirrored = obj.speedX < 0;
 }
 void DeadEnemy::Logic(uint32_t elapsedTime)
 {
-	position.x += _speed.x * elapsedTime;
-	_speed.y += GRAVITY * elapsedTime;
-	position.y += _speed.y * elapsedTime;
+	position.x += speed.x * elapsedTime;
+	speed.y += GRAVITY * elapsedTime;
+	position.y += speed.y * elapsedTime;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
 	removeObject = !WindowManager::isInScreen(_ani->GetRect());
@@ -40,23 +40,23 @@ BossGem::BossGem(const WwdObject& obj)
 {
 	float alpha = atan((position.y - _destination.y) / (position.x - _destination.x));
 
-	_speed.x = cos(alpha) * GEM_SPEED;
-	_speed.y = sin(alpha) * GEM_SPEED;
+	speed.x = cos(alpha) * GEM_SPEED;
+	speed.y = sin(alpha) * GEM_SPEED;
 
 	if (_destination.x == position.x)
 	{
-		_speed.x = 0;
-		_speed.y = GEM_SPEED;
+		speed.x = 0;
+		speed.y = GEM_SPEED;
 	}
 	else if (_destination.x < position.x)
 	{
-		_speed.x = -_speed.x;
-		_speed.y = -_speed.y;
+		speed.x = -speed.x;
+		speed.y = -speed.y;
 	}
 }
 void BossGem::Logic(uint32_t elapsedTime)
 {
-	if (_speed.x == 0 && _speed.y == 0)
+	if (speed.x == 0 && speed.y == 0)
 	{
 		if (GetRect().intersects(player->GetRect()))
 		{
@@ -67,12 +67,12 @@ void BossGem::Logic(uint32_t elapsedTime)
 	if (abs(position.x - _destination.x) <= 5 && abs(position.y - _destination.y) <= 5)
 	{
 		position = _destination;
-		_speed = {};
+		speed = {};
 	}
 	else
 	{
-		position.y += _speed.y * elapsedTime;
-		position.x += _speed.x * elapsedTime;
+		position.y += speed.y * elapsedTime;
+		position.x += speed.x * elapsedTime;
 	}
 }
 
@@ -107,7 +107,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage,
 	if (!noTreasures && _itemsTypes.size() == 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
 
 
-	_speed.x = walkingSpeed;
+	speed.x = walkingSpeed;
 
 	if (_isStaticEnemy)
 	{
@@ -142,8 +142,8 @@ BaseEnemy::~BaseEnemy()
 		for (int8_t t : _itemsTypes)
 		{
 			Item* i = Item::getItem(obj, t);
-			i->setSpeedY(-0.6f);
-			i->setSpeedX(getRandomFloat(-0.25f, 0.25f));
+			i->speed.y = -0.6f;
+			i->speed.x = getRandomFloat(-0.25f, 0.25f);
 			ActionPlane::addPlaneObject(i);
 		}
 
@@ -175,13 +175,13 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 
 	if (!_isStanding && !_isAttack && !_isStaticEnemy)
 	{
-		position.x += _speed.x * elapsedTime;
+		position.x += speed.x * elapsedTime;
 		if (position.x < _minX) { stopMovingLeft(_minX - position.x); }
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
 
-	_speed.y += GRAVITY * elapsedTime;
-	position.y += _speed.y * elapsedTime;
+	speed.y += GRAVITY * elapsedTime;
+	position.y += speed.y * elapsedTime;
 	
 
 	if (!_isAttack) // TODO: replace blocks and do not use `!`
@@ -203,7 +203,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 			_ani = ANIMATION_WALK;
 			_ani->reset();
 			_isAttack = false;
-			_isMirrored = _speed.x < 0;
+			_isMirrored = speed.x < 0;
 		}
 	}
 
@@ -315,14 +315,14 @@ bool BaseEnemy::isWalkAnimation() const { return _ani == ANIMATION_WALK; }
 void BaseEnemy::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
-	_speed.x = -_speed.x;
+	speed.x = -speed.x;
 	_isMirrored = false;
 	_isStanding = true;
 }
 void BaseEnemy::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
-	_speed.x = -_speed.x;
+	speed.x = -speed.x;
 	_isMirrored = true;
 	_isStanding = true;
 }

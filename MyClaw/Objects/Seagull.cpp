@@ -26,8 +26,8 @@ void Seagull::Logic(uint32_t elapsedTime)
 {
 	if (!PreLogic(elapsedTime)) return;
 
-	position.x += _speed.x * elapsedTime;
-	position.y += _speed.y * elapsedTime;
+	position.x += speed.x * elapsedTime;
+	position.y += speed.y * elapsedTime;
 	if (position.x < _minX) { stopMovingLeft(_minX - position.x); }
 	else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 
@@ -43,8 +43,8 @@ void Seagull::Logic(uint32_t elapsedTime)
 		{
 			_state = States::DiveIn;
 			_isAttack = true;
-			_speed.x = calcSpeed(position.x, player->position.x);
-			_speed.y = calcSpeed(position.y, player->position.y);
+			speed.x = calcSpeed(position.x, player->position.x);
+			speed.y = calcSpeed(position.y, player->position.y);
 			_ani = _animations["DIVE" + to_string(getRandomInt(1, 4))];
 		}
 		break;
@@ -54,8 +54,8 @@ void Seagull::Logic(uint32_t elapsedTime)
 		{
 			_state = States::DiveOut;
 			_isAttack = false;
-			_speed.x = calcSpeed(position.x, _isMirrored ? _minX : _maxX); // TODO: find better `dstPos`
-			_speed.y = calcSpeed(position.y, _minY);
+			speed.x = calcSpeed(position.x, _isMirrored ? _minX : _maxX); // TODO: find better `dstPos`
+			speed.y = calcSpeed(position.y, _minY);
 
 			_ani = _animations["HOME"];
 		}
@@ -65,8 +65,8 @@ void Seagull::Logic(uint32_t elapsedTime)
 		if (position.y < _minY)
 		{
 			position.y = _minY;
-			_speed.x = _isMirrored ? ENEMY_PATROL_SPEED : -ENEMY_PATROL_SPEED;
-			_speed.y = 0;
+			speed.x = _isMirrored ? ENEMY_PATROL_SPEED : -ENEMY_PATROL_SPEED;
+			speed.y = 0;
 			_attackRest = 1000;
 
 			_ani = _animations["FLYING"];

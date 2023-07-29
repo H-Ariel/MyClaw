@@ -89,14 +89,14 @@ void Marrow::Logic(uint32_t elapsedTime)
 	{
 		if (_ani == MARROW_ANIMATION_HAND_UP && _ani->isFinishAnimation())
 		{
-			_speed.x = marrowSise == MarrowSise::Left ? -0.4f : 0.4f;
+			speed.x = marrowSise == MarrowSise::Left ? -0.4f : 0.4f;
 			_isMirrored = marrowSise != MarrowSise::Left ? false : true;
 			position.y -= 128;
 			_ani = MARROW_ANIMATION_WAIT_HAND_UP;
 			_ani->reset();
 			_ani->loopAni = false;
 		}
-		else if (_ani == MARROW_ANIMATION_WAIT_HAND_UP && _speed.x == 0) // Marrow stops move
+		else if (_ani == MARROW_ANIMATION_WAIT_HAND_UP && speed.x == 0) // Marrow stops move
 		{
 			position.y += 128;
 			marrowSise = marrowSise == MarrowSise::Left ? MarrowSise::Right : MarrowSise::Left;
@@ -106,7 +106,7 @@ void Marrow::Logic(uint32_t elapsedTime)
 			_ani->reset();
 		}
 
-		position.x += _speed.x * elapsedTime;
+		position.x += speed.x * elapsedTime;
 	}
 	
 
@@ -185,13 +185,13 @@ bool Marrow::checkForHurts()
 void Marrow::stopMovingLeft(float collisionSize)
 {
 	BaseBoss::stopMovingLeft(collisionSize);
-	_speed = {};
+	speed = {};
 	_isMirrored = !false;
 }
 void Marrow::stopMovingRight(float collisionSize)
 {
 	BaseBoss::stopMovingRight(collisionSize);
-	_speed = {};
+	speed = {};
 	_isMirrored = !true;
 }
 
@@ -207,15 +207,15 @@ MarrowParrot::MarrowParrot(const WwdObject& obj)
 {
 	myMemCpy(_initialPosition, position);
 	_isMirrored = !false;
-	_speed = { 0, MARROW_PARROT_SPEED };
+	speed = { 0, MARROW_PARROT_SPEED };
 }
 
 void MarrowParrot::Logic(uint32_t elapsedTime)
 {
 	if (!PreLogic(elapsedTime)) return;
 
-	position.x += _speed.x * elapsedTime;
-	position.y += _speed.y * elapsedTime;
+	position.x += speed.x * elapsedTime;
+	position.y += speed.y * elapsedTime;
 
 	if (globalState == GlobalState::ParrotAttackClaw ||
 		(globalState == GlobalState::ParrotReturnToMarrow &&
@@ -225,26 +225,26 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 		if (position.y > _flyRect.bottom)
 		{
 			position.y = _flyRect.bottom;
-			_speed = { -MARROW_PARROT_SPEED, 0 };
+			speed = { -MARROW_PARROT_SPEED, 0 };
 		}
 		else if (position.y < _flyRect.top)
 		{
 			position.y = _flyRect.top;
-			_speed = { MARROW_PARROT_SPEED, 0 };
+			speed = { MARROW_PARROT_SPEED, 0 };
 		}
 		else if (position.x < _flyRect.left)
 		{
 			position.x = _flyRect.left;
-			_speed = { 0, -MARROW_PARROT_SPEED };
+			speed = { 0, -MARROW_PARROT_SPEED };
 		}
 		else if (position.x > _flyRect.right)
 		{
 			position.x = _flyRect.right;
-			_speed = { 0, MARROW_PARROT_SPEED };
+			speed = { 0, MARROW_PARROT_SPEED };
 		}
 		else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
 		{
-			_speed = { 0, -MARROW_PARROT_SPEED };
+			speed = { 0, -MARROW_PARROT_SPEED };
 		}
 
 
@@ -261,7 +261,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 		position = this->_initialPosition;
 	}
 
-	if (_speed.x < 0)
+	if (speed.x < 0)
 	{
 		_ani = PARROT_ANIMATION_STRIKE;
 		_isAttack = true;
@@ -278,7 +278,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	
 	
 
-	_isMirrored = _speed.x < 0;
+	_isMirrored = speed.x < 0;
 
 	PostLogic(elapsedTime);
 }
@@ -305,7 +305,7 @@ bool MarrowParrot::checkForHurts()
 	if (_isAttack && BaseEnemy::checkForHurts())
 	{
 		_hitsCounter += 1;
-		_speed = { 0, -MARROW_PARROT_SPEED };
+		speed = { 0, -MARROW_PARROT_SPEED };
 		_ani = _animations["HIT"];
 		_ani->reset();
 	}

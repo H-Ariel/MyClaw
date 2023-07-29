@@ -164,7 +164,7 @@ Item::Item(const WwdObject& obj, int8_t type)
 }
 void Item::Logic(uint32_t elapsedTime)
 {
-	if (_speed.x == 0 && _speed.y == 0)
+	if (speed.x == 0 && speed.y == 0)
 	{
 		if (GetRect().intersects(player->GetRect()))
 		{
@@ -173,14 +173,14 @@ void Item::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	if (_speed.y != 0)
+	if (speed.y != 0)
 	{
-		_speed.y += GRAVITY * elapsedTime;
-		position.y += _speed.y * elapsedTime;
+		speed.y += GRAVITY * elapsedTime;
+		position.y += speed.y * elapsedTime;
 	}
-	if (_speed.x != 0)
+	if (speed.x != 0)
 	{
-		position.x += _speed.x * elapsedTime;
+		position.x += speed.x * elapsedTime;
 	}
 }
 void Item::Draw()
@@ -196,8 +196,8 @@ void Item::Draw()
 }
 void Item::stopFalling(float collisionSize)
 {
-	_speed.y = 0;
-	_speed.x = 0;
+	speed.y = 0;
+	speed.x = 0;
 	position.y -= collisionSize;
 }
 

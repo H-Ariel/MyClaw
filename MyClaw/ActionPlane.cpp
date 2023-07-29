@@ -232,7 +232,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		obj->Logic(elapsedTime);
 
 		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
-			|| (isinstance<Item>(obj) && ((Item*)obj)->getSpeedY() != 0)
+			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{
 			_physicsManager->checkCollides((BaseDynamicPlaneObject*)obj, [obj] { obj->removeObject = true; });

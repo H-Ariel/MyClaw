@@ -10,16 +10,16 @@
 
 TProjectilesShooter::TProjectilesShooter(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
-	_damage(obj.damage > 0 ? obj.damage : 5), _speed({ obj.speedX / 1000.f, obj.speedY / 1000.f }),
+	_damage(obj.damage > 0 ? obj.damage : 5), speed({ obj.speedX / 1000.f, obj.speedY / 1000.f }),
 	_restTime(0), _offset({})
 {
 	// 1=right, 2=left, 3=down, 4=up
 	switch (obj.userValue1)
 	{
 	case 1: myMemCpy(_offset.x, -OFFSET_X); break;
-	case 2: myMemCpy(_offset.x, OFFSET_X); myMemCpy(_speed.x, -_speed.x); break;
+	case 2: myMemCpy(_offset.x, OFFSET_X); myMemCpy(speed.x, -speed.x); break;
 	case 3: myMemCpy(_offset.y, -OFFSET_Y); break;
-	case 4: myMemCpy(_offset.y, OFFSET_Y); myMemCpy(_speed.y, -_speed.y); break;
+	case 4: myMemCpy(_offset.y, OFFSET_Y); myMemCpy(speed.y, -speed.y); break;
 	}
 
 	char frame[9]; sprintf(frame, "/%03d.PID", obj.userValue1);
@@ -36,7 +36,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 	if (_restTime <= 0 && _objRc.intersects(player->GetRect()))
 	{
 		ActionPlane::addPlaneObject(DBG_NEW TProjectile(_ani, _damage,
-			_speed, { position.x + _offset.x, position.y + _offset.y }));
+			speed, { position.x + _offset.x, position.y + _offset.y }));
 		_restTime = _maxRestTime;
 	}
 }

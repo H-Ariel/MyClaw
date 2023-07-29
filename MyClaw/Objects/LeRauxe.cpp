@@ -39,8 +39,8 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		96 = 0.5 * GRAVITY * 22500 + v0 * 150 + 0
 		...
 		*/
-		_speed.y = -(0.64f - 75 * GRAVITY);
-		_speed.x = (position.x < player->position.x) ? -0.35f : 0.35f;
+		speed.y = -(0.64f - 75 * GRAVITY);
+		speed.x = (position.x < player->position.x) ? -0.35f : 0.35f;
 
 		_isAttack = false;
 		_canJump = false;
@@ -49,7 +49,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 	if (!_isAttack)
 	{
-		position.x += _speed.x * elapsedTime;
+		position.x += speed.x * elapsedTime;
 		if (position.x < _minX)
 		{
 			stopMovingLeft(_minX - position.x);
@@ -59,8 +59,8 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 			stopMovingRight(position.x - _maxX);
 		}
 	}
-	_speed.y += GRAVITY * elapsedTime;
-	position.y += _speed.y * elapsedTime;
+	speed.y += GRAVITY * elapsedTime;
+	position.y += speed.y * elapsedTime;
 
 	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_JUMPBACK)
 	{
@@ -70,14 +70,14 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 	{
 		_ani = ANIMATION_WALK;
 		_isAttack = false;
-		_isMirrored = _speed.x < 0;
+		_isMirrored = speed.x < 0;
 	}
 	
 	if (_ani != ANIMATION_JUMPBACK && abs(player->position.x - position.x) > 64)
 	{
 		_isMirrored = player->position.x < position.x;
-		if (!_isMirrored) _speed.x = abs(_speed.x);
-		else _speed.x = -abs(_speed.x);
+		if (!_isMirrored) speed.x = abs(speed.x);
+		else speed.x = -abs(speed.x);
 	}
 
 	if (_ani != prevAni)
@@ -141,7 +141,7 @@ pair<Rectangle2D, int> LeRauxe::GetAttackRect()
 
 void LeRauxe::stopFalling(float collisionSize)
 {
-	_speed.y = 0;
+	speed.y = 0;
 	position.y -= collisionSize;
 	
 	if (_ani == ANIMATION_JUMPBACK)
@@ -153,15 +153,15 @@ void LeRauxe::stopFalling(float collisionSize)
 void LeRauxe::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
-	_speed.x = ENEMY_PATROL_SPEED;
-	_speed.y = 0;
+	speed.x = ENEMY_PATROL_SPEED;
+	speed.y = 0;
 	_isMirrored = false;
 }
 void LeRauxe::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
-	_speed.x = -ENEMY_PATROL_SPEED;
-	_speed.y = 0;
+	speed.x = -ENEMY_PATROL_SPEED;
+	speed.y = 0;
 	_isMirrored = true;
 }
 
@@ -180,9 +180,9 @@ bool LeRauxe::PreLogic(uint32_t elapsedTime)
 		}
 		else
 		{
-			position.x += _speed.x * elapsedTime;
-			position.y += _speed.y * elapsedTime;
-			_speed.y += GRAVITY * elapsedTime;
+			position.x += speed.x * elapsedTime;
+			position.y += speed.y * elapsedTime;
+			speed.y += GRAVITY * elapsedTime;
 
 			PostLogic(elapsedTime);
 			return false;

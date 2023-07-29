@@ -14,8 +14,8 @@ HermitCrab::HermitCrab(const WwdObject& obj, bool isFromNest)
 {
 	if (isFromNest)
 	{
-		_speed.x = obj.speedX / 1000.f;
-		_speed.y = obj.speedY / 1000.f;
+		speed.x = obj.speedX / 1000.f;
+		speed.y = obj.speedY / 1000.f;
 		_isMirrored = obj.speedX > 0;
 	}
 }
@@ -24,9 +24,9 @@ void HermitCrab::Logic(uint32_t elapsedTime)
 {
 	if (_isFromNest)
 	{
-		_speed.y += GRAVITY * elapsedTime;
-		position.y += _speed.y * elapsedTime;
-		position.x += _speed.x * elapsedTime;
+		speed.y += GRAVITY * elapsedTime;
+		position.y += speed.y * elapsedTime;
+		position.x += speed.x * elapsedTime;
 		PostLogic(elapsedTime);
 	}
 	else
@@ -71,7 +71,7 @@ void HermitCrab::stopFalling(float collisionSize)
 		auto range = ActionPlane::getPhysicsManager().getEnemyRange(position, _minX, _maxX);
 		myMemCpy(_minX, range.first);
 		myMemCpy(_maxX, range.second);
-		_speed.x = ENEMY_PATROL_SPEED;
+		speed.x = ENEMY_PATROL_SPEED;
 		_isFromNest = false;
 	}
 	else
