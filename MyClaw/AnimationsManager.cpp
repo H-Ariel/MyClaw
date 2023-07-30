@@ -30,7 +30,7 @@ shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, co
 	const string k = aniPath + '+' + imageSetPath;
 	if (_loadedAnimations.count(k) == 0)
 	{
-		try 
+		try
 		{
 			shared_ptr<Animation> ani(DBG_NEW Animation(_rezArchive, aniPath, imageSetPath));
 			if (!save)
@@ -70,25 +70,46 @@ map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirector
 		if (isEnemyAniations(dirPath))
 		{
 			vector<Animation::FrameData*> imagesList;
-			vector<string> anisNames;
-			for (auto& i : anis)
+
+			for (auto i = anis.begin(); i != anis.end();)
 			{
-				if (startsWith(i.first, "STAND") || startsWith(i.first, "IDLE"))
+				if (startsWith(i->first, "STAND") || startsWith(i->first, "IDLE"))
 				{
-					anisNames.push_back(i.first);
-					for (Animation::FrameData* f : i.second->getImagesList())
+					for (Animation::FrameData* f : i->second->getImagesList())
 					{
 						if (f->duration == 0)
 							myMemCpy(f->duration, 500U);
 						imagesList.push_back(f);
 					}
+					i = anis.erase(i);
 				}
+				else
+					i++;
 			}
 
-			for (const string& k : anisNames)
-				anis.erase(k);
-
 			anis["IDLE"] = allocNewSharedPtr<Animation>(imagesList);
+		}
+		else if (endsWith(dirPath, "/ANIS/SEAGULL"))
+		{
+			vector<Animation::FrameData*> imagesList;
+
+			for (auto i = anis.begin(); i != anis.end();)
+			{
+				if (startsWith(i->first, "DIVE"))
+				{
+					for (Animation::FrameData* f : i->second->getImagesList())
+					{
+						if (f->duration == 0)
+							myMemCpy(f->duration, 500U);
+						imagesList.push_back(f);
+					}
+					i = anis.erase(i);
+				}
+				else
+					i++;
+			}
+
+			anis["DIVE"] = allocNewSharedPtr<Animation>(imagesList);
 		}
 
 		_savedAniDirs[dirPath] = anis;

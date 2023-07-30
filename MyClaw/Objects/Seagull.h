@@ -12,7 +12,5 @@ public:
 	pair<Rectangle2D, int> GetAttackRect() override;
 
 private:
-	enum class States : int8_t { Fly, DiveIn, DiveOut };
 	const float _minY, _maxY;
-	States _state;
 };
