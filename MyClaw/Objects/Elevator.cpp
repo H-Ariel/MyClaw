@@ -1,6 +1,6 @@
 #include "Elevator.h"
 #include "../Player.h"
-#include "../AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
 
 // The following classes indicate precisely the type of elevator:

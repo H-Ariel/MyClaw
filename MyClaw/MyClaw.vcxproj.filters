@@ -8,14 +8,14 @@
     <Filter Include="Objects">
       <UniqueIdentifier>{dc271a34-c867-4fdb-8e90-a808784358f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Objects\Enemies">
-      <UniqueIdentifier>{a2887d18-21e7-4c2f-8cee-7cd0845c1beb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets-Managers">
       <UniqueIdentifier>{5eeb444f-47da-4190-ae43-4efa33079872}</UniqueIdentifier>
     </Filter>
     <Filter Include="GUI">
       <UniqueIdentifier>{c3d6819f-164a-4389-832f-0bbd7fd5e0bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemies">
+      <UniqueIdentifier>{0535962b-54b5-4051-ba03-05f8905cde92}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,15 +70,6 @@
     <ClCompile Include="Objects\Pegs.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\LeRauxe.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Rat.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Officer.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\PowderKeg.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -91,17 +82,8 @@
     <ClCompile Include="Objects\Item.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Soldier.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\Rope.cpp">
       <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\RobberThief.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\CutThroat.cpp">
-      <Filter>Objects\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Objects\FloorSpike.cpp">
       <Filter>Objects</Filter>
@@ -112,41 +94,14 @@
     <ClCompile Include="Objects\Statue.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\BaseEnemy.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Katherine.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Seagull.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\TownGuard.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\GroundBlower.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="Objects\GooVent.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Wolvington.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\RedTailPirate.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\BearSailor.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\CrazyHook.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\ConveyorBelt.cpp">
       <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\HermitCrab.cpp">
-      <Filter>Objects\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Objects\CrabNest.cpp">
       <Filter>Objects</Filter>
@@ -154,77 +109,11 @@
     <ClCompile Include="Objects\TProjectilesShooter.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\PegLeg.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\Laser.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Mercat.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Siren.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Fish.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Gabriel.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Marrow.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Chameleon.cpp">
-      <Filter>Objects\Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="PhysicsManager.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationsManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="AssetsManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="AudioManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="ImagesManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Miniz.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="MidiPlayer.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="WavPlayer.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="WwdFile.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="XmiFile.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="PidPalette.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="PathManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="RezArchive.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="BufferWriter.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="BufferReader.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseBuffer.cpp">
-      <Filter>Assets-Managers</Filter>
     </ClCompile>
     <ClCompile Include="WindowManager.cpp">
       <Filter>GUI</Filter>
@@ -244,6 +133,117 @@
     <ClCompile Include="Animation.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="BaseEnemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\BearSailor.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Chameleon.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\CrazyHook.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\CutThroat.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Fish.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Gabriel.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\HermitCrab.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Katherine.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\LeRauxe.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Marrow.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Mercat.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Officer.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\PegLeg.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Rat.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RedTailPirate.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RobberThief.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Seagull.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Siren.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Soldier.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\TownGuard.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Wolvington.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\AnimationsManager.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\AssetsManager.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\AudioManager.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\BaseBuffer.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\BufferReader.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\BufferWriter.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\ImagesManager.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\MidiPlayer.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\Miniz.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\PathManager.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\PidPalette.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\RezArchive.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\WavPlayer.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\WwdFile.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\XmiFile.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -252,26 +252,14 @@
     <ClInclude Include="Objects\Projectile.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Soldier.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\SoundTrigger.h">
       <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\LeRauxe.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Rat.h">
-      <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Pegs.h">
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Item.h">
       <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Officer.h">
-      <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\DoNothing.h">
       <Filter>Objects</Filter>
@@ -291,12 +279,6 @@
     <ClInclude Include="Objects\Rope.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\RobberThief.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\CutThroat.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\FloorSpike.h">
       <Filter>Objects</Filter>
     </ClInclude>
@@ -306,38 +288,11 @@
     <ClInclude Include="Objects\Statue.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\BaseEnemy.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Katherine.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Seagull.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\TownGuard.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\GroundBlower.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Wolvington.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\RedTailPirate.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\BearSailor.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\CrazyHook.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\ConveyorBelt.h">
       <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\HermitCrab.h">
-      <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\CrabNest.h">
       <Filter>Objects</Filter>
@@ -345,71 +300,11 @@
     <ClInclude Include="Objects\TProjectilesShooter.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\PegLeg.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\Laser.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Mercat.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Siren.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Fish.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Gabriel.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\GooVent.h">
       <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Marrow.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Chameleon.h">
-      <Filter>Objects\Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationsManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="AssetsManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="AudioManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="WavPlayer.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="MidiPlayer.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="PathManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="WwdFile.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="RezArchive.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="PidPalette.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="ImagesManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="BufferReader.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="BufferWriter.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBuffer.h">
-      <Filter>Assets-Managers</Filter>
     </ClInclude>
     <ClInclude Include="WindowManager.h">
       <Filter>GUI</Filter>
@@ -467,6 +362,111 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseEnemy.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\BearSailor.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Chameleon.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\CrazyHook.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\CutThroat.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Fish.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Gabriel.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\HermitCrab.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Katherine.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\LeRauxe.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Marrow.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Mercat.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Officer.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\PegLeg.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Rat.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\RedTailPirate.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\RobberThief.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Seagull.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Siren.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Soldier.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\TownGuard.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Wolvington.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\AnimationsManager.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\AssetsManager.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\AudioManager.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\BaseBuffer.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\BufferReader.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\BufferWriter.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\ImagesManager.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\MidiPlayer.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\PathManager.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\PidPalette.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\RezArchive.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\WavPlayer.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\WwdFile.h">
+      <Filter>Assets-Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

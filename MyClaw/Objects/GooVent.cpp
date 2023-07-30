@@ -1,5 +1,5 @@
 #include "GooVent.h"
-#include "../AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
 
 GooVent::GooVent(const WwdObject& obj)

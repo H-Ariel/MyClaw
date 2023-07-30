@@ -1,6 +1,7 @@
 #pragma once
 
-#include "WwdFile.h"
+#include "Assets-Managers/WwdFile.h"
+#include "UIBaseImage.h"
 
 
 class LevelPlane : public UIBaseElement

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HermitCrab.h"
+#include "../Enemies/HermitCrab.h"
 
 
 class CrabNest : public BaseStaticPlaneObject

@@ -1,5 +1,5 @@
 #include "DoNothing.h"
-#include "../AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
 
 DoNothing::DoNothing(const WwdObject& obj)

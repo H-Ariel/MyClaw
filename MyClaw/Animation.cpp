@@ -1,6 +1,4 @@
-#include "Animation.h"
-#include "AssetsManager.h"
-#include "PidPalette.h"
+#include "Assets-Managers/AssetsManager.h"
 
 
 Animation::FrameData::FrameData(const string& pidPath, uint32_t duration, const string& soundFilePath)

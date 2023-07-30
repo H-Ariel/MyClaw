@@ -1,6 +1,6 @@
 #include "SpringBoard.h"
 #include "../Player.h"
-#include "../AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
 
 SpringBoard::SpringBoard(const WwdObject& obj)

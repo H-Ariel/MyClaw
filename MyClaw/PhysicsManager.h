@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BasePlaneObject.h"
-#include "WwdFile.h"
+#include "Assets-Managers/WwdFile.h"
 
 
 class PhysicsManager

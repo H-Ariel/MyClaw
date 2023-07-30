@@ -1,6 +1,6 @@
 #include "ConveyorBelt.h"
 #include "../Player.h"
-#include "../AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
 
 ConveyorBelt::ConveyorBelt(const WwdObject& obj)

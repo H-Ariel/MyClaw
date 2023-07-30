@@ -40,7 +40,7 @@
 
 #include "Exception.hpp"
 #include "Rectangle2D.h"
-#include "PathManager.h"
+#include "Assets-Managers/PathManager.h"
 
 
 #pragma comment(lib, "d2d1")

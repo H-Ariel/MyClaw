@@ -1,6 +1,6 @@
 #include "Checkpoint.h"
 #include "../Player.h"
-#include "../AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
 
 Checkpoint::Checkpoint(const WwdObject& obj)
