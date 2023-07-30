@@ -12,7 +12,6 @@ public:
 private:
 	size_t _framesAmount;
 	int32_t _startTimeDelay; // in milliseconds
-	bool _isAlwaysOn;
 };
 
 

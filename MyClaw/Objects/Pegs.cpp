@@ -2,15 +2,11 @@
 #include "../AssetsManager.h"
 
 
-// I improved the code, but it affect the memory usage.
-// TODO: find way to use the improved code and not affect the memory usage.
-// (the problem is duplicate images and animation in the memory)
-
-
 TogglePeg::TogglePeg(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _startTimeDelay(0), _isAlwaysOn(false)
+	: BaseStaticPlaneObject(obj), _startTimeDelay(0)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
+	bool isAlwaysOn = false;
 
 	if (obj.speed > 0)
 	{
@@ -48,31 +44,25 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 		}
 	}
 
-	vector<Animation::FrameData*> appearImages = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, true)->getImagesList();
-	vector<Animation::FrameData*> images;
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, true)->getImagesList();
 
-	myMemCpy(appearImages.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1500));
+	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1500));
 
 	if (obj.smarts & 0x1)
 	{
-		_isAlwaysOn = true;
-
-		images.push_back(appearImages.back());
-		appearImages.erase(appearImages.end() - 1);
-		for (auto i : appearImages) delete i;
+		isAlwaysOn = true;
+		for_each(images.begin(), images.end() - 1, [](Animation::FrameData* f) { delete f; });
+		images.erase(images.begin(), images.end() - 1);
 	}
 	else
 	{
-		uint32_t timeOff = obj.speedY > 0 ? obj.speedY : 1500;
-
-		vector<Animation::FrameData*> disappearImages = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, false)->getImagesList();
-		myMemCpy(disappearImages.back()->duration, timeOff);
-
-		images = disappearImages;
-		images.insert(images.end(), appearImages.begin(), appearImages.end());
+		vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, false)->getImagesList();
+		myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 1500));
+		images.insert(images.begin(), appearImages.begin(), appearImages.end());
 	}
 
 	_ani = allocNewSharedPtr<Animation>(images);
+	_ani->updateFrames = !isAlwaysOn;
 	_framesAmount = images.size();
 
 	setObjectRectangle();
@@ -85,12 +75,6 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 }
 void TogglePeg::Logic(uint32_t elapsedTime)
 {
-	if (_isAlwaysOn)
-	{
-		tryCatchPlayer();
-		return;
-	}
-
 	if (_startTimeDelay > 0)
 	{
 		_startTimeDelay -= elapsedTime;
@@ -109,7 +93,7 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 CrumblingPeg::CrumblingPeg(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
-	vector<Animation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false)->getImagesList();
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false)->getImagesList();
 	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
 	_ani = allocNewSharedPtr<Animation>(images);
 	_ani->position = position;
