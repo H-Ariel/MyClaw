@@ -67,7 +67,7 @@
 //#define SAVE_LOGICS "c:/users/ariel/desktop/remain- level7 logics.txt"
 //#ifndef _DEBUG
 //#undef LOW_DETAILS
-#define USE_ENEMIES
+//#define USE_ENEMIES
 //#endif
 
 /*

@@ -22,7 +22,7 @@ SteppingStone::SteppingStone(const WwdObject& obj)
 	}
 	else
 	{
-		switch (obj.logic[obj.logic.length() - 1])
+		switch (obj.logic.back())
 		{
 		case '2': _startTimeDelay = 500; break;
 		case '3': _startTimeDelay = 1000; break;

@@ -6,7 +6,7 @@
 TownGuard::TownGuard(const WwdObject& obj)
 	: BaseEnemy(obj, 9, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "STRIKE2", "STRIKE1", "", "", "", ENEMY_PATROL_SPEED),
-	_type((Type)(obj.logic[obj.logic.length() - 1] - '1'))
+	_type((Type)(obj.logic.back() - '1'))
 {
 }
 
