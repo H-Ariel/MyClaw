@@ -77,24 +77,18 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 
 	_ani->Logic(elapsedTime);
 
-	size_t idx = _ani->getFrameNumber();
-
-	size_t quarter1 = _framesAmount / 4; // 0 - 1/4
-//	size_t quarter2 = _framesAmount / 2; // 1/4 - 1/2
-	size_t quarter3 = 3 * _framesAmount / 4; // 1/2 - 3/4
-//	size_t quarter4 = _framesAmount; // 3/4 - 1
-
-	if (idx <= quarter1 || quarter3 <= idx)
+	size_t idx = _ani->getFrameNumber() * 4;
+	if (idx <= _framesAmount || _framesAmount * 3 <= idx)
 	{
 		tryCatchPlayer();
 	}
 }
 
 CrumblingPeg::CrumblingPeg(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _delayTime(obj.counter)
+	: BaseStaticPlaneObject(obj)
 {
 	vector<Animation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false)->getImagesList();
-	myMemCpy(images.front()->duration, (uint32_t)_delayTime);
+	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
 	_ani = allocNewSharedPtr<Animation>(images);
 	_ani->position = position;
 	Reset();
@@ -102,25 +96,17 @@ CrumblingPeg::CrumblingPeg(const WwdObject& obj)
 }
 void CrumblingPeg::Logic(uint32_t elapsedTime)
 {
-	if (!_draw) return;
+	if (_ani->isFinishAnimation())
+		return; // the object is not used
 
-	if (_used)
-		if (tryCatchPlayer())
-		{
-			_state = States::Crumbling;
-			_ani->updateFrames = true;
-		}
+	if (!_ani->isPassedHalf() && tryCatchPlayer())
+		_ani->updateFrames = true;
 
-	if (_state == States::Crumbling)
-	{
-		_draw = !_ani->isFinishAnimation();
-		_used = !_ani->isPassedHalf();
-		_ani->Logic(elapsedTime);
-	}
+	_ani->Logic(elapsedTime);
 }
 void CrumblingPeg::Draw()
 {
-	if (_draw)
+	if (!_ani->isFinishAnimation())
 		_ani->Draw();
 }
 void CrumblingPeg::Reset()
@@ -128,9 +114,6 @@ void CrumblingPeg::Reset()
 	_ani->reset();
 	_ani->updateFrames = false;
 	_ani->loopAni = false;
-	_state = States::Appear;
-	_used = true;
-	_draw = true;
 }
 
 BreakPlank::BreakPlank(const WwdObject& obj, float topOffset)

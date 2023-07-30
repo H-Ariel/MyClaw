@@ -1,20 +1,16 @@
 #include "FloorSpike.h"
-#include "../Player.h"
 #include "../AssetsManager.h"
 
 
 // This functions are same to TogglePeg. maybe we can combine them
 
 FloorSpike::FloorSpike(const WwdObject& obj)
-	: BaseDamageObject(obj, 10), _state(States::WaitAppear),
-	_totalTime(0), _startTimeDelay(0), _timeOn(0), _timeOff(0)
+	: BaseDamageObject(obj, 10), _startTimeDelay(0)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
-	_aniAppear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, false);
-	_aniDisappear = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, true);
-
-	_ani = _aniDisappear;
-	_ani->updateFrames = false;
+	vector<Animation::FrameData*> appearImages = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, false)->getImagesList();
+	vector<Animation::FrameData*> disappearImages = AssetsManager::createCopyAnimationFromDirectory(imageSetPath, 125, true)->getImagesList();
+	vector<Animation::FrameData*> images;
 
 	if (obj.speed > 0)
 	{
@@ -30,22 +26,14 @@ FloorSpike::FloorSpike(const WwdObject& obj)
 		}
 	}
 
-	if (obj.speedX > 0)
-	{
-		_timeOn = obj.speedX;
-	}
-	else
-	{
-		_timeOn = 1500;
-	}
-	if (obj.speedY > 0)
-	{
-		_timeOff = obj.speedY;
-	}
-	else
-	{
-		_timeOff = 1500;
-	}
+	myMemCpy(appearImages.back()->duration, uint32_t((obj.speedX > 0) ? obj.speedX : 1500));
+	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));
+
+	images.insert(images.end(), appearImages.begin(), appearImages.end());
+	images.insert(images.end(), disappearImages.begin(), disappearImages.end());
+
+	_ani = allocNewSharedPtr<Animation>(images);
+	_framesAmount = images.size();
 
 	setObjectRectangle();
 }
@@ -58,74 +46,55 @@ void FloorSpike::Logic(uint32_t elapsedTime)
 		return;
 	}
 
-	_totalTime += elapsedTime;
-
-	switch (_state)
-	{
-	case States::Appear:
-		if (_ani->isFinishAnimation())
-		{
-			_state = States::WaitAppear;
-			_totalTime = 0;
-			_ani->updateFrames = false;
-		}
-		break;
-
-	case States::WaitAppear:
-		if (_totalTime >= _timeOn && _timeOff > 0)
-		{
-			_state = States::Disappear;
-			_ani = _aniDisappear;
-			_ani->reset();
-			_ani->loopAni = false;
-		}
-		break;
-
-	case States::Disappear:
-		if (_ani->isFinishAnimation())
-		{
-			_state = States::WaitDisappear;
-			_totalTime = 0;
-			_ani->updateFrames = false;
-		}
-		break;
-
-	case States::WaitDisappear:
-		if (_totalTime >= _timeOff)
-		{
-			_state = States::Appear;
-			_ani = _aniAppear;
-			_ani->reset();
-			_ani->loopAni = false;
-		}
-		break;
-	}
-
 	_ani->Logic(elapsedTime);
 }
 
 bool FloorSpike::isDamage() const
 {
-	return ((_state == States::Disappear && !_ani->isPassedHalf()) ||
-		(_state == States::Appear && _ani->isPassedHalf()) ||
-		_state == States::WaitAppear);
+	size_t idx = _ani->getFrameNumber() * 4;
+	return (_framesAmount <= idx && idx <= _framesAmount * 3);
 }
 
 
+// TODO: spin animation is not implemented yet
 SawBlade::SawBlade(const WwdObject& obj)
 	: FloorSpike(obj)
 {
-	_aniAppear = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_UP"));
-	_aniDisappear = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_DOWN"));
-	_aniWait = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_SPIN"));
-	_ani = _aniDisappear;
-	_ani->updateFrames = false;
-}
+	shared_ptr<Animation> _aniAppear = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_UP"));
+//	shared_ptr<Animation> _aniWait = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_SPIN"));
+	shared_ptr<Animation> _aniDisappear = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_DOWN"));
 
-void SawBlade::Logic(uint32_t elapsedTime)
-{
-	if (_state == States::WaitAppear)
-		_ani = _aniWait;
+	/*
+	// that written in FloorSpike constructor
+	if (obj.speed > 0)
+	{
+		_startTimeDelay = obj.speed;
+	}
+	else
+	{
+		switch (obj.logic.back())
+		{
+		case '2': _startTimeDelay = 750; break;
+		case '3': _startTimeDelay = 1500; break;
+		case '4': _startTimeDelay = 2250; break;
+		}
+	}
+	*/
 
-	FloorSpike::Logic(elapsedTime);
+	vector<Animation::FrameData*> appearImages = _aniAppear->getImagesList();
+//	vector<Animation::FrameData*> waitImages = _aniWait->getImagesList();
+	vector<Animation::FrameData*> disappearImages = _aniDisappear->getImagesList();
+	vector<Animation::FrameData*> images;
+
+	myMemCpy(appearImages.back()->duration, uint32_t((obj.speedX > 0) ? obj.speedX : 1500));
+	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));
+
+	images.insert(images.end(), appearImages.begin(), appearImages.end());
+//	images.insert(images.end(), waitImages.begin(), waitImages.end());
+	images.insert(images.end(), disappearImages.begin(), disappearImages.end());
+
+	_ani = allocNewSharedPtr<Animation>(images);
+	_framesAmount = images.size();
+
+	setObjectRectangle();
 }

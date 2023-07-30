@@ -68,6 +68,7 @@
 //#ifndef _DEBUG
 //#undef LOW_DETAILS
 //#define USE_ENEMIES
+#define USE_OBSTACLES
 //#endif
 
 /*
@@ -435,37 +436,9 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_objects.push_back(DBG_NEW ConveyorBelt(obj));
 	}
 #ifdef USE_ENEMIES
-	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
-	{
-		_objects.push_back(DBG_NEW TowerCannon(obj));
-	}
-	else if (obj.logic == "GooVent")
-	{
-		ADD_DAMAGE_OBJECT(GooVent(obj));
-	}
-	else if (startsWith(obj.logic, "FloorSpike"))
-	{
-		ADD_DAMAGE_OBJECT(FloorSpike(obj));
-	}
 	else if (obj.logic == "CrabNest")
 	{
 		_objects.push_back(DBG_NEW CrabNest(obj));
-	}
-	else if (startsWith(obj.logic, "SawBlade"))
-	{
-		ADD_DAMAGE_OBJECT(SawBlade(obj));
-	}
-	else if (obj.logic == "TProjectile")
-	{
-		_objects.push_back(DBG_NEW TProjectilesShooter(obj));
-	}
-	else if (obj.logic == "SkullCannon")
-	{
-		_objects.push_back(DBG_NEW SkullCannon(obj));
-	}
-	else if (obj.logic == "Laser")
-	{
-		ADD_DAMAGE_OBJECT(Laser(obj));
 	}
 	else if (obj.logic == "Officer")
 	{
@@ -534,6 +507,36 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "Chameleon")
 	{
 		ADD_ENEMY(Chameleon(obj));
+	}
+#endif
+#ifdef USE_OBSTACLES
+	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
+	{
+		_objects.push_back(DBG_NEW TowerCannon(obj));
+	}
+	else if (obj.logic == "GooVent")
+	{
+		ADD_DAMAGE_OBJECT(GooVent(obj));
+	}
+	else if (startsWith(obj.logic, "FloorSpike"))
+	{
+		ADD_DAMAGE_OBJECT(FloorSpike(obj));
+	}
+	else if (startsWith(obj.logic, "SawBlade"))
+	{
+		ADD_DAMAGE_OBJECT(SawBlade(obj));
+	}
+	else if (obj.logic == "TProjectile")
+	{
+		_objects.push_back(DBG_NEW TProjectilesShooter(obj));
+	}
+	else if (obj.logic == "SkullCannon")
+	{
+		_objects.push_back(DBG_NEW SkullCannon(obj));
+	}
+	else if (obj.logic == "Laser")
+	{
+		ADD_DAMAGE_OBJECT(Laser(obj));
 	}
 #endif
 	else if (obj.logic == "Raux")

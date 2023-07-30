@@ -23,12 +23,6 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 	void Reset() override;
-
-private:
-	enum class States : int8_t { Appear, Crumbling };
-	const int32_t _delayTime; // in milliseconds
-	States _state;
-	bool _used, _draw;
 };
 
 
