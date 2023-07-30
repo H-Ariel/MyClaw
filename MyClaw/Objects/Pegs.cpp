@@ -18,11 +18,33 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 	}
 	else
 	{
-		switch (obj.logic.back())
+		if (obj.logic == "StartSteppingStone")
 		{
-		case '2': _startTimeDelay = 750; break;
-		case '3': _startTimeDelay = 1500; break;
-		case '4': _startTimeDelay = 2250; break;
+			if (obj.speedX <= 0) myMemCpy(obj.speedX, 1000);
+			if (obj.speedY <= 0) myMemCpy(obj.speedY, 2000);
+			myMemCpy(obj.smarts, 0);
+		}
+		else if (startsWith(obj.logic, "SteppingStone"))
+		{
+			switch (obj.logic.back())
+			{
+			case '2': _startTimeDelay = 500; break;
+			case '3': _startTimeDelay = 1000; break;
+			case '4': _startTimeDelay = 1500; break;
+			}
+
+			if (obj.speedX <= 0) myMemCpy(obj.speedX, 150);
+			if (obj.speedY <= 0) myMemCpy(obj.speedY, 500);
+			myMemCpy(obj.smarts, 0);
+		}
+		else // regular TogglePeg
+		{
+			switch (obj.logic.back())
+			{
+			case '2': _startTimeDelay = 750; break;
+			case '3': _startTimeDelay = 1500; break;
+			case '4': _startTimeDelay = 2250; break;
+			}
 		}
 	}
 

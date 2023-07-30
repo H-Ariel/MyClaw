@@ -106,9 +106,6 @@
     <ClCompile Include="Objects\FloorSpike.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\SteppingStone.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\SpringBoard.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -301,9 +298,6 @@
       <Filter>Objects\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Objects\FloorSpike.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\SteppingStone.h">
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\SpringBoard.h">

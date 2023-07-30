@@ -206,7 +206,6 @@
     <ClCompile Include="Objects\SoundTrigger.cpp" />
     <ClCompile Include="Objects\SpringBoard.cpp" />
     <ClCompile Include="Objects\Statue.cpp" />
-    <ClCompile Include="Objects\SteppingStone.cpp" />
     <ClCompile Include="Objects\TownGuard.cpp" />
     <ClCompile Include="Objects\TProjectilesShooter.cpp" />
     <ClCompile Include="Objects\Wolvington.cpp" />
@@ -284,7 +283,6 @@
     <ClInclude Include="Objects\SoundTrigger.h" />
     <ClInclude Include="Objects\SpringBoard.h" />
     <ClInclude Include="Objects\Statue.h" />
-    <ClInclude Include="Objects\SteppingStone.h" />
     <ClInclude Include="Objects\TownGuard.h" />
     <ClInclude Include="Objects\TProjectilesShooter.h" />
     <ClInclude Include="Objects\Wolvington.h" />

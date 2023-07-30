@@ -769,7 +769,7 @@ void Player::jump()
 bool Player::checkForHurts()
 {
 #ifdef _DEBUG
-//	return false; // TODO: change this! let CC hurt!
+	return false; // TODO: change this! let CC hurt!
 #endif
 
 	if (isTakeDamage() || _damageRest > 0) return false;

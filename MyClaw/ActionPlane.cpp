@@ -20,7 +20,6 @@
 #include "Objects/DoNothing.h"
 #include "Objects/Cannon.h"
 #include "Objects/Rope.h"
-#include "Objects/SteppingStone.h"
 #include "Objects/SpringBoard.h"
 #include "Objects/Statue.h"
 #include "Objects/GroundBlower.h"
@@ -382,17 +381,9 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW Checkpoint(obj));
 	}
-	else if (startsWith(obj.logic, "TogglePeg"))
+	else if (startsWith(obj.logic, "TogglePeg") || contains(obj.logic, "SteppingStone"))
 	{
 		_objects.push_back(DBG_NEW TogglePeg(obj));
-	}
-	else if (obj.logic == "StartSteppingStone")
-	{
-		_objects.push_back(DBG_NEW StartSteppingStone(obj));
-	}
-	else if (startsWith(obj.logic, "SteppingStone"))
-	{
-		_objects.push_back(DBG_NEW SteppingStone(obj));
 	}
 	else if (obj.logic == "CrumblingPeg")
 	{
