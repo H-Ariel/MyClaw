@@ -380,12 +380,12 @@ bool BaseEnemy::enemySeeClaw() const
 	return (!_isMirrored && player->position.x > position.x) || (_isMirrored && player->position.x < position.x);
 }
 
-// TODO: maybe this c'tor don't need get parameters...
+// TODO: maybe this c'tor doesn't need get parameters...
 BaseBoss::BaseBoss(const WwdObject& obj,
 	int damage, string walkAni, string hit1, string hit2, string fallDead,
 	string strikeAni, string shootAni, string projectileAniDir)
 	: BaseEnemy(obj, obj.health, damage, walkAni, hit1, hit2, fallDead,
-		strikeAni, "", shootAni, "", projectileAniDir, 0, true),
+		strikeAni, "", shootAni, "", projectileAniDir, ENEMY_PATROL_SPEED, true),
 	_hitsCuonter(1), _blockClaw(false), _canJump(true), _gemPos({ obj.speedX, obj.speedY })
 {
 }

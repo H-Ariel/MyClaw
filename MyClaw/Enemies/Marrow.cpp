@@ -46,6 +46,7 @@ Marrow::Marrow(const WwdObject& obj)
 	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
 		"KILLFALL", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS")
 {
+	speed.x = 0;
 	_health = 100;
 	_ani = MARROW_ANIMATION_HOME;
 	_isMirrored = !false;

@@ -30,6 +30,7 @@ Gabriel::Gabriel(const WwdObject& obj)
 	, _throwBombsTime(THROW_BOMBS_TIME), _canThrowBombs(true)
 	, _sendPiratesTime(SEND_PIRATES_TIME), _canSendPirates(true)
 {
+	speed.x = 0;
 	_isMirrored = true;
 	_ani = _animations["IDLE"];
 	_health = 5; // we need hurt Gabriel only 5 times to win

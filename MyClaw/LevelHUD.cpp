@@ -2,6 +2,7 @@
 #include "Assets-Managers/AssetsManager.h"
 #include "WindowManager.h"
 
+// TODO: draw boss health bar
 
 LevelHUD::LevelHUD(const D2D1_POINT_2F& offset)
 	: _offset(offset)
