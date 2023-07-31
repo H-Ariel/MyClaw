@@ -1,6 +1,7 @@
 #include "LevelHUD.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "WindowManager.h"
+#include "ActionPlane.h"
 
 // TODO: draw boss health bar
 
@@ -14,6 +15,7 @@ LevelHUD::LevelHUD(const D2D1_POINT_2F& offset)
 	_weaponAni[ClawProjectile::Types::Dynamite] = AssetsManager::loadAnimation("GAME/ANIS/INTERFACE/DYNAMITE.ANI");
 	_lives = AssetsManager::loadAnimation("GAME/ANIS/INTERFACE/LIVES.ANI");
 	_stopwatch = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/STOPWATCH", 125, false);
+	_bossBar = AssetsManager::createAnimationFromFromPidImage("GAME/IMAGES/BOSSBAR/001.PID");
 
 	char imgPath[44] = {};
 	for (int i = 0; i <= 9; i++)
@@ -30,7 +32,8 @@ LevelHUD::LevelHUD(const D2D1_POINT_2F& offset)
 void LevelHUD::Draw()
 {
 	D2D1_POINT_2F pos = {};
-	const float winWidth = WindowManager::getSize().width - 15 / WindowManager::PixelSize;
+	D2D1_SIZE_F wndSz = WindowManager::getSize();
+	const float winWidth = wndSz.width - 15 / WindowManager::PixelSize;
 	pos.y = 20 + _offset.y;
 
 	_chest->position = { 20 + _offset.x, pos.y };
@@ -60,6 +63,14 @@ void LevelHUD::Draw()
 	pos.y = 52; drawNumbers(BasePlaneObject::player->getWeaponAmount(), 2, _smallNumbers, pos);
 	pos.y = 81; drawNumbers(BasePlaneObject::player->getLivesAmount(), 1, _smallNumbers, pos);
 	drawNumbers(BasePlaneObject::player->getScore(), 8, _scoreNumbers, { 50 + _offset.x, 20 }, true);
+
+	if (ActionPlane::isInBoss())
+	{
+		_bossBar->position.x = _offset.x + 0.5f * wndSz.width;
+		_bossBar->position.y = _offset.y + 0.9f * wndSz.height;
+		_bossBar->updateImageData();
+		_bossBar->Draw();
+	}
 }
 
 void LevelHUD::drawNumbers(uint32_t amount, int numOfDigits, shared_ptr<UIBaseImage> const numArr[], D2D1_POINT_2F pos, bool isScore) const

@@ -85,8 +85,8 @@ public:
 ActionPlane* ActionPlane::_instance = nullptr;
 
 ActionPlane::ActionPlane(WapWorld* wwd)
-	: _state(States::Play), _deathAniWait(false), _wwd(wwd),
-	_needSort(true), _holeRadius(0), _physicsManager(nullptr), _planeSize({})
+	: _state(States::Play), _deathAniWait(false), _wwd(wwd), _needSort(true),
+	_holeRadius(0), _physicsManager(nullptr), _planeSize({}), _isInBoss(false)
 {
 	if (_instance != nullptr)
 		throw Exception("ActionPlane already exists");
@@ -97,7 +97,6 @@ ActionPlane::ActionPlane(WapWorld* wwd)
 	playerData.y = _wwd->startY;
 	playerData.z = 4000;
 	_objects.push_back(player = DBG_NEW Player(playerData));
-
 }
 ActionPlane::~ActionPlane()
 {
@@ -142,11 +141,12 @@ void ActionPlane::init()
 			cout << "Error while adding object \"" << obj.logic << "\": message: " << ex.what() << endl;
 #endif
 		}
-}
+	}
 #ifdef SAVE_LOGICS
 	ofstream of(SAVE_LOGICS);
 	for (auto& i : allLogics) of << i << endl;
 #endif
+	objects.clear();
 }
 
 void ActionPlane::Logic(uint32_t elapsedTime)
@@ -225,7 +225,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	}
 
 	BasePlaneObject* obj;
-	
+
 	for (size_t i = 0; i < _objects.size(); i++)
 	{
 		obj = _objects[i];
@@ -306,17 +306,15 @@ void ActionPlane::playerEnterToBoss()
 	for (auto& i : _instance->_damageObjects) i->removeObject = true;
 
 	// move all objects that we need in boss to the objects' list
-	for (auto& i : _instance->_bossObjects) {
+	for (auto& i : _instance->_bossObjects)
+	{
 		_instance->_objects.push_back(i);
-
 		if (isbaseinstance<BaseEnemy>(i))
 			_instance->_enemies.push_back((BaseEnemy*)i);
-		else if (isProjectile(i))
-			_instance->_projectiles.push_back((Projectile*)i);
-
 	}
 	_instance->_bossObjects.clear();
 	_instance->_needSort = true;
+	_instance->_isInBoss = true;
 
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Boss);
 }
@@ -365,211 +363,211 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW Statue(obj));
 	}
-	else 
-		if (obj.logic == "PowderKeg")
-	{
-		PowderKeg* p = DBG_NEW PowderKeg(obj);
-		_objects.push_back(p); _powderKegs.push_back(p);
-	}
 	else
-#endif
-	if (endsWith(obj.logic, "Elevator"))
-	{
-		_objects.push_back(Elevator::create(obj, _wwd->levelNumber));
-	}
-	else if (endsWith(obj.logic, "Checkpoint"))
-	{
-		_objects.push_back(DBG_NEW Checkpoint(obj));
-	}
-	else if (startsWith(obj.logic, "TogglePeg") || contains(obj.logic, "SteppingStone"))
-	{
-		_objects.push_back(DBG_NEW TogglePeg(obj));
-	}
-	else if (obj.logic == "CrumblingPeg")
-	{
-		_objects.push_back(DBG_NEW CrumblingPeg(obj));
-	}
-	else if (obj.logic == "BreakPlank")
-	{
-		int32_t topOffset = 0;
-		if (_wwd->levelNumber == 5) topOffset = _wwd->tilesDescription[509].rect.top;
-		else if (_wwd->levelNumber == 11) topOffset = _wwd->tilesDescription[39].rect.top;
-
-		for (int32_t i = 0; i < obj.width; i++)
+		if (obj.logic == "PowderKeg")
 		{
-			_objects.push_back(DBG_NEW BreakPlank(obj, (float)topOffset));
-			(int32_t&)obj.x += TILE_SIZE;
-			//myMemCpy(obj.x, obj.x + TILE_SIZE);
+			PowderKeg* p = DBG_NEW PowderKeg(obj);
+			_objects.push_back(p); _powderKegs.push_back(p);
 		}
-	}
-	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
-		|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"
-		|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup"
-		|| obj.logic == "EndOfLevelPowerup" || obj.logic == "MagicPowerup"
-		/*|| obj.logic == "CursePowerup"*/)
-	{
-		_objects.push_back(Item::getItem(obj));
-	}
-	else if (obj.logic == "AniRope")
-	{
-		_objects.push_back(DBG_NEW Rope(obj));
-	}
-	else if (obj.logic == "SpringBoard" || obj.logic == "WaterRock")
-	{
-		_objects.push_back(DBG_NEW SpringBoard(obj));
-	}
-	else if (obj.logic == "GroundBlower")
-	{
-		_objects.push_back(DBG_NEW GroundBlower(obj));
-	}
-	else if (obj.logic == "ConveyorBelt")
-	{
-		_objects.push_back(DBG_NEW ConveyorBelt(obj));
-	}
+		else
+#endif
+			if (endsWith(obj.logic, "Elevator"))
+			{
+				_objects.push_back(Elevator::create(obj, _wwd->levelNumber));
+			}
+			else if (endsWith(obj.logic, "Checkpoint"))
+			{
+				_objects.push_back(DBG_NEW Checkpoint(obj));
+			}
+			else if (startsWith(obj.logic, "TogglePeg") || contains(obj.logic, "SteppingStone"))
+			{
+				_objects.push_back(DBG_NEW TogglePeg(obj));
+			}
+			else if (obj.logic == "CrumblingPeg")
+			{
+				_objects.push_back(DBG_NEW CrumblingPeg(obj));
+			}
+			else if (obj.logic == "BreakPlank")
+			{
+				int32_t topOffset = 0;
+				if (_wwd->levelNumber == 5) topOffset = _wwd->tilesDescription[509].rect.top;
+				else if (_wwd->levelNumber == 11) topOffset = _wwd->tilesDescription[39].rect.top;
+
+				for (int32_t i = 0; i < obj.width; i++)
+				{
+					_objects.push_back(DBG_NEW BreakPlank(obj, (float)topOffset));
+					(int32_t&)obj.x += TILE_SIZE;
+					//myMemCpy(obj.x, obj.x + TILE_SIZE);
+				}
+			}
+			else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
+				|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"
+				|| obj.logic == "BossWarp" || obj.logic == "HealthPowerup"
+				|| obj.logic == "EndOfLevelPowerup" || obj.logic == "MagicPowerup"
+				/*|| obj.logic == "CursePowerup"*/)
+			{
+				_objects.push_back(Item::getItem(obj));
+			}
+			else if (obj.logic == "AniRope")
+			{
+				_objects.push_back(DBG_NEW Rope(obj));
+			}
+			else if (obj.logic == "SpringBoard" || obj.logic == "WaterRock")
+			{
+				_objects.push_back(DBG_NEW SpringBoard(obj));
+			}
+			else if (obj.logic == "GroundBlower")
+			{
+				_objects.push_back(DBG_NEW GroundBlower(obj));
+			}
+			else if (obj.logic == "ConveyorBelt")
+			{
+				_objects.push_back(DBG_NEW ConveyorBelt(obj));
+			}
 #ifdef USE_ENEMIES
-	else if (obj.logic == "CrabNest")
-	{
-		_objects.push_back(DBG_NEW CrabNest(obj));
-	}
-	else if (obj.logic == "Officer")
-	{
-		ADD_ENEMY(Officer(obj));
-	}
-	else if (obj.logic == "Soldier")
-	{
-		ADD_ENEMY(Soldier(obj));
-	}
-	else if (obj.logic == "Rat")
-	{
-		ADD_ENEMY(Rat(obj));
-	}
-	else if (obj.logic == "PunkRat")
-	{
-		ADD_ENEMY(PunkRat(obj));
-	}
-	else if (obj.logic == "RobberThief")
-	{
-		ADD_ENEMY(RobberThief(obj));
-	}
-	else if (obj.logic == "CutThroat")
-	{
-		ADD_ENEMY(CutThroat(obj));
-	}
-	else if (obj.logic == "Seagull")
-	{
-		ADD_ENEMY(Seagull(obj));
-	}
-	else if (obj.logic == "TownGuard1" || obj.logic == "TownGuard2")
-	{
-		ADD_ENEMY(TownGuard(obj));
-	}
-	else if (obj.logic == "RedTailPirate")
-	{
-		ADD_ENEMY(RedTailPirate(obj));
-	}
-	else if (obj.logic == "BearSailor")
-	{
-		ADD_ENEMY(BearSailor(obj));
-	}
-	else if (obj.logic == "CrazyHook")
-	{
-		ADD_ENEMY(CrazyHook(obj));
-	}
-	else if (obj.logic == "HermitCrab")
-	{
-		ADD_ENEMY(HermitCrab(obj));
-	}
-	else if (obj.logic == "PegLeg")
-	{
-		ADD_ENEMY(PegLeg(obj));
-	}
-	else if (obj.logic == "Mercat")
-	{
-		ADD_ENEMY(Mercat(obj));
-	}
-	else if (obj.logic == "Siren")
-	{
-		ADD_ENEMY(Siren(obj));
-	}
-	else if (obj.logic == "Fish")
-	{
-		ADD_ENEMY(Fish(obj));
-	}
-	else if (obj.logic == "Chameleon")
-	{
-		ADD_ENEMY(Chameleon(obj));
-	}
+			else if (obj.logic == "CrabNest")
+			{
+				_objects.push_back(DBG_NEW CrabNest(obj));
+			}
+			else if (obj.logic == "Officer")
+			{
+				ADD_ENEMY(Officer(obj));
+			}
+			else if (obj.logic == "Soldier")
+			{
+				ADD_ENEMY(Soldier(obj));
+			}
+			else if (obj.logic == "Rat")
+			{
+				ADD_ENEMY(Rat(obj));
+			}
+			else if (obj.logic == "PunkRat")
+			{
+				ADD_ENEMY(PunkRat(obj));
+			}
+			else if (obj.logic == "RobberThief")
+			{
+				ADD_ENEMY(RobberThief(obj));
+			}
+			else if (obj.logic == "CutThroat")
+			{
+				ADD_ENEMY(CutThroat(obj));
+			}
+			else if (obj.logic == "Seagull")
+			{
+				ADD_ENEMY(Seagull(obj));
+			}
+			else if (obj.logic == "TownGuard1" || obj.logic == "TownGuard2")
+			{
+				ADD_ENEMY(TownGuard(obj));
+			}
+			else if (obj.logic == "RedTailPirate")
+			{
+				ADD_ENEMY(RedTailPirate(obj));
+			}
+			else if (obj.logic == "BearSailor")
+			{
+				ADD_ENEMY(BearSailor(obj));
+			}
+			else if (obj.logic == "CrazyHook")
+			{
+				ADD_ENEMY(CrazyHook(obj));
+			}
+			else if (obj.logic == "HermitCrab")
+			{
+				ADD_ENEMY(HermitCrab(obj));
+			}
+			else if (obj.logic == "PegLeg")
+			{
+				ADD_ENEMY(PegLeg(obj));
+			}
+			else if (obj.logic == "Mercat")
+			{
+				ADD_ENEMY(Mercat(obj));
+			}
+			else if (obj.logic == "Siren")
+			{
+				ADD_ENEMY(Siren(obj));
+			}
+			else if (obj.logic == "Fish")
+			{
+				ADD_ENEMY(Fish(obj));
+			}
+			else if (obj.logic == "Chameleon")
+			{
+				ADD_ENEMY(Chameleon(obj));
+			}
 #endif
 #ifdef USE_OBSTACLES
-	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
-	{
-		_objects.push_back(DBG_NEW TowerCannon(obj));
-	}
-	else if (obj.logic == "GooVent")
-	{
-		ADD_DAMAGE_OBJECT(GooVent(obj));
-	}
-	else if (startsWith(obj.logic, "FloorSpike"))
-	{
-		ADD_DAMAGE_OBJECT(FloorSpike(obj));
-	}
-	else if (startsWith(obj.logic, "SawBlade"))
-	{
-		ADD_DAMAGE_OBJECT(SawBlade(obj));
-	}
-	else if (obj.logic == "TProjectile")
-	{
-		_objects.push_back(DBG_NEW TProjectilesShooter(obj));
-	}
-	else if (obj.logic == "SkullCannon")
-	{
-		_objects.push_back(DBG_NEW SkullCannon(obj));
-	}
-	else if (obj.logic == "Laser")
-	{
-		ADD_DAMAGE_OBJECT(Laser(obj));
-	}
+			else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
+			{
+				_objects.push_back(DBG_NEW TowerCannon(obj));
+			}
+			else if (obj.logic == "GooVent")
+			{
+				ADD_DAMAGE_OBJECT(GooVent(obj));
+			}
+			else if (startsWith(obj.logic, "FloorSpike"))
+			{
+				ADD_DAMAGE_OBJECT(FloorSpike(obj));
+			}
+			else if (startsWith(obj.logic, "SawBlade"))
+			{
+				ADD_DAMAGE_OBJECT(SawBlade(obj));
+			}
+			else if (obj.logic == "TProjectile")
+			{
+				_objects.push_back(DBG_NEW TProjectilesShooter(obj));
+			}
+			else if (obj.logic == "SkullCannon")
+			{
+				_objects.push_back(DBG_NEW SkullCannon(obj));
+			}
+			else if (obj.logic == "Laser")
+			{
+				ADD_DAMAGE_OBJECT(Laser(obj));
+			}
 #endif
-	else if (obj.logic == "Raux")
-	{
-		ADD_BOSS_OBJECT(LeRauxe(obj));
-	}
-	else if (obj.logic == "Katherine")
-	{
-		ADD_BOSS_OBJECT(Katherine(obj));
-	}
-	else if (obj.logic == "Wolvington")
-	{
-		ADD_BOSS_OBJECT(Wolvington(obj));
-	}
-	else if (obj.logic == "Gabriel")
-	{
-		ADD_BOSS_OBJECT(Gabriel(obj));
-	}
-	else if (obj.logic == "GabrielCannon")
-	{
-		ADD_BOSS_OBJECT(GabrielCannon(obj));
-	}
-	else if (obj.logic == "CannonSwitch")
-	{
-		ADD_BOSS_OBJECT(GabrielCannonSwitch(obj));
-	}
-	else if (obj.logic == "CannonButton")
-	{
-		ADD_BOSS_OBJECT(GabrielCannonButton(obj));
-	}
-	else if (obj.logic == "Marrow")
-	{
-		ADD_BOSS_OBJECT(Marrow(obj));
-	}
-	else if (obj.logic == "Parrot")
-	{
-		ADD_BOSS_OBJECT(MarrowParrot(obj));
-	}
-	else if (obj.logic == "MarrowFloor")
-	{
-		ADD_BOSS_OBJECT(MarrowFloor(obj));
-	}
+			else if (obj.logic == "Raux")
+			{
+				ADD_BOSS_OBJECT(LeRauxe(obj));
+			}
+			else if (obj.logic == "Katherine")
+			{
+				ADD_BOSS_OBJECT(Katherine(obj));
+			}
+			else if (obj.logic == "Wolvington")
+			{
+				ADD_BOSS_OBJECT(Wolvington(obj));
+			}
+			else if (obj.logic == "Gabriel")
+			{
+				ADD_BOSS_OBJECT(Gabriel(obj));
+			}
+			else if (obj.logic == "GabrielCannon")
+			{
+				ADD_BOSS_OBJECT(GabrielCannon(obj));
+			}
+			else if (obj.logic == "CannonSwitch")
+			{
+				ADD_BOSS_OBJECT(GabrielCannonSwitch(obj));
+			}
+			else if (obj.logic == "CannonButton")
+			{
+				ADD_BOSS_OBJECT(GabrielCannonButton(obj));
+			}
+			else if (obj.logic == "Marrow")
+			{
+				ADD_BOSS_OBJECT(Marrow(obj));
+			}
+			else if (obj.logic == "Parrot")
+			{
+				ADD_BOSS_OBJECT(MarrowParrot(obj));
+			}
+			else if (obj.logic == "MarrowFloor")
+			{
+				ADD_BOSS_OBJECT(MarrowFloor(obj));
+			}
 
 	//	throw Exception("TODO: logic=" + obj.logic);
 }

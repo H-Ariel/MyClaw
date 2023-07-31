@@ -28,6 +28,7 @@ public:
 	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }
 	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
 	static void playerEnterToBoss();
+	static bool isInBoss() { return _instance->_isInBoss; }
 
 private:
 	void updatePosition();
@@ -50,7 +51,7 @@ private:
 	WapWorld* _wwd;
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish
-	bool _needSort;
+	bool _needSort, _isInBoss;
 	States _state;
 
 

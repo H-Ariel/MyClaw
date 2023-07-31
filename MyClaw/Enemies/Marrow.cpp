@@ -49,7 +49,7 @@ Marrow::Marrow(const WwdObject& obj)
 	speed.x = 0;
 	_health = 100;
 	_ani = MARROW_ANIMATION_HOME;
-	_isMirrored = !false;
+	_isMirrored = true;
 }
 
 void Marrow::Logic(uint32_t elapsedTime)
@@ -187,13 +187,13 @@ void Marrow::stopMovingLeft(float collisionSize)
 {
 	BaseBoss::stopMovingLeft(collisionSize);
 	speed = {};
-	_isMirrored = !false;
+	_isMirrored = true;
 }
 void Marrow::stopMovingRight(float collisionSize)
 {
 	BaseBoss::stopMovingRight(collisionSize);
 	speed = {};
-	_isMirrored = !true;
+	_isMirrored = false;
 }
 
 
@@ -207,7 +207,7 @@ MarrowParrot::MarrowParrot(const WwdObject& obj)
 	_flyRect((float)obj.minX, (float)obj.minY - 32.f, (float)obj.maxX, (float)obj.maxY - 32.f)
 {
 	myMemCpy(_initialPosition, position);
-	_isMirrored = !false;
+	_isMirrored = true;
 	speed = { 0, MARROW_PARROT_SPEED };
 }
 

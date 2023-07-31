@@ -137,14 +137,14 @@ void Wolvington::stopMovingLeft(float collisionSize)
 	position.x += collisionSize;
 	speed.x = ENEMY_PATROL_SPEED;
 	speed.y = 0;
-	_isMirrored = !true;
+	_isMirrored = false;
 }
 void Wolvington::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
 	speed.x = -ENEMY_PATROL_SPEED;
 	speed.y = 0;
-	_isMirrored = !false;
+	_isMirrored = true;
 }
 
 bool Wolvington::PreLogic(uint32_t elapsedTime)

@@ -1,10 +1,5 @@
-* use DBG_NEW instead of vector in LevelPlane
-* activate boss after CC comes to boss area
-* if CC die when he fight boss we should return CC to the boss start area and reset boss
-
 * use pegs/elevators/etc. as ground for enemies/treasures/etc. too
 * find perfect speeds for enemies
-* fix Seagull
 * catch and throw enemies (like a powder-keg)
 * when CC die draw circle (not square)
 * add "ADVANCE.ANI" for enemies (before they attack)
