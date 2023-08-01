@@ -81,7 +81,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 {
 	wwdFileReader->skip(8);
 	uint32_t flags = wwdFileReader->read<uint32_t>();
-	
+
 	if (!(flags & WwdFlag_Compress))
 		throw Exception("WWD file is not compressed");
 
@@ -109,19 +109,28 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 	uint32_t decompressedMainBlockLength = planesOffset + mainBlockLength;
 	uint8_t* decompressedMainBlock = DBG_NEW uint8_t[decompressedMainBlockLength];
 	memcpy(decompressedMainBlock, wwdFileReader->getCData(), planesOffset);
-	mz_uncompress(decompressedMainBlock + planesOffset, mainBlockLength, wwdFileReader->getCData() + planesOffset, (uint32_t)wwdFileReader->getSize() - planesOffset);
-	wwdFileReader.reset(); // we don't need it anymore
-	BufferReader wwdFileStreamInflated(decompressedMainBlock, decompressedMainBlockLength, false);
-	wwdFileStreamInflated.setIndex(planesOffset);
-	readPlanes(wwdFileStreamInflated, palette->colors, imageDirectoryPath, numOfPlanes);
-	wwdFileStreamInflated.setIndex(tileDescriptionsOffset);
-	readTileDescriptions(wwdFileStreamInflated);
-	delete[] decompressedMainBlock;
+
+	try
+	{
+		mz_uncompress(decompressedMainBlock + planesOffset, mainBlockLength, wwdFileReader->getCData() + planesOffset, (uint32_t)wwdFileReader->getSize() - planesOffset);
+		wwdFileReader.reset(); // we don't need it anymore
+		BufferReader wwdFileStreamInflated(decompressedMainBlock, decompressedMainBlockLength, false);
+		wwdFileStreamInflated.setIndex(tileDescriptionsOffset);
+		readTileDescriptions(wwdFileStreamInflated);
+		wwdFileStreamInflated.setIndex(planesOffset);
+		readPlanes(wwdFileStreamInflated, palette->colors, imageDirectoryPath, numOfPlanes);
+		delete[] decompressedMainBlock;
+	}
+	catch (Exception& ex)
+	{
+		delete[] decompressedMainBlock;
+		throw;
+	}
 
 
 	if (flags & WwdFlag_UseZCoords)
 	{
-		sort(planes.begin(), planes.end(), [](const LevelPlane* a, const LevelPlane* b) { return a->ZCoord < b->ZCoord; });
+		sort(planes.begin(), planes.end(), [](shared_ptr<LevelPlane>& a, shared_ptr<LevelPlane>& b) { return a->ZCoord < b->ZCoord; });
 	}
 
 	WindowManager::setBackgroundColor(planes[0]->fillColor);
@@ -161,7 +170,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 	}
 	else if (levelNumber == 8)
 	{
-		for (LevelPlane* pln : planes)
+		for (shared_ptr<LevelPlane>& pln : planes)
 			if (pln->_isMainPlane)
 			{
 				for (size_t i = 703; i < 720; pln->tiles[90][i++] = 184); // set death tiles behind Gabriel's ship
@@ -181,17 +190,15 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 		tilesDescription[54].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 
-	for (auto& p : planes) p->init();
-
 	tilesDescription.clear();
 }
-void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath, uint32_t numOfPlanes)
+void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath, int numOfPlanes)
 {
 	vector<string> imageSets;
 	int64_t currIdx;
 	uint32_t fillColor, tilesOffset, imageSetsOffset, objectsOffset, flags, tilePixelWidth, tilePixelHeight;
 
-	while (numOfPlanes-- > 0)
+	while (numOfPlanes--)
 	{
 #ifdef LOW_DETAILS
 		reader.skip(16); // skip to plane name
@@ -205,19 +212,19 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		reader.skip(-80);
 #endif
 
-		LevelPlane* pln;
-		
+		shared_ptr<LevelPlane> pln;
+
 		reader.skip(8);
 		reader.read(flags);
 
 		if (flags & WwdPlaneFlags_MainPlane)
 		{
-			pln = DBG_NEW ActionPlane(this);
+			pln = allocNewSharedPtr<ActionPlane>(this);
 			pln->_isMainPlane = true;
 		}
 		else
 		{
-			pln = DBG_NEW LevelPlane();
+			pln = allocNewSharedPtr<LevelPlane>();
 		}
 
 		reader.skip(76); // 4 unk, 64 plane-name, 4 total pixel width, 4 total pixel height
@@ -230,11 +237,18 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		reader.read(pln->tilesOnAxisX);
 		reader.read(pln->tilesOnAxisY);
 		reader.skip(8);
+		// these properties are used when drawing the plane
 		pln->movementPercentX = reader.read<uint32_t>() / 100.f;
 		pln->movementPercentY = reader.read<uint32_t>() / 100.f;
+		pln->maxTileIdxX = ((flags & WwdPlaneFlags_XWrapping) ? INT32_MAX : pln->tilesOnAxisX);
+		pln->maxTileIdxY = ((flags & WwdPlaneFlags_YWrapping) ? INT32_MAX : pln->tilesOnAxisY);
+
 		reader.read(fillColor);
+		pln->fillColor = ColorF(colors[fillColor].r / 255.f, colors[fillColor].g / 255.f, colors[fillColor].b / 255.f);
+
 		imageSets.resize(reader.read<uint32_t>());
-		pln->objects.resize(reader.read<uint32_t>());
+		pln->_objects.resize(reader.read<uint32_t>()); // save objects' amount
+
 		reader.read(tilesOffset);
 		reader.read(imageSetsOffset);
 		reader.read(objectsOffset);
@@ -258,21 +272,14 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		// read image sets
 		reader.setIndex(imageSetsOffset);
 		for (string& s : imageSets) s = reader.ReadNullTerminatedString();
+		pln->tilesImages = AssetsManager::loadPlaneTilesImages(imageDirectoryPath + '/' + imageSets[0]);
+		imageSets.clear();
 
 		// read objects
 		reader.setIndex(objectsOffset);
 		pln->readPlaneObjects(reader);
 
 		reader.setIndex(currIdx);
-
-		// set plane properties. used when drawing the plane
-		pln->maxTileIdxX = ((flags & WwdPlaneFlags_XWrapping) ? INT32_MAX : pln->tilesOnAxisX);
-		pln->maxTileIdxY = ((flags & WwdPlaneFlags_YWrapping) ? INT32_MAX : pln->tilesOnAxisY);
-
-		pln->fillColor = ColorF(colors[fillColor].r / 255.f, colors[fillColor].g / 255.f, colors[fillColor].b / 255.f);
-		pln->tilesImages = AssetsManager::loadPlaneTilesImages(imageDirectoryPath + '/' + imageSets[0]);
-
-		imageSets.clear();
 
 		planes.push_back(pln);
 	}
@@ -281,12 +288,12 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 void WapWorld::readTileDescriptions(BufferReader& reader)
 {
 	reader.skip(8);
-	vector<WwdTileDescription> tilesDescList(reader.read<uint32_t>());
+	tilesDescription.resize(reader.read<uint32_t>());
 	reader.skip(20);
 
 	uint32_t width, height; // in pixels
 
-	for (WwdTileDescription& tileDesc : tilesDescList)
+	for (WwdTileDescription& tileDesc : tilesDescription)
 	{
 		reader.read(tileDesc.type);
 		reader.skip(4);
@@ -306,9 +313,9 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
 			reader.read(tileDesc.outsideAttrib);
 			reader.read(tileDesc.insideAttrib);
 			reader.read(tileDesc.rect);
-			if (tileDesc.rect.left   < 0 || TILE_SIZE < tileDesc.rect.left  ||
-				tileDesc.rect.top    < 0 || TILE_SIZE < tileDesc.rect.top   ||
-				tileDesc.rect.right  < 0 || TILE_SIZE < tileDesc.rect.right ||
+			if (tileDesc.rect.left < 0 || TILE_SIZE < tileDesc.rect.left ||
+				tileDesc.rect.top < 0 || TILE_SIZE < tileDesc.rect.top ||
+				tileDesc.rect.right < 0 || TILE_SIZE < tileDesc.rect.right ||
 				tileDesc.rect.bottom < 0 || TILE_SIZE < tileDesc.rect.bottom)
 				throw Exception("invalid rect");
 			break;
@@ -317,16 +324,4 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
 			throw Exception("invalid type");
 		}
 	}
-
-	// save only what we need...
-	tilesDescription[-1].type = WwdTileDescription::TileType_Empty;
-	for (LevelPlane* pln : planes)
-		if (pln->_isMainPlane)
-		{
-			for (const vector<int32_t>& vec : pln->tiles)
-				for (const int32_t& tileId : vec)
-					if (tilesDescription.count(tileId) == 0)
-						tilesDescription[tileId] = tilesDescList[tileId];
-			break;
-		}
 }

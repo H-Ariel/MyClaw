@@ -39,7 +39,6 @@ void GameMainApp::run()
 			{
 				cout << "load level " << i << endl;
 				auto wwd = AssetsManager::loadLevelWwdFile(i);
-				for (auto& p : wwd->planes) delete p; // do not forget free allocated memory
 				cout << endl;
 			}
 			catch (const Exception& e) {
@@ -52,7 +51,7 @@ void GameMainApp::run()
 	{
 		runApp = true;
 		//_pEngine = allocNewSharedPtr<MenuEngine>();
-		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(10);
+		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(1);
 		runEngine();
 	}
 }

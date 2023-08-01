@@ -15,10 +15,10 @@ public:
 	ActionPlane(WapWorld* wwd);
 	~ActionPlane();
 
-	void init() override;
-
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
+	void readPlaneObjects(BufferReader& reader) override;
+	void addObject(const WwdObject& obj) override;
 
 	// TODO: make non-static
 	static void addPlaneObject(BasePlaneObject* obj);
@@ -32,7 +32,7 @@ public:
 
 private:
 	void updatePosition();
-	void addObject(const WwdObject& obj);
+	
 	
 	enum class States : int8_t {
 		Play, // normal gameplay
@@ -42,7 +42,7 @@ private:
 	};
 
 	PhysicsManager* _physicsManager;
-	vector<BasePlaneObject*> _objects, _bossObjects;
+	vector<BasePlaneObject*> _bossObjects;
 	vector<PowderKeg*> _powderKegs;
 	vector<BaseEnemy*> _enemies;
 	vector<Projectile*> _projectiles;

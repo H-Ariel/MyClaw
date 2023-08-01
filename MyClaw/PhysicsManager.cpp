@@ -15,13 +15,12 @@
 const float PhysicsManager::myGRAVITY = GRAVITY;
 
 
-PhysicsManager::PhysicsManager(WapWorld* wwd)
+PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 {
-	const LevelPlane* plane = *find_if(wwd->planes.begin(), wwd->planes.end(), [](LevelPlane* p) { return p->isMainPlane(); });
-
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
-	Rectangle2D tileRc, originalTileRc;
+	WwdTileDescription tileDesc;
+	Rectangle2D tileRc;
 	uint32_t i, j;
 	float x1, x2, y1, y2;
 
@@ -58,7 +57,8 @@ PhysicsManager::PhysicsManager(WapWorld* wwd)
 	{
 		for (j = 0; j < plane->tilesOnAxisX; j++)
 		{
-			const WwdTileDescription& tileDesc = wwd->tilesDescription[plane->tiles[i][j]];
+			if (plane->tiles[i][j] == EMPTY_TILE) tileDesc = {};
+			else tileDesc = wwd->tilesDescription[plane->tiles[i][j]];
 
 			tileRc.left = (float)(j * TILE_SIZE);
 			tileRc.top = (float)(i * TILE_SIZE);

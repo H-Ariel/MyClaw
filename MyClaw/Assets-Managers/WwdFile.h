@@ -6,10 +6,14 @@
 #define TILE_SIZE 64 // width and height of tile in pixels
 
 
+class LevelPlane;
+
+
 struct WwdRect
 {
 	uint32_t left, top, right, bottom; // TODO: use int32_t ?
 };
+
 
 struct WwdObject
 {
@@ -121,6 +125,7 @@ struct WwdObject
 	string animation; // animation path or sound path
 };
 
+
 struct WwdTileDescription
 {
 	enum WwdTileTypeFlags
@@ -146,19 +151,18 @@ struct WwdTileDescription
 	WwdRect rect;
 };
 
-class LevelPlane;
 
 class WapWorld // in short: WWD
 {
 public:
 	WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber);
 
-	vector<LevelPlane*> planes; // we should delete them manually. TODO: shared_ptr
-	map<int32_t, WwdTileDescription> tilesDescription; // [id]=description
+	vector<shared_ptr<LevelPlane>> planes;
+	vector<WwdTileDescription> tilesDescription; // [id]=description
 	int32_t startX, startY;
 	const int levelNumber;
 
 private:
-	void readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath, uint32_t numOfPlanes);
+	void readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath, int numOfPlanes);
 	void readTileDescriptions(BufferReader& reader);
 };

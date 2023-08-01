@@ -9,11 +9,11 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	_mainPlanePosition(nullptr), _helpImage("/STATES/HELP/SCREENS/HELP.PCX")
 {
 	_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
-	for (LevelPlane* pln : _wwd->planes)
+	for (shared_ptr<LevelPlane>& pln : _wwd->planes)
 	{
 		if (pln->isMainPlane())
 			_mainPlanePosition = &pln->position;
-		_elementsList.push_back(pln);
+		_elementsList.push_back(pln.get());
 	}
 
 	if (_mainPlanePosition == nullptr) throw Exception("no main plane found");
@@ -86,8 +86,6 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 ClawLevelEngine::~ClawLevelEngine()
 {
 	delete _hud;
-	for (LevelPlane* p : _wwd->planes)
-		delete p;
 	AssetsManager::clearLevelAssets(_levelNumber);
 }
 
@@ -95,7 +93,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
 	BaseEngine::Logic(elapsedTime);
 
-	for (LevelPlane* p : _wwd->planes)
+	for (shared_ptr<LevelPlane>& p : _wwd->planes)
 		p->position = *_mainPlanePosition;
 
 	if (_state == State::Play)
@@ -155,8 +153,8 @@ void ClawLevelEngine::OnKeyUp(int key)
 	else // if (_state == State::Pause)
 	{
 		_elementsList.clear();
-		for (LevelPlane* p : _wwd->planes)
-			_elementsList.push_back(p);
+		for (shared_ptr<LevelPlane>& p : _wwd->planes)
+			_elementsList.push_back(p.get());
 		_elementsList.push_back(_hud);
 		WindowManager::setWindowOffset(_mainPlanePosition);
 		WindowManager::setBackgroundColor(_saveBgColor);

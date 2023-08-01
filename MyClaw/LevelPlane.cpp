@@ -8,8 +8,6 @@ LevelPlane::LevelPlane()
 {
 }
 
-void LevelPlane::init() {}
-
 void LevelPlane::Draw()
 {
 	shared_ptr<UIBaseImage> img;
@@ -38,13 +36,19 @@ void LevelPlane::Draw()
 			}
 		}
 	}
+
+	for (BasePlaneObject* obj : _objects)
+		obj->Draw();
 }
 
 void LevelPlane::readPlaneObjects(BufferReader& reader)
 {
+	WwdObject obj;
 	uint32_t nameLength, logicLength, imageSetLength, animationLength;
+	size_t objectsCount = _objects.size();
+	_objects.clear(); // in `addObject` we use `_objects.push_back`, and we don't want an endless vector
 
-	for (WwdObject& obj : objects)
+	while (objectsCount--)
 	{
 		reader.read(obj.id);
 		reader.read(nameLength);
@@ -103,7 +107,9 @@ void LevelPlane::readPlaneObjects(BufferReader& reader)
 		obj.logic = reader.ReadString(logicLength);
 		obj.imageSet = reader.ReadString(imageSetLength);
 		obj.animation = reader.ReadString(animationLength);
-	}
 
-	sort(objects.begin(), objects.end(), [](const WwdObject& a, const WwdObject& b) { return a.z < b.z; });
+		addObject(obj);
+	}
 }
+
+void LevelPlane::addObject(const WwdObject& obj) {}

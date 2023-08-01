@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Assets-Managers/WwdFile.h"
-#include "UIBaseImage.h"
+#include "BasePlaneObject.h"
 
 
 class LevelPlane : public UIBaseElement
@@ -9,17 +9,14 @@ class LevelPlane : public UIBaseElement
 public:
 	LevelPlane();
 
-	virtual void init(); // initialize after loading from WWD
-
 	void Draw() override;
-
+	virtual void readPlaneObjects(BufferReader& reader);
+	virtual void addObject(const WwdObject& obj); // called from `readPlaneObjects`
 	bool isMainPlane() const { return _isMainPlane; }
-
-	void readPlaneObjects(BufferReader& reader);
 
 protected:
 	vector<vector<int32_t>> tiles; // tiles[y][x] = id
-	vector<WwdObject> objects;
+	vector<BasePlaneObject*> _objects;
 	map<int32_t, shared_ptr<UIBaseImage>> tilesImages; // [id]=image
 	ColorF fillColor;
 	uint32_t tilesOnAxisX, tilesOnAxisY;
