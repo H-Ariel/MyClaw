@@ -197,8 +197,10 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	position.x += speed.x * elapsedTime;
 	position.y += speed.y * elapsedTime;
 
-	if (globalState == GlobalState::ParrotAttackClaw)
+	switch (globalState)
 	{
+	case GlobalState::ParrotAttackClaw:
+		// TODO: better code here
 		if (_Marrow->getSide() == Marrow::Side::Right)
 		{
 			if (position.y > _flyRect.bottom)
@@ -254,19 +256,18 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 			}
 		}
 
-
 		if (_hitsCounter == 3)
 		{
 			_hitsCounter = 0;
 			globalState = GlobalState::AddFloor;
 		}
-	}
-	else if (globalState == GlobalState::ClawAttackMarrow)
-	{
+		break;
+
+	case GlobalState::ClawAttackMarrow:
 		position = _initialPosition;
-	}
-	else if (globalState == GlobalState::ParrotTakeMarrow)
-	{
+		break;
+
+	case GlobalState::ParrotTakeMarrow:
 		_ani = _animations["FLY"];
 		_isAttack = false;
 		_isMirrored = _Marrow->isMirrored();
@@ -274,35 +275,23 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 		position.y -= 64;
 		if (_isMirrored) position.x -= 48;
 		else position.x += 48;
+		break;
+
+	default:
+		break;
 	}
 
-	if (_Marrow->getSide() == Marrow::Side::Right)
+	if (speed.x > 0 && _Marrow->getSide() == Marrow::Side::Left ||
+		speed.x < 0 && _Marrow->getSide() == Marrow::Side::Right)
 	{
-		if (speed.x < 0)
-		{
-			_ani = PARROT_ANIMATION_STRIKE;
-			_isAttack = true;
-		}
-		else
-		{
-			_ani = _animations["FLY"];
-			_isAttack = false;
-		}
+		_ani = PARROT_ANIMATION_STRIKE;
+		_isAttack = true;
 	}
-	else // if (marrowSise == MarrowSise::Left)
+	else
 	{
-		if (speed.x > 0)
-		{
-			_ani = PARROT_ANIMATION_STRIKE;
-			_isAttack = true;
-		}
-		else
-		{
-			_ani = _animations["FLY"];
-			_isAttack = false;
-		}
+		_ani = _animations["FLY"];
+		_isAttack = false;
 	}
-
 
 	if (globalState != GlobalState::ParrotTakeMarrow)
 		_isMirrored = speed.x < 0;
@@ -312,13 +301,9 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 pair<Rectangle2D, int> MarrowParrot::GetAttackRect() { return { GetRect(), _damage }; }
 bool MarrowParrot::checkForHurts()
 {
-	// when CC hurt parrot, it returns to Marrow
-
 	int health = _health; // save health value
 
-	// TODO: hurt only from CC attack (not weapons)
-	// i.e. if (checkForHurt(_player->GetAttackRect())) { ... }
-	if (_isAttack && BaseEnemy::checkForHurts())
+	if (_isAttack && checkForHurt(player->GetAttackRect()))
 	{
 		_hitsCounter += 1;
 		speed = { 0, -PARROT_SPEED };

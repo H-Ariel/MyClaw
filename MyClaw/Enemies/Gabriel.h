@@ -17,6 +17,7 @@ private:
 	bool _canThrowBombs, _canSendPirates;
 };
 
+
 class GabrielCannon : public BaseStaticPlaneObject
 {
 public:
@@ -27,6 +28,7 @@ private:
 	shared_ptr<Animation> _home, _rest, _rise, _horzfire, _vertfire;
 };
 
+
 class GabrielCannonSwitch : public BaseStaticPlaneObject
 {
 public:
@@ -36,6 +38,7 @@ public:
 private:
 	int32_t _switchCannonTime;
 };
+
 
 class GabrielCannonButton : public BaseStaticPlaneObject
 {

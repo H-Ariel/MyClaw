@@ -5,7 +5,6 @@
 #include "RedTailPirate.h"
 
 
-// TODO: move into classes
 static bool riseCannon = false;
 static bool cannonIsUp = false;
 static bool operateCannon = false;

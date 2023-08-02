@@ -10,14 +10,11 @@ public:
 	~Marrow();
 
 	void Logic(uint32_t elapsedTime) override;
-
 	pair<Rectangle2D, int> GetAttackRect() override;
-
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
 
 	enum class Side : int8_t { Right = 0, Left = 1 };
-
 	Side getSide() const { return side; }
 
 private:
@@ -27,15 +24,14 @@ private:
 	Side side;
 };
 
+
 class MarrowParrot : public BaseEnemy
 {
 public:
 	MarrowParrot(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
-	
 	pair<Rectangle2D, int> GetAttackRect() override;
-
 	void stopFalling(float collisionSize) override;
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
@@ -48,7 +44,6 @@ private:
 	const D2D1_POINT_2F _initialPosition;
 	int _hitsCounter;
 };
-
 
 
 class MarrowFloor : public BaseStaticPlaneObject
