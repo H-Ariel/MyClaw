@@ -8,7 +8,7 @@ BasePlaneObject::BasePlaneObject(const WwdObject& obj)
 	: UIBaseElement({ (float)obj.x, (float)obj.y }),
 	ZCoord(obj.z), removeObject(false), _ani(nullptr),
 	_isMirrored(obj.drawFlags & WwdObject::Mirror), // TODO: parse all flags
-	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)) {}
+	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)) {} // TODO: we know who is not visible, so we can remove this flag and ovveride Draw() function
 void BasePlaneObject::Draw()
 {
 	// TODO: some object need only `_ani->Draw();`, so we need create 2 functions...

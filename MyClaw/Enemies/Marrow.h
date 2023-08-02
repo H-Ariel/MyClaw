@@ -7,6 +7,7 @@ class Marrow : public BaseBoss
 {
 public:
 	Marrow(const WwdObject& obj);
+	~Marrow();
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -15,10 +16,15 @@ public:
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
 
+	enum class Side : int8_t { Right = 0, Left = 1 };
+
+	Side getSide() const { return side; }
+
 private:
 	void makeAttack() override;
 	bool checkForHurts() override;
 
+	Side side;
 };
 
 class MarrowParrot : public BaseEnemy

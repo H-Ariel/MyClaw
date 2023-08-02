@@ -4,54 +4,43 @@
 #include "../ActionPlane.h"
 
 
-// TODO: continue Marrow logic
+#define MARROW_ANIMATION_BLOCK			_animations["BLOCK"]
+#define MARROW_ANIMATION_HOME			_animations["HOME"] // just stand
+#define MARROW_ANIMATION_HAND_UP		_animations["IDLE1"] // raise his hand up
+#define MARROW_ANIMATION_WAIT_HAND_UP	_animations["IDLE2"] // wait with hand up (eyes open)
+#define MARROW_ANIMATION_HAND_DOWN		_animations["IDLE4"] // get hand down back
+
+#define PARROT_ANIMATION_STRIKE _animations["STRIKE1"]
+#define PARROT_SPEED 0.4f
 
 
 enum class GlobalState : int8_t
 {
 	ParrotAttackClaw = 0,
-	ParrotReturnToMarrow = 1, AddFloor = 1,
-	ClawAttackMarrow = 2, ParrotIdle = 2,
-	ParrotTakeMarrow = 3, RemoveFloor = 3
-};
-
-enum class MarrowSise : int8_t
-{
-	Left = 0,
-	Right = 1
+	AddFloor = 1,
+	ClawAttackMarrow = 2,
+	ParrotTakeMarrow = 3
 };
 
 
+static Marrow* _Marrow = nullptr;
+static int8_t floorCounter = 0; // use to sync floors
 static GlobalState globalState = GlobalState::ParrotAttackClaw;
-static int floorCounter = 0; // use to sync floors
-static bool firstFloorsRemove = true;
-static MarrowSise marrowSise = MarrowSise::Left;
+static bool firstFloorsRemove = true; // flag to say if this is the first time we remove floors (when CC enter to boss area)
 
 
-#define MARROW_ANIMATION_BLOCK			_animations["BLOCK"]
-#define MARROW_ANIMATION_HOME			_animations["HOME"]
-#define MARROW_ANIMATION_HAND_UP		_animations["IDLE1"]
-#define MARROW_ANIMATION_WAIT_HAND_UP	_animations["IDLE2"]
-#define MARROW_ANIMATION_HAND_DOWN		_animations["IDLE4"]
-
-/*
-HOME - just stand
-IDLE1 - raise his hand up
-IDLE2 - wait with hand up (eyes open)
-IDLE3 - wait with hand up (eyes closed)
-IDLE4 - get hand down back
-*/
 
 Marrow::Marrow(const WwdObject& obj)
-	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW",
-		"KILLFALL", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS")
+	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS"),
+	side(Side::Right)
 {
 	speed.x = 0;
 	_health = 100;
 	_ani = MARROW_ANIMATION_HOME;
 	_isMirrored = true;
+	_Marrow = this;
 }
-
+Marrow::~Marrow() { _Marrow = nullptr; }
 void Marrow::Logic(uint32_t elapsedTime)
 {
 	if (!PreLogic(elapsedTime)) return;
@@ -71,27 +60,24 @@ void Marrow::Logic(uint32_t elapsedTime)
 
 	_blockClaw = (_hitsCuonter == 1 && !_blockClaw);
 
-	if (globalState == GlobalState::ClawAttackMarrow)
+	switch (globalState)
 	{
+	case GlobalState::ClawAttackMarrow:
 		if (_hitsCuonter == 5)
 		{
 			_hitsCuonter = 0;
-
-			// TODO: open floor and move side (using parrot)
-
-			globalState = GlobalState::RemoveFloor;
-
+			globalState = GlobalState::ParrotTakeMarrow;
 			_ani = MARROW_ANIMATION_HAND_UP;
 			_ani->reset();
 			_ani->loopAni = false;
 		}
-	}
-	else if (globalState == GlobalState::ParrotTakeMarrow)
-	{
+		break;
+
+	case GlobalState::ParrotTakeMarrow:
 		if (_ani == MARROW_ANIMATION_HAND_UP && _ani->isFinishAnimation())
 		{
-			speed.x = marrowSise == MarrowSise::Left ? -0.4f : 0.4f;
-			_isMirrored = marrowSise != MarrowSise::Left ? false : true;
+			_isMirrored = side == Marrow::Side::Right;
+			speed.x = _isMirrored ? -0.4f : 0.4f;
 			position.y -= 128;
 			_ani = MARROW_ANIMATION_WAIT_HAND_UP;
 			_ani->reset();
@@ -100,33 +86,36 @@ void Marrow::Logic(uint32_t elapsedTime)
 		else if (_ani == MARROW_ANIMATION_WAIT_HAND_UP && speed.x == 0) // Marrow stops move
 		{
 			position.y += 128;
-			marrowSise = marrowSise == MarrowSise::Left ? MarrowSise::Right : MarrowSise::Left;
-			_isMirrored = marrowSise != MarrowSise::Left ? false : true;
-			globalState = GlobalState::AddFloor;
+			_isMirrored = side == Marrow::Side::Right;
+			side = _isMirrored ? Marrow::Side::Left : Marrow::Side::Right;
+			globalState = GlobalState::ParrotAttackClaw;
 			_ani = MARROW_ANIMATION_HOME;
 			_ani->reset();
 		}
 
 		position.x += speed.x * elapsedTime;
-	}
-	
 
-	if (!_isAttack)
-	{
-		if (globalState == GlobalState::ClawAttackMarrow)
-			makeAttack();
+		break;
+
+	default:
+		break;
 	}
-	else
+
+
+	if (_isAttack)
 	{
 		if (_ani->isFinishAnimation())
 		{
 			_ani = MARROW_ANIMATION_HOME;
 			_ani->reset();
 			_isAttack = false;
-		//	_forward = false;
 		}
 	}
-
+	else
+	{
+		if (globalState == GlobalState::ClawAttackMarrow)
+			makeAttack();
+	}
 
 
 	PostLogic(elapsedTime);
@@ -141,12 +130,6 @@ void Marrow::makeAttack()
 		_isMirrored = player->position.x < position.x;
 	}
 }
-
-pair<Rectangle2D, int> Marrow::GetAttackRect()
-{
-	return {};
-}
-
 bool Marrow::checkForHurts()
 {
 	if (globalState != GlobalState::ClawAttackMarrow)
@@ -182,7 +165,6 @@ bool Marrow::checkForHurts()
 
 	return false;
 }
-
 void Marrow::stopMovingLeft(float collisionSize)
 {
 	BaseBoss::stopMovingLeft(collisionSize);
@@ -195,106 +177,139 @@ void Marrow::stopMovingRight(float collisionSize)
 	speed = {};
 	_isMirrored = false;
 }
+pair<Rectangle2D, int> Marrow::GetAttackRect() { return {}; }
 
-
-
-#define PARROT_ANIMATION_STRIKE _animations["STRIKE1"]
-#define MARROW_PARROT_SPEED 0.3f
 
 MarrowParrot::MarrowParrot(const WwdObject& obj)
 	: BaseEnemy(obj, 3, 10, "FLY", "HIT", "HIT", "KILLFALL", "STRIKE1", "",
-		"", "", "", MARROW_PARROT_SPEED, true), _hitsCounter(0), _initialPosition({}),
+		"", "", "", PARROT_SPEED, true), _hitsCounter(0), _initialPosition({}),
 	_flyRect((float)obj.minX, (float)obj.minY - 32.f, (float)obj.maxX, (float)obj.maxY - 32.f)
 {
 	myMemCpy(_initialPosition, position);
 	_isMirrored = true;
-	speed = { 0, MARROW_PARROT_SPEED };
+	speed = { 0, PARROT_SPEED };
 }
-
 void MarrowParrot::Logic(uint32_t elapsedTime)
 {
 	if (!PreLogic(elapsedTime)) return;
+	if (!_Marrow) { PostLogic(elapsedTime); return; }
 
 	position.x += speed.x * elapsedTime;
 	position.y += speed.y * elapsedTime;
 
-	if (globalState == GlobalState::ParrotAttackClaw ||
-		(globalState == GlobalState::ParrotReturnToMarrow &&
-			position.x != _initialPosition.x &&
-			abs(position.y - _initialPosition.y) > 5))
+	if (globalState == GlobalState::ParrotAttackClaw)
 	{
-		if (position.y > _flyRect.bottom)
+		if (_Marrow->getSide() == Marrow::Side::Right)
 		{
-			position.y = _flyRect.bottom;
-			speed = { -MARROW_PARROT_SPEED, 0 };
+			if (position.y > _flyRect.bottom)
+			{
+				position.y = _flyRect.bottom;
+				speed = { -PARROT_SPEED, 0 };
+			}
+			else if (position.y < _flyRect.top)
+			{
+				position.y = _flyRect.top;
+				speed = { PARROT_SPEED, 0 };
+			}
+			else if (position.x < _flyRect.left)
+			{
+				position.x = _flyRect.left;
+				speed = { 0, -PARROT_SPEED };
+			}
+			else if (position.x > _flyRect.right)
+			{
+				position.x = _flyRect.right;
+				speed = { 0, PARROT_SPEED };
+			}
+			else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
+			{
+				speed = { 0, -PARROT_SPEED };
+			}
 		}
-		else if (position.y < _flyRect.top)
+		else // if (marrowSise == MarrowSise::Left)
 		{
-			position.y = _flyRect.top;
-			speed = { MARROW_PARROT_SPEED, 0 };
-		}
-		else if (position.x < _flyRect.left)
-		{
-			position.x = _flyRect.left;
-			speed = { 0, -MARROW_PARROT_SPEED };
-		}
-		else if (position.x > _flyRect.right)
-		{
-			position.x = _flyRect.right;
-			speed = { 0, MARROW_PARROT_SPEED };
-		}
-		else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
-		{
-			speed = { 0, -MARROW_PARROT_SPEED };
+			if (position.y > _flyRect.bottom)
+			{
+				position.y = _flyRect.bottom;
+				speed = { PARROT_SPEED, 0 };
+			}
+			else if (position.y < _flyRect.top)
+			{
+				position.y = _flyRect.top;
+				speed = { -PARROT_SPEED, 0 };
+			}
+			else if (position.x < _flyRect.left)
+			{
+				position.x = _flyRect.left;
+				speed = { 0, PARROT_SPEED };
+			}
+			else if (position.x > _flyRect.right)
+			{
+				position.x = _flyRect.right;
+				speed = { 0, -PARROT_SPEED };
+			}
+			else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
+			{
+				speed = { 0, PARROT_SPEED };
+			}
 		}
 
 
 		if (_hitsCounter == 3)
 		{
 			_hitsCounter = 0;
-			// TODO: return to initial position
-
 			globalState = GlobalState::AddFloor;
 		}
 	}
 	else if (globalState == GlobalState::ClawAttackMarrow)
 	{
-		position = this->_initialPosition;
+		position = _initialPosition;
 	}
-
-	if (speed.x < 0)
-	{
-		_ani = PARROT_ANIMATION_STRIKE;
-		_isAttack = true;
-	}
-	else
+	else if (globalState == GlobalState::ParrotTakeMarrow)
 	{
 		_ani = _animations["FLY"];
 		_isAttack = false;
+		_isMirrored = _Marrow->isMirrored();
+		position = _Marrow->position;
+		position.y -= 64;
+		if (_isMirrored) position.x -= 48;
+		else position.x += 48;
 	}
-	
-	
-	
-	
-	
-	
 
-	_isMirrored = speed.x < 0;
+	if (_Marrow->getSide() == Marrow::Side::Right)
+	{
+		if (speed.x < 0)
+		{
+			_ani = PARROT_ANIMATION_STRIKE;
+			_isAttack = true;
+		}
+		else
+		{
+			_ani = _animations["FLY"];
+			_isAttack = false;
+		}
+	}
+	else // if (marrowSise == MarrowSise::Left)
+	{
+		if (speed.x > 0)
+		{
+			_ani = PARROT_ANIMATION_STRIKE;
+			_isAttack = true;
+		}
+		else
+		{
+			_ani = _animations["FLY"];
+			_isAttack = false;
+		}
+	}
+
+
+	if (globalState != GlobalState::ParrotTakeMarrow)
+		_isMirrored = speed.x < 0;
 
 	PostLogic(elapsedTime);
 }
-
-pair<Rectangle2D, int> MarrowParrot::GetAttackRect()
-{
-	return { GetRect(), _damage };
-}
-
-// the Parrot is flying so if it touch ground we ignore it
-void MarrowParrot::stopFalling(float collisionSize) {}
-void MarrowParrot::stopMovingLeft(float collisionSize) {}
-void MarrowParrot::stopMovingRight(float collisionSize) {}
-void MarrowParrot::bounceTop() {}
-
+pair<Rectangle2D, int> MarrowParrot::GetAttackRect() { return { GetRect(), _damage }; }
 bool MarrowParrot::checkForHurts()
 {
 	// when CC hurt parrot, it returns to Marrow
@@ -306,7 +321,7 @@ bool MarrowParrot::checkForHurts()
 	if (_isAttack && BaseEnemy::checkForHurts())
 	{
 		_hitsCounter += 1;
-		speed = { 0, -MARROW_PARROT_SPEED };
+		speed = { 0, -PARROT_SPEED };
 		_ani = _animations["HIT"];
 		_ani->reset();
 	}
@@ -317,9 +332,11 @@ bool MarrowParrot::checkForHurts()
 
 	return false;
 }
-
-
-
+// the Parrot is flying so if it touch ground we ignore it
+void MarrowParrot::stopFalling(float collisionSize) {}
+void MarrowParrot::stopMovingLeft(float collisionSize) {}
+void MarrowParrot::stopMovingRight(float collisionSize) {}
+void MarrowParrot::bounceTop() {}
 
 
 MarrowFloor::MarrowFloor(const WwdObject& obj)
@@ -329,11 +346,9 @@ MarrowFloor::MarrowFloor(const WwdObject& obj)
 {
 	_ani = AssetsManager::createAnimationFromFromPidImage("LEVEL10/IMAGES/TRAPELEVATOR/001.PID");
 }
-
 void MarrowFloor::Logic(uint32_t elapsedTime)
 {
 	tryCatchPlayer();
-
 
 	if (globalState == GlobalState::AddFloor)
 	{
@@ -351,12 +366,12 @@ void MarrowFloor::Logic(uint32_t elapsedTime)
 
 		if (floorCounter == 2)
 		{
-			// floors finish their job
+			// floors finished their job
 			floorCounter = 0;
 			globalState = GlobalState::ClawAttackMarrow;
 		}
 	}
-	else if (globalState == GlobalState::RemoveFloor || firstFloorsRemove)
+	else if (globalState == GlobalState::ParrotTakeMarrow || firstFloorsRemove) // when parrot take Marrow, floors remove
 	{
 		position.x += _speedX * elapsedTime;
 		if (position.x < _minX)
@@ -376,9 +391,7 @@ void MarrowFloor::Logic(uint32_t elapsedTime)
 			firstFloorsRemove = false;
 		}
 	}
-	
 }
-
 Rectangle2D MarrowFloor::GetRect()
 {
 	return BasePlaneObject::GetRect();

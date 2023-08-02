@@ -71,8 +71,7 @@ ActionPlane::ActionPlane(WapWorld* wwd)
 	: _state(States::Play), _deathAniWait(false), _wwd(wwd), _needSort(true),
 	_holeRadius(0), _physicsManager(nullptr), _planeSize({}), _isInBoss(false)
 {
-	if (_instance != nullptr)
-		throw Exception("ActionPlane already exists");
+	//if (_instance != nullptr) throw Exception("ActionPlane already exists");
 	_instance = this;
 }
 ActionPlane::~ActionPlane()
