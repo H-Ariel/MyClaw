@@ -23,7 +23,7 @@ void Stalactite::Logic(uint32_t elapsedTime)
 	if (speed.y == 0)
 	{
 		if (_activityArea.intersects(player->GetRect()))
-			speed.y = 0.2f;
+			speed.y = 0.25f;
 	}
 	else
 	{

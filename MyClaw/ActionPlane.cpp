@@ -48,10 +48,7 @@
 #define RECT_SPEED			0.5f // speed of the rect that shows when CC is died
 #define CC_FALLDEATH_SPEED	0.7f // speed of CC when he falls out the window
 
-#define MIN_OFFSET_X 0
-#define MIN_OFFSET_Y 0
-#define MAX_OFFSET_X (_planeSize.width - wndSize.width)
-#define MAX_OFFSET_Y (_planeSize.height - wndSize.height)
+#define SHAKE_TIME 3000 // time of shaking screen (ms)
 
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 #define player BasePlaneObject::player
@@ -69,8 +66,8 @@
 ActionPlane* ActionPlane::_instance = nullptr;
 
 ActionPlane::ActionPlane(WapWorld* wwd)
-	: _state(States::Play), _deathAniWait(false), _wwd(wwd), _needSort(true),
-	_holeRadius(0), _physicsManager(nullptr), _planeSize({}), _isInBoss(false)
+	: _planeSize({}), _physicsManager(nullptr), _wwd(wwd), _shakeTime(0), _holeRadius(0)
+	, _deathAniWait(false), _needSort(true), _isInBoss(false), _state(States::Play)
 {
 	//if (_instance != nullptr) throw Exception("ActionPlane already exists");
 	_instance = this;
@@ -156,6 +153,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		_physicsManager->checkCollides(player, [&] { player->loseLife(); });
 	}
 
+	if (_shakeTime > 0)
+		_shakeTime -= elapsedTime;
 	updatePosition();
 
 	if (_needSort)
@@ -207,6 +206,17 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	}
 
 	AssetsManager::callLogics(elapsedTime);
+
+	const Rectangle2D playerRect = player->GetRect();
+	for (auto i = _shakeRects.begin(); i != _shakeRects.end(); i++)
+	{
+		if (playerRect.intersects(*i))
+		{
+			_shakeTime = SHAKE_TIME;
+			_shakeRects.erase(i);
+			break;
+		}
+	}
 }
 void ActionPlane::Draw()
 {
@@ -458,6 +468,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_objects.push_back(p);
 		_projectiles.push_back(p);
 	}
+	else if (obj.logic == "Shake")
+	{
+		_shakeRects.push_back(Rectangle2D((float)obj.attackRect.left, (float)obj.attackRect.top,
+			(float)obj.attackRect.right, (float)obj.attackRect.bottom));
+	}
 #endif
 	else if (obj.logic == "Raux")
 	{
@@ -541,8 +556,19 @@ void ActionPlane::updatePosition()
 	position.x = player->position.x - wndSize.width / 2.0f;
 	position.y = player->position.y - wndSize.height / 2.0f;
 
-	if (position.x < MIN_OFFSET_X) position.x = MIN_OFFSET_X;
-	if (position.x > MAX_OFFSET_X) position.x = MAX_OFFSET_X;
-	if (position.y < MIN_OFFSET_Y) position.y = MIN_OFFSET_Y;
-	if (position.y > MAX_OFFSET_Y) position.y = MAX_OFFSET_Y;
+	float maxOffsetX = _planeSize.width - wndSize.width;
+	float maxOffsetY = _planeSize.height - wndSize.height;
+
+	if (position.x < 0) position.x = 0;
+	if (position.y < 0) position.y = 0;
+	if (position.x > maxOffsetX) position.x = maxOffsetX;
+	if (position.y > maxOffsetY) position.y = maxOffsetY;
+
+	if (_shakeTime > 0)
+	{
+		// to shake the screen we just move it a little bit
+		const float shakeDelta = 5;
+		if (_shakeTime / 75 % 2) { position.x -= shakeDelta; position.y -= shakeDelta; }
+		else { position.x += shakeDelta; position.y += shakeDelta; }
+	}
 }
