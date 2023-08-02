@@ -213,6 +213,7 @@
     <ClCompile Include="Objects\Rope.cpp" />
     <ClCompile Include="Objects\SoundTrigger.cpp" />
     <ClCompile Include="Objects\SpringBoard.cpp" />
+    <ClCompile Include="objects\Stalactite.cpp" />
     <ClCompile Include="Objects\Statue.cpp" />
     <ClCompile Include="Objects\TProjectilesShooter.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
@@ -289,6 +290,7 @@
     <ClInclude Include="Objects\Rope.h" />
     <ClInclude Include="Objects\SoundTrigger.h" />
     <ClInclude Include="Objects\SpringBoard.h" />
+    <ClInclude Include="objects\Stalactite.h" />
     <ClInclude Include="Objects\Statue.h" />
     <ClInclude Include="Objects\TProjectilesShooter.h" />
     <ClInclude Include="PhysicsManager.h" />

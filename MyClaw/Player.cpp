@@ -2,7 +2,7 @@
 #include "Assets-Managers/AssetsManager.h"
 #include "ActionPlane.h"
 #include "Objects/Rope.h"
-#include "Objects/Projectile.h"
+#include "Objects/Stalactite.h"
 #include "BaseEnemy.h"
 
 
@@ -803,6 +803,14 @@ bool Player::checkForHurts()
 			{
 				_health -= p->getDamage();
 				p->removeObject = true;
+				return true;
+			}
+		}
+		else if (isinstance<Stalactite>(p))
+		{
+			if (_saveCurrRect.intersects(p->GetRect()))
+			{
+				_health -= p->getDamage();
 				return true;
 			}
 		}

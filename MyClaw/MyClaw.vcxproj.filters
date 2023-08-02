@@ -244,6 +244,9 @@
     <ClCompile Include="Assets-Managers\XmiFile.cpp">
       <Filter>Assets-Managers</Filter>
     </ClCompile>
+    <ClCompile Include="objects\Stalactite.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -467,6 +470,9 @@
     </ClInclude>
     <ClInclude Include="Assets-Managers\WwdFile.h">
       <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\Stalactite.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

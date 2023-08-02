@@ -4,10 +4,14 @@
 #include "../ActionPlane.h"
 
 
+// TODO: split this file into multiple files (?)
+
+
 Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet)
 	: BaseDynamicPlaneObject(obj), _damage(obj.damage), _timeLeft(3000)
 {
-	if (endsWith(aniDirPath, ".ANI"))
+	if (aniDirPath.empty()) return;
+	else if (endsWith(aniDirPath, ".ANI"))
 		_ani = AssetsManager::loadCopyAnimation(aniDirPath, imageSet);
 	else if (contains(aniDirPath, "SIREN"))
 		_ani = AssetsManager::createCopyAnimationFromDirectory(aniDirPath, 100, false);
@@ -21,7 +25,7 @@ Projectile::Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F spee
 	: BaseDynamicPlaneObject({}), _damage(damage), _timeLeft(3000)
 {
 	_ani = ani;
-	speed = speed;
+	this->speed = speed;
 	position = initialPosition;
 }
 void Projectile::Logic(uint32_t elapsedTime)

@@ -103,7 +103,7 @@ struct WwdObject
 	WwdRect hitRect;
 	WwdRect attackRect;
 	WwdRect clipRect;
-	WwdRect userRect1, userRect2; // todo: change to `int32_t additionalTreasures[8];`
+	WwdRect userRect1, userRect2;
 	int32_t userValue1, userValue2, userValue3, userValue4, userValue5, userValue6, userValue7, userValue8;
 	int32_t minX, minY;
 	int32_t maxX, maxY;

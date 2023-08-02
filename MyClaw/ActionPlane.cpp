@@ -21,6 +21,7 @@
 #include "Objects/FloorSpike.h"
 #include "Objects/GooVent.h"
 #include "Objects/Laser.h"
+#include "Objects/Stalactite.h"
 #include "Enemies/Officer.h"
 #include "Enemies/Soldier.h"
 #include "Enemies/Rat.h"
@@ -61,7 +62,7 @@
 
 
 //#undef LOW_DETAILS
-#define USE_ENEMIES
+//#define USE_ENEMIES
 //#define USE_OBSTACLES
 
 
@@ -450,6 +451,12 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "Laser")
 	{
 		ADD_DAMAGE_OBJECT(Laser(obj));
+	}
+	else if (obj.logic == "Stalactite")
+	{
+		Stalactite* p = DBG_NEW Stalactite(obj);
+		_objects.push_back(p);
+		_projectiles.push_back(p);
 	}
 #endif
 	else if (obj.logic == "Raux")
