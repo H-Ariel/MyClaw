@@ -112,6 +112,13 @@ map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const 
 	return images;
 }
 
+string AssetsManager::getCreditsText()
+{
+	const RezFile* file = instance->_rezArchive->getFile("STATES/CREDITS/CREDITS.TXT");
+	vector<uint8_t> data = file->getData();
+	return string((char*)data.data(), data.size());
+}
+
 shared_ptr<MidiPlayer> AssetsManager::getMidiPlayer(const string& xmiFilePath)
 {
 	return allocNewSharedPtr<MidiPlayer>(instance->_rezArchive->getFileData(xmiFilePath));

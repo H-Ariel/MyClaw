@@ -30,6 +30,7 @@ GameMainApp::~GameMainApp()
 
 void GameMainApp::run()
 {
+#ifdef _DEBUG
 	if (0) // TODO: delete this `if` block
 	{
 		// try load all levels
@@ -50,10 +51,14 @@ void GameMainApp::run()
 	else
 	{
 		runApp = true;
-		//_pEngine = allocNewSharedPtr<MenuEngine>();
-		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(12);
+		_pEngine = allocNewSharedPtr<MenuEngine>();
+		//_pEngine = allocNewSharedPtr<LevelLoadingEngine>(12);
 		runEngine();
 	}
+#else
+	_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
+	runEngine();
+#endif
 }
 
 void GameMainApp::runEngine()

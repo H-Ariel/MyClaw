@@ -1,6 +1,7 @@
 #pragma once
 
 #include "framework.h"
+#include "UITextElement.h"
 
 
 class WindowManager
@@ -29,6 +30,9 @@ public:
 	static void fillRect(D2D1_RECT_F dst, ColorF color);
 	static void drawCircle(D2D1_POINT_2F center, float radius, ColorF color, float width = 1);
 	static void drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirrored);
+	
+	static void drawText(wstring text, FontData font, D2D1_RECT_F layoutRect, ColorF color);
+
 
 	static ID2D1Bitmap* createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height);
 
@@ -44,9 +48,12 @@ private:
 
 	static HWND _hWnd;
 	static ID2D1Factory* _d2dFactory;
+	static IDWriteFactory* _dWriteFactory;
 	static ID2D1HwndRenderTarget* _renderTarget;
 	static IWICImagingFactory* _wicImagingFactory;
 	static const D2D1_POINT_2F* _windowOffset;
 	static ColorF _backgroundColor;
 	static D2D1_SIZE_F realSize;
+
+	friend class CreditsEngine; // TODO: remove this and write a proper interface
 };

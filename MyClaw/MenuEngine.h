@@ -30,12 +30,15 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 protected:
+	void backToMenu();
+
 	static stack<const HierarchicalMenu*> _menusStack;
 	static const HierarchicalMenu* _currMenu;
 
-	MenuBackgroundImage* _bgImg;
 	shared_ptr<Animation> _cursor;
+	MenuBackgroundImage* _bgImg;
 };
+
 
 class LevelLoadingEngine : public MenuEngine
 {
@@ -48,6 +51,7 @@ private:
 	const int _lvlNo;
 	bool _isDrawn;
 };
+
 
 class LevelEndEngine : public MenuEngine
 {
@@ -72,4 +76,20 @@ private:
 	map<Item::Type, uint32_t> _collectedTreasures;
 	const int _lvlNum;
 	int8_t _state;
+};
+
+
+class OpeningScreenEngine : public MenuEngine
+{
+public:
+	OpeningScreenEngine();
+	void Logic(uint32_t elapsedTime) override;
+	void OnKeyUp(int key) override;
+	void OnMouseButtonUp(MouseButtons btn) override;
+
+private:
+	void continueToMenu();
+
+	uint32_t _wavId;
+	int _totalTime;
 };

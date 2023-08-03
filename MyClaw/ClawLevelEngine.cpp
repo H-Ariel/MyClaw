@@ -21,6 +21,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	_elementsList.push_back(_hud = DBG_NEW LevelHUD(*_mainPlanePosition));
 	WindowManager::setWindowOffset(_mainPlanePosition);
 
+#ifdef _DEBUG
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL
@@ -85,6 +86,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 //	if (levelNumber == 12) BasePlaneObject::player->position = { 11454, 3159 };
 	if (levelNumber == 12) BasePlaneObject::player->position = { 5839, 3608 };
 //	if (levelNumber == 13) BasePlaneObject::player->position = { 18159, 2543 };
+#endif
 }
 ClawLevelEngine::~ClawLevelEngine()
 {

@@ -19,7 +19,6 @@ void MenuBackgroundImage::Logic(uint32_t)
 	// change image size according to window size:
 
 	D2D1_SIZE_F wndSz = WindowManager::getRealSize();
-	wndSz.height -= 40; // the title
 
 	if (wndSz.width > wndSz.height)
 	{
@@ -32,7 +31,7 @@ void MenuBackgroundImage::Logic(uint32_t)
 		size.height = size.width / _imgRatio;
 	}
 
-	position.x = wndSz.width / 2 - 5;
+	position.x = wndSz.width / 2;
 	position.y = wndSz.height / 2;
 }
 
@@ -43,13 +42,51 @@ public:
 	HelpEngine() : MenuEngine(false, "STATES/HELP/SCREENS/HELP.PCX") {}
 	void OnKeyUp(int key) override { backToMenu(); }
 	void OnMouseButtonUp(MouseButtons btn) override { backToMenu(); }
-private:
-	void backToMenu()
+};
+
+
+class CreditsEngine : public MenuEngine
+{
+public:
+	CreditsEngine()
+		: MenuEngine(false, "STATES/CREDITS/SCREENS/CREDITS.PCX")
 	{
-		_currMenu = _menusStack.top();
-		_menusStack.pop();
-		changeEngine<MenuEngine>();
+		string creditsText = AssetsManager::getCreditsText();
+		_creditsTextElement.text += wstring(creditsText.begin(), creditsText.end());
+		_creditsTextElement.fgcolor = ColorF::White;
+		_creditsTextElement.bgcolor.a = 0;// = ColorF::Black;
+		_elementsList.push_back(&_creditsTextElement);
+
+		_yOffset = 9800;
 	}
+
+	~CreditsEngine()
+	{
+		_elementsList.pop_back(); // remove the text element
+	}
+
+	void Logic(uint32_t elapsedTime) override 
+	{
+		MenuEngine::Logic(elapsedTime);
+
+		D2D1_SIZE_F wndSz = WindowManager::getRealSize();
+		
+		_yOffset -= 0.07f * elapsedTime;
+		if (_yOffset < -9500)
+			backToMenu();
+
+		_creditsTextElement.size = _bgImg->size;
+		_creditsTextElement.position.x = _bgImg->position.x;
+		_creditsTextElement.position.y = _bgImg->size.height / 2 + _yOffset;
+		_creditsTextElement.font.size = _bgImg->size.height / 30;
+	}
+	void OnKeyUp(int key) override { backToMenu(); }
+	void OnMouseButtonUp(MouseButtons btn) override { backToMenu(); }
+	void OnResize() override { backToMenu(); }
+
+private:
+	UITextElement _creditsTextElement;
+	float _yOffset;
 };
 
 class MenuItem : virtual UIBaseButton, virtual UIBaseImage
@@ -100,6 +137,7 @@ struct HierarchicalMenu
 		MenuOut, // back to previous menu
 		ExitApp,
 		Help,
+		Credits,
 		OpenLevel, // `OpenLevel | (<lvlNo> << 4)`
 
 		OpenLevel_1 = OpenLevel | (0x10),
@@ -163,7 +201,7 @@ HierarchicalMenu HierarchicalMenu::MainMenu("", MenuIn, 0, 0, {
 	HierarchicalMenu(MENU_ROOT "003_MULTIPLAYER.PCX", NotImpleted, 0, 0.03f),
 	HierarchicalMenu(MENU_ROOT "005_REPLAYMOVIES.PCX", NotImpleted, 0, 0.11f),
 	HierarchicalMenu(MENU_ROOT "008_OPTIONS.PCX", NotImpleted, 0, 0.19f),
-	HierarchicalMenu(MENU_ROOT "015_CREDITS.PCX", NotImpleted, 0, 0.27f),
+	HierarchicalMenu(MENU_ROOT "015_CREDITS.PCX", Credits, 0, 0.27f),
 	HierarchicalMenu(MENU_ROOT "010_HELP.PCX", Help, 0, 0.35f),
 	HierarchicalMenu(MENU_ROOT "012_QUIT.PCX", MenuIn, 0, 0.43f, {
 		HierarchicalMenu(MENU_ROOT "QUIT/005_AREYOUSURE.PCX", Nop, 0, 0),
@@ -200,7 +238,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 		AssetsManager::loadPidPalette("LEVEL1/PALETTES/MAIN.PAL");
 		_cursor = AssetsManager::loadAnimation("STATES/MENU/ANIS/CURSOR.ANI");
 	}
-	
+
 	function<void(MouseButtons)> onClick;
 
 	for (const HierarchicalMenu& m : _currMenu->subMenus)
@@ -220,6 +258,14 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 				_menusStack.push(_currMenu);
 				_currMenu = &m;
 				changeEngine<HelpEngine>();
+			};
+			break;
+
+		case HierarchicalMenu::Credits:
+			onClick = [&](MouseButtons) {
+				_menusStack.push(_currMenu);
+				_currMenu = &m;
+				changeEngine<CreditsEngine>();
 			};
 			break;
 
@@ -271,14 +317,18 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 }
 MenuEngine::~MenuEngine() {
 	if (_cursor) _elementsList.pop_back(); // remove the cursor
-	if (_bgImg) { _elementsList.erase(_elementsList.begin()); delete _bgImg; }// remove the bg image
 	for (UIBaseElement* i : _elementsList) delete i;
 }
 void MenuEngine::Logic(uint32_t elapsedTime) {
 	if (_cursor) _cursor->position = { mousePosition.x + 16.f, mousePosition.y + 17.f };
 	BaseEngine::Logic(elapsedTime);
 }
-
+void MenuEngine::backToMenu()
+{
+	_currMenu = _menusStack.top();
+	_menusStack.pop();
+	changeEngine<MenuEngine>();
+}
 
 LevelLoadingEngine::LevelLoadingEngine(int lvlNo) :
 	MenuEngine(false, "LEVEL" + to_string(lvlNo) + "/SCREENS/LOADING.PCX"),
@@ -436,6 +486,11 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 {
 	MenuEngine::Logic(elapsedTime);
 
+	uint8_t digits[3] = {}; // we have only 3 digits to display
+	MenuItem* item;
+	float x, y;
+	int i, j;
+
 	switch (_state)
 	{
 	case DrawScore:
@@ -445,12 +500,6 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 		_state += 1;
 
 		// draw all treasures and their points
-
-		uint8_t digits[3]; // we have only 3 digits to display
-		MenuItem* item;
-		float x, y;
-		int i, j;
-
 		for (i = 0; i < NUM_OF_TREASURES; i++)
 		{
 			x = -0.18f;
@@ -483,8 +532,6 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 		playNextLevel();
 		break;
 
-	case Start:
-	case Wait:
 	default:
 		// do nothing
 		break;
@@ -498,4 +545,27 @@ void LevelEndEngine::playNextLevel()
 		changeEngine<MenuEngine>(); // TODO: go to credits
 	else
 		changeEngine<LevelLoadingEngine>(_lvlNum + 1);
+}
+
+
+OpeningScreenEngine::OpeningScreenEngine()
+	: MenuEngine(false, "STATES/ATTRACT/SCREENS/TITLE.PCX")
+{
+	_wavId = AssetsManager::playWavFile("STATES/ATTRACT/SOUNDS/TITLE.WAV");
+	_totalTime = (int)AssetsManager::getWavFileDuration(_wavId);
+}
+void OpeningScreenEngine::Logic(uint32_t elapsedTime)
+{
+	BaseEngine::Logic(elapsedTime);
+	_totalTime -= elapsedTime;
+	if (_totalTime <= 0)
+		continueToMenu();
+}
+void OpeningScreenEngine::OnKeyUp(int key) { continueToMenu(); }
+void OpeningScreenEngine::OnMouseButtonUp(MouseButtons btn) { continueToMenu(); }
+void OpeningScreenEngine::continueToMenu()
+{
+	if (_totalTime > 0)
+		AssetsManager::stopWavFile(_wavId);
+	changeEngine<MenuEngine>();
 }

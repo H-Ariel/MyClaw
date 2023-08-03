@@ -247,6 +247,9 @@
     <ClCompile Include="objects\Stalactite.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="UITextElement.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -473,6 +476,9 @@
     </ClInclude>
     <ClInclude Include="objects\Stalactite.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="UITextElement.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
