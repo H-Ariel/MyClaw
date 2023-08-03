@@ -1,42 +1,42 @@
-#include "UITextElement.h"
 #include "WindowManager.h"
 
 
 FontData::FontData()
-	: size(30), family(L"Consolas"), horizontalAlignment(HorizontalAlignment::Center), verticalAlignment(VerticalAlignment::Center)
-{
-}
-FontData::FontData(float size)
-	: size(size), family(L"Consolas"), horizontalAlignment(HorizontalAlignment::Center), verticalAlignment(VerticalAlignment::Center)
-{
-}
-FontData::FontData(float size, wstring family)
-	: size(size), family(family), horizontalAlignment(HorizontalAlignment::Center), verticalAlignment(VerticalAlignment::Center)
-{
-}
-FontData::FontData(float size, wstring family, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment)
-	: size(size), family(family), horizontalAlignment(horizontalAlignment), verticalAlignment(verticalAlignment)
+	: size(30), family(L"Consolas"), hAlignment(HorizontalAlignment::Center), vAlignment(VerticalAlignment::Center)
 {
 }
 
 
 UITextElement::UITextElement()
-	: text(L""), size({ 0,0 }), fgcolor(ColorF::Black), bgcolor(ColorF::White)
+	: text(L""), size({})
 {
+	_brush = WindowManager::createSolidBrush(ColorF::Black);
 }
-UITextElement::UITextElement(wstring text, FontData font, D2D1_SIZE_F size, D2D1_POINT_2F position, ColorF forgroundColor, ColorF backgroundColor)
-	: UIBaseElement(position),
-	text(text), font(font), size(size), fgcolor(forgroundColor), bgcolor(backgroundColor)
+UITextElement::~UITextElement()
 {
+	SafeRelease(_brush);
 }
+
 void UITextElement::Draw()
 {
-	Rectangle2D dst(
-		position.x - size.width / 2,
-		position.y - size.height / 2,
-		position.x + size.width / 2,
-		position.y + size.height / 2
+	IDWriteTextFormat* textFormat = WindowManager::createTextFormat(font);
+	WindowManager::drawText(text, textFormat, _brush, GetRect());
+	SafeRelease(textFormat);
+}
+Rectangle2D UITextElement::GetRect()
+{
+	return Rectangle2D(
+		position.x - size.width / 2, position.y - size.height / 2,
+		position.x + size.width / 2, position.y + size.height / 2
 	);
-	WindowManager::fillRect(dst, bgcolor);
-	WindowManager::drawText(text, font, dst, fgcolor);
+}
+
+void UITextElement::setColor(ColorF color)
+{
+	_brush->SetColor(color);
+}
+ColorF UITextElement::getColor() const 
+{
+	D2D1_COLOR_F color = _brush->GetColor();
+	return ColorF(color.r, color.g, color.b, color.a);
 }

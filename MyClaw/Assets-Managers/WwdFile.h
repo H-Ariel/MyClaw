@@ -11,7 +11,7 @@ class LevelPlane;
 
 struct WwdRect
 {
-	uint32_t left, top, right, bottom; // TODO: use int32_t ?
+	int32_t left, top, right, bottom;
 };
 
 

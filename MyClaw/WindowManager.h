@@ -19,31 +19,30 @@ public:
 	static D2D1_SIZE_F getRealSize() { return realSize; }
 	static const HWND& getHwnd() { return _hWnd; }
 
+	static bool isInScreen(Rectangle2D rc); // return if `rc` is in the window area
+
 	static void BeginDraw() { _renderTarget->BeginDraw(); _renderTarget->Clear(_backgroundColor); }
 	static void EndDraw() { _renderTarget->EndDraw(); }
 
 	static void resizeRenderTarget(D2D1_SIZE_U newSize);
 
-	static void drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width = 1);
-	static void drawRect(D2D1_RECT_F dst, ColorF color, float width = 1);
-	static void fillRect(D2D1_RECT_F dst, D2D1_COLOR_F color);
-	static void fillRect(D2D1_RECT_F dst, ColorF color);
-	static void drawCircle(D2D1_POINT_2F center, float radius, ColorF color, float width = 1);
-	static void drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirrored);
-	
-	static void drawText(wstring text, FontData font, D2D1_RECT_F layoutRect, ColorF color);
-
+	static void drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width = 1);
+	static void drawRect(Rectangle2D dst, ColorF color, float width = 1);
+	static void fillRect(Rectangle2D dst, D2D1_COLOR_F color);
+	static void fillRect(Rectangle2D dst, ColorF color);
+	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored);
+	static void drawText(const wstring& text, IDWriteTextFormat* textFormat, ID2D1SolidColorBrush* brush, const Rectangle2D& layoutRect);
+	static void drawText(const wstring& text, const FontData& font, const Rectangle2D& layoutRect, ColorF color);
 
 	static ID2D1Bitmap* createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height);
-
-	static bool isInScreen(D2D1_RECT_F rc); // return if `rc` is in the window area
-
+	static IDWriteTextFormat* createTextFormat(const FontData& font);
+	static ID2D1SolidColorBrush* createSolidBrush(ColorF color);
+	
 
 	static float PixelSize;
 
 private:
-	static bool _isInScreen(D2D1_RECT_F& rc); // return if `rc` is in the window area and subtracts the window-offset from it
-	static bool _isInScreen(D2D1_ELLIPSE& el); // return if `el` is in the window area and subtracts the window-offset from it
+	static bool _isInScreen(Rectangle2D& rc); // return if `rc` is in the window area and subtracts the window-offset from it
 
 
 	static HWND _hWnd;
@@ -54,6 +53,4 @@ private:
 	static const D2D1_POINT_2F* _windowOffset;
 	static ColorF _backgroundColor;
 	static D2D1_SIZE_F realSize;
-
-	friend class CreditsEngine; // TODO: remove this and write a proper interface
 };

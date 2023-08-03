@@ -1,6 +1,7 @@
 #include "Siren.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
+#include "../Objects/EnemyProjectile.h"
 
 
 Siren::Siren(const WwdObject& obj)

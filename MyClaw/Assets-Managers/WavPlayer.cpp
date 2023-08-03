@@ -89,11 +89,11 @@ void WavPlayer::setVolume(int32_t volume)
 
 void WavPlayer::WavError(MMRESULT mmResult)
 {
-	// TODO ?
+#ifdef _DEBUG
 	char text[512];
 	waveOutGetErrorTextA(mmResult, text, sizeof(text));
-	//throw Exception(text);
 	cout << "WaveError: " << text << endl;
+#endif
 }
 
 void WavPlayer::waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)

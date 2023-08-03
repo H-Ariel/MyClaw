@@ -5,6 +5,7 @@
 #include "Assets-Managers/AssetsManager.h"
 #include "ActionPlane.h"
 #include "WindowManager.h"
+#include "Objects/EnemyProjectile.h"
 
 
 #define ANIMATION_IDLE			_animations.at(_idleAniName)

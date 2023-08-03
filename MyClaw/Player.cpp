@@ -4,6 +4,7 @@
 #include "Objects/Rope.h"
 #include "Objects/Stalactite.h"
 #include "BaseEnemy.h"
+#include "Objects/EnemyProjectile.h"
 
 
 // TODO: find perfect values (if they are still not perfect :D )

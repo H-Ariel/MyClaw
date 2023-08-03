@@ -2,7 +2,7 @@
 
 #include "BaseCharacter.h"
 #include "Objects/Item.h"
-#include "Objects/Projectile.h"
+#include "Objects/ClawProjectile.h"
 
 
 class Elevator;

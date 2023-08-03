@@ -3,6 +3,7 @@
 #include "../Assets-Managers/AssetsManager.h"
 #include "../ActionPlane.h"
 #include "RedTailPirate.h"
+#include "../Objects/EnemyProjectile.h"
 
 
 static bool riseCannon = false;
@@ -77,7 +78,6 @@ void Gabriel::Logic(uint32_t elapsedTime)
 	}
 
 	// send pirates
-	// TODO: send pirates after CC comes to boss
 	if (_canSendPirates)
 	{
 		_sendPiratesTime -= elapsedTime;

@@ -3,8 +3,10 @@
 #include "Animation.h"
 #include "Assets-Managers/WwdFile.h"
 
+#define GRAVITY 2048e-6f //(2.048f/1000)
 
 class Player;
+
 
 // the base class for all objects that are used in the game
 class BasePlaneObject : public UIBaseElement
@@ -30,6 +32,7 @@ protected:
 	bool _isMirrored, _isVisible;
 };
 
+
 // an object that does not move during gameplay
 class BaseStaticPlaneObject : public BasePlaneObject
 {
@@ -44,8 +47,6 @@ protected:
 	const Rectangle2D _objRc;
 };
 
-
-#define GRAVITY 2048e-6f //(2.048f/1000)
 
 // an object that can move during gameplay
 class BaseDynamicPlaneObject : public BasePlaneObject
@@ -79,4 +80,18 @@ public:
 
 protected:
 	const int _damage;
+};
+
+
+class BaseSoundObject : public BaseStaticPlaneObject
+{
+public:
+	BaseSoundObject(const WwdObject& obj);
+
+	void Draw() override;
+
+protected:
+	const string _wavPath; // the sound file
+	int32_t _volume;
+	uint32_t _wavPlayerId;
 };

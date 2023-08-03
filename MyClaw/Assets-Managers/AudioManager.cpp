@@ -5,6 +5,9 @@
 AudioManager::AudioManager(RezArchive* rezArchive)
 	: _rezArchive(rezArchive), _currBgMusicType(BackgroundMusicType::None)
 {
+	_midiPlayers[BackgroundMusicType::Powerup] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("GAME/MUSIC/POWERUP.XMI"));
+	_midiPlayers[BackgroundMusicType::Credits] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("STATES/CREDITS/MUSIC/PLAY.XMI"));
+	_midiPlayers[BackgroundMusicType::Boss] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("LEVEL2/MUSIC/BOSS.XMI"));
 }
 AudioManager::~AudioManager() // todo: make sure we need this function...
 {
@@ -61,10 +64,9 @@ void AudioManager::setVolume(uint32_t wavFileId, int32_t volume)
 
 void AudioManager::clearLevelSounds()
 {
+	stopBackgroundMusic();
 	_wavPlayers.clear();
-	_midiPlayers.clear();
-	_currBgMusic = nullptr;
-	_currBgMusicType = BackgroundMusicType::None;
+	_midiPlayers.erase(BackgroundMusicType::Level);
 }
 
 void AudioManager::checkForRestart()
@@ -78,18 +80,18 @@ void AudioManager::checkForRestart()
 
 void AudioManager::setBackgroundMusic(BackgroundMusicType type)
 {
-	static mutex myMutex;
-	myMutex.lock();
+	_bgMutex.lock();
 	if (type != _currBgMusicType)
 	{
-		if (_midiPlayers.count(type) == 0)
+		if (type == BackgroundMusicType::Level)
 		{
-			_midiPlayers[BackgroundMusicType::Level] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY")));
-			_midiPlayers[BackgroundMusicType::Powerup] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(PathManager::getBackgroundMusicFilePath("GAME_POWERUP")));
 			try {
-				_midiPlayers[BackgroundMusicType::Boss] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(PathManager::getBackgroundMusicFilePath("LEVEL_BOSS")));
+				_midiPlayers[BackgroundMusicType::Level] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY")));
 			}
-			catch (const Exception&) {}
+			catch (const Exception&) {
+				_bgMutex.unlock();
+				return;
+			}
 		}
 
 		_currBgMusicType = type;
@@ -101,5 +103,18 @@ void AudioManager::setBackgroundMusic(BackgroundMusicType type)
 		if (!_currBgMusic->isPlaying())
 			_currBgMusic->play(true);
 	}
-	myMutex.unlock();
+	_bgMutex.unlock();
+}
+
+void AudioManager::stopBackgroundMusic()
+{
+	_bgMutex.lock();
+
+	if (_currBgMusic != nullptr)
+		_currBgMusic->stop();
+	_currBgMusic = nullptr;
+	_midiPlayers.erase(BackgroundMusicType::Level);
+	_currBgMusicType = BackgroundMusicType::None;
+
+	_bgMutex.unlock();
 }

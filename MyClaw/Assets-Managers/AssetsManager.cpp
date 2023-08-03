@@ -148,10 +148,15 @@ void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type)
 {
 	thread(&AudioManager::setBackgroundMusic, instance->_audioManager, type).detach();
 }
+void AssetsManager::stopBackgroundMusic()
+{
+	instance->_audioManager->stopBackgroundMusic();
+}
 #else
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int32_t volume, bool infinite) { return -1; }
 void AssetsManager::stopWavFile(uint32_t wavFileId) {}
 void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type) {}
+void AssetsManager::stopBackgroundMusic() {}
 #endif
 uint32_t AssetsManager::getWavFileDuration(uint32_t wavFileId)
 {

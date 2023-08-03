@@ -26,14 +26,17 @@ public:
 		None,
 		Level,
 		Powerup,
-		Boss
+		Boss,
+		Credits
 	};
 	void setBackgroundMusic(BackgroundMusicType type);
+	void stopBackgroundMusic();
 
 
 private:
 	uint32_t getNewId();
 
+	mutex _bgMutex; // background music mutex
 	map<uint32_t, shared_ptr<WavPlayer>> _wavPlayers; // [id]=player
 	map<BackgroundMusicType, shared_ptr<MidiPlayer>> _midiPlayers; // [type]=player
 	shared_ptr<MidiPlayer> _currBgMusic;

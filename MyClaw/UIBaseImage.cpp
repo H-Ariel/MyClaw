@@ -28,7 +28,5 @@ Rectangle2D UIBaseImage::GetRect()
 
 shared_ptr<UIBaseImage> UIBaseImage::getCopy()
 {
-	shared_ptr<UIBaseImage> newImg(DBG_NEW UIBaseImage(_bitmap, offset));
-	newImg->mirrored = mirrored;
-	return newImg;
+	return allocNewSharedPtr<UIBaseImage>(*this);
 }

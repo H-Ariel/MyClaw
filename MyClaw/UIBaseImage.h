@@ -14,11 +14,11 @@ public:
 	shared_ptr<UIBaseImage> getCopy();
 
 	
-	const D2D1_POINT_2F offset;
 	D2D1_SIZE_F size;
 	bool mirrored; // flag to set whether to draw normal or inverted
 
 private:
+	const D2D1_POINT_2F offset;
 	ID2D1Bitmap* const _bitmap;
 
 	friend class ImagesManager;

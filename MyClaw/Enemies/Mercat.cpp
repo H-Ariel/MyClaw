@@ -1,6 +1,7 @@
 #include "Mercat.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
+#include "../Objects/EnemyProjectile.h"
 
 // TODO: jump back when CC try to attack
 

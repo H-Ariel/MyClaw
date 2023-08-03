@@ -44,3 +44,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 void TProjectilesShooter::Draw()
 {
 }
+
+
+TProjectile::TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+	: Projectile(ani, damage, speed, initialPosition) {}

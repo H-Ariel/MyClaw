@@ -25,7 +25,7 @@ void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
 	UpdateWindow(_hWnd);
 	TRY_HRESULT(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_d2dFactory), "Failed to create D2D1 factory");
 	TRY_HRESULT(_d2dFactory->CreateHwndRenderTarget(RenderTargetProperties(), HwndRenderTargetProperties(_hWnd, { (UINT32)realSize.width, (UINT32)realSize.height }, D2D1_PRESENT_OPTIONS_NONE), &_renderTarget), "Failed to create render target");
-	TRY_HRESULT(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(_dWriteFactory), (IUnknown**)(&_dWriteFactory)));
+	TRY_HRESULT(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(_dWriteFactory), (IUnknown**)(&_dWriteFactory)), "Faild to create write-factory");
 	TRY_HRESULT(CoInitialize(nullptr), "Failed to initialize COM");
 	TRY_HRESULT(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)(&_wicImagingFactory)), "Failed to create WIC imaging factory");
 }
@@ -55,7 +55,7 @@ void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
 	}
 }
 
-void WindowManager::drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width)
+void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)
 {
 	if (!_isInScreen(dst)) return;
 
@@ -72,11 +72,11 @@ void WindowManager::drawRect(D2D1_RECT_F dst, D2D1_COLOR_F color, float width)
 		SafeRelease(brush);
 	}
 }
-void WindowManager::drawRect(D2D1_RECT_F dst, ColorF color, float width)
+void WindowManager::drawRect(Rectangle2D dst, ColorF color, float width)
 {
 	drawRect(dst, (D2D1_COLOR_F)color, width);
 }
-void WindowManager::fillRect(D2D1_RECT_F dst, D2D1_COLOR_F color)
+void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
 {
 	if (!_isInScreen(dst)) return;
 
@@ -93,24 +93,11 @@ void WindowManager::fillRect(D2D1_RECT_F dst, D2D1_COLOR_F color)
 		SafeRelease(brush);
 	}
 }
-void WindowManager::fillRect(D2D1_RECT_F dst, ColorF color)
+void WindowManager::fillRect(Rectangle2D dst, ColorF color)
 {
 	fillRect(dst, (D2D1_COLOR_F)color);
 }
-void WindowManager::drawCircle(D2D1_POINT_2F center, float radius, ColorF color, float width)
-{
-	D2D1_ELLIPSE el = { { center.x * PixelSize, center.y * PixelSize }, radius * PixelSize, radius * PixelSize };
-	if (!_isInScreen(el)) return;
-
-	ID2D1SolidColorBrush* brush = nullptr;
-	_renderTarget->CreateSolidColorBrush(color, &brush);
-	if (brush)
-	{
-		_renderTarget->DrawEllipse(el, brush, width);
-		SafeRelease(brush);
-	}
-}
-void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirrored)
+void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored)
 {
 	if (!_isInScreen(dst) || bitmap == nullptr) return;
 
@@ -139,45 +126,18 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, D2D1_RECT_F dst, bool mirror
 		_renderTarget->SetTransform(Matrix3x2F::Identity());
 	}
 }
-
-void WindowManager::drawText(wstring text, FontData font, D2D1_RECT_F layoutRect, ColorF color)
+void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat, ID2D1SolidColorBrush* brush, const Rectangle2D& layoutRect)
 {
-	IDWriteTextFormat* TextFormat = nullptr;
-	_dWriteFactory->CreateTextFormat(font.family.c_str(), nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, font.size, L"", &TextFormat);
-
-	if (TextFormat)
-	{
-		switch (font.horizontalAlignment)
-		{
-		case HorizontalAlignment::Right:	TextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); break;
-		case HorizontalAlignment::Center:	TextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER); break;
-		case HorizontalAlignment::Left:		TextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING); break;
-		}
-		switch (font.verticalAlignment)
-		{
-		case VerticalAlignment::Top:	TextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); break;
-		case VerticalAlignment::Center:	TextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER); break;
-		case VerticalAlignment::Bottom:	TextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR); break;
-		}
-
-		ID2D1SolidColorBrush* brush = nullptr;
-		_renderTarget->CreateSolidColorBrush(color, &brush);
-		if (brush)
-		{
-			_renderTarget->DrawText(text.c_str(), (UINT32)text.length(), TextFormat, layoutRect, brush);
-			SafeRelease(brush);
-		}
-		SafeRelease(TextFormat);
-	}
-
-	/*
-	
-	// TODO: method that get TextFormat, brush and layoutRect and draw text
-	IDWriteTextFormat* createTextFormat(FontData font);
-	ID2D1SolidColorBrush* createBrush(ColorF color);
-	void drawText(wstring text, IDWriteTextFormat* textFormat, ID2D1SolidColorBrush* brush, D2D1_RECT_F layoutRect);
-	
-	*/
+	if (!textFormat || !brush) return;
+	_renderTarget->DrawText(text.c_str(), (UINT32)text.length(), textFormat, layoutRect, brush);
+}
+void WindowManager::drawText(const wstring& text, const FontData& font, const Rectangle2D& layoutRect, ColorF color)
+{
+	IDWriteTextFormat* textFormat = createTextFormat(font);
+	ID2D1SolidColorBrush* brush = createSolidBrush(color);
+	drawText(text, textFormat, brush, layoutRect);
+	SafeRelease(brush);
+	SafeRelease(textFormat);
 }
 
 ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height)
@@ -196,12 +156,43 @@ ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uin
 
 	return bitmap;
 }
+IDWriteTextFormat* WindowManager::createTextFormat(const FontData& font)
+{
+	IDWriteTextFormat* textFormat = nullptr;
+	_dWriteFactory->CreateTextFormat(font.family.c_str(), nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, font.size, L"", &textFormat);
 
-bool WindowManager::isInScreen(D2D1_RECT_F rc)
+	if (textFormat)
+	{
+		switch (font.hAlignment)
+		{
+		case FontData::HorizontalAlignment::Right: textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); break;
+		case FontData::HorizontalAlignment::Center: textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER); break;
+		case FontData::HorizontalAlignment::Left: textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING); break;
+		}
+		switch (font.vAlignment)
+		{
+		case FontData::VerticalAlignment::Top: textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); break;
+		case FontData::VerticalAlignment::Center: textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER); break;
+		case FontData::VerticalAlignment::Bottom: textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR); break;
+		}
+	}
+
+	return textFormat;
+}
+ID2D1SolidColorBrush* WindowManager::createSolidBrush(ColorF color)
+{
+	ID2D1SolidColorBrush* brush = nullptr;
+	_renderTarget->CreateSolidColorBrush(color, &brush);
+	return brush;
+}
+
+
+bool WindowManager::isInScreen(Rectangle2D rc)
 {
 	return _isInScreen(rc);
 }
-bool WindowManager::_isInScreen(D2D1_RECT_F& rc)
+bool WindowManager::_isInScreen(Rectangle2D& rc)
 {
 	rc.top -= _windowOffset->y;
 	rc.bottom -= _windowOffset->y;
@@ -210,14 +201,4 @@ bool WindowManager::_isInScreen(D2D1_RECT_F& rc)
 
 	const D2D1_SIZE_F wndSz = getSize();
 	return (0 <= rc.right && rc.left < wndSz.width && 0 <= rc.bottom && rc.top < wndSz.height);
-}
-
-bool WindowManager::_isInScreen(D2D1_ELLIPSE& el)
-{
-	el.point.x -= _windowOffset->x;
-	el.point.y -= _windowOffset->y;
-
-	const D2D1_SIZE_F wndSz = getSize();
-	return (0 <= el.point.x + el.radiusX && el.point.x - el.radiusX < wndSz.width
-		&& 0 <= el.point.x + el.radiusY && el.point.x - el.radiusY < wndSz.height);
 }

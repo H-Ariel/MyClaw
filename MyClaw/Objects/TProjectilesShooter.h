@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BasePlaneObject.h"
+#include "Projectile.h"
 
 
 class TProjectilesShooter : public BaseStaticPlaneObject
@@ -15,4 +15,11 @@ private:
 	const D2D1_POINT_2F speed, _offset;
 	const int32_t _maxRestTime, _damage;
 	int32_t _restTime;
+};
+
+
+class TProjectile : public Projectile
+{
+public:
+	TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 };

@@ -7,6 +7,7 @@
 #include "Objects/Crate.h"
 #include "Objects/Projectile.h"
 #include "Objects/SoundTrigger.h"
+#include "Objects/AmbientSound.h"
 #include "Objects/Pegs.h"
 #include "Objects/DoNothing.h"
 #include "Objects/Rope.h"
@@ -520,7 +521,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 {
-	// TODO? if (obj == nullptr) return; 
+	//if (obj == nullptr) return; 
 	_instance->_objects.push_back(obj);
 	_instance->_needSort = true;
 	if (isProjectile(obj)) _instance->_projectiles.push_back((Projectile*)obj);

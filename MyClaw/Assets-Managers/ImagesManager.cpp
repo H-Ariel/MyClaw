@@ -45,7 +45,7 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 				img = loadPcxImage(path);
 			}
 		}
-		catch (const Exception& ex)
+		catch (const Exception&)
 		{
 			img = allocNewSharedPtr<UIBaseImage>(nullptr); // empty image
 			//cout << "WARNING: error while loading image \"" << path << "\". message: " << ex.what() << endl;

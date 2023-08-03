@@ -49,19 +49,18 @@ class CreditsEngine : public MenuEngine
 {
 public:
 	CreditsEngine()
-		: MenuEngine(false, "STATES/CREDITS/SCREENS/CREDITS.PCX")
+		: MenuEngine(false, "STATES/CREDITS/SCREENS/CREDITS.PCX"), _yOffset(9800)
 	{
-		string creditsText = AssetsManager::getCreditsText();
-		_creditsTextElement.text += wstring(creditsText.begin(), creditsText.end());
-		_creditsTextElement.fgcolor = ColorF::White;
-		_creditsTextElement.bgcolor.a = 0;// = ColorF::Black;
+		string creditsText = "Claw - Rewritten by Ariel Halili\n\n" + AssetsManager::getCreditsText();
+		_creditsTextElement.text = wstring(creditsText.begin(), creditsText.end());
+		_creditsTextElement.setColor(ColorF::White);
 		_elementsList.push_back(&_creditsTextElement);
 
-		_yOffset = 9800;
+		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Credits);
 	}
-
 	~CreditsEngine()
 	{
+		AssetsManager::stopBackgroundMusic();
 		_elementsList.pop_back(); // remove the text element
 	}
 
@@ -69,10 +68,8 @@ public:
 	{
 		MenuEngine::Logic(elapsedTime);
 
-		D2D1_SIZE_F wndSz = WindowManager::getRealSize();
-		
 		_yOffset -= 0.07f * elapsedTime;
-		if (_yOffset < -9500)
+		if (_yOffset < -9600)
 			backToMenu();
 
 		_creditsTextElement.size = _bgImg->size;
@@ -542,7 +539,7 @@ void LevelEndEngine::OnMouseButtonUp(MouseButtons btn) { _state += 1; }
 void LevelEndEngine::playNextLevel()
 {
 	if (_lvlNum == 14) // last level
-		changeEngine<MenuEngine>(); // TODO: go to credits
+		changeEngine<CreditsEngine>();
 	else
 		changeEngine<LevelLoadingEngine>(_lvlNum + 1);
 }

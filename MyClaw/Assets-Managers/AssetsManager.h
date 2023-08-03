@@ -31,6 +31,7 @@ public:
 	static void stopWavFile(uint32_t wavFileId);
 	static uint32_t getWavFileDuration(uint32_t wavFileId);
 	static void setBackgroundMusic(AudioManager::BackgroundMusicType type);
+	static void stopBackgroundMusic();
 
 	static void callLogics(uint32_t elapsedTime);
 

@@ -121,7 +121,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 		readPlanes(wwdFileStreamInflated, palette->colors, imageDirectoryPath, numOfPlanes);
 		delete[] decompressedMainBlock;
 	}
-	catch (Exception& ex)
+	catch (const Exception&)
 	{
 		delete[] decompressedMainBlock;
 		throw;

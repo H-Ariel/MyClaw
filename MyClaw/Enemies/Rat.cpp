@@ -2,6 +2,7 @@
 #include "../Objects/Projectile.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
+#include "../Objects/EnemyProjectile.h"
 
 
 #define ANIMATION_WALK		_animations.at(_walkAniName)

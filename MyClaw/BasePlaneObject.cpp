@@ -4,6 +4,7 @@
 
 Player* BasePlaneObject::player = nullptr;
 
+
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)
 	: UIBaseElement({ (float)obj.x, (float)obj.y }),
 	ZCoord(obj.z), removeObject(false), _ani(nullptr),
@@ -46,11 +47,13 @@ bool BasePlaneObject::tryCatchPlayer()
 	return false;
 }
 
+
 BaseStaticPlaneObject::BaseStaticPlaneObject(const WwdObject& obj)
 	: BasePlaneObject(obj) {}
 void BaseStaticPlaneObject::Logic(uint32_t elapsedTime) {}
 Rectangle2D BaseStaticPlaneObject::GetRect() { return _objRc; }
 void BaseStaticPlaneObject::setObjectRectangle() { myMemCpy(_objRc, BasePlaneObject::GetRect()); }
+
 
 BaseDynamicPlaneObject::BaseDynamicPlaneObject(const WwdObject& obj)
 	: BasePlaneObject(obj), speed({}) {}
@@ -60,5 +63,74 @@ void BaseDynamicPlaneObject::stopMovingLeft(float collisionSize) { speed.x = 0; 
 void BaseDynamicPlaneObject::stopMovingRight(float collisionSize) { speed.x = 0; position.x -= collisionSize; }
 void BaseDynamicPlaneObject::bounceTop() { speed.y = abs(speed.y); }
 
+
 BaseDamageObject::BaseDamageObject(const WwdObject& obj, int damage)
 	: BaseStaticPlaneObject(obj), _damage(damage) {}
+
+
+BaseSoundObject::BaseSoundObject(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj),
+	_wavPath(PathManager::getSoundFilePath(obj.animation)), _wavPlayerId(-1)
+{
+	// These objects are invisible so no need to animate them
+	//_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
+
+	_volume = obj.damage;
+	if (_volume == 0)
+	{
+		_volume = 100;
+	}
+
+	Rectangle2D newRc;
+
+	if (obj.minX != 0)
+	{
+		newRc.left = (float)obj.minX;
+		newRc.top = (float)obj.minY;
+		newRc.right = (float)obj.maxX;
+		newRc.bottom = (float)obj.maxY;
+	}
+	else
+	{
+		D2D1_SIZE_F size = {};
+
+		if (contains(obj.logic, "Tiny"))
+		{
+			size = { 32, 32 };
+		}
+		else if (contains(obj.logic, "Small"))
+		{
+			size = { 64, 64 };
+		}
+		else if (contains(obj.logic, "Big"))
+		{
+			size = { 256, 256 };
+		}
+		else if (contains(obj.logic, "Huge"))
+		{
+			size = { 512, 512 };
+		}
+		else if (contains(obj.logic, "Wide"))
+		{
+			size = { 200, 64 };
+		}
+		else if (contains(obj.logic, "Tall"))
+		{
+			size = { 64, 200 };
+		}
+		else
+		{
+			size = { 128, 128 };
+		}
+
+		newRc.left = position.x - size.width / 2;
+		newRc.top = position.y - size.height / 2;
+		newRc.right = newRc.left + size.width;
+		newRc.bottom = newRc.top + size.height;
+	}
+
+	myMemCpy(_objRc, newRc);
+}
+void BaseSoundObject::Draw()
+{
+}

@@ -250,6 +250,15 @@
     <ClCompile Include="UITextElement.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\AmbientSound.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ClawProjectile.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyProjectile.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -479,6 +488,15 @@
     </ClInclude>
     <ClInclude Include="UITextElement.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\AmbientSound.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\ClawProjectile.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\EnemyProjectile.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
