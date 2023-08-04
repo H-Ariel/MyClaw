@@ -51,8 +51,8 @@ void GameMainApp::run()
 	else
 	{
 		runApp = true;
-		_pEngine = allocNewSharedPtr<MenuEngine>();
-		//_pEngine = allocNewSharedPtr<LevelLoadingEngine>(12);
+		//_pEngine = allocNewSharedPtr<MenuEngine>();
+		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(12);
 		runEngine();
 	}
 #else

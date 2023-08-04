@@ -169,6 +169,7 @@
     <ClCompile Include="BaseEngine.cpp" />
     <ClCompile Include="BasePlaneObject.cpp" />
     <ClCompile Include="ClawLevelEngine.cpp" />
+    <ClCompile Include="Enemies\Aquatis.cpp" />
     <ClCompile Include="Enemies\BearSailor.cpp" />
     <ClCompile Include="Enemies\Chameleon.cpp" />
     <ClCompile Include="Enemies\CrazyHook.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="BaseEngine.h" />
     <ClInclude Include="BasePlaneObject.h" />
     <ClInclude Include="ClawLevelEngine.h" />
+    <ClInclude Include="Enemies\Aquatis.h" />
     <ClInclude Include="Enemies\BearSailor.h" />
     <ClInclude Include="Enemies\Chameleon.h" />
     <ClInclude Include="Enemies\CrazyHook.h" />

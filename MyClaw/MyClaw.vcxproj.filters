@@ -259,6 +259,9 @@
     <ClCompile Include="objects\EnemyProjectile.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Enemies\Aquatis.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -497,6 +500,9 @@
     </ClInclude>
     <ClInclude Include="objects\EnemyProjectile.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Aquatis.h">
+      <Filter>Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

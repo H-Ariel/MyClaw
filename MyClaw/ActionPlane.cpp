@@ -44,6 +44,7 @@
 #include "Enemies/Gabriel.h"
 #include "Enemies/Marrow.h"
 #include "Enemies/Chameleon.h"
+#include "Enemies/Aquatis.h"
 
 
 #define RECT_SPEED			0.5f // speed of the rect that shows when CC is died
@@ -246,8 +247,7 @@ void ActionPlane::Draw()
 
 void ActionPlane::readPlaneObjects(BufferReader& reader)
 {
-	// initialize global fields and then read objects:
-	// (we init here because now we have all data)
+	// initialize global fields and then read objects: (we init here because now we have all data)
 
 	_planeSize.width = (float)TILE_SIZE * tilesOnAxisX;
 	_planeSize.height = (float)TILE_SIZE * tilesOnAxisY;
@@ -514,6 +514,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "MarrowFloor")
 	{
 		ADD_BOSS_OBJECT(MarrowFloor(obj));
+	}
+	else if (obj.logic == "Tentacle")
+	{
+		ADD_BOSS_OBJECT(Tentacle(obj));
 	}
 
 //	throw Exception("TODO: logic=" + obj.logic);

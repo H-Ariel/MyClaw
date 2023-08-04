@@ -108,7 +108,14 @@ void LevelPlane::readPlaneObjects(BufferReader& reader)
 		obj.imageSet = reader.ReadString(imageSetLength);
 		obj.animation = reader.ReadString(animationLength);
 
-		addObject(obj);
+		try
+		{
+			addObject(obj);
+		}
+		catch (const Exception& ex)
+		{
+			cout << "Error while reading object: " << ex.what() << endl;
+		}
 	}
 }
 
