@@ -96,6 +96,12 @@ private:
 	int32_t _duration; // (in milliseconds). used in Catnip, Fire-Sword, etc.
 	// TODO: use `obj.damage` - [not] respawning (see "Logics.pdf" 2.170)
 	bool _useGlitter;
+
+	static string getItemPath(Item::Type type, const string& imageSet);
+
+	static const initializer_list<Item::Type> UpdateFramesTypes;
+	static const map<string, Item::Type> ItemsMap;
+	static map<string, string> ItemsPaths;
 };
 
 

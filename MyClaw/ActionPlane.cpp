@@ -519,6 +519,18 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_BOSS_OBJECT(Tentacle(obj));
 	}
+	else if (obj.logic == "AquatisCrack")
+	{
+		ADD_BOSS_OBJECT(AquatisCrack(obj));
+	}
+	else if (obj.logic == "AquatisDynamite")
+	{
+		ADD_BOSS_OBJECT(AquatisDynamite(obj));
+	}
+	else if (obj.logic == "AquatisStalactite")
+	{
+		ADD_BOSS_OBJECT(AquatisStalactite(obj));
+	}
 
 //	throw Exception("TODO: logic=" + obj.logic);
 }

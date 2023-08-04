@@ -4,92 +4,92 @@
 #include "../ActionPlane.h"
 
 
-static const initializer_list<Item::Type> UpdateFramesTypes = {
-	Item::Warp,
-	Item::Treasure_Coins,
-	Item::Curse_Ammo,
-	Item::Curse_Magic,
-	Item::Curse_Health,
-	Item::Curse_Life,
-	Item::Curse_Treasure,
-	Item::Curse_Freeze,
-	Item::Powerup_Invisibility,
-	Item::Powerup_Invincibility,
-	Item::Powerup_ExtraLife,
-	Item::Powerup_FireSword,
-	Item::Powerup_LightningSword,
-	Item::Powerup_IceSword,
-	Item::BossWarp,
+const initializer_list<Item::Type> Item::UpdateFramesTypes = {
+	Warp,
+	Treasure_Coins,
+	Curse_Ammo,
+	Curse_Magic,
+	Curse_Health,
+	Curse_Life,
+	Curse_Treasure,
+	Curse_Freeze,
+	Powerup_Invisibility,
+	Powerup_Invincibility,
+	Powerup_ExtraLife,
+	Powerup_FireSword,
+	Powerup_LightningSword,
+	Powerup_IceSword,
+	BossWarp,
 };
-static const map<string, Item::Type> ItemsMap = {
-	{ "GAME_TREASURE_GOLDBARS", Item::Type::Treasure_Goldbars },
-	{ "GAME_TREASURE_RINGS_RED", Item::Type::Treasure_Rings_Red },
-	{ "GAME_TREASURE_RINGS_GREEN", Item::Type::Treasure_Rings_Green },
-	{ "GAME_TREASURE_RINGS_BLUE", Item::Type::Treasure_Rings_Blue },
-	{ "GAME_TREASURE_RINGS_PURPLE", Item::Type::Treasure_Rings_Purple },
-	{ "GAME_TREASURE_NECKLACE", Item::Type::Treasure_Necklace },
-	{ "GAME_TREASURE_CROSSES_RED", Item::Type::Treasure_Crosses_Red },
-	{ "GAME_TREASURE_CROSSES_GREEN", Item::Type::Treasure_Crosses_Green },
-	{ "GAME_TREASURE_CROSSES_BLUE", Item::Type::Treasure_Crosses_Blue },
-	{ "GAME_TREASURE_CROSSES_PURPLE", Item::Type::Treasure_Crosses_Purple },
-	{ "GAME_TREASURE_SCEPTERS_RED", Item::Type::Treasure_Scepters_Red },
-	{ "GAME_TREASURE_SCEPTERS_GREEN", Item::Type::Treasure_Scepters_Green },
-	{ "GAME_TREASURE_SCEPTERS_BLUE", Item::Type::Treasure_Scepters_Blue },
-	{ "GAME_TREASURE_SCEPTERS_PURPLE", Item::Type::Treasure_Scepters_Purple },
-	{ "GAME_TREASURE_GECKOS_RED", Item::Type::Treasure_Geckos_Red },
-	{ "GAME_TREASURE_GECKOS_GREEN", Item::Type::Treasure_Geckos_Green },
-	{ "GAME_TREASURE_GECKOS_BLUE", Item::Type::Treasure_Geckos_Blue },
-	{ "GAME_TREASURE_GECKOS_PURPLE", Item::Type::Treasure_Geckos_Purple },
-	{ "GAME_AMMO_DEATHBAG", Item::Type::Ammo_Deathbag },
-	{ "GAME_AMMO_SHOT", Item::Type::Ammo_Shot },
-	{ "GAME_AMMO_SHOTBAG", Item::Type::Ammo_Shotbag },
-	{ "GAME_CATNIPS_NIP1", Item::Type::Powerup_Catnip_White },
-	{ "GAME_CATNIPS_NIP2", Item::Type::Powerup_Catnip_Red },
-	{ "LEVEL_HEALTH", Item::Type::Health_Level },
-	{ "GAME_HEALTH_BREADWATER", Item::Type::Health_Level },
-	{ "GAME_HEALTH_POTION3", Item::Type::Health_25 },
-	{ "GAME_HEALTH_POTION1", Item::Type::Health_10 },
-	{ "GAME_HEALTH_POTION2", Item::Type::Health_15 },
-	{ "GAME_MAGIC_GLOW", Item::Type::Ammo_Magic_5 },
-	{ "GAME_MAGIC_STARGLOW", Item::Type::Ammo_Magic_10 },
-	{ "GAME_MAGIC_MAGICCLAW", Item::Type::Ammo_Magic_25 },
-	{ "GAME_MAPPIECE", Item::Type::MapPiece },
-	{ "GAME_WARP", Item::Type::Warp },
-	{ "GAME_VERTWARP", Item::Type::Warp },
-	{ "GAME_TREASURE_COINS", Item::Type::Treasure_Coins },
-	{ "GAME_DYNAMITE", Item::Type::Ammo_Dynamite },
-	{ "GAME_CURSES_AMMO", Item::Type::Curse_Ammo },
-	{ "GAME_CURSES_MAGIC", Item::Type::Curse_Magic },
-	{ "GAME_CURSES_HEALTH", Item::Type::Curse_Health },
-	{ "GAME_CURSES_LIFE", Item::Type::Curse_Life },
-	{ "GAME_CURSES_TREASURE", Item::Type::Curse_Treasure },
-	{ "GAME_CURSES_FREEZE", Item::Type::Curse_Freeze },
-	{ "GAME_TREASURE_CHALICES_RED", Item::Type::Treasure_Chalices_Red },
-	{ "GAME_TREASURE_CHALICES_GREEN", Item::Type::Treasure_Chalices_Green },
-	{ "GAME_TREASURE_CHALICES_BLUE", Item::Type::Treasure_Chalices_Blue },
-	{ "GAME_TREASURE_CHALICES_PURPLE", Item::Type::Treasure_Chalices_Purple },
-	{ "GAME_TREASURE_CROWNS_RED", Item::Type::Treasure_Crowns_Red },
-	{ "GAME_TREASURE_CROWNS_GREEN", Item::Type::Treasure_Crowns_Green },
-	{ "GAME_TREASURE_CROWNS_BLUE", Item::Type::Treasure_Crowns_Blue },
-	{ "GAME_TREASURE_CROWNS_PURPLE", Item::Type::Treasure_Crowns_Purple },
-	{ "GAME_TREASURE_JEWELEDSKULL_RED", Item::Type::Treasure_Skull_Red },
-	{ "GAME_TREASURE_JEWELEDSKULL_GREEN", Item::Type::Treasure_Skull_Green },
-	{ "GAME_TREASURE_JEWELEDSKULL_BLUE", Item::Type::Treasure_Skull_Blue },
-	{ "GAME_TREASURE_JEWELEDSKULL_PURPLE", Item::Type::Treasure_Skull_Purple },
-	{ "GAME_POWERUPS_GHOST", Item::Type::Powerup_Invisibility },
-	{ "GAME_POWERUPS_INVULNERABLE", Item::Type::Powerup_Invincibility },
-	{ "GAME_POWERUPS_EXTRALIFE", Item::Type::Powerup_ExtraLife },
-	{ "GAME_POWERUPS_LIGHTNINGSWORD", Item::Type::Powerup_LightningSword },
-	{ "GAME_POWERUPS_FIRESWORD", Item::Type::Powerup_FireSword },
-	{ "GAME_POWERUPS_ICESWORD", Item::Type::Powerup_IceSword },
-	{ "GAME_BOSSWARP", Item::Type::BossWarp },
-	{ "LEVEL_GEM", Item::Type::NineLivesGem }
+const map<string, Item::Type> Item::ItemsMap = {
+	{ "GAME_TREASURE_GOLDBARS", Treasure_Goldbars },
+	{ "GAME_TREASURE_RINGS_RED", Treasure_Rings_Red },
+	{ "GAME_TREASURE_RINGS_GREEN", Treasure_Rings_Green },
+	{ "GAME_TREASURE_RINGS_BLUE", Treasure_Rings_Blue },
+	{ "GAME_TREASURE_RINGS_PURPLE", Treasure_Rings_Purple },
+	{ "GAME_TREASURE_NECKLACE", Treasure_Necklace },
+	{ "GAME_TREASURE_CROSSES_RED", Treasure_Crosses_Red },
+	{ "GAME_TREASURE_CROSSES_GREEN", Treasure_Crosses_Green },
+	{ "GAME_TREASURE_CROSSES_BLUE", Treasure_Crosses_Blue },
+	{ "GAME_TREASURE_CROSSES_PURPLE", Treasure_Crosses_Purple },
+	{ "GAME_TREASURE_SCEPTERS_RED", Treasure_Scepters_Red },
+	{ "GAME_TREASURE_SCEPTERS_GREEN", Treasure_Scepters_Green },
+	{ "GAME_TREASURE_SCEPTERS_BLUE", Treasure_Scepters_Blue },
+	{ "GAME_TREASURE_SCEPTERS_PURPLE", Treasure_Scepters_Purple },
+	{ "GAME_TREASURE_GECKOS_RED", Treasure_Geckos_Red },
+	{ "GAME_TREASURE_GECKOS_GREEN", Treasure_Geckos_Green },
+	{ "GAME_TREASURE_GECKOS_BLUE", Treasure_Geckos_Blue },
+	{ "GAME_TREASURE_GECKOS_PURPLE", Treasure_Geckos_Purple },
+	{ "GAME_AMMO_DEATHBAG", Ammo_Deathbag },
+	{ "GAME_AMMO_SHOT", Ammo_Shot },
+	{ "GAME_AMMO_SHOTBAG", Ammo_Shotbag },
+	{ "GAME_CATNIPS_NIP1", Powerup_Catnip_White },
+	{ "GAME_CATNIPS_NIP2", Powerup_Catnip_Red },
+	{ "LEVEL_HEALTH", Health_Level },
+	{ "GAME_HEALTH_BREADWATER", Health_Level },
+	{ "GAME_HEALTH_POTION3", Health_25 },
+	{ "GAME_HEALTH_POTION1", Health_10 },
+	{ "GAME_HEALTH_POTION2", Health_15 },
+	{ "GAME_MAGIC_GLOW", Ammo_Magic_5 },
+	{ "GAME_MAGIC_STARGLOW", Ammo_Magic_10 },
+	{ "GAME_MAGIC_MAGICCLAW", Ammo_Magic_25 },
+	{ "GAME_MAPPIECE", MapPiece },
+	{ "GAME_WARP", Warp },
+	{ "GAME_VERTWARP", Warp },
+	{ "GAME_TREASURE_COINS", Treasure_Coins },
+	{ "GAME_DYNAMITE", Ammo_Dynamite },
+	{ "GAME_CURSES_AMMO", Curse_Ammo },
+	{ "GAME_CURSES_MAGIC", Curse_Magic },
+	{ "GAME_CURSES_HEALTH", Curse_Health },
+	{ "GAME_CURSES_LIFE", Curse_Life },
+	{ "GAME_CURSES_TREASURE", Curse_Treasure },
+	{ "GAME_CURSES_FREEZE", Curse_Freeze },
+	{ "GAME_TREASURE_CHALICES_RED", Treasure_Chalices_Red },
+	{ "GAME_TREASURE_CHALICES_GREEN", Treasure_Chalices_Green },
+	{ "GAME_TREASURE_CHALICES_BLUE", Treasure_Chalices_Blue },
+	{ "GAME_TREASURE_CHALICES_PURPLE", Treasure_Chalices_Purple },
+	{ "GAME_TREASURE_CROWNS_RED", Treasure_Crowns_Red },
+	{ "GAME_TREASURE_CROWNS_GREEN", Treasure_Crowns_Green },
+	{ "GAME_TREASURE_CROWNS_BLUE", Treasure_Crowns_Blue },
+	{ "GAME_TREASURE_CROWNS_PURPLE", Treasure_Crowns_Purple },
+	{ "GAME_TREASURE_JEWELEDSKULL_RED", Treasure_Skull_Red },
+	{ "GAME_TREASURE_JEWELEDSKULL_GREEN", Treasure_Skull_Green },
+	{ "GAME_TREASURE_JEWELEDSKULL_BLUE", Treasure_Skull_Blue },
+	{ "GAME_TREASURE_JEWELEDSKULL_PURPLE", Treasure_Skull_Purple },
+	{ "GAME_POWERUPS_GHOST", Powerup_Invisibility },
+	{ "GAME_POWERUPS_INVULNERABLE", Powerup_Invincibility },
+	{ "GAME_POWERUPS_EXTRALIFE", Powerup_ExtraLife },
+	{ "GAME_POWERUPS_LIGHTNINGSWORD", Powerup_LightningSword },
+	{ "GAME_POWERUPS_FIRESWORD", Powerup_FireSword },
+	{ "GAME_POWERUPS_ICESWORD", Powerup_IceSword },
+	{ "GAME_BOSSWARP", BossWarp },
+	{ "LEVEL_GEM", NineLivesGem }
 };
-static map<string, string> ItemsPaths;
+map<string, string> Item::ItemsPaths;
 
-string getItemPath(Item::Type type, const string& imageSet)
+string Item::getItemPath(Type type, const string& imageSet)
 {
-	if (type == Item::Type::Warp)
+	if (type == Type::Warp)
 	{
 		// because we have WARP and VERTWARP
 		return PathManager::getImageSetPath(imageSet);
@@ -117,6 +117,7 @@ string getItemPath(Item::Type type, const string& imageSet)
 	return "";
 }
 
+// TODO: activate WAV sound when item is picked up
 
 Item::Item(const WwdObject& obj, int8_t type)
 	: BaseDynamicPlaneObject(obj), _type((Type)type), _useGlitter(false), _glitterAnimation(nullptr)
@@ -224,7 +225,6 @@ void Item::resetItemsPaths()
 {
 	ItemsPaths.clear();
 }
-
 uint32_t Item::getTreasureScore(Type type)
 {
 	switch (type)
