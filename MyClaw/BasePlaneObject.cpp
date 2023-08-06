@@ -134,3 +134,21 @@ BaseSoundObject::BaseSoundObject(const WwdObject& obj)
 void BaseSoundObject::Draw()
 {
 }
+
+
+OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani)
+	: BasePlaneObject({})
+{
+	_ani = ani;
+	_ani->loopAni = false;
+	_ani->position = pos;
+}
+void OneTimeAnimation::Logic(uint32_t elapsedTime)
+{
+	_ani->Logic(elapsedTime);
+	removeObject = _ani->isFinishAnimation();
+}
+void OneTimeAnimation::Draw()
+{
+	_ani->Draw();
+}

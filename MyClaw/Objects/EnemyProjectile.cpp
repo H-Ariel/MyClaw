@@ -3,6 +3,7 @@
 #include "../ActionPlane.h"
 
 
+// TODO: use OneTimeAnimation
 class BombExplos : public BaseStaticPlaneObject
 {
 public:

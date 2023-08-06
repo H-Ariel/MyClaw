@@ -31,6 +31,8 @@ private:
 		_slap, // tentacle slap/whip (when player is too far)
 		_squeeze; // tentacle squeeze (when player is too close)
 	Rectangle2D _lastAttackRect;
+	int _squeezeRestTime;
+	int _deadTime;
 };
 
 

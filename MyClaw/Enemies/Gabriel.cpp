@@ -24,7 +24,7 @@ static bool makeGabrielHurt = false;
 #define SEND_PIRATES_TIME	2000
 
 
-// TODO: change the `KILLFALL4` to the original death animations' sequence
+// TODO: change the `KILLFALL4` to the original death animations' sequence (use `OneTimeAnimation`)
 Gabriel::Gabriel(const WwdObject& obj)
 	: BaseBoss(obj, 10, "", "HITHIGH", "HITLOW", "KILLFALL4", "", "", "")
 	, _throwBombsTime(THROW_BOMBS_TIME), _canThrowBombs(true)

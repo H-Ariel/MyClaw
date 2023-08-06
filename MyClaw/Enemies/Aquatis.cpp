@@ -6,37 +6,13 @@
 
 
 
-class OneTimeAnimation : public BasePlaneObject
-{
-public:
-	OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani)
-		: BasePlaneObject({})
-	{
-		_ani = ani;
-		_ani->loopAni = false;
-		_ani->position = pos;
-	}
-	void Logic(uint32_t elapsedTime) override {
-		_ani->Logic(elapsedTime);
-		removeObject = _ani->isFinishAnimation();
-	}
-	void Draw() override {
-		_ani->Draw();
-	}
-
-};
-
-
-
-
-static bool shouldRespawnTentacles = false; // after the stalactite fall on Aquatis, the tentacles should respawn
 static int activateAquatisStalactite = 0;
 static vector<AquatisStalactite*> AquatisStalactitesList; // list of stalactites that can hurt Aquatis
 static vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that can hurt Aquatis
 
 
 AquatisTentacle::AquatisTentacle(const WwdObject& obj)
-	: BaseDamageObject(obj, 10)
+	: BaseDamageObject(obj, 10), _squeezeRestTime(0), _deadTime(0)
 {
 	string imageSet = PathManager::getImageSetPath(obj.imageSet);
 	string aniSet = PathManager::getAnimationSetPath(obj.imageSet);
@@ -47,6 +23,14 @@ AquatisTentacle::AquatisTentacle(const WwdObject& obj)
 	_respawn = AssetsManager::loadCopyAnimation(aniSet + "/RESPAWN.ANI", imageSet);
 	_slap = AssetsManager::loadCopyAnimation(aniSet + "/STRIKE1.ANI", imageSet);
 	_squeeze = AssetsManager::loadCopyAnimation(aniSet + "/STRIKE3.ANI", imageSet);
+
+	// squeeze animation is too short, so we need to repeat it 3 times
+	vector< Animation::FrameData*> images;
+	for (int i = 0; i < 3; i++)
+		for (Animation::FrameData* frame : _squeeze->getImagesList())
+			images.push_back(frame);
+	_squeeze = allocNewSharedPtr<Animation>(images);
+
 
 	_ani = _idle;
 	myMemCpy(ZCoord, player->ZCoord + 1);
@@ -63,31 +47,50 @@ AquatisTentacle::~AquatisTentacle()
 }
 void AquatisTentacle::Logic(uint32_t elapsedTime)
 {
-	shared_ptr<Animation> prevAni = _ani;
+	if (_deadTime > 0)
+	{
+		_deadTime -= elapsedTime;
+
+		if (_deadTime <= 0)
+		{
+			_ani = _respawn;
+			_ani->reset();
+			_ani->loopAni = false;
+		}
+		else
+		{
+			_ani->Logic(elapsedTime);
+			return;
+		}
+	}
 
 	if (checkForHurts())
 	{
 		_ani = _killfall;
+		_deadTime = 5000;
 		_ani->reset();
 		_ani->loopAni = false;
 	}
-	else if ((_ani == _respawn || _ani == _slap || _ani == _squeeze) && _ani->isFinishAnimation())
+	else if (_ani->isFinishAnimation())
 	{
-		_ani = _idle;
-		_ani->reset();
-	}
-
-	if (shouldRespawnTentacles)
-	{
-		_ani = _respawn;
-		_ani->reset();
-		_ani->loopAni = false;
+		if (_ani == _squeeze)
+		{
+			_ani = _idle;
+			_ani->reset();
+			_squeezeRestTime = 1000;
+			player->unsqueeze();
+		}
+		else if (_ani == _respawn || _ani == _slap)
+		{
+			_ani = _idle;
+			_ani->reset();
+		}
 	}
 
 	if (_ani == _idle)
 	{
 		float distance = position.x - player->position.x - 37;
-		if (-55 <= distance && distance < 64)
+		if (-55 <= distance && distance < 40)
 		{
 			_ani = _slap;
 			_ani->reset();
@@ -95,10 +98,20 @@ void AquatisTentacle::Logic(uint32_t elapsedTime)
 		}
 		else if (-96 <= distance && distance < -55)
 		{
-			// TODO: catch player
-			_ani = _squeeze;
-			_ani->reset();
-			_ani->loopAni = false;
+			if (_squeezeRestTime <= 0)
+			{
+				if (_ani != _squeeze && !player->isSqueezed())
+				{
+					_ani = _squeeze;
+					_ani->reset();
+					_ani->loopAni = false;
+					player->squeeze({ position.x + 40, position.y - 80 });
+				}
+			}
+			else
+			{
+				_squeezeRestTime -= elapsedTime;
+			}
 		}
 	}
 
@@ -165,16 +178,11 @@ void AquatisCrack::Logic(uint32_t elapsedTime)
 {
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
-		if (p != _lastDynamite)
+		if (p != _lastDynamite && p->isClawDynamite() &&
+			p->getDamage() && _objRc.intersects(p->GetRect()))
 		{
-			if (p->isClawDynamite() && p->GetRect().intersects(this->GetRect()))
-			{
-				if (int dmg = p->getDamage())
-				{
-					_lastDynamite = p;
-					activateAquatisStalactite += 1;
-				}
-			}
+			_lastDynamite = p;
+			activateAquatisStalactite += 1;
 		}
 	}
 }
@@ -231,27 +239,16 @@ void AquatisStalactite::Logic(uint32_t elapsedTime)
 	_ani->Logic(elapsedTime);
 	removeObject = _ani->isFinishAnimation();
 }
-void AquatisStalactite::stopFalling(float collisionSize)
-{
-	_ani->updateFrames = true;
-}
-int AquatisStalactite::getDamage() const
-{
-	return 10;
-}
+void AquatisStalactite::stopFalling(float collisionSize) { _ani->updateFrames = true; }
+int AquatisStalactite::getDamage() const { return 10; }
 
 
 
 #define ANIMATION_HITHIGH	_animations["HITHIGH"]
 #define ANIMATION_HITLOW	_animations["HITLOW"]
 #define ANIMATION_KILLFALL	_animations["KILLFALL"]
-#define ANIMATION_STRIKE1	_animations["STRIKE1"]
-#define ANIMATION_STRIKE2	_animations["STRIKE2"]
-
-/*
-strike1 - punch up
-strike2 - punch down
-*/
+#define ANIMATION_STRIKE1	_animations["STRIKE1"] // punch up
+#define ANIMATION_STRIKE2	_animations["STRIKE2"] // punch down
 
 Aquatis::Aquatis(const WwdObject& obj)
 	: BaseBoss(obj, 0, "", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1", "", "")
@@ -292,7 +289,7 @@ void Aquatis::Logic(uint32_t elapsedTime)
 		if (rc.intersects(i->GetRect()))
 		{
 			i->stopFalling(0);
-			_ani = ANIMATION_HITHIGH;
+			_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
 			_ani->reset();
 			_ani->loopAni = false;
 		}

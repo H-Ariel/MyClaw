@@ -112,16 +112,29 @@ Player::Player(const WwdObject& obj)
 	renameKey("EMPTYJUMPMAGIC", "JUMPEMPTYMAGIC");
 
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
-	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT"};
+	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT" };
 
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 125, false);
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromFromPidImage("CLAW/IMAGES/100.PID");
+
+	_animations["SQUEEZED"] = allocNewSharedPtr<Animation>(vector<Animation::FrameData*>({
+		DBG_NEW Animation::FrameData("CLAW/IMAGES/450.PID"),
+		DBG_NEW Animation::FrameData("CLAW/IMAGES/451.PID"),
+		DBG_NEW Animation::FrameData("CLAW/IMAGES/452.PID")
+	}));
 
 	PowerupSparkle::playerRc = &_saveCurrRect;
 }
 
 void Player::Logic(uint32_t elapsedTime)
 {
+	if (isSqueezed())
+	{
+		_ani->position = position;
+		_ani->Logic(elapsedTime);
+		return;
+	}
+
 	if (_aniName == "LIFT" || _aniName == "THROW" || _aniName == "FALLDEATH" ||
 		_aniName == "EMPTYPOSTDYNAMITE" || _aniName == "DUCKEMPTYPOSTDYNAMITE")
 	{
@@ -537,7 +550,7 @@ void Player::Logic(uint32_t elapsedTime)
 	_ani->mirrored = _isMirrored && !_isOnLadder;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
-	
+
 	calcRect();
 	calcAttackRect();
 }
@@ -831,7 +844,7 @@ bool Player::checkForHurts()
 			}
 		}
 	}
-	
+
 	for (BaseDamageObject* obj : ActionPlane::getDamageObjects())
 	{
 		if ((damage = obj->getDamage()) > 0)
@@ -939,7 +952,7 @@ bool Player::isFalling() const
 }
 bool Player::isStanding() const
 {
-	return _aniName == "STAND" || _aniName == "IDLE" 
+	return _aniName == "STAND" || _aniName == "IDLE"
 		|| _aniName == "LIFT" || _aniName == "LIFT2"
 		|| _aniName == "THROW";
 }
@@ -1075,4 +1088,19 @@ void Player::keyDown(int key)
 		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount[ClawProjectile::Types::Dynamite] > 0);
 	} break;
 	}
+}
+
+void Player::squeeze(D2D1_POINT_2F pos)
+{
+	if (pos.x != 0 && pos.y != 0)
+		position = pos;
+
+	_ani = _animations[_aniName = "SQUEEZED"];
+	speed = {};
+
+	calcRect();
+}
+void Player::unsqueeze()
+{
+	_ani = _animations[_aniName = "STAND"];
 }

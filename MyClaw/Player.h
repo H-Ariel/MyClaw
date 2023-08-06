@@ -47,6 +47,7 @@ public:
 	bool isFinishDeathAnimation() const { return isInDeathAnimation() && _ani->isFinishAnimation(); }
 	bool isFinishLevel() const { return _finishLevel; }
 	bool isFreeze() const { return _freezeTime > 0; }
+	bool isSqueezed() const { return _aniName == "SQUEEZED"; }
 	bool isFalling() const override;
 	bool isStanding() const override;
 	bool isDuck() const override;
@@ -70,6 +71,9 @@ public:
 	void keyDown(int key);
 
 	void activateDialog(int32_t duration) { _dialogLeftTime = duration; }
+
+	void squeeze(D2D1_POINT_2F pos = {});
+	void unsqueeze();
 
 
 	D2D1_POINT_2F startPosition;

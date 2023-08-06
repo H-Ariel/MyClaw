@@ -95,3 +95,13 @@ protected:
 	int32_t _volume;
 	uint32_t _wavPlayerId;
 };
+
+
+// simple animation that plays only once
+class OneTimeAnimation : public BasePlaneObject
+{
+public:
+	OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani);
+	void Logic(uint32_t elapsedTime) override;
+	void Draw() override;
+};
