@@ -1,7 +1,5 @@
 #include "Projectile.h"
-#include "../WindowManager.h"
 #include "../Assets-Managers/AssetsManager.h"
-#include "../ActionPlane.h"
 #include "ClawProjectile.h"
 #include "EnemyProjectile.h"
 #include "TProjectilesShooter.h"
@@ -51,10 +49,7 @@ bool Projectile::isClawBullet() const
 		return ((ClawProjectile*)this)->type == ClawProjectile::Types::Pistol;
 	return false;
 }
-bool Projectile::isClawDynamite() const 
-{
-	return isinstance<ClawDynamite>(this); 
-}
+bool Projectile::isClawDynamite() const { return isinstance<ClawDynamite>(this); }
 int Projectile::getDamage() const { return _damage; }
 
 

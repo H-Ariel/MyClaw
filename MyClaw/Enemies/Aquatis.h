@@ -1,13 +1,25 @@
 #pragma once
 
-#include "../BasePlaneObject.h"
-#include "../Objects/Stalactite.h"
+#include "../BaseEnemy.h"
+#include "../Objects/Projectile.h"
 
 
-class Tentacle : public BaseDamageObject
+class Aquatis : public BaseBoss
 {
 public:
-	Tentacle(const WwdObject& obj);
+	Aquatis(const WwdObject& obj);
+	~Aquatis();
+
+	void Logic(uint32_t elapsedTime) override;
+	pair<Rectangle2D, int> GetAttackRect() override;
+};
+
+
+class AquatisTentacle : public BaseDamageObject
+{
+public:
+	AquatisTentacle(const WwdObject& obj);
+	~AquatisTentacle();
 	void Logic(uint32_t elapsedTime) override;
 	Rectangle2D GetRect() override;
 	bool isDamage() const override;
@@ -28,6 +40,9 @@ public:
 	AquatisCrack(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
+
+private:
+	Projectile* _lastDynamite;
 };
 
 
@@ -43,13 +58,16 @@ private:
 };
 
 
-class AquatisStalactite : public Stalactite
+class AquatisStalactite : public Projectile
 {
 public:
 	AquatisStalactite(const WwdObject& obj);
 	~AquatisStalactite();
 
 	void Logic(uint32_t elapsedTime) override;
+	void stopFalling(float collisionSize) override;
 	int getDamage() const override;
 
+private:
+	const int _idx;
 };

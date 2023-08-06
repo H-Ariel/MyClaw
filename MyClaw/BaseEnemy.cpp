@@ -130,11 +130,13 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage,
 
 		if (!_walkAniName.empty())
 			_ani = ANIMATION_WALK;
+		//else
+		//	_ani = ANIMATION_IDLE; // TODO: breakpoint here
 	}
 }
 BaseEnemy::~BaseEnemy()
 {
-	if (removeObject)
+	if (removeObject && _fallDead)
 	{
 		WwdObject obj;
 		obj.x = (int32_t)position.x;

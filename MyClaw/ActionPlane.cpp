@@ -515,9 +515,13 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_BOSS_OBJECT(MarrowFloor(obj));
 	}
+	else if (obj.logic == "Aquatis")
+	{
+		ADD_BOSS_OBJECT(Aquatis(obj));
+	}
 	else if (obj.logic == "Tentacle")
 	{
-		ADD_BOSS_OBJECT(Tentacle(obj));
+		ADD_BOSS_OBJECT(AquatisTentacle(obj));
 	}
 	else if (obj.logic == "AquatisCrack")
 	{
@@ -558,6 +562,8 @@ void ActionPlane::playerEnterToBoss()
 		_instance->_objects.push_back(i);
 		if (isbaseinstance<BaseEnemy>(i))
 			_instance->_enemies.push_back((BaseEnemy*)i);
+		else if (isProjectile(i))
+			_instance->_projectiles.push_back((Projectile*)i);
 	}
 	_instance->_bossObjects.clear();
 	_instance->_needSort = true;

@@ -5,7 +5,7 @@
 
 
 Stalactite::Stalactite(const WwdObject& obj)
-	: Projectile(obj, "", "") // the stalactite behave like a projectile
+	: Projectile(obj, "") // the stalactite behave like a projectile
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 50, false);
 	_ani->updateFrames = false;

@@ -70,6 +70,8 @@ string PathManager::getAnimationSetPath(const string& _aniSet)
 		}
 
 		aniSet = replaceString(aniSet, '_', '/');
+		if (aniSet == "LEVEL12/ANIS/KINGAQUATIS")
+			aniSet = "LEVEL12/ANIS/AQUATIS";
 		data[ANIMATION_SET][_aniSet] = aniSet;
 	}
 
