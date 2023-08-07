@@ -189,7 +189,17 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 	position.y += speed.y * elapsedTime;
 	
 
-	if (!_isAttack) // TODO: replace blocks and do not use `!`
+	if (_isAttack)
+	{
+		if (_ani->isFinishAnimation())
+		{
+			_ani = ANIMATION_WALK;
+			_ani->reset();
+			_isAttack = false;
+			_isMirrored = speed.x < 0;
+		}
+	}
+	else
 	{
 		if (_attackRest > 0)
 			_attackRest -= elapsedTime;
@@ -200,16 +210,6 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 		}
 		if (_attackRest <= 0)
 			makeAttack();
-	}
-	else
-	{
-		if (_ani->isFinishAnimation())
-		{
-			_ani = ANIMATION_WALK;
-			_ani->reset();
-			_isAttack = false;
-			_isMirrored = speed.x < 0;
-		}
 	}
 
 	PostLogic(elapsedTime);

@@ -60,9 +60,11 @@
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
 
 
+#ifdef _DEBUG
 //#undef LOW_DETAILS
-//#define USE_ENEMIES
+#define USE_ENEMIES
 //#define USE_OBSTACLES
+#endif
 
 
 ActionPlane* ActionPlane::_instance = nullptr;

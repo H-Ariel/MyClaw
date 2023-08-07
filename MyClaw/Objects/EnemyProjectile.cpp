@@ -3,25 +3,6 @@
 #include "../ActionPlane.h"
 
 
-// TODO: use OneTimeAnimation
-class BombExplos : public BaseStaticPlaneObject
-{
-public:
-	BombExplos(const WwdObject& obj, const string& aniSet, const string& imageSet = "")
-		: BaseStaticPlaneObject(obj)
-	{
-		_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath(aniSet),
-			imageSet.empty() ? "" : PathManager::getImageSetPath(imageSet));
-		_ani->loopAni = false;
-	}
-	void Logic(uint32_t elapsedTime) override
-	{
-		_ani->Logic(elapsedTime);
-		removeObject = _ani->isFinishAnimation();
-	}
-};
-
-
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir)
 	: Projectile(obj, projectileAniDir) {} // TODO: use here the `PathManager::getImageSetPath` ...
 
@@ -34,11 +15,7 @@ RatBomb::~RatBomb()
 {
 	if (removeObject)
 	{
-		WwdObject obj;
-		obj.x = (int32_t)position.x;
-		obj.y = (int32_t)position.y;
-		obj.z = ZCoord;
-		ActionPlane::addPlaneObject(DBG_NEW BombExplos(obj, "LEVEL_RATBOMB_EXPLODE"));
+		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_RATBOMB_EXPLODE"));
 	}
 }
 
@@ -51,11 +28,7 @@ CrabBomb::~CrabBomb()
 {
 	if (removeObject)
 	{
-		WwdObject obj;
-		obj.x = (int32_t)position.x;
-		obj.y = (int32_t)position.y;
-		obj.z = ZCoord;
-		ActionPlane::addPlaneObject(DBG_NEW BombExplos(obj, "LEVEL_CRABBOMB_EXPLODE", "LEVEL_CRABBOMB"));
+		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_CRABBOMB_EXPLODE", "LEVEL_CRABBOMB"));
 	}
 }
 
@@ -68,11 +41,7 @@ GabrielBomb::~GabrielBomb()
 {
 	if (removeObject)
 	{
-		WwdObject obj;
-		obj.x = (int32_t)position.x;
-		obj.y = (int32_t)position.y;
-		obj.z = ZCoord;
-		ActionPlane::addPlaneObject(DBG_NEW BombExplos(obj, "LEVEL_GABRIELBOMB_EXPLODE", "LEVEL_GABRIELBOMB"));
+		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_GABRIELBOMB_EXPLODE", "LEVEL_GABRIELBOMB"));
 	}
 }
 void GabrielBomb::Logic(uint32_t elapsedTime)
@@ -100,12 +69,7 @@ MercatTrident::~MercatTrident()
 {
 	if (removeObject)
 	{
-		WwdObject obj;
-		obj.x = (int32_t)position.x;
-		obj.y = (int32_t)position.y;
-		obj.z = ZCoord;
-		ActionPlane::addPlaneObject(DBG_NEW BombExplos(obj,
-			"LEVEL_TRIDENTEXPLOSION", "LEVEL_TRIDENT_TRIDENTEXPLOSION"));
+		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_TRIDENTEXPLOSION", "LEVEL_TRIDENT_TRIDENTEXPLOSION"));
 	}
 }
 

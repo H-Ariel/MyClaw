@@ -20,13 +20,19 @@ BearSailor::BearSailor(const WwdObject& obj)
 	: BaseEnemy(obj, 14, 20, "FASTADVANCE", "HITHIGH",
 		"HITLOW", "KILLFALL", "STRIKE1", "", "", "", "", ENEMY_PATROL_SPEED)
 {
+	// hug animation is too short, so we need to repeat it 3 times
+	// TODO: find better times for animations (maybe not repeat it 3 times)
+	vector<Animation::FrameData*> images;
+	for (int i = 0; i < 3; i++)
+		for (Animation::FrameData* frame : ANIMATION_HUG->getImagesList())
+			images.push_back(frame);
+	ANIMATION_HUG = allocNewSharedPtr<Animation>(images);
+
+	myMemCpy(ZCoord, player->ZCoord + 1); // when this enemy hug CC it should be above him
 }
 
 void BearSailor::Logic(uint32_t elapsedTime)
 {
-	BaseEnemy::Logic(elapsedTime);
-	return;
-
 	if (!PreLogic(elapsedTime)) return;
 
 	if (_isStanding)
@@ -51,19 +57,22 @@ void BearSailor::Logic(uint32_t elapsedTime)
 		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
 	}
 
-	if (!_isAttack)
-	{
-		makeAttack();
-	}
-	else
+	if (_isAttack)
 	{
 		if (_ani->isFinishAnimation())
 		{
+			if (_ani == ANIMATION_HUG)
+				player->unsqueeze();
+
 			_ani = ANIMATION_WALK;
 			_ani->reset();
 			_isAttack = false;
 			_isMirrored = speed.x < 0;
 		}
+	}
+	else
+	{
+		makeAttack();
 	}
 
 	PostLogic(elapsedTime);
@@ -79,14 +88,12 @@ void BearSailor::makeAttack()
 		{
 			if (deltaX < 64) // CC is close to enemy
 			{
-				return; // TODO
-
-				//_ani = ANIMATION_TRYCATCH;
 				_ani = ANIMATION_HUG;
 				_ani->reset();
 				_isStanding = false;
 				_isAttack = true;
 				_isMirrored = player->position.x < position.x;
+				player->squeeze(position); // TODO: find perfec position and direction for CC
 			}
 			else if (deltaX < 96) // CC is little far from enemy
 			{

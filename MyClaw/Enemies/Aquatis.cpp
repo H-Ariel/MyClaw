@@ -25,7 +25,8 @@ AquatisTentacle::AquatisTentacle(const WwdObject& obj)
 	_squeeze = AssetsManager::loadCopyAnimation(aniSet + "/STRIKE3.ANI", imageSet);
 
 	// squeeze animation is too short, so we need to repeat it 3 times
-	vector< Animation::FrameData*> images;
+	// TODO: find better times for animations (maybe not repeat it 3 times)
+	vector<Animation::FrameData*> images;
 	for (int i = 0; i < 3; i++)
 		for (Animation::FrameData* frame : _squeeze->getImagesList())
 			images.push_back(frame);

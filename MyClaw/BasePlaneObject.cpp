@@ -1,5 +1,6 @@
 #include "BasePlaneObject.h"
 #include "Player.h"
+#include "Assets-Managers/AssetsManager.h"
 
 
 Player* BasePlaneObject::player = nullptr;
@@ -142,6 +143,11 @@ OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani)
 	_ani = ani;
 	_ani->loopAni = false;
 	_ani->position = pos;
+}
+OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, const string& aniPath, const string& imageSet)
+	: OneTimeAnimation(pos, AssetsManager::loadCopyAnimation(
+		PathManager::getAnimationPath(aniPath), PathManager::getImageSetPath(imageSet)))
+{
 }
 void OneTimeAnimation::Logic(uint32_t elapsedTime)
 {

@@ -102,6 +102,7 @@ class OneTimeAnimation : public BasePlaneObject
 {
 public:
 	OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani);
+	OneTimeAnimation(D2D1_POINT_2F pos, const string& aniPath, const string& imageSet = "");
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 };
