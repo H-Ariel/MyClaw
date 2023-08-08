@@ -92,7 +92,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage,
 	_canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()),
 	_projectileAniDir(projectileAniDir), _hit1AniName(hit1), _hit2AniName(hit2),
 	_fallDeadAniName(fallDead), _minX((float)obj.minX), _maxX((float)obj.maxX),
-	_isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0)
+	_isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0), _fallDead(true)
 {
 	_isMirrored = false;
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);

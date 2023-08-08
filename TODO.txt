@@ -1,3 +1,5 @@
+* use MyString and MySharedPtr ???
+
 * fix CC dynamite (throw)
 * use pegs/elevators/etc. as ground for enemies/treasures/etc. too
 * find perfect speeds for enemies

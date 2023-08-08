@@ -62,8 +62,11 @@
 
 #ifdef _DEBUG
 //#undef LOW_DETAILS
-#define USE_ENEMIES
+//#define USE_ENEMIES
 //#define USE_OBSTACLES
+#else
+#define USE_ENEMIES
+#define USE_OBSTACLES
 #endif
 
 
