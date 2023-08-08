@@ -46,7 +46,8 @@
 #define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
 
 
-static int32_t MAX_DYNAMITE_SPEED = DEFAULT_PROJECTILE_SPEED * 8 / 7;
+static int32_t MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
+static int32_t MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
 
 class PowerupSparkle
@@ -171,7 +172,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_zPressed = false;
 	}
 
-	if (_holdAltTime < 1050) _holdAltTime += elapsedTime; // the max time for holding is 1050 milliseconds
+	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
 	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
 	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
 	else if (_currPowerup != PowerupType::None)
@@ -414,7 +415,7 @@ void Player::Logic(uint32_t elapsedTime)
 						break;
 
 					case ClawProjectile::Types::Dynamite:
-						// TODO: find and calculate perfect speed (don't forget `if (_holdAltTime < 1050) ...`
+						// find and calculate perfect speed (don't forget `if (_holdAltTime < 1000) ...`
 
 						obj.x = (int32_t)position.x;
 						obj.y = (int32_t)position.y;
@@ -422,16 +423,17 @@ void Player::Logic(uint32_t elapsedTime)
 
 						if (inAir)
 						{
-							obj.speedX = _isMirrored ? -MAX_DYNAMITE_SPEED : MAX_DYNAMITE_SPEED;
-							obj.speedY = -MAX_DYNAMITE_SPEED;
+							obj.speedX = _isMirrored ? -MAX_DYNAMITE_SPEED_X : MAX_DYNAMITE_SPEED_X;
+							obj.speedY = -MAX_DYNAMITE_SPEED_Y / 2;
 						}
 						else
 						{
+							int32_t f = obj.speedX * _holdAltTime / 1000;
 							if (_isMirrored)
-								obj.speedX = max(obj.speedX * _holdAltTime / 1000, -MAX_DYNAMITE_SPEED);
+								obj.speedX = max(f, -MAX_DYNAMITE_SPEED_X);
 							else
-								obj.speedX = min(obj.speedX * _holdAltTime / 1000, MAX_DYNAMITE_SPEED);
-							obj.speedY = min(obj.speedY * _holdAltTime / 1000, -MAX_DYNAMITE_SPEED);
+								obj.speedX = min(f, MAX_DYNAMITE_SPEED_X);
+							obj.speedY = min(obj.speedY, -MAX_DYNAMITE_SPEED_Y) * _holdAltTime / 1000;
 						}
 
 						break;
@@ -925,7 +927,7 @@ bool Player::collectItem(Item* item)
 		// impleted as `class Warp`
 		break;
 
-		// TODO: not impleted
+		// these items used in multiplayer mode, so I don't need to implement them now
 	case Item::Curse_Ammo:		break;
 	case Item::Curse_Magic:		break;
 	case Item::Curse_Health:	break;
@@ -1090,6 +1092,10 @@ void Player::keyDown(int key)
 	}
 }
 
+#ifdef _DEBUG // in debug mode, player can move freely
+void Player::squeeze(D2D1_POINT_2F pos) {}
+void Player::unsqueeze() {}
+#else
 void Player::squeeze(D2D1_POINT_2F pos)
 {
 	if (pos.x != 0 && pos.y != 0)
@@ -1104,3 +1110,4 @@ void Player::unsqueeze()
 {
 	_ani = _animations[_aniName = "STAND"];
 }
+#endif
