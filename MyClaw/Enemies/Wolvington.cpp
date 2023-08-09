@@ -230,7 +230,7 @@ void Wolvington::makeAttack()
 				_isAttack = true;
 				_isMirrored = player->position.x < position.x;
 
-				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL6/IMAGES/WOLVINGTONMAGIC"));
+				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL_WOLVINGTONMAGIC"));
 
 				_attackRest = 1500;
 

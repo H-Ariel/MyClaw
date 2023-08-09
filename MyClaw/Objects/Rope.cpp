@@ -35,10 +35,11 @@ static D2D1_POINT_2F ropeFrameIndexToRopeHandleOffset[120] = {
 };
 
 
+// TODO: somthibg is wrong with rope animation and CC movement
 Rope::Rope(const WwdObject& obj)
 	: BasePlaneObject(obj), _edgePos({})
 {
-	myMemCpy(this->ZCoord, player->ZCoord + 1);
+//	myMemCpy(this->ZCoord, player->ZCoord + 1);
 	int32_t speed = obj.speedX / 60;
 	if (speed == 0)
 		speed = 25;

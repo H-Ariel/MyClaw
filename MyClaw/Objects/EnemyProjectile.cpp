@@ -1,10 +1,9 @@
 #include "EnemyProjectile.h"
-#include "../Assets-Managers/AssetsManager.h"
 #include "../ActionPlane.h"
 
 
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir)
-	: Projectile(obj, projectileAniDir) {} // TODO: use here the `PathManager::getImageSetPath` ...
+	: Projectile(obj, PathManager::getImageSetPath(projectileAniDir)) {}
 
 RatBomb::RatBomb(const WwdObject& obj)
 	: Projectile(obj, PathManager::getAnimationPath("LEVEL_RATBOMB_FALLEASTWEST"))
@@ -61,7 +60,7 @@ CannonBall::CannonBall(const WwdObject& obj)
 	: Projectile(obj, PathManager::getImageSetPath("LEVEL_CANNONBALL")) {}
 
 MercatTrident::MercatTrident(const WwdObject& obj)
-	: EnemyProjectile(obj, PathManager::getImageSetPath("LEVEL_TRIDENT_TRIDENTPROJECTILE"))
+	: EnemyProjectile(obj, "LEVEL_TRIDENT_TRIDENTPROJECTILE")
 {
 	_isMirrored = !_isMirrored; // the mercat-trident is already mirrored
 }
@@ -74,7 +73,7 @@ MercatTrident::~MercatTrident()
 }
 
 SirenProjectile::SirenProjectile(const WwdObject& obj, int32_t delay)
-	: EnemyProjectile(obj, PathManager::getImageSetPath("LEVEL_SIRENPROJECTILE")), _delay(delay)
+	: EnemyProjectile(obj, "LEVEL_SIRENPROJECTILE"), _delay(delay)
 {
 	_isMirrored = !_isMirrored; // the siren-projectile is already mirrored
 }
