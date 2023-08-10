@@ -38,13 +38,14 @@
 	} break;
 #define SET_POWERUP(type) \
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Powerup); \
-	if (_currPowerup != PowerupType:: type) _powerupLeftTime = 0; \
+	if (_currPowerup != Item:: type) _powerupLeftTime = 0; \
 	_powerupLeftTime += item->getDuration(); \
-	_currPowerup = PowerupType:: type; \
+	_currPowerup = Item:: type; \
 	return true;
 
 #define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
 
+#define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup
 
 static int32_t MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
 static int32_t MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
@@ -175,17 +176,17 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
 	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
 	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
-	else if (_currPowerup != PowerupType::None)
+	else if (_currPowerup != Item::None)
 	{
 		_powerupLeftTime = 0;
-		_currPowerup = PowerupType::None;
+		_currPowerup = Item::None;
 		_powerupSparkles.clear();
 		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	}
 
 	float speedX = SpeedX_Normal, speedYClimb = SpeedY_Climb;
 
-	if (_currPowerup == PowerupType::Catnip)
+	if (_currPowerup == Item::Powerup_Catnip)
 	{
 		for (size_t i = 0; i < 30; _powerupSparkles[i++].Logic(elapsedTime));
 		speedX = SpeedX_SuperSpeed;
@@ -210,8 +211,8 @@ void Player::Logic(uint32_t elapsedTime)
 		_ani = _animations[_aniName];
 		_ani->reset();
 		_ani->loopAni = false;
-		_ani->mirrored = _isMirrored; ////////
-		_ani->position = position; ////////
+		_ani->mirrored = _isMirrored;
+		_ani->position = position;
 		_isOnLadder = false;
 	}
 	if (isTakeDamage() || _aniName == "FALLDEATH")
@@ -223,7 +224,7 @@ void Player::Logic(uint32_t elapsedTime)
 		}
 
 		_ani->Logic(elapsedTime);
-		_lastAttackRect = {}; // TODO: delete this or what in `checkEnemyHits`
+		_lastAttackRect = {};
 
 		if (_ani->isFinishAnimation())
 			_damageRest = 250;
@@ -355,9 +356,9 @@ void Player::Logic(uint32_t elapsedTime)
 				else if (inAir) _aniName = "JUMP" + _aniName;
 				else
 				{
-					if (_currPowerup != PowerupType::FireSword &&
-						_currPowerup != PowerupType::IceSword &&
-						_currPowerup != PowerupType::LightningSword)
+					if (_currPowerup != Item::Powerup_FireSword &&
+						_currPowerup != Item::Powerup_IceSword &&
+						_currPowerup != Item::Powerup_LightningSword)
 					{
 						// get random attack
 						switch (getRandomInt(0, 5))
@@ -538,7 +539,7 @@ void Player::Logic(uint32_t elapsedTime)
 			_ani->loopAni = !FindInArray(NoLoopAnimations, _aniName) && !FindInArray(AttackAnimations, _aniName)
 				&& !isWeaponAnimation() && !isDuck();
 
-			if (endsWith(_aniName, "SWIPE") && _currPowerup != PowerupType::None)
+			if (endsWith(_aniName, "SWIPE") && _currPowerup != Item::None)
 			{
 				shootSwordProjectile();
 			}
@@ -725,10 +726,10 @@ void Player::calcAttackRect()
 
 	rc = setRectByCenter(rc, _saveCurrRect);
 
-	_saveCurrAttackRect = { rc, (_currPowerup == PowerupType::Catnip
-		|| _currPowerup == PowerupType::FireSword
-		|| _currPowerup == PowerupType::IceSword
-		|| _currPowerup == PowerupType::LightningSword) ? 100 : damage };
+	_saveCurrAttackRect = { rc, (_currPowerup == Item::Powerup_Catnip
+		|| _currPowerup == Item::Powerup_FireSword
+		|| _currPowerup == Item::Powerup_IceSword
+		|| _currPowerup == Item::Powerup_LightningSword) ? 100 : damage };
 }
 
 void Player::stopFalling(float collisionSize)
@@ -778,91 +779,12 @@ void Player::jump(float force)
 }
 void Player::jump()
 {
-	if (_currPowerup == PowerupType::Catnip)
+	if (_currPowerup == Item::Powerup_Catnip)
 		jump(SpeedY_SuperJump);
 	else
 		jump(SpeedY_RegularJump);
 }
 
-bool Player::checkForHurts()
-{
-#ifdef _DEBUG
-	return false; // no damage in debug mode
-#endif
-
-	if (isTakeDamage() || _damageRest > 0 || _currPowerup == PowerupType::Invincibility) return false;
-
-	pair<Rectangle2D, int> atkRc;
-
-	for (BaseEnemy* enemy : ActionPlane::getEnemies())
-	{
-		if (enemy->isAttack())
-		{
-			atkRc = enemy->GetAttackRect();
-			if (_lastAttackRect != atkRc.first && _saveCurrRect.intersects(atkRc.first))
-			{
-				_lastAttackRect = atkRc.first;
-				_health -= atkRc.second;
-				return true;
-			}
-		}
-	}
-
-	for (Projectile* p : ActionPlane::getProjectiles())
-	{
-		if (isinstance<SirenProjectile>(p))
-		{
-			_freezeTime = 3000; // freeze CC for 3 seconds
-			return false;
-		}
-		if (isEnemyProjectile(p))
-		{
-			if (_saveCurrRect.intersects(p->GetRect()))
-			{
-				_health -= p->getDamage();
-				p->removeObject = true;
-				return true;
-			}
-		}
-		else if (isinstance<Stalactite>(p))
-		{
-			if (_saveCurrRect.intersects(p->GetRect()))
-			{
-				_health -= p->getDamage();
-				return true;
-			}
-		}
-	}
-
-	int damage;
-
-	for (PowderKeg* p : ActionPlane::getPowderKegs())
-	{
-		if (p != _lastPowderKegExplos && (damage = p->getDamage()) > 0)
-		{
-			if (_saveCurrRect.intersects(p->GetRect()))
-			{
-				_health -= damage;
-				_lastPowderKegExplos = p;
-				return true;
-			}
-		}
-	}
-
-	for (BaseDamageObject* obj : ActionPlane::getDamageObjects())
-	{
-		if ((damage = obj->getDamage()) > 0)
-			if (_saveCurrRect.intersects(obj->GetRect()))
-			{
-				_health -= damage;
-				return true;
-			}
-	}
-
-	_lastAttackRect = {};
-
-	return false;
-}
 bool Player::collectItem(Item* item)
 {
 	// TODO: score animation when collect treasure
@@ -931,12 +853,12 @@ bool Player::collectItem(Item* item)
 		break;
 
 	case Item::Powerup_Catnip_White:
-	case Item::Powerup_Catnip_Red:		SET_POWERUP(Catnip);
-	case Item::Powerup_Invisibility:	SET_POWERUP(Invisibility);
-	case Item::Powerup_Invincibility:	SET_POWERUP(Invincibility);
-	case Item::Powerup_FireSword:		SET_POWERUP(FireSword);
-	case Item::Powerup_LightningSword:	SET_POWERUP(LightningSword);
-	case Item::Powerup_IceSword:		SET_POWERUP(IceSword);
+	case Item::Powerup_Catnip_Red:		SET_POWERUP(Powerup_Catnip);
+	case Item::Powerup_Invisibility:	SET_POWERUP(Powerup_Invisibility);
+	case Item::Powerup_Invincibility:	SET_POWERUP(Powerup_Invincibility);
+	case Item::Powerup_FireSword:		SET_POWERUP(Powerup_FireSword);
+	case Item::Powerup_LightningSword:	SET_POWERUP(Powerup_LightningSword);
+	case Item::Powerup_IceSword:		SET_POWERUP(Powerup_IceSword);
 	case Item::Powerup_ExtraLife:		_lives += 1; return true;
 
 		// these items used in multiplayer mode, so I don't need to implement them now
@@ -1001,7 +923,7 @@ void Player::backToLife()
 	_powerupLeftTime = 0;
 	_dialogLeftTime = 0;
 	_holdAltTime = 0;
-	_currPowerup = PowerupType::None;
+	_currPowerup = Item::None;
 	_lastPowderKegExplos = nullptr;
 	_raisedPowderKeg = nullptr;
 	_lastAttackRect = {};
@@ -1011,7 +933,7 @@ void Player::backToLife()
 	_freezeTime = 0;
 
 	calcRect();
-	//calcAttackRect();
+	_saveCurrAttackRect = {};
 
 	Logic(0); // update position and animation
 }
@@ -1026,7 +948,7 @@ void Player::loseLife()
 		_ani = _animations[_aniName];
 		_ani->reset();
 		_powerupLeftTime = 0;
-		_currPowerup = PowerupType::None;
+		_currPowerup = Item::None;
 		_powerupSparkles.clear();
 		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	}
@@ -1037,9 +959,9 @@ void Player::shootSwordProjectile()
 	ClawProjectile::Types type;
 	switch (_currPowerup)
 	{
-	case PowerupType::FireSword: type = ClawProjectile::Types::FireSword; break;
-	case PowerupType::IceSword: type = ClawProjectile::Types::IceSword; break;
-	case PowerupType::LightningSword: type = ClawProjectile::Types::LightningSword; break;
+	case Item::Powerup_FireSword: type = ClawProjectile::Types::FireSword; break;
+	case Item::Powerup_IceSword: type = ClawProjectile::Types::IceSword; break;
+	case Item::Powerup_LightningSword: type = ClawProjectile::Types::LightningSword; break;
 	default: return;
 	}
 
@@ -1095,12 +1017,95 @@ void Player::keyDown(int key)
 	}
 }
 
+bool Player::checkForHurts()
+{
+#ifdef _DEBUG
+	return false; // no damage in debug mode
+#endif
+
+	if (isTakeDamage() || _damageRest > 0 || _currPowerup == Item::Powerup_Invincibility) return false;
+
+	pair<Rectangle2D, int> atkRc;
+
+	for (BaseEnemy* enemy : ActionPlane::getEnemies())
+	{
+		if (enemy->isAttack())
+		{
+			atkRc = enemy->GetAttackRect();
+			if (_lastAttackRect != atkRc.first && _saveCurrRect.intersects(atkRc.first))
+			{
+				_lastAttackRect = atkRc.first;
+				_health -= atkRc.second;
+				return true;
+}
+		}
+	}
+
+	for (Projectile* p : ActionPlane::getProjectiles())
+	{
+		if (isinstance<SirenProjectile>(p))
+		{
+			_freezeTime = 3000; // freeze CC for 3 seconds
+			return false;
+		}
+		if (isEnemyProjectile(p))
+		{
+			if (_saveCurrRect.intersects(p->GetRect()))
+			{
+				_health -= p->getDamage();
+				p->removeObject = true;
+				return true;
+			}
+		}
+		else if (isinstance<Stalactite>(p))
+		{
+			if (_saveCurrRect.intersects(p->GetRect()))
+			{
+				_health -= p->getDamage();
+				return true;
+			}
+		}
+	}
+
+	int damage;
+
+	for (PowderKeg* p : ActionPlane::getPowderKegs())
+	{
+		if (p != _lastPowderKegExplos && (damage = p->getDamage()) > 0)
+		{
+			if (_saveCurrRect.intersects(p->GetRect()))
+			{
+				_health -= damage;
+				_lastPowderKegExplos = p;
+				return true;
+			}
+		}
+	}
+
+	for (BaseDamageObject* obj : ActionPlane::getDamageObjects())
+	{
+		if ((damage = obj->getDamage()) > 0)
+			if (_saveCurrRect.intersects(obj->GetRect()))
+			{
+				_health -= damage;
+				return true;
+			}
+	}
+
+	_lastAttackRect = {};
+
+	return false;
+}
+
 #ifdef _DEBUG // in debug mode, player can move freely
 void Player::squeeze(D2D1_POINT_2F pos) {}
 void Player::unsqueeze() {}
 #else
 void Player::squeeze(D2D1_POINT_2F pos)
 {
+	if (_currPowerup == Item::Powerup_Invincibility)
+		return;
+
 	if (pos.x != 0 && pos.y != 0)
 		position = pos;
 

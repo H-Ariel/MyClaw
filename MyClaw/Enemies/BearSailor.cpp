@@ -33,52 +33,10 @@ BearSailor::BearSailor(const WwdObject& obj)
 
 void BearSailor::Logic(uint32_t elapsedTime)
 {
-	// the code same to BaseEnemy::Logic (except `if (_ani == ANIMATION_HUG) player->unsqueeze();`
-	// TODO: make it better / combine it with BaseEnemy::Logic
-	
-	if (!PreLogic(elapsedTime)) return;
-
-	if (_isStanding)
-	{
-		if (_ani != ANIMATION_IDLE)
-		{
-			_ani = ANIMATION_IDLE;
-			_ani->reset();
-		}
-		else if (_ani->isFinishAnimation())
-		{
-			_isStanding = false;
-			_ani = ANIMATION_WALK;
-			_ani->reset();
-		}
-	}
-
-	if (!_isStanding && !_isAttack)
-	{
-		position.x += speed.x * elapsedTime;
-		if (position.x < _minX) { stopMovingLeft(_minX - position.x); }
-		else if (position.x > _maxX) { stopMovingRight(position.x - _maxX); }
-	}
-
-	if (_isAttack)
-	{
-		if (_ani->isFinishAnimation())
-		{
-			if (_ani == ANIMATION_HUG)
-				player->unsqueeze();
-
-			_ani = ANIMATION_WALK;
-			_ani->reset();
-			_isAttack = false;
-			_isMirrored = speed.x < 0;
-		}
-	}
-	else
-	{
-		makeAttack();
-	}
-
-	PostLogic(elapsedTime);
+	shared_ptr<Animation> prevAni(_ani);
+	BaseEnemy::Logic(elapsedTime);
+	if (prevAni == ANIMATION_HUG && prevAni != _ani) // hug animation is finished
+		player->unsqueeze(); // CC is free now
 }
 
 void BearSailor::makeAttack()

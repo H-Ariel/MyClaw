@@ -67,7 +67,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 
 	setObjectRectangle();
 
-	//TODO: used in level 8
+	// this used in level 8
 	if (obj.imageSet == "LEVEL_CANNON2")
 	{
 		myMemCpy(_objRc.top, _objRc.top + 32);

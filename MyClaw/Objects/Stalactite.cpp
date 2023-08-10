@@ -6,20 +6,23 @@
 
 Stalactite::Stalactite(const WwdObject& obj)
 	: Projectile(obj, "") // the stalactite behave like a projectile
+	, _initialPosition({ (float)obj.x, (float)obj.y })
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 50, false);
-	_ani->updateFrames = false;
 
 	_activityArea.left = (float)obj.userRect1.left;
 	_activityArea.top = (float)obj.userRect1.top;
 	_activityArea.right = (float)obj.userRect1.right;
 	_activityArea.bottom = (float)obj.userRect1.bottom;
 
-	speed = {};
+	Reset();
 }
 
 void Stalactite::Logic(uint32_t elapsedTime)
 {
+	if (_ani->isFinishAnimation())
+		return; // the object is not used (it finished its job for now)
+
 	if (speed.y == 0)
 	{
 		if (_activityArea.intersects(player->GetRect()))
@@ -33,7 +36,21 @@ void Stalactite::Logic(uint32_t elapsedTime)
 
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
-	removeObject = _ani->isFinishAnimation();
+}
+
+void Stalactite::Draw()
+{
+	if (!_ani->isFinishAnimation())
+		_ani->Draw();
+}
+
+void Stalactite::Reset()
+{
+	_ani->reset();
+	_ani->updateFrames = false;
+	_ani->loopAni = false;
+	speed = {};
+	position = _initialPosition;
 }
 
 void Stalactite::stopFalling(float collisionSize)
@@ -43,5 +60,5 @@ void Stalactite::stopFalling(float collisionSize)
 
 int Stalactite::getDamage() const
 {
-	return 10; // TODO: find the real damage
+	return 10;
 }

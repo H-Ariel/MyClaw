@@ -14,18 +14,6 @@ class PowerupSparkle;
 class Player : public BaseCharacter // The legendary Captain Claw !
 {
 public:
-	enum class PowerupType : uint8_t // TODO: use Item::Type ?
-	{
-		None,
-		Catnip,
-		FireSword,
-		IceSword,
-		LightningSword,
-		Invisibility, // ghost (enemies can't see him)
-		Invincibility // colorful (enemies can't hurt him)
-	};
-
-
 	Player(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
@@ -38,7 +26,7 @@ public:
 	void stopMovingRight(float collisionSize) override;
 	void jump(float force); // the force go to `_speed.y`
 
-	bool collectItem(Item* item); // returns true if the item collected and should be removed. else - false
+	bool collectItem(Item* item); // returns `true` if the item collected and should be removed. else - `false`.
 
 	bool isJumping() const { return speed.y < 0 && !_isOnLadder; }
 	bool isClimbing() const { return _isOnLadder; }
@@ -49,7 +37,7 @@ public:
 	bool isFinishLevel() const { return _finishLevel; }
 	bool isFreeze() const { return _freezeTime > 0; }
 	bool isSqueezed() const { return _aniName == "SQUEEZED"; }
-	bool isGhost() const { return _currPowerup == PowerupType::Invisibility; }
+	bool isGhost() const { return _currPowerup == Item::Powerup_Invisibility; }
 	bool isFalling() const override;
 	bool isStanding() const override;
 	bool isDuck() const override;
@@ -106,7 +94,7 @@ private:
 	int32_t _freezeTime; // in milliseconds. it used for freeze from siren.
 	int _lives;
 	ClawProjectile::Types _currWeapon;
-	PowerupType _currPowerup;
+	Item::Type _currPowerup; // the current powerup he has (not treasures!)
 	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _spacePressed, _altPressed, _zPressed;
 	bool _leftCollision, _rightCollision, _isOnLadder, _useWeapon;
 	bool _finishLevel, _isCollideWithLadder, _isOnLadderTop;

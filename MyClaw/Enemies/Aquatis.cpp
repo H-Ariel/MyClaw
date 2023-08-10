@@ -12,7 +12,7 @@ static vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that 
 
 
 AquatisTentacle::AquatisTentacle(const WwdObject& obj)
-	: BaseDamageObject(obj, 10), _squeezeRestTime(0), _deadTime(0)
+	: BaseDamageObject(obj, 5), _squeezeRestTime(0), _deadTime(0)
 {
 	string imageSet = PathManager::getImageSetPath(obj.imageSet);
 	string aniSet = PathManager::getAnimationSetPath(obj.imageSet);
@@ -23,15 +23,6 @@ AquatisTentacle::AquatisTentacle(const WwdObject& obj)
 	_respawn = AssetsManager::loadCopyAnimation(aniSet + "/RESPAWN.ANI", imageSet);
 	_slap = AssetsManager::loadCopyAnimation(aniSet + "/STRIKE1.ANI", imageSet);
 	_squeeze = AssetsManager::loadCopyAnimation(aniSet + "/STRIKE3.ANI", imageSet);
-
-	// squeeze animation is too short, so we need to repeat it 3 times
-	// TODO: find better times for animations (maybe not repeat it 3 times)
-	vector<Animation::FrameData*> images;
-	for (int i = 0; i < 3; i++)
-		for (Animation::FrameData* frame : _squeeze->getImagesList())
-			images.push_back(frame);
-	_squeeze = allocNewSharedPtr<Animation>(images);
-
 
 	_ani = _idle;
 	myMemCpy(ZCoord, player->ZCoord + 1);

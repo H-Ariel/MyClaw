@@ -202,18 +202,27 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			if (isbaseinstance<BaseEnemy>(obj))
 				eraseByValue(_enemies, obj);
 			else if (isProjectile(obj))
-				eraseByValue(_projectiles, obj);
+			{
+				if (isinstance<Stalactite>(obj))
+					obj->removeObject = false; // we don't want to delete this object
+				else
+					eraseByValue(_projectiles, obj);
+			}
 			else if (isinstance<PowderKeg>(obj))
 				eraseByValue(_powderKegs, obj);
 
-			delete obj;
-			_objects.erase(_objects.begin() + i);
-			i--; // cancel `i++`
+			if (obj->removeObject) // we really want to delete this object
+			{
+				delete obj;
+				_objects.erase(_objects.begin() + i);
+				i--; // cancel `i++`
+			}
 		}
 	}
 
 	AssetsManager::callLogics(elapsedTime);
 
+#ifndef _DEBUG // when I'm debugging, I don't want to shake the screen (it's annoying)
 	const Rectangle2D playerRect = player->GetRect();
 	for (auto i = _shakeRects.begin(); i != _shakeRects.end(); i++)
 	{
@@ -224,6 +233,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			break;
 		}
 	}
+#endif
 }
 void ActionPlane::Draw()
 {
