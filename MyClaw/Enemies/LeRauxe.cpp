@@ -64,7 +64,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_JUMPBACK)
 	{
-		makeAttack();
+		BaseBoss::makeAttack();
 	}
 	else if (_ani->isFinishAnimation())
 	{
@@ -208,21 +208,17 @@ bool LeRauxe::PreLogic(uint32_t elapsedTime)
 
 	return true;
 }
-void LeRauxe::makeAttack()
+void LeRauxe::makeAttack(float deltaX, float deltaY)
 {
-	if (enemySeeClaw())
+	if (deltaX < 96 && deltaY < 16) // CC is close to LR
 	{
-		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
-		if (deltaX < 96 && deltaY < 16) // CC is close to LR
-		{
-			if (player->isDuck()) _ani = ANIMATION_STRIKE;
-			else _ani = ANIMATION_STAB;
-			_ani->reset();
-			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+		if (player->isDuck()) _ani = ANIMATION_STRIKE;
+		else _ani = ANIMATION_STAB;
+		_ani->reset();
+		_isAttack = true;
+		_isMirrored = player->position.x < position.x;
 
-			_attackRest = 600;
-		}
+		_attackRest = 600;
 	}
 }
 bool LeRauxe::checkForHurts()

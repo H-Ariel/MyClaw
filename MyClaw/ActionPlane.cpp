@@ -330,6 +330,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW Checkpoint(obj));
 	}
+	// TODO: add StartSteppingStone (it is not regular SteppingStone (see lvl8)
 	else if (startsWith(obj.logic, "TogglePeg") || contains(obj.logic, "SteppingStone"))
 	{
 		_objects.push_back(DBG_NEW TogglePeg(obj));
@@ -340,13 +341,13 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "BreakPlank")
 	{
-		int32_t topOffset = 0;
-		if (_wwd->levelNumber == 5) topOffset = _wwd->tilesDescription[509].rect.top;
-		else if (_wwd->levelNumber == 11) topOffset = _wwd->tilesDescription[39].rect.top;
+		float topOffset = 0;
+		if (_wwd->levelNumber == 5) topOffset = (float)_wwd->tilesDescription[509].rect.top;
+		else if (_wwd->levelNumber == 11) topOffset = (float)_wwd->tilesDescription[39].rect.top;
 
 		for (int32_t i = 0; i < obj.width; i++)
 		{
-			_objects.push_back(DBG_NEW BreakPlank(obj, (float)topOffset));
+			_objects.push_back(DBG_NEW BreakPlank(obj, topOffset));
 			(int32_t&)obj.x += TILE_SIZE;
 			//myMemCpy(obj.x, obj.x + TILE_SIZE);
 		}

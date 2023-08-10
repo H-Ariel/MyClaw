@@ -18,7 +18,7 @@ public:
 	Side getSide() const { return side; }
 
 private:
-	void makeAttack() override;
+	void makeAttack(float deltaX, float deltaY) override;
 	bool checkForHurts() override;
 
 	Side side;

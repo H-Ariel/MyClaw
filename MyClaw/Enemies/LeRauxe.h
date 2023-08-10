@@ -19,6 +19,6 @@ public:
 
 private:
 	bool PreLogic(uint32_t elapsedTime) override;
-	void makeAttack() override;
+	void makeAttack(float deltaX, float deltaY) override;
 	bool checkForHurts() override;
 };

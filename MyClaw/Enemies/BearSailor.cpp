@@ -39,31 +39,26 @@ void BearSailor::Logic(uint32_t elapsedTime)
 		player->unsqueeze(); // CC is free now
 }
 
-void BearSailor::makeAttack()
+void BearSailor::makeAttack(float deltaX, float deltaY)
 {
-	if (enemySeeClaw())
+	if (deltaY < 24)
 	{
-		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
-
-		if (deltaY < 24)
+		if (deltaX < 64) // CC is close to enemy
 		{
-			if (deltaX < 64) // CC is close to enemy
-			{
-				_ani = ANIMATION_HUG;
-				_ani->reset();
-				_isStanding = false;
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
-				player->squeeze(position); // TODO: find perfec position and direction for CC
-			}
-			else if (deltaX < 96) // CC is little far from enemy
-			{
-				_ani = ANIMATION_STRIKE;
-				_ani->reset();
-				_isStanding = false;
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
-			}
+			_ani = ANIMATION_HUG;
+			_ani->reset();
+			_isStanding = false;
+			_isAttack = true;
+			_isMirrored = player->position.x < position.x;
+			player->squeeze(position); // TODO: find perfec position and direction for CC
+		}
+		else if (deltaX < 96) // CC is little far from enemy
+		{
+			_ani = ANIMATION_STRIKE;
+			_ani->reset();
+			_isStanding = false;
+			_isAttack = true;
+			_isMirrored = player->position.x < position.x;
 		}
 	}
 }

@@ -38,7 +38,7 @@ void Fish::Logic(uint32_t elapsedTime)
 		if (_attackRest > 0)
 			_attackRest -= elapsedTime;
 		if (_attackRest <= 0)
-			makeAttack();
+			BaseEnemy::makeAttack();
 	}
 	else
 	{
@@ -72,21 +72,18 @@ void Fish::stopMovingRight(float collisionSize)
 	_isMirrored = true;
 }
 
-void Fish::makeAttack()
+void Fish::makeAttack(float deltaX, float deltaY)
 {
-	if (enemySeeClaw())
+	if (deltaX < 96 && deltaY < 32)
 	{
-		if (abs(player->position.x - position.x) < 96 && abs(player->position.y - position.y) < 32)
-		{
-			_ani = ANIMATION_STRIKE;
+		_ani = ANIMATION_STRIKE;
 
-			// TODO: jump if CC on land next to water
-		//	_ani = ANIMATION_JUMP;
-		//	speed.y = -0.6f;
-			_ani->reset();
-			_isStanding = false;
-			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
-		}
+		// TODO: jump if CC on land next to water
+	//	_ani = ANIMATION_JUMP;
+	//	speed.y = -0.6f;
+		_ani->reset();
+		_isStanding = false;
+		_isAttack = true;
+		_isMirrored = player->position.x < position.x;
 	}
 }

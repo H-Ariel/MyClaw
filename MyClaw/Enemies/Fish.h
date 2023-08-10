@@ -12,7 +12,7 @@ public:
 	pair<Rectangle2D, int> GetAttackRect() override;
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
-	void makeAttack() override;
+	void makeAttack(float deltaX, float deltaY) override;
 
 private:
 	const float _yPos;

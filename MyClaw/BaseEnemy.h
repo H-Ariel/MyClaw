@@ -29,7 +29,8 @@ public:
 
 
 protected:
-	virtual void makeAttack();
+	virtual void makeAttack(float deltaX, float deltaY); // recieves the distance between the enemy and CC
+	void makeAttack(); // calc deltaX and deltaY and call `makeAttack(float deltaX, float deltaY)`
 
 	virtual bool PreLogic(uint32_t elapsedTime); // called before `Logic`. returns `true` if we need do `Logic`
 	virtual void PostLogic(uint32_t elapsedTime); // called after `Logic`

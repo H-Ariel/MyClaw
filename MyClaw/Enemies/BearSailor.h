@@ -13,5 +13,5 @@ public:
 	pair<Rectangle2D, int> GetAttackRect() override;
 
 private:
-	void makeAttack() override;
+	void makeAttack(float deltaX, float deltaY) override;
 };

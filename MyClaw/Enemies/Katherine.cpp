@@ -52,7 +52,7 @@ void Katherine::Logic(uint32_t elapsedTime)
 
 	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_FLIP)
 	{
-		makeAttack();
+		BaseBoss::makeAttack();
 	}
 	else if (_ani->isFinishAnimation())
 	{
@@ -205,29 +205,25 @@ bool Katherine::PreLogic(uint32_t elapsedTime)
 
 	return true;
 }
-void Katherine::makeAttack()
+void Katherine::makeAttack(float deltaX, float deltaY)
 {
-	if (enemySeeClaw())
+	if (deltaX < 48 && deltaY < 16) // CC is close to K
 	{
-		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
-		if (deltaX < 48 && deltaY < 16) // CC is close to K
-		{
-			_ani = ANIMATION_STRIKE2;
-			_ani->reset();
-			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+		_ani = ANIMATION_STRIKE2;
+		_ani->reset();
+		_isAttack = true;
+		_isMirrored = player->position.x < position.x;
 
-			_attackRest = 800;
-		}
-		else if (192 < deltaX && deltaX < 208 && deltaY < 24) // CC is far from K
-		{
-			_ani = ANIMATION_STRIKE1;
-			_ani->reset();
-			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+		_attackRest = 800;
+	}
+	else if (192 < deltaX && deltaX < 208 && deltaY < 24) // CC is far from K
+	{
+		_ani = ANIMATION_STRIKE1;
+		_ani->reset();
+		_isAttack = true;
+		_isMirrored = player->position.x < position.x;
 
-			_attackRest = 1200;
-		}
+		_attackRest = 1200;
 	}
 }
 bool Katherine::checkForHurts()

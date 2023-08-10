@@ -36,31 +36,25 @@ void HermitCrab::Logic(uint32_t elapsedTime)
 	}
 }
 
-void HermitCrab::makeAttack()
+void HermitCrab::makeAttack(float deltaX, float deltaY)
 {
-	if (_isStanding || enemySeeClaw())
+	if (deltaX < 256 && deltaY < 42)
 	{
-		const float deltaX = abs(player->position.x - position.x);
-		const float deltaY = abs(player->position.y - position.y);
+		_ani = ANIMATION_SHOOT;
+		_ani->reset();
+		_isStanding = false;
+		_isAttack = true;
+		_isMirrored = player->position.x < position.x;
 
-		if (deltaX < 256 && deltaY < 42)
-		{
-			_ani = ANIMATION_SHOOT;
-			_ani->reset();
-			_isStanding = false;
-			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+		WwdObject obj;
+		obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
+		obj.y = (int32_t)position.y - 24;
+		obj.z = ZCoord;
+		obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
+		obj.damage = 10;
+		ActionPlane::addPlaneObject(DBG_NEW CrabBomb(obj));
 
-			WwdObject obj;
-			obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
-			obj.y = (int32_t)position.y - 24;
-			obj.z = ZCoord;
-			obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
-			obj.damage = 10;
-			ActionPlane::addPlaneObject(DBG_NEW CrabBomb(obj));
-
-			_attackRest = 1200;
-		}
+		_attackRest = 1200;
 	}
 }
 

@@ -135,11 +135,10 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 
 	WindowManager::setBackgroundColor(planes[0]->fillColor);
 
-	// minor change to tiles so they will be more accurate for reduce rectangles (in PhysicsManager)
-	// in levels 5, 11 it's necessary to change the tiles for "BreakPlanks"
-	// in level 8 it's necessary to change the tiles for death blocks
-	// TODO: levels 5, 11: connect the planks to the tiles (in ActionPlane)
-	// TODO: continue for all levels (if needed)
+	// Minor change to tiles so they will be more accurate for reduce rectangles (in PhysicsManager)
+	// In levels 5, 11 it's necessary to change the tiles for "BreakPlanks"
+	// (we relate the planks to the tiles in ActionPlane)
+	// In level 8 it's necessary to change the tiles for death blocks
 	if (levelNumber == 1)
 	{
 		WwdTileDescription& t401 = tilesDescription[401];

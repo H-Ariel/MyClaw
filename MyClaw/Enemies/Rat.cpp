@@ -15,26 +15,23 @@ Rat::Rat(const WwdObject& obj)
 {
 }
 
-void Rat::makeAttack()
+void Rat::makeAttack(float deltaX, float deltaY)
 {
-	if (_isStanding || enemySeeClaw())
+	if (deltaX < 352 && deltaY < 42)
 	{
-		if (abs(player->position.x - position.x) < 352 && abs(player->position.y - position.y) < 42)
-		{
-			_ani = ANIMATION_SHOOT;
-			_ani->reset();
-			_isStanding = false;
-			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+		_ani = ANIMATION_SHOOT;
+		_ani->reset();
+		_isStanding = false;
+		_isAttack = true;
+		_isMirrored = player->position.x < position.x;
 
-			WwdObject obj;
-			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
-			obj.y = (int32_t)position.y - 32;
-			obj.z = ZCoord;
-			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
-			obj.damage = 15;
-			ActionPlane::addPlaneObject(DBG_NEW RatBomb(obj));
-		}
+		WwdObject obj;
+		obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+		obj.y = (int32_t)position.y - 32;
+		obj.z = ZCoord;
+		obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+		obj.damage = 15;
+		ActionPlane::addPlaneObject(DBG_NEW RatBomb(obj));
 	}
 }
 

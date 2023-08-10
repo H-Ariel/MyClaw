@@ -64,18 +64,17 @@ pair<Rectangle2D, int> Chameleon::GetAttackRect()
 	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }
 
-void Chameleon::makeAttack()
+void Chameleon::makeAttack(float deltaX, float deltaY)
 {
-	if (_opacity == 1 && (_isStanding || enemySeeClaw()))
+	if (_opacity != 1) return;
+
+	if (deltaX < 128 && deltaY < 32) // CC is close to enemy
 	{
-		if (abs(player->position.x - position.x) < 128 && abs(player->position.y - position.y) < 32) // CC is close to enemy
-		{
-			_ani = _animations["STRIKE1"];
-			_ani->reset();
-			_isStanding = false;
-			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
-		}
+		_ani = _animations["STRIKE1"];
+		_ani->reset();
+		_isStanding = false;
+		_isAttack = true;
+		_isMirrored = player->position.x < position.x;
 	}
 }
 bool Chameleon::checkForHurts()

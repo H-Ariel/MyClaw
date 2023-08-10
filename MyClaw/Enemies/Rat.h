@@ -9,7 +9,7 @@ class Rat : public BaseEnemy
 public:
 	Rat(const WwdObject& obj);
 
-	void makeAttack() override;
+	void makeAttack(float deltaX, float deltaY) override;
 	pair<Rectangle2D, int> GetAttackRect() override;
 
 	bool isDuck() const override;

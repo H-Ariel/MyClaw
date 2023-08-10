@@ -217,62 +217,62 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 void BaseEnemy::makeAttack()
 {
 	if (_isStanding || enemySeeClaw())
+		makeAttack(abs(player->position.x - position.x), abs(player->position.y - position.y));
+}
+void BaseEnemy::makeAttack(float deltaX, float deltaY)
+{
+	if (deltaX < 96 && deltaY < 16) // CC is close to enemy
 	{
-		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
-
-		if (deltaX < 96 && deltaY < 16) // CC is close to enemy
+		if (_canStrike)
 		{
-			if (_canStrike)
-			{
-				_ani = ANIMATION_STRIKE_HIGH;
-				_ani->reset();
-				_isStanding = false;
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
-			}
-			if (_canStrikeDuck && player->isDuck())
-			{
-				_ani = ANIMATION_STRIKE_LOW;
-				_ani->reset();
-				_isStanding = false;
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
-			}
+			_ani = ANIMATION_STRIKE_HIGH;
+			_ani->reset();
+			_isStanding = false;
+			_isAttack = true;
+			_isMirrored = player->position.x < position.x;
 		}
-		else if (deltaX < 256) // CC is far from enemy
+		if (_canStrikeDuck && player->isDuck())
 		{
-			if (_canShootDuck && deltaY < 128 && player->isDuck())
-			{
-				_ani = ANIMATION_SHOOTDUCK;
-				_ani->reset();
-				_isStanding = false;
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
+			_ani = ANIMATION_STRIKE_LOW;
+			_ani->reset();
+			_isStanding = false;
+			_isAttack = true;
+			_isMirrored = player->position.x < position.x;
+		}
+	}
+	else if (deltaX < 256) // CC is far from enemy
+	{
+		if (_canShootDuck && deltaY < 128 && player->isDuck())
+		{
+			_ani = ANIMATION_SHOOTDUCK;
+			_ani->reset();
+			_isStanding = false;
+			_isAttack = true;
+			_isMirrored = player->position.x < position.x;
 
-				WwdObject obj;
-				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
-				obj.y = (int32_t)position.y + 10;
-				obj.z = ZCoord;
-				obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
-				obj.damage = 10;
-				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
-			}
-			else if (_canShoot && deltaY < 16)
-			{
-				_ani = ANIMATION_SHOOT;
-				_ani->reset();
-				_isStanding = false;
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
+			WwdObject obj;
+			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+			obj.y = (int32_t)position.y + 10;
+			obj.z = ZCoord;
+			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+			obj.damage = 10;
+			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
+		}
+		else if (_canShoot && deltaY < 16)
+		{
+			_ani = ANIMATION_SHOOT;
+			_ani->reset();
+			_isStanding = false;
+			_isAttack = true;
+			_isMirrored = player->position.x < position.x;
 
-				WwdObject obj;
-				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
-				obj.y = (int32_t)position.y - 20;
-				obj.z = ZCoord;
-				obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
-				obj.damage = 10;
-				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
-			}
+			WwdObject obj;
+			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+			obj.y = (int32_t)position.y - 20;
+			obj.z = ZCoord;
+			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+			obj.damage = 10;
+			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 		}
 	}
 }
@@ -348,7 +348,7 @@ bool BaseEnemy::checkForHurt(pair<Rectangle2D, int> hurtData)
 	}
 	return false;
 }
-bool BaseEnemy::checkForHurts() // TODO: combine all `checkForHurts` methods from all enemies
+bool BaseEnemy::checkForHurts()
 {
 	if (checkForHurt(player->GetAttackRect()))
 		return true;

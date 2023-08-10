@@ -19,7 +19,7 @@ public:
 
 private:
 	bool PreLogic(uint32_t elapsedTime) override;
-	void makeAttack() override;
+	void makeAttack(float deltaX, float deltaY) override;
 	bool checkForHurts() override;
 
 	int32_t _magicAttackCuonter; // count the times W attack CC with magic

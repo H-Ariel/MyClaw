@@ -11,5 +11,5 @@ public:
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;
 
-	void makeAttack() override;
+	void makeAttack(float deltaX, float deltaY) override;
 };

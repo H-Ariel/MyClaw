@@ -114,15 +114,15 @@ void Marrow::Logic(uint32_t elapsedTime)
 	else
 	{
 		if (globalState == GlobalState::ClawAttackMarrow)
-			makeAttack();
+			BaseBoss::makeAttack();
 	}
 
 
 	PostLogic(elapsedTime);
 }
-void Marrow::makeAttack()
+void Marrow::makeAttack(float deltaX, float deltaY)
 {
-	if (abs(player->position.x - position.x) < 96 && abs(player->position.y - position.y) < 16)
+	if (deltaX < 96 && deltaY < 16)
 	{
 		_ani = _animations["STRIKE2"]; // knife attack
 		_ani->reset();

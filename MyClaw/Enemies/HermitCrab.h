@@ -15,7 +15,7 @@ public:
 	bool isTakeDamage() const override;
 
 private:
-	void makeAttack() override;
+	void makeAttack(float deltaX, float deltaY) override;
 
 	bool _isFromNest;
 };

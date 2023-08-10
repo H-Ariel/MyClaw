@@ -42,43 +42,38 @@ pair<Rectangle2D, int> Mercat::GetAttackRect()
 	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }
 
-void Mercat::makeAttack()
+void Mercat::makeAttack(float deltaX, float deltaY)
 {
-	if (_isStanding || enemySeeClaw())
+	if (deltaY < 24)
 	{
-		const float deltaX = abs(player->position.x - position.x), deltaY = abs(player->position.y - position.y);
+		bool strike = false;
 
-		if (deltaY < 24)
+		if (deltaX < 128) // CC is close to enemy
 		{
-			bool strike = false;
+			strike = true;
+		}
+		else if (deltaX < 256) // CC is far from enemy
+		{
+			strike = true;
 
-			if (deltaX < 128) // CC is close to enemy
-			{
-				strike = true;
-			}
-			else if (deltaX < 256) // CC is far from enemy
-			{
-				strike = true;
+			WwdObject obj;
+			obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
+			obj.y = (int32_t)position.y;
+			obj.z = ZCoord;
+			obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
+			obj.damage = 10;
+			ActionPlane::addPlaneObject(DBG_NEW MercatTrident(obj));
+		}
 
-				WwdObject obj;
-				obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
-				obj.y = (int32_t)position.y;
-				obj.z = ZCoord;
-				obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
-				obj.damage = 10;
-				ActionPlane::addPlaneObject(DBG_NEW MercatTrident(obj));
-			}
+		if (strike)
+		{
+			_ani = _animations["STRIKE1"];
+			_ani->reset();
+			_isStanding = false;
+			_isAttack = true;
+			_isMirrored = player->position.x < position.x;
 
-			if (strike)
-			{
-				_ani = _animations["STRIKE1"];
-				_ani->reset();
-				_isStanding = false;
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
-
-				_attackRest = 250;
-			}
+			_attackRest = 250;
 		}
 	}
 }

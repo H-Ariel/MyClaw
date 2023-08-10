@@ -54,7 +54,7 @@ void Wolvington::Logic(uint32_t elapsedTime)
 
 	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_JUMPBACK)
 	{
-		makeAttack();
+		BaseBoss::makeAttack();
 	}
 	else if (_ani->isFinishAnimation())
 	{
@@ -191,51 +191,47 @@ bool Wolvington::PreLogic(uint32_t elapsedTime)
 
 	return true;
 }
-void Wolvington::makeAttack()
+void Wolvington::makeAttack(float deltaX, float deltaY)
 {
-	if (enemySeeClaw())
+	if (deltaX < 64) // CC is close to W
 	{
-		const float deltaX = abs(player->position.x - position.x);
-		if (deltaX < 64) // CC is close to W
+		if (player->isDuck()) _ani = ANIMATION_STRIKE1;
+		else _ani = ANIMATION_STRIKE2;
+		_ani->reset();
+		_isAttack = true;
+		_isMirrored = player->position.x < position.x;
+
+		_attackRest = 700;
+
+		_magicAttackCuonter = 0;
+	}
+	else if (deltaX < 256) // CC is far from W
+	{
+		if (_magicAttackCuonter < 3)
 		{
-			if (player->isDuck()) _ani = ANIMATION_STRIKE1;
-			else _ani = ANIMATION_STRIKE2;
+			WwdObject obj;
+			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
+			obj.y = (int32_t)position.y - 20;
+			obj.z = ZCoord;
+			obj.speedX = (!_isMirrored) ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
+			obj.damage = 20;
+
+			if (player->isDuck()) {
+				_ani = ANIMATION_STRIKE4;
+				obj.y += 30;
+			}
+			else
+				_ani = ANIMATION_STRIKE3;
+
 			_ani->reset();
 			_isAttack = true;
 			_isMirrored = player->position.x < position.x;
 
-			_attackRest = 700;
+			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL_WOLVINGTONMAGIC"));
 
-			_magicAttackCuonter = 0;
-		}
-		else if (deltaX < 256) // CC is far from W
-		{
-			if (_magicAttackCuonter < 3)
-			{
-				WwdObject obj;
-				obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
-				obj.y = (int32_t)position.y - 20;
-				obj.z = ZCoord;
-				obj.speedX = (!_isMirrored) ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
-				obj.damage = 20;
+			_attackRest = 1500;
 
-				if (player->isDuck()) {
-					_ani = ANIMATION_STRIKE4;
-					obj.y += 30;
-				}
-				else
-					_ani = ANIMATION_STRIKE3;
-				
-				_ani->reset();
-				_isAttack = true;
-				_isMirrored = player->position.x < position.x;
-
-				ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL_WOLVINGTONMAGIC"));
-
-				_attackRest = 1500;
-
-				_magicAttackCuonter += 1;
-			}
+			_magicAttackCuonter += 1;
 		}
 	}
 }
