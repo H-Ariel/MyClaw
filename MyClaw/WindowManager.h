@@ -30,7 +30,7 @@ public:
 	static void drawRect(Rectangle2D dst, ColorF color, float width = 1);
 	static void fillRect(Rectangle2D dst, D2D1_COLOR_F color);
 	static void fillRect(Rectangle2D dst, ColorF color);
-	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored);
+	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity = 1);
 	static void drawText(const wstring& text, IDWriteTextFormat* textFormat, ID2D1SolidColorBrush* brush, const Rectangle2D& layoutRect);
 	static void drawText(const wstring& text, const FontData& font, const Rectangle2D& layoutRect, ColorF color);
 

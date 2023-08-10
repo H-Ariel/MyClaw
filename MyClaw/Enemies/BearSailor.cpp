@@ -33,6 +33,9 @@ BearSailor::BearSailor(const WwdObject& obj)
 
 void BearSailor::Logic(uint32_t elapsedTime)
 {
+	// the code same to BaseEnemy::Logic (except `if (_ani == ANIMATION_HUG) player->unsqueeze();`
+	// TODO: make it better / combine it with BaseEnemy::Logic
+	
 	if (!PreLogic(elapsedTime)) return;
 
 	if (_isStanding)

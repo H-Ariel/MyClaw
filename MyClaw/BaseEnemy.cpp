@@ -380,7 +380,10 @@ bool BaseEnemy::checkForHurts() // TODO: combine all `checkForHurts` methods fro
 
 bool BaseEnemy::enemySeeClaw() const
 {
-	return (!_isMirrored && player->position.x > position.x) || (_isMirrored && player->position.x < position.x);
+	return !player->isGhost() && (
+		(!_isMirrored && player->position.x > position.x) ||
+		(_isMirrored && player->position.x < position.x)
+		);
 }
 
 // TODO: maybe this c'tor doesn't need get parameters...

@@ -146,6 +146,7 @@ void Animation::updateImageData() const
 {
 	_images[_currImgIdx]->image->position = position;
 	_images[_currImgIdx]->image->mirrored = mirrored;
+	_images[_currImgIdx]->image->opacity = opacity;
 }
 void Animation::reset()
 {
@@ -154,6 +155,7 @@ void Animation::reset()
 	mirrored = false;
 	updateFrames = true; // TODO: use (_images.size() > 1) ? (its stop Katherine when she blocks CC)
 	loopAni = true; // TODO: use (_images.size() > 1) ?
+	opacity = 1;
 	for (FrameData* i : _images)
 	{
 		i->elapsedTime = 0;

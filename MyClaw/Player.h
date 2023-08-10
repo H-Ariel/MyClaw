@@ -21,7 +21,8 @@ public:
 		FireSword,
 		IceSword,
 		LightningSword,
-		// TODO: [fire,ice,ligh]sword, etc.
+		Invisibility, // ghost (enemies can't see him)
+		Invincibility // colorful (enemies can't hurt him)
 	};
 
 
@@ -48,6 +49,7 @@ public:
 	bool isFinishLevel() const { return _finishLevel; }
 	bool isFreeze() const { return _freezeTime > 0; }
 	bool isSqueezed() const { return _aniName == "SQUEEZED"; }
+	bool isGhost() const { return _currPowerup == PowerupType::Invisibility; }
 	bool isFalling() const override;
 	bool isStanding() const override;
 	bool isDuck() const override;

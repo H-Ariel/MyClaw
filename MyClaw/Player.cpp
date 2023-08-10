@@ -549,6 +549,8 @@ void Player::Logic(uint32_t elapsedTime)
 		_ani->loopAni = false;
 	}
 
+	_ani->opacity = isGhost() ? 0.5f : 1.f;
+	// TODO: when `_currPowerup` is `Invincibility` draw CC colorfuly
 	_ani->mirrored = _isMirrored && !_isOnLadder;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
@@ -788,7 +790,7 @@ bool Player::checkForHurts()
 	return false; // no damage in debug mode
 #endif
 
-	if (isTakeDamage() || _damageRest > 0) return false;
+	if (isTakeDamage() || _damageRest > 0 || _currPowerup == PowerupType::Invincibility) return false;
 
 	pair<Rectangle2D, int> atkRc;
 
@@ -922,10 +924,20 @@ bool Player::collectItem(Item* item)
 	case Item::NineLivesGem:
 		_finishLevel = true;
 		break;
+
 	case Item::Warp:
 	case Item::BossWarp:
 		// impleted as `class Warp`
 		break;
+
+	case Item::Powerup_Catnip_White:
+	case Item::Powerup_Catnip_Red:		SET_POWERUP(Catnip);
+	case Item::Powerup_Invisibility:	SET_POWERUP(Invisibility);
+	case Item::Powerup_Invincibility:	SET_POWERUP(Invincibility);
+	case Item::Powerup_FireSword:		SET_POWERUP(FireSword);
+	case Item::Powerup_LightningSword:	SET_POWERUP(LightningSword);
+	case Item::Powerup_IceSword:		SET_POWERUP(IceSword);
+	case Item::Powerup_ExtraLife:		_lives += 1; return true;
 
 		// these items used in multiplayer mode, so I don't need to implement them now
 	case Item::Curse_Ammo:		break;
@@ -934,15 +946,6 @@ bool Player::collectItem(Item* item)
 	case Item::Curse_Life:		break;
 	case Item::Curse_Treasure:	break;
 	case Item::Curse_Freeze:	break;
-
-	case Item::Powerup_Catnip_White:
-	case Item::Powerup_Catnip_Red:		SET_POWERUP(Catnip);
-	case Item::Powerup_Invisibility:	/* TODO: not impleted */ break;
-	case Item::Powerup_Invincibility:	/* TODO: not impleted */ break;
-	case Item::Powerup_FireSword:		SET_POWERUP(FireSword);
-	case Item::Powerup_LightningSword:	SET_POWERUP(LightningSword);
-	case Item::Powerup_IceSword:		SET_POWERUP(IceSword);
-	case Item::Powerup_ExtraLife:		_lives += 1; return true;
 	}
 
 	return false;

@@ -3,7 +3,7 @@
 
 
 UIBaseImage::UIBaseImage(ID2D1Bitmap* bitmap, D2D1_POINT_2F offset)
-	: _bitmap(bitmap), offset(offset), size({}), mirrored(false)
+	: _bitmap(bitmap), offset(offset), size({}), mirrored(false), opacity(1.0f)
 {
 	if (_bitmap)
 		size = _bitmap->GetSize();
@@ -11,7 +11,7 @@ UIBaseImage::UIBaseImage(ID2D1Bitmap* bitmap, D2D1_POINT_2F offset)
 
 void UIBaseImage::Draw()
 {
-	WindowManager::drawBitmap(_bitmap, GetRect(), mirrored);
+	WindowManager::drawBitmap(_bitmap, GetRect(), mirrored, opacity);
 }
 
 Rectangle2D UIBaseImage::GetRect()

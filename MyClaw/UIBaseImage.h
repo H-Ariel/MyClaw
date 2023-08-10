@@ -15,6 +15,7 @@ public:
 
 	
 	D2D1_SIZE_F size;
+	float opacity; // value between 0 (transparent) and 1 (opaque)
 	bool mirrored; // flag to set whether to draw normal or inverted
 
 private:

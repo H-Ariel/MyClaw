@@ -39,6 +39,7 @@ public:
 	bool isPassedHalf() const { return _currImgIdx >= _images.size() / 2; }
 
 
+	float opacity; // value between 0 (transparent) and 1 (opaque)
 	bool updateFrames;
 	bool mirrored; // flag to set whether to draw normal or inverted
 	bool loopAni; // Defines whether at the end of the animation it will return to the beginning or remain in the current state

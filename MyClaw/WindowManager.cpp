@@ -97,7 +97,7 @@ void WindowManager::fillRect(Rectangle2D dst, ColorF color)
 {
 	fillRect(dst, (D2D1_COLOR_F)color);
 }
-void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored)
+void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity)
 {
 	if (!_isInScreen(dst) || bitmap == nullptr) return;
 
@@ -118,7 +118,7 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 		_renderTarget->SetTransform(transformMatrix);
 	}
 
-	_renderTarget->DrawBitmap(bitmap, dst); // TODO: use opacity for CC-Ghost and Lizards
+	_renderTarget->DrawBitmap(bitmap, dst, opacity);
 
 	if (mirrored)
 	{

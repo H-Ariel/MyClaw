@@ -1,14 +1,37 @@
 #include "Chameleon.h"
 #include "../Player.h"
 
-
-// TODO: let it disapper (no animation for this. should use effect)
-
+// it doesn't feel like the original game, but it's the best I can do for now
+// TODO: improve chameleon's logic
 
 Chameleon::Chameleon(const WwdObject& obj)
-	: BaseEnemy(obj, 1, 10, "FASTADVANCE", "HIT",
-		"HIT", "KILLFALL", "STRIKE1", "", "", "", "", ENEMY_PATROL_SPEED)
+	: BaseEnemy(obj, 1, 10, "FASTADVANCE", "HIT", "HIT", "KILLFALL",
+		"STRIKE1", "", "", "", "", ENEMY_PATROL_SPEED), _opacity(1)
 {
+}
+
+void Chameleon::Logic(uint32_t elapsedTime)
+{
+	BaseEnemy::Logic(elapsedTime);
+
+	///////////////////
+	// without the next code it attacks normally but not disappear when it's not attacking
+	if (!_isAttack && enemySeeClaw())
+	{
+		_opacity -= 0.001f * elapsedTime;
+		if (_opacity < 0)
+			_opacity = 0;
+	}
+	else
+	{
+		_opacity += 0.001f * elapsedTime;
+		if (_opacity > 1)
+			_opacity = 1;
+	}
+	///////////////////
+
+	_ani->opacity = _opacity;
+	_ani->updateImageData();
 }
 
 Rectangle2D Chameleon::GetRect()
@@ -43,7 +66,7 @@ pair<Rectangle2D, int> Chameleon::GetAttackRect()
 
 void Chameleon::makeAttack()
 {
-	if (_isStanding || enemySeeClaw())
+	if (_opacity == 1 && (_isStanding || enemySeeClaw()))
 	{
 		if (abs(player->position.x - position.x) < 128 && abs(player->position.y - position.y) < 32) // CC is close to enemy
 		{
@@ -54,4 +77,8 @@ void Chameleon::makeAttack()
 			_isMirrored = player->position.x < position.x;
 		}
 	}
+}
+bool Chameleon::checkForHurts()
+{
+	return (_opacity == 1) ? BaseEnemy::checkForHurts() : false;
 }
