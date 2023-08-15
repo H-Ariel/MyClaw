@@ -15,6 +15,14 @@ private:
 };
 
 
+class StartSteppingStone : public BaseStaticPlaneObject
+{
+public:
+	StartSteppingStone(const WwdObject& obj);
+	void Logic(uint32_t elapsedTime) override;
+};
+
+
 class CrumblingPeg : public BaseStaticPlaneObject
 {
 public:

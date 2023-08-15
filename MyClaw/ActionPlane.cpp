@@ -62,7 +62,7 @@
 
 #ifdef _DEBUG
 //#undef LOW_DETAILS
-#define USE_ENEMIES
+//#define USE_ENEMIES
 //#define USE_OBSTACLES
 #else
 #define USE_ENEMIES
@@ -330,8 +330,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW Checkpoint(obj));
 	}
-	// TODO: add StartSteppingStone (it is not regular SteppingStone (see lvl8)
-	else if (startsWith(obj.logic, "TogglePeg") || contains(obj.logic, "SteppingStone"))
+	else if (obj.logic == "StartSteppingStone")
+	{
+		_objects.push_back(DBG_NEW StartSteppingStone(obj));
+	}
+	else if (startsWith(obj.logic, "TogglePeg") || startsWith(obj.logic, "SteppingStone"))
 	{
 		_objects.push_back(DBG_NEW TogglePeg(obj));
 	}

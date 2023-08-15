@@ -14,13 +14,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 	}
 	else
 	{
-		if (obj.logic == "StartSteppingStone")
-		{
-			if (obj.speedX <= 0) myMemCpy(obj.speedX, 1000);
-			if (obj.speedY <= 0) myMemCpy(obj.speedY, 2000);
-			myMemCpy(obj.smarts, 0);
-		}
-		else if (startsWith(obj.logic, "SteppingStone"))
+		if (startsWith(obj.logic, "SteppingStone"))
 		{
 			switch (obj.logic.back())
 			{
@@ -88,6 +82,36 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 	{
 		tryCatchPlayer();
 	}
+}
+
+StartSteppingStone::StartSteppingStone(const WwdObject& obj)
+	: BaseStaticPlaneObject(obj)
+{
+	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
+
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, true)->getImagesList();
+	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1000));
+	vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, false)->getImagesList();
+	myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 2000));
+	images.insert(images.begin(), appearImages.begin(), appearImages.end());
+
+	_ani = allocNewSharedPtr<Animation>(images);
+
+	setObjectRectangle();
+}
+void StartSteppingStone::Logic(uint32_t elapsedTime)
+{
+	if (tryCatchPlayer())
+	{
+ 		_ani->updateFrames = true;
+	}
+	else
+	{
+		if (_ani->getFrameNumber() == 0)
+			_ani->updateFrames = false;
+	}
+
+	_ani->Logic(elapsedTime);
 }
 
 CrumblingPeg::CrumblingPeg(const WwdObject& obj)
