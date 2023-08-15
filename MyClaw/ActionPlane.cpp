@@ -45,6 +45,7 @@
 #include "Enemies/Marrow.h"
 #include "Enemies/Chameleon.h"
 #include "Enemies/Aquatis.h"
+#include "Enemies/RedTail.h"
 
 
 #define RECT_SPEED			0.5f // speed of the rect that shows when CC is died
@@ -554,6 +555,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_BOSS_OBJECT(AquatisStalactite(obj));
 	}
+	else if (obj.logic == "RedTailSpikes")
+	{
+		ADD_BOSS_OBJECT(RedTailSpikes(obj));
+	}
+	else if (obj.logic == "RedTailWind")
+	{
+		ADD_BOSS_OBJECT(RedTailWind(obj));
+	}
 
 //	throw Exception("TODO: logic=" + obj.logic);
 }
@@ -583,6 +592,8 @@ void ActionPlane::playerEnterToBoss()
 			_instance->_enemies.push_back((BaseEnemy*)i);
 		else if (isProjectile(i))
 			_instance->_projectiles.push_back((Projectile*)i);
+		else if (isbaseinstance<BaseDamageObject>(i))
+			_instance->_damageObjects.push_back((BaseDamageObject*)i);
 	}
 	_instance->_bossObjects.clear();
 	_instance->_needSort = true;

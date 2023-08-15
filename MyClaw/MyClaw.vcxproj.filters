@@ -262,6 +262,9 @@
     <ClCompile Include="Enemies\Aquatis.cpp">
       <Filter>Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Enemies\RedTail.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -502,6 +505,9 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Enemies\Aquatis.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\RedTail.h">
       <Filter>Enemies</Filter>
     </ClInclude>
   </ItemGroup>
