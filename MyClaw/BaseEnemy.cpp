@@ -20,6 +20,28 @@
 #define GEM_SPEED 0.2f
 
 
+//////////////////////////////
+// Help classes for enemies //
+//////////////////////////////
+
+// This class is responsible for leaving the enemy from the screen
+class DeadEnemy : public BaseDynamicPlaneObject
+{
+public:
+	DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni);
+	void Logic(uint32_t elapsedTime) override;
+};
+
+class BossGem : public Item
+{
+public:
+	BossGem(const WwdObject& obj);
+	void Logic(uint32_t elapsedTime) override;
+
+private:
+	D2D1_POINT_2F _destination;
+};
+
 DeadEnemy::DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni)
 	: BaseDynamicPlaneObject(obj)
 {
@@ -78,6 +100,11 @@ void BossGem::Logic(uint32_t elapsedTime)
 		position.x += speed.x * elapsedTime;
 	}
 }
+
+
+///////////////////////////////////////////
+// BaseEnemy and BaseBoss implementation //
+///////////////////////////////////////////
 
 // TODO: fit 'hithigh' and 'hitlow' to CC attack
 // TODO: fix the shoot to CC height
@@ -408,13 +435,4 @@ BaseBoss::~BaseBoss()
 		obj.imageSet = "LEVEL_GEM";
 		ActionPlane::addPlaneObject(DBG_NEW BossGem(obj));
 	}
-}
-bool BaseBoss::checkForHurts()
-{
-	//throw Exception(__FUNCTION__ ": Write Me!");
-	throw Exception("not implemented");
-//	return checkForHurt(_player->GetAttackRect());
-
-	// TODO: maybe- `if BaseEnemy::checkForHurts(): block`
-	// or- implement this function (copy from other bosses)
 }

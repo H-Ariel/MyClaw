@@ -12,6 +12,7 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 	pair<Rectangle2D, int> GetAttackRect() override;
+	bool checkForHurts() override;
 };
 
 

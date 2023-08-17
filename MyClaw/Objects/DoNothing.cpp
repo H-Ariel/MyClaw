@@ -7,7 +7,7 @@ DoNothing::DoNothing(const WwdObject& obj)
 {
 	string path(PathManager::getImageSetPath(obj.imageSet));
 
-	if (obj.imageSet == "LEVEL_ARCHESFRONT" || obj.imageSet == "LEVEL_WANTED") // TODO: somthing else
+	if (obj.imageSet == "LEVEL_ARCHESFRONT" || obj.imageSet == "LEVEL_WANTED")
 	{
 		char str[9];
 		int32_t i = obj.i;

@@ -5,10 +5,77 @@
 #include "../Objects/Item.h"
 
 
+#define ANIMATION_HITHIGH	_animations["HITHIGH"]
+#define ANIMATION_HITLOW	_animations["HITLOW"]
+#define ANIMATION_KILLFALL	_animations["KILLFALL"]
+#define ANIMATION_STRIKE1	_animations["STRIKE1"] // punch up
+#define ANIMATION_STRIKE2	_animations["STRIKE2"] // punch down
+
 
 static int activateAquatisStalactite = 0;
 static vector<AquatisStalactite*> AquatisStalactitesList; // list of stalactites that can hurt Aquatis
 static vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that can hurt Aquatis
+
+
+Aquatis::Aquatis(const WwdObject& obj)
+	: BaseBoss(obj, 0, "", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1", "", "")
+{
+	_ani = _animations["IDLE1"];
+	_isMirrored = true;
+}
+Aquatis::~Aquatis()
+{
+	if (removeObject)
+	{
+		_fallDead = false;
+		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, ANIMATION_KILLFALL));
+
+		for (AquatisTentacle* i : AquatisTentaclesList)
+			i->removeObject = true;
+	}
+}
+void Aquatis::Logic(uint32_t elapsedTime)
+{
+	if (AquatisStalactitesList.size() == 0)
+	{
+		removeObject = true;
+		return;
+	}
+
+	if (isTakeDamage() && !_ani->isFinishAnimation())
+	{
+		PostLogic(elapsedTime);
+		return;
+	}
+
+	_ani = _animations["IDLE1"];
+
+	Rectangle2D rc = GetRect();
+	for (AquatisStalactite* i : AquatisStalactitesList)
+	{
+		if (rc.intersects(i->GetRect()))
+		{
+			i->stopFalling(0);
+			_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
+			_ani->reset();
+			_ani->loopAni = false;
+		}
+	}
+
+
+	// TODO: punch CC after hit-animation is finished (and use tentacles)
+
+
+	PostLogic(elapsedTime);
+}
+pair<Rectangle2D, int> Aquatis::GetAttackRect()
+{
+	return pair<Rectangle2D, int>();
+}
+bool Aquatis::checkForHurts()
+{
+	return false;
+}
 
 
 AquatisTentacle::AquatisTentacle(const WwdObject& obj)
@@ -233,67 +300,3 @@ void AquatisStalactite::Logic(uint32_t elapsedTime)
 }
 void AquatisStalactite::stopFalling(float collisionSize) { _ani->updateFrames = true; }
 int AquatisStalactite::getDamage() const { return 10; }
-
-
-
-#define ANIMATION_HITHIGH	_animations["HITHIGH"]
-#define ANIMATION_HITLOW	_animations["HITLOW"]
-#define ANIMATION_KILLFALL	_animations["KILLFALL"]
-#define ANIMATION_STRIKE1	_animations["STRIKE1"] // punch up
-#define ANIMATION_STRIKE2	_animations["STRIKE2"] // punch down
-
-Aquatis::Aquatis(const WwdObject& obj)
-	: BaseBoss(obj, 0, "", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1", "", "")
-{
-	_ani = _animations["IDLE1"];
-	_isMirrored = true;
-}
-Aquatis::~Aquatis()
-{
-	if (removeObject)
-	{
-		_fallDead = false;
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, ANIMATION_KILLFALL));
-
-		for (AquatisTentacle* i : AquatisTentaclesList)
-			i->removeObject = true;
-	}
-}
-void Aquatis::Logic(uint32_t elapsedTime)
-{
-	if (AquatisStalactitesList.size() == 0)
-	{
-		removeObject = true;
-		return;
-	}
-
-	if (isTakeDamage() && !_ani->isFinishAnimation())
-	{
-		PostLogic(elapsedTime);
-		return;
-	}
-
-	_ani = _animations["IDLE1"];
-
- 	Rectangle2D rc = GetRect();
-	for (AquatisStalactite* i : AquatisStalactitesList)
-	{
-		if (rc.intersects(i->GetRect()))
-		{
-			i->stopFalling(0);
-			_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
-			_ani->reset();
-			_ani->loopAni = false;
-		}
-	}
-
-
-	// TODO: punch CC after hit-animation is finished (and use tentacles)
-
-
-	PostLogic(elapsedTime);
-}
-pair<Rectangle2D, int> Aquatis::GetAttackRect()
-{
-	return pair<Rectangle2D, int>();
-}

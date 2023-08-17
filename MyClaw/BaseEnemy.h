@@ -47,8 +47,8 @@ protected:
 		_shootAniName, _shootDuckAniName, _projectileAniDir, _idleAniName;
 	vector<int8_t> _itemsTypes;
 	const float _minX, _maxX;
-	int32_t _attackRest; // rest time between attack. NOTE: not all enemies used that
-	int _damage; // the amount of health that enemy took when he hit Claw
+	const int _damage; // the amount of health that enemy took when he hit Claw
+	int _attackRest; // rest time between attack. NOTE: not all enemies used that
 	bool _isStanding;
 	bool _fallDead; // true if enemy is falling dead
 	const bool _canStrike, _canStrikeDuck, _canShoot, _canShootDuck;
@@ -68,34 +68,11 @@ public:
 	virtual void Logic(uint32_t elapsedTime) override = 0;
 
 protected:
-	bool checkForHurts() override; // We added this function because bosses are not hit by CC projectiles
+	virtual bool checkForHurts() override = 0; // We added this function because bosses are not hit by CC projectiles
 
 	int32_t _hitsCuonter; // count the times CC hit the boss
 	bool _blockClaw, _canJump;
 
 private:
 	const D2D1_POINT_2L _gemPos;
-};
-
-
-//////////////////////////////
-// Help classes for enemies //
-//////////////////////////////
-
-// This class is responsible for leaving the enemy from the screen
-class DeadEnemy : public BaseDynamicPlaneObject
-{
-public:
-	DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni);
-	void Logic(uint32_t elapsedTime) override;
-};
-
-class BossGem : public Item
-{
-public:
-	BossGem(const WwdObject& obj);
-	void Logic(uint32_t elapsedTime) override;
-
-private:
-	D2D1_POINT_2F _destination;
 };
