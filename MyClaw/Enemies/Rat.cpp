@@ -1,25 +1,18 @@
 #include "Rat.h"
-#include "../Objects/Projectile.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
 #include "../Objects/EnemyProjectile.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAniName)
-#define ANIMATION_SHOOT		_animations.at(_shootAniName)
-
-
-// the rat has its own Logic so we don't need pass all arguments
 Rat::Rat(const WwdObject& obj)
 	: BaseEnemy(obj, 1, 0, "WALK", "DEAD", "DEAD", "DEAD", "", "", "THROWEASTWEST", "", "", ENEMY_PATROL_SPEED, true)
 {
 }
-
 void Rat::makeAttack(float deltaX, float deltaY)
 {
 	if (deltaX < 352 && deltaY < 42)
 	{
-		_ani = ANIMATION_SHOOT;
+		_ani = _animations[_shootAniName];
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;
@@ -34,21 +27,19 @@ void Rat::makeAttack(float deltaX, float deltaY)
 		ActionPlane::addPlaneObject(DBG_NEW RatBomb(obj));
 	}
 }
-
 pair<Rectangle2D, int> Rat::GetAttackRect() { return {}; }
 bool Rat::isDuck() const { return true; }
 bool Rat::isTakeDamage() const { return false; }
 
 
-
-#define PUNKRAT_HOME	_animations.at("HOME")
-#define PUNKRAT_IDLE	_animations.at("IDLE")
-#define PUNKRAT_RECOIL	_animations.at("RECOIL")
+//#define PUNKRAT_HOME	_animations.at("HOME")
+//#define PUNKRAT_IDLE	_animations.at("IDLE")
+//#define PUNKRAT_RECOIL	_animations.at("RECOIL")
+//#define PUNKRAT_STRIKE	_animations.at("STRIKE")
 #define PUNKRAT_STAND	_animations.at("STAND")
-#define PUNKRAT_STRIKE	_animations.at("STRIKE")
 #define PUNKRAT_WALK	_animations.at("WALK")
 
-//TODO: use all animation
+
 PunkRat::PunkRat(const WwdObject& obj)
 	: BaseEnemy(obj, 1, 0, "WALK", "IDLE",
 		"IDLE", "IDLE", "", "", "", "", "", 0.07f, true)
@@ -107,11 +98,10 @@ void PunkRat::Logic(uint32_t elapsedTime)
 void PunkRat::Draw()
 {
 	_cannon->Draw();
-	BaseCharacter::Draw();
+	BaseEnemy::Draw();
 }
 Rectangle2D PunkRat::GetRect()
 {
-//	return _ani->GetRect();
 	return BasePlaneObject::GetRect();
 }
 pair<Rectangle2D, int> PunkRat::GetAttackRect() { return{}; }

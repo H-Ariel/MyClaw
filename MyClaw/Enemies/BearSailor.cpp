@@ -96,7 +96,7 @@ pair<Rectangle2D, int> BearSailor::GetAttackRect()
 	}
 	else if (_ani == ANIMATION_HUG)
 	{
-		// TODO
+		// nop
 	}
 
 	return { setRectByCenter(rc, _saveCurrRect), _damage };

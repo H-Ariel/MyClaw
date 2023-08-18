@@ -225,9 +225,9 @@ void Item::resetItemsPaths()
 {
 	ItemsPaths.clear();
 }
-uint32_t Item::getTreasureScore(Type type)
+uint32_t Item::getTreasureScore()
 {
-	switch (type)
+	switch (_type)
 	{
 	case Item::Default:
 	case Item::Treasure_Coins:

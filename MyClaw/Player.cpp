@@ -91,6 +91,41 @@ public:
 };
 Rectangle2D* PowerupSparkle::playerRc = nullptr;
 
+class ScoreAnimation : public BasePlaneObject
+{
+private:
+	int _timer;
+public:
+	ScoreAnimation(Item* item)
+		: BasePlaneObject({}), _timer(1000)
+	{
+		position = item->position;
+		myMemCpy(ZCoord, item->ZCoord);
+
+		int i = 0;
+
+		switch (item->getTreasureScore())
+		{
+		case   100: i = 1; break;
+		case   500: i = 2; break;
+		case  1500: i = 3; break;
+		case  2500: i = 4; break;
+		case  5000: i = 5; break;
+		case  7500: i = 6; break;
+		case 10000: i = 7; break;
+		case 15000: i = 8; break;
+		case 25000: i = 9; break;
+		}
+
+		_ani = AssetsManager::createAnimationFromFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID");
+	}
+	void Logic(uint32_t elapsedTime) override
+	{
+		_timer -= elapsedTime;
+		removeObject = (_timer <= 0);
+	}
+};
+
 
 Player::Player(const WwdObject& obj)
 	: BaseCharacter(obj), _currWeapon(ClawProjectile::Types::Pistol), _finishLevel(false)
@@ -787,8 +822,6 @@ void Player::jump()
 
 bool Player::collectItem(Item* item)
 {
-	// TODO: score animation when collect treasure
-
 	Item::Type type = item->getType();
 
 	switch (type)
@@ -825,8 +858,11 @@ bool Player::collectItem(Item* item)
 	case Item::Treasure_Skull_Green:
 	case Item::Treasure_Skull_Blue:
 	case Item::Treasure_Skull_Purple:
-		_score += Item::getTreasureScore(type);
+		_score += item->getTreasureScore();
 		_collectedTreasures[type] += 1;
+#ifndef LOW_DETAILS
+		ActionPlane::addPlaneObject(new ScoreAnimation(item));
+#endif
 		return true;
 
 	case Item::Ammo_Deathbag:	_weaponsAmount[ClawProjectile::Types::Pistol] += 25; return true;
@@ -847,11 +883,6 @@ bool Player::collectItem(Item* item)
 		_finishLevel = true;
 		break;
 
-	case Item::Warp:
-	case Item::BossWarp:
-		// impleted as `class Warp`
-		break;
-
 	case Item::Powerup_Catnip_White:
 	case Item::Powerup_Catnip_Red:		SET_POWERUP(Powerup_Catnip);
 	case Item::Powerup_Invisibility:	SET_POWERUP(Powerup_Invisibility);
@@ -861,7 +892,13 @@ bool Player::collectItem(Item* item)
 	case Item::Powerup_IceSword:		SET_POWERUP(Powerup_IceSword);
 	case Item::Powerup_ExtraLife:		_lives += 1; return true;
 
-		// these items used in multiplayer mode, so I don't need to implement them now
+
+	case Item::Warp:
+	case Item::BossWarp:
+		// impleted as `class Warp`
+		break;
+
+	// these items used in multiplayer mode, so I don't need to implement them now
 	case Item::Curse_Ammo:		break;
 	case Item::Curse_Magic:		break;
 	case Item::Curse_Health:	break;

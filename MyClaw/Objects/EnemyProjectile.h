@@ -16,14 +16,14 @@ public:
 	~RatBomb();
 };
 
-class CrabBomb : public Projectile // TODO: combine with `RatBomb`
+class CrabBomb : public Projectile
 {
 public:
 	CrabBomb(const WwdObject& obj);
 	~CrabBomb();
 };
 
-class GabrielBomb : public Projectile // TODO: combine with `RatBomb`
+class GabrielBomb : public Projectile
 {
 public:
 	GabrielBomb(const WwdObject& obj);

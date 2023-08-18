@@ -22,17 +22,16 @@ void PowderKeg::Logic(uint32_t elapsedTime)
 
 	if (_state == State::Thrown || _state == State::Stand)
 	{
+		_ani->Logic(elapsedTime);
 		position.x += speed.x * elapsedTime;
 		speed.y += GRAVITY * elapsedTime;
 		position.y += speed.y * elapsedTime;
 	}
 	else if (_state == State::Explos)
 	{
+		_ani->Logic(elapsedTime);
 		removeObject = _ani->isFinishAnimation();
 	}
-
-	_ani->position = position;
-	_ani->Logic(elapsedTime);
 }
 int PowderKeg::getDamage() const
 {

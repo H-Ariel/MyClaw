@@ -7,7 +7,7 @@ Checkpoint::Checkpoint(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _state(States::Down),
 	_imageSetPath(PathManager::getImageSetPath(obj.imageSet)), _isSuperCheckpoint(contains(obj.logic, "Super"))
 {
-	_ani = AssetsManager::createCopyAnimationFromFromPidImage(_imageSetPath + "/001.PID");
+	_ani = AssetsManager::createAnimationFromFromPidImage(_imageSetPath + "/001.PID");
 	setObjectRectangle();
 }
 void Checkpoint::Logic(uint32_t elapsedTime)
@@ -19,7 +19,6 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 		if (_objRc.intersects(player->GetRect()))
 		{
 			_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/CHECKPOINT/RISE.ANI", _imageSetPath);
-			_ani->position = position;
 			_state = States::Rise;
 			player->startPosition = position;
 
@@ -31,14 +30,12 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 		break;
 
 	case States::Rise:
+		_ani->Logic(elapsedTime);
 		if (_ani->isFinishAnimation())
 		{
-			_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/CHECKPOINT/WAVE.ANI", _imageSetPath);
-			_ani->position = position;
+			_ani = AssetsManager::loadAnimation("GAME/ANIS/CHECKPOINT/WAVE.ANI", _imageSetPath);
 			_state = States::Wave;
 		}
 		break;
 	}
-
-	_ani->Logic(elapsedTime);
 }
