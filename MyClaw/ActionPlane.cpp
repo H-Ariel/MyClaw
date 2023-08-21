@@ -63,11 +63,9 @@
 
 #ifdef _DEBUG
 //#undef LOW_DETAILS
-//#define USE_ENEMIES
-//#define USE_OBSTACLES
-#else
-#define USE_ENEMIES
-#define USE_OBSTACLES
+#define NO_DEATH
+#define NO_ENEMIES
+#define NO_OBSTACLES
 #endif
 
 
@@ -158,7 +156,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 	if (!player->isInDeathAnimation())
 	{
-		_physicsManager->checkCollides(player, [&] { player->loseLife(); });
+		_physicsManager->checkCollides(player, [&] {
+#ifndef NO_DEATH
+			player->loseLife();
+#endif
+		});
 	}
 
 	if (_shakeTime > 0)
@@ -380,7 +382,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW ConveyorBelt(obj));
 	}
-#ifdef USE_ENEMIES
+#ifndef NO_ENEMIES
 	else if (obj.logic == "CrabNest")
 	{
 		_objects.push_back(DBG_NEW CrabNest(obj));
@@ -454,7 +456,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 		ADD_ENEMY(Chameleon(obj));
 	}
 #endif
-#ifdef USE_OBSTACLES
+#ifndef NO_OBSTACLES
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
 	{
 		_objects.push_back(DBG_NEW TowerCannon(obj));

@@ -77,6 +77,7 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 
 	_ani->Logic(elapsedTime);
 
+	// catch player between the second and third quarters
 	size_t idx = _ani->getFrameNumber() * 4;
 	if (idx <= _framesAmount || _framesAmount * 3 <= idx)
 	{
@@ -103,7 +104,7 @@ void StartSteppingStone::Logic(uint32_t elapsedTime)
 {
 	if (tryCatchPlayer())
 	{
- 		_ani->updateFrames = true;
+		_ani->updateFrames = true;
 	}
 	else
 	{

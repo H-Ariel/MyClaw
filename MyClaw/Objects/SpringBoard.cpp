@@ -29,7 +29,7 @@ SpringBoard::SpringBoard(const WwdObject& obj)
 		anisPath = PathManager::getAnimationSetPath(obj.imageSet);
 	}
 
-	_idle = AssetsManager::loadCopyAnimation(anisPath + "/IDLE.ANI", obj.imageSet);
+	_idle = AssetsManager::loadAnimation(anisPath + "/IDLE.ANI", obj.imageSet);
 	_spring = AssetsManager::loadCopyAnimation(anisPath + "/SPRING.ANI", obj.imageSet);
 
 	_ani = _idle;
