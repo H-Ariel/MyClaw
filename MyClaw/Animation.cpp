@@ -11,8 +11,9 @@ Animation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration
 }
 
 
-Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string& _imageSetPath)
+vector<Animation::FrameData*> makeAnimation(RezArchive* rezArchive, const string& aniPath, const string& _imageSetPath)
 {
+	vector<Animation::FrameData*> images;
 	shared_ptr<BufferReader> aniFileReader = rezArchive->getFileBufferReader(aniPath);
 	string imageSetPath;
 	string soundFilePath;
@@ -78,12 +79,17 @@ Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string
 
 		sprintf(imgName, "/%03d.PID", imageFileId); // according to `fixFileName` at `RezArchive.cpp`
 
-		_images.push_back(DBG_NEW FrameData(imageSetPath + imgName, duration, soundFilePath));
+		images.push_back(DBG_NEW Animation::FrameData(imageSetPath + imgName, duration, soundFilePath));
 	}
 
-	reset();
+	return images;
 }
-Animation::Animation(vector<FrameData*> images)
+
+Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string& imageSetPath)
+	: Animation(makeAnimation(rezArchive, aniPath, imageSetPath))
+{
+}
+Animation::Animation(const vector<FrameData*>& images)
 	: _images(images)
 {
 	reset();

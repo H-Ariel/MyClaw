@@ -22,7 +22,7 @@ public:
 
 
 	Animation(RezArchive* rezArchive, const string& aniPath, const string& imageSetPath);
-	Animation(vector<FrameData*> images);
+	Animation(const vector<FrameData*>& images);
 	~Animation() override;
 
 	void Logic(uint32_t elapsedTime) override;

@@ -1,6 +1,76 @@
 #include "RedTail.h"
 #include "../Assets-Managers/AssetsManager.h"
 #include "../Player.h"
+#include "../ActionPlane.h"
+
+
+#define ANIMATION_BLOCK _animations["BLOCK"]
+
+
+RedTail::RedTail(const WwdObject& obj)
+	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1",
+		"", "") // find shoot animation
+{
+}
+
+void RedTail::Logic(uint32_t elapsedTime)
+{
+	BaseEnemy::Logic(elapsedTime);
+}
+
+pair<Rectangle2D, int> RedTail::GetAttackRect()
+{
+	return pair<Rectangle2D, int>();
+}
+
+void RedTail::stopMovingLeft(float collisionSize)
+{
+	BaseBoss::stopMovingLeft(collisionSize);
+}
+
+void RedTail::stopMovingRight(float collisionSize)
+{
+	BaseBoss::stopMovingRight(collisionSize);
+}
+
+void RedTail::makeAttack(float deltaX, float deltaY)
+{
+}
+
+bool RedTail::checkForHurts()
+{
+	for (Projectile* p : ActionPlane::getProjectiles())
+	{
+		if (isClawProjectile(p))
+		{
+			if (_saveCurrRect.intersects(p->GetRect()))
+			{
+				_ani = ANIMATION_BLOCK;
+				_ani->reset();
+				return false;
+			}
+		}
+	}
+
+	if (checkForHurt(player->GetAttackRect()))
+	{
+		if (_blockClaw)
+		{
+			_ani = ANIMATION_BLOCK;
+			return false;
+		}
+		else
+		{
+			// jump/block every 4 hits
+			_hitsCuonter = (_hitsCuonter + 1) % 4;
+			_canJump = true;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 
 
 RedTailSpikes::RedTailSpikes(const WwdObject& obj)

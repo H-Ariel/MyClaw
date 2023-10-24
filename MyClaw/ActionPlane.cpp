@@ -557,6 +557,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_BOSS_OBJECT(AquatisStalactite(obj));
 	}
+	else if (obj.logic == "RedTail")
+	{
+		ADD_BOSS_OBJECT(RedTail(obj));
+	}
 	else if (obj.logic == "RedTailSpikes")
 	{
 		ADD_BOSS_OBJECT(RedTailSpikes(obj));
