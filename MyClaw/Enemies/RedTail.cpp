@@ -5,12 +5,15 @@
 
 
 #define ANIMATION_BLOCK _animations["BLOCK"]
+#define ANIMATION_SHOOT_HIGH _animations["STRIKE4"]
 
 
+// TODO: write real logig for this boss (combine Red-Tail and wind)
 RedTail::RedTail(const WwdObject& obj)
-	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1",
-		"", "") // find shoot animation
+	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE8",
+		"STRIKE4", "LEVEL_REDTAILBULLET")
 {
+	_health = 100;
 }
 
 void RedTail::Logic(uint32_t elapsedTime)
@@ -35,6 +38,7 @@ void RedTail::stopMovingRight(float collisionSize)
 
 void RedTail::makeAttack(float deltaX, float deltaY)
 {
+	BaseBoss::makeAttack(deltaX, deltaY);
 }
 
 bool RedTail::checkForHurts()

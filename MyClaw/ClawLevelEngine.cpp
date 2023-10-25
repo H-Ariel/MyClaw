@@ -89,7 +89,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 //	if (levelNumber == 12) BasePlaneObject::player->position = { 5839, 3608 };
 	if (levelNumber == 12) BasePlaneObject::player->position = { 36324, 2072 }; // END OF LEVEL
 //	if (levelNumber == 13) BasePlaneObject::player->position = { 18159, 2543 };
-	if (levelNumber == 13) BasePlaneObject::player->position = { 32938, 2267 };
+//	if (levelNumber == 13) BasePlaneObject::player->position = { 32938, 2267 };
+	if (levelNumber == 13) BasePlaneObject::player->position = { 33002, 2267 };
 #endif
 }
 ClawLevelEngine::~ClawLevelEngine()
