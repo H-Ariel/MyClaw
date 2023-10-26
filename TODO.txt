@@ -1,5 +1,5 @@
-* use MyString and MySharedPtr ???
-
+* display image when character hit (red/white star)
+* split all classes to h and cpp files (not 2 classes in 1 file)
 * use pegs/elevators/etc. as ground for enemies/treasures/etc. too
 * find perfect speeds for enemies
 * catch and throw enemies (like a powder-keg)

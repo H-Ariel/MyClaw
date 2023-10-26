@@ -212,6 +212,7 @@
     <ClCompile Include="Objects\GroundBlower.cpp" />
     <ClCompile Include="Objects\Item.cpp" />
     <ClCompile Include="Objects\Laser.cpp" />
+    <ClCompile Include="Objects\LavaMouth.cpp" />
     <ClCompile Include="Objects\Pegs.cpp" />
     <ClCompile Include="Objects\PowderKeg.cpp" />
     <ClCompile Include="Objects\Projectile.cpp" />
@@ -295,6 +296,7 @@
     <ClInclude Include="Objects\GroundBlower.h" />
     <ClInclude Include="Objects\Item.h" />
     <ClInclude Include="Objects\Laser.h" />
+    <ClInclude Include="Objects\LavaMouth.h" />
     <ClInclude Include="Objects\Pegs.h" />
     <ClInclude Include="Objects\PowderKeg.h" />
     <ClInclude Include="Objects\Projectile.h" />

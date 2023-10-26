@@ -3,6 +3,7 @@
 #include "ActionPlane.h"
 #include "Objects/Rope.h"
 #include "Objects/Stalactite.h"
+#include "Objects/LavaMouth.h"
 #include "BaseEnemy.h"
 #include "Objects/EnemyProjectile.h"
 
@@ -1094,7 +1095,7 @@ bool Player::checkForHurts()
 				return true;
 			}
 		}
-		else if (isinstance<Stalactite>(p))
+		else if (isinstance<Stalactite>(p) || isinstance<LavaMouth>(p))
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{

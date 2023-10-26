@@ -100,7 +100,7 @@ SawBlade::SawBlade(const WwdObject& obj)
 LavaGeyser::LavaGeyser(const WwdObject& obj)
 	: FloorSpike(obj, false)
 {
-	vector<Animation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory("LEVEL14/IMAGES/LAVAGEYSER", 50, false)->getImagesList();
+	vector<Animation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAGEYSER"), 50, false)->getImagesList();
 	myMemCpy(images.back()->duration, uint32_t((obj.speed > 0) ? obj.speed : 500));
 	_ani = allocNewSharedPtr<Animation>(images);
 	_framesAmount = images.size();
