@@ -497,6 +497,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 			(float)obj.attackRect.right, (float)obj.attackRect.bottom));
 	}
 #endif
+	else if (obj.logic == "LavaGeyser")
+	{
+		ADD_DAMAGE_OBJECT(LavaGeyser(obj));
+	}
 	else if (obj.logic == "Raux")
 	{
 		ADD_BOSS_OBJECT(LeRauxe(obj));

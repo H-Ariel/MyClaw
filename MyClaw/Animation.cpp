@@ -11,7 +11,7 @@ Animation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration
 }
 
 
-vector<Animation::FrameData*> makeAnimation(RezArchive* rezArchive, const string& aniPath, const string& _imageSetPath)
+vector<Animation::FrameData*> getAnimationImages(RezArchive* rezArchive, const string& aniPath, const string& _imageSetPath)
 {
 	vector<Animation::FrameData*> images;
 	shared_ptr<BufferReader> aniFileReader = rezArchive->getFileBufferReader(aniPath);
@@ -86,7 +86,7 @@ vector<Animation::FrameData*> makeAnimation(RezArchive* rezArchive, const string
 }
 
 Animation::Animation(RezArchive* rezArchive, const string& aniPath, const string& imageSetPath)
-	: Animation(makeAnimation(rezArchive, aniPath, imageSetPath))
+	: Animation(getAnimationImages(rezArchive, aniPath, imageSetPath))
 {
 }
 Animation::Animation(const vector<FrameData*>& images)

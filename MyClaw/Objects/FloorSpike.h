@@ -6,7 +6,7 @@
 class FloorSpike : public BaseDamageObject
 {
 public:
-	FloorSpike(const WwdObject& obj);
+	FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor = true);
 
 	void Logic(uint32_t elapsedTime) override;
 	bool isDamage() const override;
@@ -21,4 +21,10 @@ class SawBlade : public FloorSpike
 {
 public:
 	SawBlade(const WwdObject& obj);
+};
+
+class LavaGeyser : public FloorSpike
+{
+public:
+	LavaGeyser(const WwdObject& obj);
 };

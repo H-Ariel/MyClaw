@@ -2,15 +2,12 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
-// This functions are same to TogglePeg. maybe we can combine them
+// TODO: This functions are same to TogglePeg. maybe we can combine them
 
-FloorSpike::FloorSpike(const WwdObject& obj)
-	: BaseDamageObject(obj, 10), _startTimeDelay(0)
+// FloorSpike ctor. The purpose of `doFloorSpikeCtor` flag is to save time in children classes
+FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
+	: BaseDamageObject(obj, 10), _framesAmount(0), _startTimeDelay(0)
 {
-	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, false)->getImagesList();
-	vector<Animation::FrameData*> disappearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, true)->getImagesList();
-
 	if (obj.speed > 0)
 	{
 		_startTimeDelay = obj.speed;
@@ -24,6 +21,13 @@ FloorSpike::FloorSpike(const WwdObject& obj)
 		case '4': _startTimeDelay = 2250; break;
 		}
 	}
+
+	if (!doFloorSpikeCtor) return;
+
+	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, false)->getImagesList();
+	vector<Animation::FrameData*> disappearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, true)->getImagesList();
+
 
 	myMemCpy(images.back()->duration, uint32_t((obj.speedX > 0) ? obj.speedX : 1500));
 	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));
@@ -56,7 +60,7 @@ bool FloorSpike::isDamage() const
 
 // TODO: spin animation is not implemented yet
 SawBlade::SawBlade(const WwdObject& obj)
-	: FloorSpike(obj)
+	: FloorSpike(obj, false)
 {
 	/*
 	// that written in FloorSpike constructor
@@ -90,5 +94,15 @@ SawBlade::SawBlade(const WwdObject& obj)
 	_ani = allocNewSharedPtr<Animation>(images);
 	_framesAmount = images.size();
 
+	setObjectRectangle();
+}
+
+LavaGeyser::LavaGeyser(const WwdObject& obj)
+	: FloorSpike(obj, false)
+{
+	vector<Animation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory("LEVEL14/IMAGES/LAVAGEYSER", 50, false)->getImagesList();
+	myMemCpy(images.back()->duration, uint32_t((obj.speed > 0) ? obj.speed : 500));
+	_ani = allocNewSharedPtr<Animation>(images);
+	_framesAmount = images.size();
 	setObjectRectangle();
 }
