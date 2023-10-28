@@ -52,84 +52,73 @@ static int32_t MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
 static int32_t MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
 
-class PowerupSparkle
+OneTimeAnimation* getScoreAnimation(Item * item)
 {
-private:
-	shared_ptr<Animation> _ani;
-public:
-	static Rectangle2D* playerRc;
+	int i = 0;
 
-	PowerupSparkle()
+	switch (item->getTreasureScore())
 	{
-		_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/GLITTER1.ANI");
-		init();
+	case   100: i = 1; break;
+	case   500: i = 2; break;
+	case  1500: i = 3; break;
+	case  2500: i = 4; break;
+	case  5000: i = 5; break;
+	case  7500: i = 6; break;
+	case 10000: i = 7; break;
+	case 15000: i = 8; break;
+	case 25000: i = 9; break;
 	}
-	void init()
-	{
-		const float a = (playerRc->right - playerRc->left) / 2; // vertical radius
-		const float b = (playerRc->bottom - playerRc->top) / 2; // horizontal radius
-		float x, y;
-		int i, n = getRandomInt(0, 3);
 
-		do {
-			x = getRandomFloat(-a, a);
-			y = getRandomFloat(-b, b);
-			// check if (x,y) is in the player ellipse
-		} while (pow(x / a, 2) + pow(y / b, 2) > 1);
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
+	myMemCpy(images[0]->duration, 1000U);
+	OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, allocNewSharedPtr<Animation>(images));
+	myMemCpy(ani->ZCoord, item->ZCoord);
+	return ani;
+}
 
-		for (i = 0; i < n; i++) _ani->Logic(50);
-
-		_ani->position.x = x + (playerRc->right + playerRc->left) / 2;
-		_ani->position.y = y + (playerRc->bottom + playerRc->top) / 2;
-	}
-	void Logic(uint32_t elapsedTime)
-	{
-		if (_ani->isFinishAnimation())
-			init();
-		_ani->Logic(elapsedTime);
-	}
-	void Draw() { _ani->Draw(); }
-};
-Rectangle2D* PowerupSparkle::playerRc = nullptr;
-
-class ScoreAnimation : public BasePlaneObject
+Player::PowerupSparkles::PowerupSparkles(Rectangle2D* playerRc)
+	: _playerRc(playerRc)
 {
-private:
-	int _timer;
-public:
-	ScoreAnimation(Item* item)
-		: BasePlaneObject({}), _timer(1000)
+	for (auto& s : _sparkles)
 	{
-		position = item->position;
-		myMemCpy(ZCoord, item->ZCoord);
-
-		int i = 0;
-
-		switch (item->getTreasureScore())
-		{
-		case   100: i = 1; break;
-		case   500: i = 2; break;
-		case  1500: i = 3; break;
-		case  2500: i = 4; break;
-		case  5000: i = 5; break;
-		case  7500: i = 6; break;
-		case 10000: i = 7; break;
-		case 15000: i = 8; break;
-		case 25000: i = 9; break;
-		}
-
-		_ani = AssetsManager::createAnimationFromFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID");
+		s = AssetsManager::loadCopyAnimation("GAME/ANIS/GLITTER1.ANI");
+		init(s);
 	}
-	void Logic(uint32_t elapsedTime) override
+}
+void Player::PowerupSparkles::init(shared_ptr<Animation> sparkle)
+{
+	const float a = (_playerRc->right - _playerRc->left) / 2; // vertical radius
+	const float b = (_playerRc->bottom - _playerRc->top) / 2; // horizontal radius
+	float x, y;
+
+	do {
+		x = getRandomFloat(-a, a);
+		y = getRandomFloat(-b, b);
+		// check if (x,y) is in the player ellipse
+	} while (pow(x / a, 2) + pow(y / b, 2) > 1);
+
+	sparkle->Logic(getRandomInt(0, 3) * 50);
+
+	sparkle->position.x = x + (_playerRc->right + _playerRc->left) / 2;
+	sparkle->position.y = y + (_playerRc->bottom + _playerRc->top) / 2;
+}
+void Player::PowerupSparkles::Logic(uint32_t elapsedTime)
+{
+	for (auto& s : _sparkles)
 	{
-		_timer -= elapsedTime;
-		removeObject = (_timer <= 0);
+		if (s->isFinishAnimation())
+			init(s);
+		s->Logic(elapsedTime);
 	}
-};
+}
+void Player::PowerupSparkles::Draw() {
+	for (auto& s : _sparkles) s->Draw();
+}
 
 
 Player::Player(const WwdObject& obj)
-	: BaseCharacter(obj), _currWeapon(ClawProjectile::Types::Pistol), _finishLevel(false)
+	: BaseCharacter(obj), _currWeapon(ClawProjectile::Types::Pistol), 
+	_finishLevel(false), _powerupSparkles(&_saveCurrRect)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_weaponsAmount[ClawProjectile::Types::Pistol] = 10;
@@ -160,8 +149,6 @@ Player::Player(const WwdObject& obj)
 		DBG_NEW Animation::FrameData("CLAW/IMAGES/451.PID"),
 		DBG_NEW Animation::FrameData("CLAW/IMAGES/452.PID")
 	}));
-
-	PowerupSparkle::playerRc = &_saveCurrRect;
 }
 
 void Player::Logic(uint32_t elapsedTime)
@@ -216,7 +203,6 @@ void Player::Logic(uint32_t elapsedTime)
 	{
 		_powerupLeftTime = 0;
 		_currPowerup = Item::None;
-		_powerupSparkles.clear();
 		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	}
 
@@ -224,7 +210,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 	if (_currPowerup == Item::Powerup_Catnip)
 	{
-		for (size_t i = 0; i < 30; _powerupSparkles[i++].Logic(elapsedTime));
+		_powerupSparkles.Logic(elapsedTime);
 		speedX = SpeedX_SuperSpeed;
 		speedYClimb = SpeedY_SuperClimb;
 	}
@@ -604,10 +590,9 @@ void Player::Draw()
 		EXCLAMATION_MARK->updateImageData();
 		EXCLAMATION_MARK->Draw();
 	}
-	for (auto& s : _powerupSparkles)
-	{
-		s.second.Draw();
-	}
+
+	if (_currPowerup == Item::Powerup_Catnip)
+		_powerupSparkles.Draw();
 }
 Rectangle2D Player::GetRect() { return _saveCurrRect; }
 pair<Rectangle2D, int> Player::GetAttackRect() { return _saveCurrAttackRect; }
@@ -862,7 +847,7 @@ bool Player::collectItem(Item* item)
 		_score += item->getTreasureScore();
 		_collectedTreasures[type] += 1;
 #ifndef LOW_DETAILS
-		ActionPlane::addPlaneObject(new ScoreAnimation(item));
+		ActionPlane::addPlaneObject(getScoreAnimation(item));
 #endif
 		return true;
 
@@ -987,7 +972,6 @@ void Player::loseLife()
 		_ani->reset();
 		_powerupLeftTime = 0;
 		_currPowerup = Item::None;
-		_powerupSparkles.clear();
 		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	}
 }

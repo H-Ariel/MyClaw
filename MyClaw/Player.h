@@ -72,6 +72,20 @@ public:
 	
 
 private:
+	class PowerupSparkles
+	{
+	public:
+		PowerupSparkles(Rectangle2D* playerRc);
+		void Logic(uint32_t elapsedTime);
+		void Draw();
+
+	private:
+		void init(shared_ptr<Animation> sparkle); // init one sparkle (from the list)
+		
+		Rectangle2D* _playerRc;
+		shared_ptr<Animation> _sparkles[30]; // all sparkles' list
+	};
+
 	void jump();
 	bool checkForHurts(); // check for hits from enemies, projectiles, and exploding powder kegs
 	bool isWeaponAnimation() const;
@@ -82,7 +96,7 @@ private:
 	string _aniName;
 	vector<string> AttackAnimations, NoLoopAnimations;
 	map<Item::Type, uint32_t> _collectedTreasures; // save all collected treasures and their amount
-	map<size_t, PowerupSparkle> _powerupSparkles;
+	PowerupSparkles _powerupSparkles;
 	map<ClawProjectile::Types, int> _weaponsAmount;
 	pair<Rectangle2D, int> _saveCurrAttackRect;
 	PowderKeg* _lastPowderKegExplos; // saves the last explos so he does not take damage over and over again.
