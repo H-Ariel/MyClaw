@@ -389,7 +389,7 @@ bool BaseEnemy::checkClawHit()
 				position.x + (damageRc.left - damageRc.right) / 2,
 				position.y + (damageRc.top - damageRc.bottom) / 2
 			},
-			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", 50, false));
+			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", 50, false));
 		myMemCpy(ani->ZCoord, ZCoord + 1);
 		ActionPlane::addPlaneObject(ani);
 #endif

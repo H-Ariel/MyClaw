@@ -66,7 +66,7 @@
 //#undef LOW_DETAILS
 #define NO_DEATH
 #define NO_ENEMIES
-#define NO_OBSTACLES
+//#define NO_OBSTACLES
 #endif
 
 

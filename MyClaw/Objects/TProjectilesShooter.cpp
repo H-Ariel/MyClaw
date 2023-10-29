@@ -8,12 +8,14 @@
 #define OFFSET_Y 64.f
 
 
+// TODO: fix TProjectilesShooter for level 14
+
 TProjectilesShooter::TProjectilesShooter(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
 	_damage(obj.damage > 0 ? obj.damage : 5), speed({ obj.speedX / 1000.f, obj.speedY / 1000.f }),
 	_restTime(0), _offset({})
 {
-	// 1=right, 2=left, 3=down, 4=up
+	// 1=right, 2=left, 3=down, 4=up   NOTE: only for levels 9,10 !!!
 	switch (obj.userValue1)
 	{
 	case 1: myMemCpy(_offset.x, -OFFSET_X); break;
@@ -35,7 +37,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 
 	if (_restTime <= 0 && _objRc.intersects(player->GetRect()))
 	{
-		ActionPlane::addPlaneObject(DBG_NEW TProjectile(_ani, _damage,
+		ActionPlane::addPlaneObject(DBG_NEW TProjectile(_ani, _damage, 
 			speed, { position.x + _offset.x, position.y + _offset.y }));
 		_restTime = _maxRestTime;
 	}
