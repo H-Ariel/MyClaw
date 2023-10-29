@@ -251,7 +251,7 @@ bool Wolvington::checkForHurts()
 		}
 	}
 
-	if (checkForHurt(player->GetAttackRect()))
+	if (checkClawHit())
 	{
 		// jump every 2 hits
 		_hitsCuonter = (_hitsCuonter + 1) % 2;

@@ -1043,21 +1043,38 @@ bool Player::checkForHurts()
 	return false; // no damage in debug mode
 #endif
 
-	if (isTakeDamage() || _damageRest > 0 || _currPowerup == Item::Powerup_Invincibility) return false;
+	if (_isAttack || isTakeDamage() || _damageRest > 0 || _currPowerup == Item::Powerup_Invincibility) return false;
 
 	pair<Rectangle2D, int> atkRc;
+	Rectangle2D damageRc;
 
 	for (BaseEnemy* enemy : ActionPlane::getEnemies())
 	{
 		if (enemy->isAttack())
 		{
 			atkRc = enemy->GetAttackRect();
-			if (_lastAttackRect != atkRc.first && _saveCurrRect.intersects(atkRc.first))
+			if (_lastAttackRect != atkRc.first)
 			{
-				_lastAttackRect = atkRc.first;
-				_health -= atkRc.second;
-				return true;
-}
+				damageRc = _saveCurrRect.getCollision(atkRc.first);
+				if (!damageRc.isEmpty())
+				{
+					_lastAttackRect = atkRc.first;
+					_health -= atkRc.second;
+
+#ifndef LOW_DETAILS
+					// draw damage animation
+					OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(
+						{
+							position.x + (damageRc.left - damageRc.right) / 2,
+							position.y + (damageRc.top - damageRc.bottom) / 2
+						},
+						AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", 50, false));
+					myMemCpy(ani->ZCoord, ZCoord + 1);
+					ActionPlane::addPlaneObject(ani);
+#endif
+					return true;
+				}
+			}
 		}
 	}
 

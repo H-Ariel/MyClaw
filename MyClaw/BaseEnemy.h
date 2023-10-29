@@ -37,7 +37,8 @@ protected:
 
 
 	bool isWalkAnimation() const;
-	bool checkForHurt(pair<Rectangle2D, int> hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
+	bool checkForHurt(const pair<Rectangle2D, int>& hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
+	bool checkClawHit(); // returns `true` if the enemy hurt by CC
 	virtual bool checkForHurts();
 
 	bool enemySeeClaw() const;

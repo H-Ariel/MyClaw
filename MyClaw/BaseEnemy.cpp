@@ -358,7 +358,7 @@ void BaseEnemy::stopMovingRight(float collisionSize)
 	_isMirrored = true;
 	_isStanding = true;
 }
-bool BaseEnemy::checkForHurt(pair<Rectangle2D, int> hurtData)
+bool BaseEnemy::checkForHurt(const pair<Rectangle2D, int>& hurtData)
 {
 	if (removeObject)
 		return true;
@@ -375,9 +375,31 @@ bool BaseEnemy::checkForHurt(pair<Rectangle2D, int> hurtData)
 	}
 	return false;
 }
+bool BaseEnemy::checkClawHit()
+{
+	pair<Rectangle2D, int> clawAttackRect = player->GetAttackRect();
+
+	if (checkForHurt(clawAttackRect))
+	{
+#ifndef LOW_DETAILS
+		// draw damage animation
+		Rectangle2D damageRc = _saveCurrRect.getCollision(clawAttackRect.first);
+		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(
+			{
+				position.x + (damageRc.left - damageRc.right) / 2,
+				position.y + (damageRc.top - damageRc.bottom) / 2
+			},
+			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", 50, false));
+		myMemCpy(ani->ZCoord, ZCoord + 1);
+		ActionPlane::addPlaneObject(ani);
+#endif
+		return true;
+	}
+	return false;
+}
 bool BaseEnemy::checkForHurts()
 {
-	if (checkForHurt(player->GetAttackRect()))
+	if (checkClawHit())
 		return true;
 
 	for (Projectile* p : ActionPlane::getProjectiles())

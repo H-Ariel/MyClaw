@@ -7,12 +7,9 @@
 class PhysicsManager
 {
 public:
-	static const float myGRAVITY;
-
 	PhysicsManager(WapWorld* wwd, const LevelPlane* plane);
 
 	void checkCollides(BaseDynamicPlaneObject* obj, function<void(void)> whenTouchDeath) const;
-
 	pair<float, float> getEnemyRange(D2D1_POINT_2F enemyPos, const float minX, const float maxX) const;
 
 	void Draw();

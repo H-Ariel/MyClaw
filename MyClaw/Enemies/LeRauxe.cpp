@@ -237,7 +237,7 @@ bool LeRauxe::checkForHurts()
 		}
 	}
 
-	if (checkForHurt(player->GetAttackRect()))
+	if (checkClawHit())
 	{
 		if (_blockClaw)
 		{

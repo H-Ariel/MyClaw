@@ -10,11 +10,6 @@
 #define EMPTY_TILE -1
 
 
-// TODO: add function to update object position
-
-const float PhysicsManager::myGRAVITY = GRAVITY;
-
-
 PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 {
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
@@ -177,7 +172,8 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(vo
 		}
 	};
 	auto _onGround = [&]() { // same to `BasePlaneObject::tryCatchPlayer`
-		if (obj->isFalling() && (collisionRc.right > 0 || collisionRc.left > 0) && collisionRc.getSmallest().bottom > 0)
+		float smallestBottom = collisionRc.getSmallest().bottom;
+		if (obj->isFalling() && (collisionRc.right > 0 || collisionRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
 		{
 			_addCollision();
 		}
