@@ -135,61 +135,7 @@ WapWorld::WapWorld(shared_ptr<BufferReader> wwdFileReader, int levelNumber)
 
 	WindowManager::setBackgroundColor(planes[0]->fillColor);
 
-	// Minor change to tiles so they will be more accurate for reduce rectangles (in PhysicsManager)
-	// In levels 5, 11 it's necessary to change the tiles for "BreakPlanks"
-	// (we relate the planks to the tiles in ActionPlane)
-	// In level 8 it's necessary to change the tiles for death blocks
-	if (levelNumber == 1)
-	{
-		WwdTileDescription& t401 = tilesDescription[401];
-		WwdTileDescription& t406 = tilesDescription[406];
-
-		t401.rect.right = 28;
-		t401.rect.bottom = 63;
-		t401.insideAttrib = WwdTileDescription::TileAttribute_Solid;
-		t401.type = WwdTileDescription::TileType_Double;
-
-		t406.rect.left = 40;
-		t406.rect.right = 63;
-		t406.rect.bottom = 63;
-		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
-		t406.type = WwdTileDescription::TileType_Double;
-	}
-	else if (levelNumber == 2)
-	{
-		tilesDescription[88].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[91].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-	else if (levelNumber == 5)
-	{
-		WwdTileDescription& t509 = tilesDescription[509];
-		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[519].rect.bottom += 2;
-	}
-	else if (levelNumber == 8)
-	{
-		for (shared_ptr<LevelPlane>& pln : planes)
-			if (pln->_isMainPlane)
-			{
-				for (size_t i = 703; i < 720; pln->tiles[90][i++] = 184); // set death tiles behind Gabriel's ship
-				break;
-			}
-	}
-	else if (levelNumber == 11)
-	{
-		WwdTileDescription& t39 = tilesDescription[39];
-		t39.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		t39.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-	else if (levelNumber == 14)
-	{
-		tilesDescription[49].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[50].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[54].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	}
-
-	tilesDescription.clear();
+	tilesDescription.clear(); // we don't need it anymore so we release the memory
 }
 void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath, int numOfPlanes)
 {
@@ -322,5 +268,67 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
 		default:
 			throw Exception("invalid type");
 		}
+	}
+
+	fixTilesDescription();
+}
+
+/*
+Minor change to tiles so they will be more accurate for reduce rectangles (in PhysicsManager)
+In levels 5, 11 it's necessary to change the tiles for "BreakPlanks"
+(we relate the planks to the tiles in ActionPlane)
+In level 8 it's necessary to change the tiles for death blocks
+*/
+void WapWorld::fixTilesDescription()
+{
+	
+	if (levelNumber == 1)
+	{
+		WwdTileDescription& t401 = tilesDescription[401];
+		WwdTileDescription& t406 = tilesDescription[406];
+
+		t401.rect.right = 28;
+		t401.rect.bottom = 63;
+		t401.insideAttrib = WwdTileDescription::TileAttribute_Solid;
+		t401.type = WwdTileDescription::TileType_Double;
+
+		t406.rect.left = 40;
+		t406.rect.right = 63;
+		t406.rect.bottom = 63;
+		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
+		t406.type = WwdTileDescription::TileType_Double;
+	}
+	else if (levelNumber == 2)
+	{
+		tilesDescription[88].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[91].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+	else if (levelNumber == 5)
+	{
+		WwdTileDescription& t509 = tilesDescription[509];
+		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[519].rect.bottom += 2;
+	}
+	else if (levelNumber == 8)
+	{
+		for (shared_ptr<LevelPlane>& pln : planes)
+			if (pln->_isMainPlane)
+			{
+				for (size_t i = 703; i < 720; pln->tiles[90][i++] = 184); // set death tiles behind Gabriel's ship
+				break;
+			}
+	}
+	else if (levelNumber == 11)
+	{
+		WwdTileDescription& t39 = tilesDescription[39];
+		t39.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		t39.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
+	else if (levelNumber == 14)
+	{
+		tilesDescription[49].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[50].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[54].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 }

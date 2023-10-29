@@ -165,4 +165,5 @@ public:
 private:
 	void readPlanes(BufferReader& reader, const ColorRGBA colors[], const string& imageDirectoryPath, int numOfPlanes);
 	void readTileDescriptions(BufferReader& reader);
+	void fixTilesDescription();
 };

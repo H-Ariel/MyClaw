@@ -81,7 +81,7 @@ bool PowderKeg::raise()
 		return false;
 
 	_state = State::Raised;
-	_ani = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath(_imageSet) + "/014.PID")->getCopy();
+	_ani = AssetsManager::createCopyAnimationFromFromPidImage(PathManager::getImageSetPath(_imageSet) + "/014.PID");
 
 	return true;
 }

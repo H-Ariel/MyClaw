@@ -247,9 +247,6 @@
     <ClCompile Include="objects\EnemyProjectile.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\RedTail.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
     <ClCompile Include="Enemies\Aquatis.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
@@ -270,6 +267,9 @@
     </ClCompile>
     <ClCompile Include="Objects\LavaMouth.cpp">
       <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RedTail.cpp">
+      <Filter>Enemies\Bosses</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -495,9 +495,6 @@
     <ClInclude Include="objects\EnemyProjectile.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\RedTail.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
     <ClInclude Include="Enemies\Aquatis.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
@@ -518,6 +515,9 @@
     </ClInclude>
     <ClInclude Include="Objects\LavaMouth.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\RedTail.h">
+      <Filter>Enemies\Bosses</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
