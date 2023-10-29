@@ -48,33 +48,10 @@
 
 #define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup
 
+
 static int32_t MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
 static int32_t MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
-
-OneTimeAnimation* getScoreAnimation(Item * item)
-{
-	int i = 0;
-
-	switch (item->getTreasureScore())
-	{
-	case   100: i = 1; break;
-	case   500: i = 2; break;
-	case  1500: i = 3; break;
-	case  2500: i = 4; break;
-	case  5000: i = 5; break;
-	case  7500: i = 6; break;
-	case 10000: i = 7; break;
-	case 15000: i = 8; break;
-	case 25000: i = 9; break;
-	}
-
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
-	myMemCpy(images[0]->duration, 1000U);
-	OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, allocNewSharedPtr<Animation>(images));
-	myMemCpy(ani->ZCoord, item->ZCoord);
-	return ani;
-}
 
 Player::PowerupSparkles::PowerupSparkles(Rectangle2D* playerRc)
 	: _playerRc(playerRc)
@@ -97,10 +74,9 @@ void Player::PowerupSparkles::init(shared_ptr<Animation> sparkle)
 		// check if (x,y) is in the player ellipse
 	} while (pow(x / a, 2) + pow(y / b, 2) > 1);
 
-	sparkle->Logic(getRandomInt(0, 3) * 50);
-
 	sparkle->position.x = x + (_playerRc->right + _playerRc->left) / 2;
 	sparkle->position.y = y + (_playerRc->bottom + _playerRc->top) / 2;
+	sparkle->Logic(getRandomInt(0, 3) * 50);
 }
 void Player::PowerupSparkles::Logic(uint32_t elapsedTime)
 {
@@ -843,13 +819,35 @@ bool Player::collectItem(Item* item)
 	case Item::Treasure_Skull_Red:
 	case Item::Treasure_Skull_Green:
 	case Item::Treasure_Skull_Blue:
-	case Item::Treasure_Skull_Purple:
-		_score += item->getTreasureScore();
+	case Item::Treasure_Skull_Purple: {
 		_collectedTreasures[type] += 1;
+		uint32_t tScore = item->getTreasureScore();
+		_score += tScore;
+
 #ifndef LOW_DETAILS
-		ActionPlane::addPlaneObject(getScoreAnimation(item));
+		int i = 0;
+
+		switch (tScore)
+		{
+		case   100: i = 1; break;
+		case   500: i = 2; break;
+		case  1500: i = 3; break;
+		case  2500: i = 4; break;
+		case  5000: i = 5; break;
+		case  7500: i = 6; break;
+		case 10000: i = 7; break;
+		case 15000: i = 8; break;
+		case 25000: i = 9; break;
+		}
+
+		vector<Animation::FrameData*> images = AssetsManager::createAnimationFromFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
+		myMemCpy(images[0]->duration, 1000U);
+		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, allocNewSharedPtr<Animation>(images));
+		myMemCpy(ani->ZCoord, item->ZCoord);
+
+		ActionPlane::addPlaneObject(ani);
 #endif
-		return true;
+	}	return true;
 
 	case Item::Ammo_Deathbag:	_weaponsAmount[ClawProjectile::Types::Pistol] += 25; return true;
 	case Item::Ammo_Shot:		_weaponsAmount[ClawProjectile::Types::Pistol] += 5; return true;
