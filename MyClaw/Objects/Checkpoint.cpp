@@ -7,7 +7,7 @@ Checkpoint::Checkpoint(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _state(States::Down),
 	_imageSetPath(PathManager::getImageSetPath(obj.imageSet)), _isSuperCheckpoint(contains(obj.logic, "Super"))
 {
-	_ani = AssetsManager::createAnimationFromFromPidImage(_imageSetPath + "/001.PID");
+	_ani = AssetsManager::createAnimationFromPidImage(_imageSetPath + "/001.PID");
 	setObjectRectangle();
 }
 void Checkpoint::Logic(uint32_t elapsedTime)

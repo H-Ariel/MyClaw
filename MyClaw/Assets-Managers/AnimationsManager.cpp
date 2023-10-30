@@ -151,7 +151,7 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const stri
 
 	return _loadedAnimations[k];
 }
-shared_ptr<Animation> AnimationsManager::createAnimationFromFromPidImage(const string& pidPath)
+shared_ptr<Animation> AnimationsManager::createAnimationFromPidImage(const string& pidPath)
 {
 	if (_loadedAnimations.count(pidPath) == 0)
 	{

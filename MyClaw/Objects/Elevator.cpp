@@ -69,7 +69,7 @@ Elevator::Elevator(const WwdObject& obj)
 	_isOneWayElevator(contains(obj.logic, "OneWay")),
 	_operateElevator(true), _offsetY(-64)
 {
-	_ani = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
+	_ani = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
 
 	if (obj.minX > 0 && obj.maxX > 0)
 	{
@@ -238,7 +238,7 @@ PathElevator::PathElevator(const WwdObject& obj)
 
 	if (_paths.size() == 0) throw Exception("PathElevator - no paths");
 
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false);
 
 	Reset();
 }

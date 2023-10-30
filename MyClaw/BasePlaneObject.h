@@ -20,7 +20,7 @@ public:
 
 	bool isMirrored() const { return _isMirrored; }
 
-	const uint32_t ZCoord;
+	const int32_t ZCoord;
 	bool removeObject;
 
 	static Player* player;

@@ -329,7 +329,7 @@ MarrowFloor::MarrowFloor(const WwdObject& obj)
 	_minX((float)obj.minX), _maxX((float)obj.maxX),
 	_speedX((obj.direction ? obj.speedX : -obj.speedX) / 1000.f)
 {
-	_ani = AssetsManager::createAnimationFromFromPidImage("LEVEL10/IMAGES/TRAPELEVATOR/001.PID");
+	_ani = AssetsManager::createAnimationFromPidImage("LEVEL10/IMAGES/TRAPELEVATOR/001.PID");
 }
 void MarrowFloor::Logic(uint32_t elapsedTime)
 {

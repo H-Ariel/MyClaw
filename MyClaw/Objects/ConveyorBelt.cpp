@@ -8,7 +8,7 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj)
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
 	// TODO: better animationss (as sequence)
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 75, obj.speed > 0);
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, obj.speed > 0);
 	setObjectRectangle();
 }
 

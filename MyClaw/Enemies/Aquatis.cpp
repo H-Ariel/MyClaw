@@ -230,7 +230,7 @@ bool AquatisTentacle::isDamage() const
 AquatisCrack::AquatisCrack(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _lastDynamite(nullptr)
 {
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 125, false);
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false);
 	setObjectRectangle();
 }
 void AquatisCrack::Logic(uint32_t elapsedTime)

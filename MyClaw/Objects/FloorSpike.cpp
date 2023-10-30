@@ -25,8 +25,8 @@ FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
 	if (!doFloorSpikeCtor) return;
 
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, false)->getImagesList();
-	vector<Animation::FrameData*> disappearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 125, true)->getImagesList();
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 100, false)->getImagesList();
+	vector<Animation::FrameData*> disappearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 100, true)->getImagesList();
 
 
 	myMemCpy(images.back()->duration, uint32_t((obj.speedX > 0) ? obj.speedX : 1500));

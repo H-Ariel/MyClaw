@@ -117,8 +117,8 @@ Player::Player(const WwdObject& obj)
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT" };
 
-	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 125, false);
-	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromFromPidImage("CLAW/IMAGES/100.PID");
+	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 100, false);
+	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
 
 	_animations["SQUEEZED"] = allocNewSharedPtr<Animation>(vector<Animation::FrameData*>({
 		DBG_NEW Animation::FrameData("CLAW/IMAGES/450.PID"),

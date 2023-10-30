@@ -10,7 +10,7 @@ GroundBlower::GroundBlower(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
 {
 	_ani = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_GROUNDBLOWER"));
-	_blowhole = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_BLOW1"), 125, false);
+	_blowhole = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_BLOW1"), 100, false);
 
 	Rectangle2D rc;
 	rc.left = position.x - 24;

@@ -345,7 +345,7 @@ string getBGImgPath1(int l)
 	string path = "STATES/BOOTY/SCREENS/";
 	char num3[4]; sprintf(num3, "%03d", l * 2 - 1);
 	path += num3;
-	if (l % 2) path += "MAP";
+	if (l % 2 && l != 13) path += "MAP";
 	else path += "AMULET";
 	path += ".PCX";
 	return path;
@@ -355,7 +355,7 @@ string getBGImgPath2(int l)
 	string path = "STATES/BOOTY/SCREENS/";
 	char num3[4]; sprintf(num3, "%03d", l * 2);
 	path += num3;
-	if (l % 2) path += "MAP";
+	if (l % 2 && l != 13) path += "MAP";
 	else path += "AMULET";
 	path += ".PCX";
 	return path;

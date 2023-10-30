@@ -10,7 +10,7 @@ public:
 	class FrameData
 	{
 	public:
-		FrameData(const string& pidPath, uint32_t duration = 125, const string& soundFilePath = "");
+		FrameData(const string& pidPath, uint32_t duration = 100, const string& soundFilePath = "");
 		FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, const string& soundFilePath);
 
 		const string soundFilePath;

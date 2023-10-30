@@ -11,6 +11,7 @@ LevelPlane::LevelPlane()
 void LevelPlane::Draw()
 {
 	shared_ptr<UIBaseImage> img;
+	size_t i;
 	int row, col, tileId, rowTileIndex;
 
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
@@ -20,6 +21,9 @@ void LevelPlane::Draw()
 	const int startCol = int(parallaxCameraPosX / TILE_SIZE);
 	const int endRow = min<int>(maxTileIdxY, int(wndSz.height / TILE_SIZE + 2 + startRow));
 	const int endCol = min<int>(maxTileIdxX, int(wndSz.width / TILE_SIZE + 2 + startCol));
+
+	for (i = 0; i < _objects.size() && _objects[i]->ZCoord < 0; i++)
+		_objects[i]->Draw();
 
 	for (row = startRow; row < endRow; row++)
 	{
@@ -37,8 +41,8 @@ void LevelPlane::Draw()
 		}
 	}
 
-	for (BasePlaneObject* obj : _objects)
-		obj->Draw();
+	for (; i < _objects.size(); i++)
+		_objects[i]->Draw();
 }
 
 void LevelPlane::readPlaneObjects(BufferReader& reader)

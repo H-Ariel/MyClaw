@@ -9,8 +9,6 @@
 #define OFFSET_Y 32.f
 
 
-// TODO: fix TProjectilesShooter for level 14
-
 TProjectilesShooter::TProjectilesShooter(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
 	_damage(obj.damage > 0 ? obj.damage : 5), _projSpeed({ obj.speedX / 1000.f, obj.speedY / 1000.f }),
@@ -45,7 +43,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj)
 		}
 
 		sprintf(frame, "/%03d.PID", obj.userValue1);
-		_projectileAni = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
+		_projectileAni = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
 	}
 	
 	vector<Animation::FrameData*> imgs = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false)->getImagesList(), newImgs;

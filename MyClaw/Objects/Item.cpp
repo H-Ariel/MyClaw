@@ -132,10 +132,10 @@ Item::Item(const WwdObject& obj, int8_t type)
 	}
 
 #ifndef LOW_DETAILS
-	if (_type != Item::Type::BossWarp && _type != Item::Type::Warp && _type != Item::Type::Treasure_Coins)
+	if (_type != Item::Type::BossWarp && _type != Item::Type::Warp)
 	{
 		_useGlitter = true;
-		_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER", 125, false);
+		_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER", 100, false);
 	}
 #endif
 
@@ -160,7 +160,7 @@ Item::Item(const WwdObject& obj, int8_t type)
 	}
 
 
-	_ani = AssetsManager::createAnimationFromDirectory(getItemPath(_type, obj.imageSet), 125, false);
+	_ani = AssetsManager::createAnimationFromDirectory(getItemPath(_type, obj.imageSet), 100, false);
 	_ani->updateFrames = FindInArray(UpdateFramesTypes, _type);
 }
 void Item::Logic(uint32_t elapsedTime)

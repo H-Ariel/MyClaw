@@ -251,7 +251,7 @@ GabrielCannonButton::GabrielCannonButton(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
 	_idle = AssetsManager::loadAnimation(PathManager::getAnimationSetPath(obj.imageSet) + "/IDLE.ANI", PathManager::getImageSetPath(obj.imageSet));
-	_pressed = AssetsManager::createAnimationFromFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
+	_pressed = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
 	_ani = _idle;
 	setObjectRectangle();
 }
@@ -275,7 +275,7 @@ GabrielRedTailPirate::GabrielRedTailPirate(Player* player)
 	: BaseDynamicPlaneObject({}), _isJumping(false)
 {
 	position = { 43479, 5020 };
-	myMemCpy(ZCoord, 2000U);
+	myMemCpy(ZCoord, 2000);
 	speed.x = -0.3f;
 	_ani = AssetsManager::loadCopyAnimation("LEVEL8/ANIS/REDTAILPIRATE/ADVANCE.ANI", "LEVEL8/IMAGES/REDTAILPIRATE");
 }

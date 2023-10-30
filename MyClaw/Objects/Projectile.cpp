@@ -13,7 +13,7 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 	else if (contains(aniDirPath, "SIREN"))
 		_ani = AssetsManager::createCopyAnimationFromDirectory(aniDirPath, 100, false);
 	else
-		_ani = AssetsManager::createAnimationFromDirectory(aniDirPath, 75, false);
+		_ani = AssetsManager::createAnimationFromDirectory(aniDirPath, 50, false);
 	speed.x = obj.speedX / 1000.f;
 	speed.y = obj.speedY / 1000.f;
 	_isMirrored = speed.x < 0;
