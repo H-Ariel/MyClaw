@@ -574,7 +574,11 @@ Rectangle2D Player::GetRect() { return _saveCurrRect; }
 pair<Rectangle2D, int> Player::GetAttackRect() { return _saveCurrAttackRect; }
 void Player::calcRect()
 {
-	_saveCurrRect.left = -7.f + 15 * _isMirrored;
+	if (_isOnLadder)
+		_saveCurrRect.left = 0;
+	else
+		_saveCurrRect.left = -7.f + 15 * _isMirrored;
+
 	_saveCurrRect.right = _saveCurrRect.left + 44;
 
 	if (isDuck())

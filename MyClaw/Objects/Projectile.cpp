@@ -39,6 +39,8 @@ void Projectile::Logic(uint32_t elapsedTime)
 		if (_timeLeft <= 0)
 			removeObject = true;
 	}
+
+	_ani->Logic(elapsedTime);
 }
 void Projectile::bounceTop() { speed.y = 0; }
 void Projectile::stopFalling(float collisionSize) {}

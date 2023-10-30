@@ -86,7 +86,6 @@ void SirenProjectile::Logic(uint32_t elapsedTime)
 	else
 	{
 		EnemyProjectile::Logic(elapsedTime);
-		_ani->Logic(elapsedTime);
 		removeObject = _ani->isFinishAnimation();
 	}
 }

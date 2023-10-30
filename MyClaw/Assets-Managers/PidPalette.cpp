@@ -11,7 +11,7 @@ PidPalette::PidPalette(vector<uint8_t> palData)
 			myMemCpy(colors[i].r, palData[j++]);
 			myMemCpy(colors[i].g, palData[j++]);
 			myMemCpy(colors[i].b, palData[j++]);
-			myMemCpy<uint8_t>(colors[i].a, 255);
+			myMemCpy<uint8_t>(colors[i].a, 0xFF);
 		}
 		myMemCpy<uint8_t>(colors[0].a, 0); // first pixel in palette is transparent
 	}

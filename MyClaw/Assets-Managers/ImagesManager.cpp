@@ -228,6 +228,58 @@ void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 		offsetX -= 2;
 		offsetY -= 1;
 	}
+	// shooters from level 14
+	// TODO: continue fix LAUNCHLEFT and fix LAUNCHRIGHT
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/002.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/003.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/004.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/005.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/007.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (startsWith(pidPath ,"LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/"))
+	{
+		pidPath = pidPath;
+		offsetX = offsetX;
+		offsetY = offsetY;
+
+		/*
+		else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/001.PID")
+		{
+			offsetX += 2;
+		}
+		else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/002.PID")
+		{
+			offsetX += 4;
+		}
+		if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/003.PID")
+		{
+			offsetX += 2;
+		}
+
+		*/
+		/*if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/004.PID")
+		{
+			offsetX += 2;
+		}
+		else
+		{
+			throw Exception("nvjdsfvjifenvkea");
+		}*/
+	}
 }
 shared_ptr<UIBaseImage> ImagesManager::loadPidImage(const string& pidPath)
 {
