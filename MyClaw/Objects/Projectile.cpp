@@ -2,7 +2,6 @@
 #include "../Assets-Managers/AssetsManager.h"
 #include "ClawProjectile.h"
 #include "EnemyProjectile.h"
-#include "TProjectilesShooter.h"
 
 
 Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet)

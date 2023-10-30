@@ -55,3 +55,11 @@ public:
 private:
 	int32_t _delay; // in milliseconds
 };
+
+
+// create new class for TProjectilesShooter
+class TProjectile : public Projectile
+{
+public:
+	TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
+};

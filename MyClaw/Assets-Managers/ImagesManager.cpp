@@ -44,6 +44,7 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 			{
 				img = loadPcxImage(path);
 			}
+			else throw Exception("empty imgae");
 		}
 		catch (const Exception&)
 		{

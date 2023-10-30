@@ -73,9 +73,9 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 //	if (levelNumber == 8) BasePlaneObject::player->position = { 9225, 5533 };
 //	if (levelNumber == 9) BasePlaneObject::player->position = { 5210, 7776 };
 //	if (levelNumber == 9) BasePlaneObject::player->position = { 4220, 6484 };
-//	if (levelNumber == 9) BasePlaneObject::player->position = { 4699, 6548 };
+	if (levelNumber == 9) BasePlaneObject::player->position = { 4699, 6548 };
 //	if (levelNumber == 9) BasePlaneObject::player->position = { 7828, 7772 };
-	if (levelNumber == 9) BasePlaneObject::player->position = { 1609, 7252 };
+//	if (levelNumber == 9) BasePlaneObject::player->position = { 1609, 7252 };
 //	if (levelNumber == 9) BasePlaneObject::player->position = { 4800, 6590 };
 	if (levelNumber == 10) BasePlaneObject::player->position = { 32368, 7769 }; // END OF LEVEL
 //	if (levelNumber == 11) BasePlaneObject::player->position = { 5116, 1360 };

@@ -95,3 +95,6 @@ void SirenProjectile::Draw()
 	if (_delay <= 0)
 		_ani->Draw();
 }
+
+TProjectile::TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+	: Projectile(ani, damage, speed, initialPosition) {}
