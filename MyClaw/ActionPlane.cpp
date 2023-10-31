@@ -268,6 +268,9 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 {
 	// initialize global fields and then read objects: (we init here because now we have all data)
 
+	LevelPlane::readPlaneObjects(reader);
+
+
 	_planeSize.width = (float)TILE_SIZE * tilesOnAxisX;
 	_planeSize.height = (float)TILE_SIZE * tilesOnAxisY;
 
@@ -280,7 +283,6 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 	playerData.z = 4000;
 	player = DBG_NEW Player(playerData);
 
-	LevelPlane::readPlaneObjects(reader);
 
 	_objects.push_back(player);
 }
@@ -348,9 +350,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "BreakPlank")
 	{
-		float topOffset = 0;
-		if (_wwd->levelNumber == 5) topOffset = (float)_wwd->tilesDescription[509].rect.top;
-		else if (_wwd->levelNumber == 11) topOffset = (float)_wwd->tilesDescription[39].rect.top;
+		int idx = -1;
+		if (_wwd->levelNumber == 5) idx = 509;
+		else if (_wwd->levelNumber == 11) idx = 39;
+		//else throw Exception("invalid level");
+		
+		WwdTileDescription& tileDesc = _wwd->tilesDescription[idx];
+
+		float topOffset = (float)tileDesc.rect.top;
 
 		for (int32_t i = 0; i < obj.width; i++)
 		{
@@ -358,6 +365,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 			(int32_t&)obj.x += TILE_SIZE;
 			//myMemCpy(obj.x, obj.x + TILE_SIZE);
 		}
+
+		// set the tile to be clear so the PhysicsManager will not check collision with it
+		tileDesc.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tileDesc.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
 		|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"
@@ -381,7 +392,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "ConveyorBelt")
 	{
-		_objects.push_back(DBG_NEW ConveyorBelt(obj));
+		// get the match tile from the WWD map
+		WwdTileDescription& tileDesc = _wwd->tilesDescription[tiles[obj.y / TILE_SIZE][obj.x / TILE_SIZE]];
+
+		_objects.push_back(DBG_NEW ConveyorBelt(obj, tileDesc.rect));
+
+		// set the tile to be clear so the PhysicsManager will not check collision with it
+		tileDesc.insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tileDesc.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 #ifndef NO_ENEMIES
 	else if (obj.logic == "CrabNest")

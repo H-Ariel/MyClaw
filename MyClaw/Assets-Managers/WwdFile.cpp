@@ -274,14 +274,14 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
 }
 
 /*
-Minor change to tiles so they will be more accurate for reduce rectangles (in PhysicsManager)
-In levels 5, 11 it's necessary to change the tiles for "BreakPlanks"
-(we relate the planks to the tiles in ActionPlane)
-In level 8 it's necessary to change the tiles for death blocks
-*/
+ * Minor change to tiles so they will be more accurate
+   for reduce rectangles (in PhysicsManager)
+ * In level 8 it's necessary to change the tiles for death blocks.
+ * In ActionPlane::addObject we set the object rectangle to be 
+   the same as the tile rectangle (and then we change it there)
+ */
 void WapWorld::fixTilesDescription()
 {
-	
 	if (levelNumber == 1)
 	{
 		WwdTileDescription& t401 = tilesDescription[401];
@@ -303,13 +303,6 @@ void WapWorld::fixTilesDescription()
 		tilesDescription[88].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 		tilesDescription[91].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
-	else if (levelNumber == 5)
-	{
-		WwdTileDescription& t509 = tilesDescription[509];
-		t509.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		t509.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[519].rect.bottom += 2;
-	}
 	else if (levelNumber == 8)
 	{
 		for (shared_ptr<LevelPlane>& pln : planes)
@@ -318,12 +311,6 @@ void WapWorld::fixTilesDescription()
 				for (size_t i = 703; i < 720; pln->tiles[90][i++] = 184); // set death tiles behind Gabriel's ship
 				break;
 			}
-	}
-	else if (levelNumber == 11)
-	{
-		WwdTileDescription& t39 = tilesDescription[39];
-		t39.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		t39.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 14)
 	{

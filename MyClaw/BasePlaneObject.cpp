@@ -38,7 +38,8 @@ bool BasePlaneObject::tryCatchPlayer()
 	if (player->isFalling())
 	{
 		Rectangle2D colRc = player->GetRect().getCollision(GetRect());
-		if ((colRc.right > 0 || colRc.left > 0) && colRc.getSmallest().bottom > 0)
+		float smallestBottom = colRc.getSmallest().bottom;
+		if ((colRc.right > 0 || colRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
 		{
 			// if player is falling/going to this object - catch him
 			player->stopFalling(colRc.bottom);
