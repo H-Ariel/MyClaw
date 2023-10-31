@@ -38,11 +38,13 @@ void LevelPlane::Draw()
 				img->position.y = (row + 0.5f) * TILE_SIZE - parallaxCameraPosY + position.y;
 				img->Draw();
 
+				/*
 #ifdef _DEBUG
 				// draw black rectangle around the tile
 				if (isMainPlane())
 					WindowManager::drawRect(img->GetRect(), ColorF::Black);
 #endif
+				*/
 			}
 		}
 	}

@@ -76,7 +76,8 @@ void Player::PowerupSparkles::init(shared_ptr<Animation> sparkle)
 
 	sparkle->position.x = x + (_playerRc->right + _playerRc->left) / 2;
 	sparkle->position.y = y + (_playerRc->bottom + _playerRc->top) / 2;
-	sparkle->Logic(getRandomInt(0, 3) * 50);
+
+	for (int i = 0, n = getRandomInt(0, 3); i < n; i++) sparkle->Logic(50);
 }
 void Player::PowerupSparkles::Logic(uint32_t elapsedTime)
 {

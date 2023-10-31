@@ -34,6 +34,7 @@ public:
 
 	shared_ptr<Animation> getCopy() const { return allocNewSharedPtr<Animation>(getImagesList()); }
 	vector<FrameData*> getImagesList() const;
+	size_t getImagesCount() const { return _images.size(); }
 	size_t getFrameNumber() const { return _currImgIdx; }
 	bool isFinishAnimation() const { return _isFinishAnimation; } // return if we finish the animation loop
 	bool isPassedHalf() const { return _currImgIdx >= _images.size() / 2; }

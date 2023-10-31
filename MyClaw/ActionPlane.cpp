@@ -269,7 +269,7 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 	// initialize global fields and then read objects: (we init here because now we have all data)
 
 	LevelPlane::readPlaneObjects(reader);
-
+	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
 
 	_planeSize.width = (float)TILE_SIZE * tilesOnAxisX;
 	_planeSize.height = (float)TILE_SIZE * tilesOnAxisY;
@@ -282,8 +282,6 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 	playerData.y = _wwd->startY;
 	playerData.z = 4000;
 	player = DBG_NEW Player(playerData);
-
-
 	_objects.push_back(player);
 }
 void ActionPlane::addObject(const WwdObject& obj)
