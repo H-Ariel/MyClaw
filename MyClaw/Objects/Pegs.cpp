@@ -38,7 +38,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 		}
 	}
 
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 100, true)->getImagesList();
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
 
 	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1500));
 
@@ -50,7 +50,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 	}
 	else
 	{
-		vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 100, false)->getImagesList();
+		vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath)->getImagesList();
 		myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 1500));
 		images.insert(images.begin(), appearImages.begin(), appearImages.end());
 	}
@@ -90,9 +90,9 @@ StartSteppingStone::StartSteppingStone(const WwdObject& obj)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
 
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 100, true)->getImagesList();
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
 	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1000));
-	vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 100, false)->getImagesList();
+	vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, false)->getImagesList();
 	myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 2000));
 	images.insert(images.begin(), appearImages.begin(), appearImages.end());
 
@@ -118,7 +118,7 @@ void StartSteppingStone::Logic(uint32_t elapsedTime)
 CrumblingPeg::CrumblingPeg(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false)->getImagesList();
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList();
 	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
 	_ani = allocNewSharedPtr<Animation>(images);
 	_ani->position = position;

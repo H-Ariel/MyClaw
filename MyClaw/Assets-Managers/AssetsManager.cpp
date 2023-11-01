@@ -58,13 +58,13 @@ shared_ptr<Animation> AssetsManager::loadCopyAnimation(const string& aniPath, co
 {
 	return instance->_animationsManager->loadAnimation(aniPath, imageSetPath, false);
 }
-shared_ptr<Animation> AssetsManager::createAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder)
+shared_ptr<Animation> AssetsManager::createAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
 {
-	return instance->_animationsManager->createAnimationFromDirectory(dirPath, duration, reversedOrder);
+	return instance->_animationsManager->createAnimationFromDirectory(dirPath, reversedOrder, duration);
 }
-shared_ptr<Animation> AssetsManager::createCopyAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder)
+shared_ptr<Animation> AssetsManager::createCopyAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
 {
-	return createAnimationFromDirectory(dirPath, duration, reversedOrder)->getCopy();
+	return createAnimationFromDirectory(dirPath, reversedOrder, duration)->getCopy();
 }
 shared_ptr<Animation> AssetsManager::createAnimationFromPidImage(const string& pidPath)
 {

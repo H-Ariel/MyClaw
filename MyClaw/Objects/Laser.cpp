@@ -7,7 +7,7 @@ Laser::Laser(const WwdObject& obj)
 	: BaseDamageObject(obj, obj.damage ? obj.damage : 1), _timeCounter(0),
 	_isActive(false), _swapTime(obj.counter > 0 ? obj.counter : 1500)
 {
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 50, false);
+	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, 50);
 	setObjectRectangle();
 }
 

@@ -22,7 +22,7 @@ void LevelPlane::Draw()
 	const int endRow = min<int>(maxTileIdxY, int(wndSz.height / TILE_SIZE + 2 + startRow));
 	const int endCol = min<int>(maxTileIdxX, int(wndSz.width / TILE_SIZE + 2 + startCol));
 
-	for (i = 0; i < _objects.size() && _objects[i]->ZCoord < 0; i++)
+	for (i = 0; i < _objects.size() && _objects[i]->ZCoord < this->ZCoord; i++)
 		_objects[i]->Draw();
 
 	for (row = startRow; row < endRow; row++)

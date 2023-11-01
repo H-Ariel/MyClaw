@@ -10,7 +10,7 @@ public:
 
 	shared_ptr<Animation> loadAnimation(const string& aniPath, const string& imageSetPath, bool save = true);
 	map<string, shared_ptr<Animation>> loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath); // load all ANI files in `dirPath`
-	shared_ptr<Animation> createAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder); // create new animation from directory content
+	shared_ptr<Animation> createAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration); // create new animation from directory content
 	shared_ptr<Animation> createAnimationFromPidImage(const string& pidPath);
 
 	void callAnimationsLogic(uint32_t elapsedTime);

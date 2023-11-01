@@ -230,7 +230,7 @@ bool AquatisTentacle::isDamage() const
 AquatisCrack::AquatisCrack(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _lastDynamite(nullptr)
 {
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false);
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
 	setObjectRectangle();
 }
 void AquatisCrack::Logic(uint32_t elapsedTime)
@@ -270,7 +270,7 @@ void AquatisDynamite::Logic(uint32_t elapsedTime)
 AquatisStalactite::AquatisStalactite(const WwdObject& obj)
 	: Projectile(obj, ""), _idx(obj.smarts)
 {
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 50, false);
+	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, 50);
 	_ani->updateFrames = false;
 	speed = {};
 	AquatisStalactitesList.push_back(this);

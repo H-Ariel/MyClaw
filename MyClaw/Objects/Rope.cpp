@@ -44,7 +44,7 @@ Rope::Rope(const WwdObject& obj)
 	if (speed == 0)
 		speed = 25;
 	
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), speed, false);
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, speed);
 }
 
 void Rope::Logic(uint32_t elapsedTime)

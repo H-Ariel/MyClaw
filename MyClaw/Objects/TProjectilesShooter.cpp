@@ -29,7 +29,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj)
 		}
 
 		sprintf(frame, "/%d", obj.userValue2);
-		_projectileAni = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame, 100, false);
+		_projectileAni = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
 	}
 	else // levels 9,10
 	{
@@ -46,7 +46,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj)
 		_projectileAni = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
 	}
 	
-	vector<Animation::FrameData*> imgs = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false)->getImagesList(), newImgs;
+	vector<Animation::FrameData*> imgs = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList(), newImgs;
 	newImgs.push_back(DBG_NEW Animation::FrameData("", 0)); // insert empty image at end
 	newImgs.insert(newImgs.end(), imgs.begin(), imgs.end());
 	_ani = allocNewSharedPtr<Animation>(newImgs);

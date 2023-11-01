@@ -25,8 +25,8 @@ FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
 	if (!doFloorSpikeCtor) return;
 
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, 100, false)->getImagesList();
-	vector<Animation::FrameData*> disappearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, 100, true)->getImagesList();
+	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath)->getImagesList();
+	vector<Animation::FrameData*> disappearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
 
 
 	myMemCpy(images.back()->duration, uint32_t((obj.speedX > 0) ? obj.speedX : 1500));
@@ -100,7 +100,7 @@ SawBlade::SawBlade(const WwdObject& obj)
 LavaGeyser::LavaGeyser(const WwdObject& obj)
 	: FloorSpike(obj, false)
 {
-	vector<Animation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAGEYSER"), 50, false)->getImagesList();
+	vector<Animation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAGEYSER"), false,50)->getImagesList();
 	myMemCpy(images.back()->duration, uint32_t((obj.speed > 0) ? obj.speed : 500));
 	_ani = allocNewSharedPtr<Animation>(images);
 	_framesAmount = images.size();

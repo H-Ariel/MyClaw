@@ -5,7 +5,7 @@
 LavaMouth::LavaMouth(const WwdObject& obj)
 	: BaseDamageObject(obj,10), _startTimeDelay(obj.speed)
 {
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAMOUTH"), 50, false);
+	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAMOUTH"), false, 50);
 }
 
 void LavaMouth::Logic(uint32_t elapsedTime)

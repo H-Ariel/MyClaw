@@ -80,7 +80,8 @@ bool RedTail::checkForHurts()
 RedTailSpikes::RedTailSpikes(const WwdObject& obj)
 	: BaseDamageObject(obj, 20)
 {
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 0, false);
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
+	_ani->updateFrames = false; // only one frame, no need to update
 	setObjectRectangle();
 }
 bool RedTailSpikes::isDamage() const { return true; }

@@ -120,7 +120,7 @@ map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirector
 		anis[i.first] = i.second->getCopy();
 	return anis;
 }
-shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder)
+shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
 {
 	const string k = dirPath + '+' + to_string(duration) + '+' + to_string(reversedOrder);
 	if (_loadedAnimations.count(k) == 0)

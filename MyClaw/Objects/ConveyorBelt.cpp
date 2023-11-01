@@ -12,7 +12,7 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj, const WwdRect& rect)
 	: BaseStaticPlaneObject(obj), speed(obj.speed / 1000.f),
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), ANIMATION_DURATION, obj.speed > 0);
+	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), obj.speed > 0, ANIMATION_DURATION);
 	if (!_canMoveCC) (int32_t&)ZCoord += 1; // handle the belts that can move CC first
 	float x = (float)obj.x - obj.x % TILE_SIZE, y = (float)obj.y - obj.y % TILE_SIZE;
 	myMemCpy(_objRc, Rectangle2D(x + rect.left, y + rect.top, x + rect.right, y + rect.bottom));
@@ -26,7 +26,7 @@ void ConveyorBelt::Logic(uint32_t elapsedTime)
 		if (_canMoveCC)
 			player->position.x += speed * elapsedTime;
 	}
-		
+
 	_ani->Logic(elapsedTime);
 }
 

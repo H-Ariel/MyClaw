@@ -238,7 +238,7 @@ PathElevator::PathElevator(const WwdObject& obj)
 
 	if (_paths.size() == 0) throw Exception("PathElevator - no paths");
 
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), 100, false);
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
 
 	Reset();
 }

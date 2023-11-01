@@ -15,8 +15,8 @@ public:
 	static shared_ptr<UIBaseImage> loadImage(const string& path);
 	static shared_ptr<Animation> loadAnimation(const string& aniPath, const string& imageSetPath = ""); // load from ANI file
 	static shared_ptr<Animation> loadCopyAnimation(const string& aniPath, const string& imageSetPath = "");
-	static shared_ptr<Animation> createAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder); // create new animation from directory content
-	static shared_ptr<Animation> createCopyAnimationFromDirectory(const string& dirPath, uint32_t duration, bool reversedOrder);
+	static shared_ptr<Animation> createAnimationFromDirectory(const string& dirPath, bool reversedOrder = false, uint32_t duration = 100); // create new animation from directory content
+	static shared_ptr<Animation> createCopyAnimationFromDirectory(const string& dirPath, bool reversedOrder = false, uint32_t duration = 100);
 	static shared_ptr<Animation> createAnimationFromPidImage(const string& pidPath); // convert PID image to an animtion
 	static shared_ptr<Animation> createCopyAnimationFromPidImage(const string& pidPath);
 	static map<string, shared_ptr<Animation>> loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath = ""); // load all ANI files in `dirPath`

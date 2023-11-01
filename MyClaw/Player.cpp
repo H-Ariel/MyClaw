@@ -118,7 +118,7 @@ Player::Player(const WwdObject& obj)
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT" };
 
-	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION", 100, false);
+	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
 
 	_animations["SQUEEZED"] = allocNewSharedPtr<Animation>(vector<Animation::FrameData*>({
@@ -1068,12 +1068,10 @@ bool Player::checkForHurts()
 
 #ifndef LOW_DETAILS
 					// draw damage animation
-					OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(
-						{
+					OneTimeAnimation* ani = DBG_NEW OneTimeAnimation({
 							position.x + (damageRc.left - damageRc.right) / 2,
 							position.y + (damageRc.top - damageRc.bottom) / 2
-						},
-						AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", 50, false));
+						}, AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", false, 50));
 					myMemCpy(ani->ZCoord, ZCoord + 1);
 					ActionPlane::addPlaneObject(ani);
 #endif
