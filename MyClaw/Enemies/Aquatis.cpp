@@ -247,21 +247,30 @@ void AquatisCrack::Logic(uint32_t elapsedTime)
 }
 
 
+bool AquatisDynamite::_playerTookDynamite;
+
 AquatisDynamite::AquatisDynamite(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _timeCounter(0) {}
+	: BaseStaticPlaneObject(obj), _timeCounter(0) 
+{
+	_playerTookDynamite = true;
+}
 void AquatisDynamite::Logic(uint32_t elapsedTime)
 {
 	_timeCounter -= elapsedTime;
 	if (_timeCounter <= 0)
 	{
-		_timeCounter = 10000; // every 10 seconds respawn the dynamite supply
+		// put new dynamite only if the previous dynamite is taken
 
-		WwdObject obj;
-		obj.x = (int32_t)position.x;
-		obj.y = (int32_t)position.y;
-		ActionPlane::addPlaneObject(Item::getItem(obj, Item::Ammo_Dynamite));
+		if (_playerTookDynamite && !player->isFalling() && !player->isJumping()) // make sure player not in the air so he can take 2 dynamites at the same time
+		{
+			_playerTookDynamite = false;
+			_timeCounter = 10000; // every 10 seconds respawn the dynamite supply
 
-		// TODO: if the previues dynamite is not taken, remove it
+			WwdObject obj;
+			obj.x = (int32_t)position.x;
+			obj.y = (int32_t)position.y;
+			ActionPlane::addPlaneObject(Item::getItem(obj, Item::Ammo_Dynamite));
+		}
 	}
 }
 

@@ -52,6 +52,7 @@ public:
 	int getHealthAmount() const { return _health; }
 	int getLivesAmount() const { return _lives; }
 	int getWeaponAmount() const { return _weaponsAmount.at(_currWeapon); }
+	int getDynamiteAmount() const { return _weaponsAmount.at(ClawProjectile::Types::Dynamite); }
 	uint32_t getScore() const { return _score; }
 	int32_t getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
 	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }

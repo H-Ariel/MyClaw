@@ -1,8 +1,11 @@
 #include "Chameleon.h"
 #include "../Player.h"
 
+
+#define OPACITY_SPEED 0.005f
+
+
 // it doesn't feel like the original game, but it's the best I can do for now
-// TODO: improve chameleon's logic
 
 Chameleon::Chameleon(const WwdObject& obj)
 	: BaseEnemy(obj, 1, 10, "FASTADVANCE", "HIT", "HIT", "KILLFALL",
@@ -14,21 +17,18 @@ void Chameleon::Logic(uint32_t elapsedTime)
 {
 	BaseEnemy::Logic(elapsedTime);
 
-	///////////////////
-	// without the next code it attacks normally but not disappear when it's not attacking
 	if (!_isAttack && enemySeeClaw())
 	{
-		_opacity -= 0.001f * elapsedTime;
+		_opacity -= OPACITY_SPEED * elapsedTime;
 		if (_opacity < 0)
 			_opacity = 0;
 	}
 	else
 	{
-		_opacity += 0.001f * elapsedTime;
+		_opacity += OPACITY_SPEED * elapsedTime;
 		if (_opacity > 1)
 			_opacity = 1;
 	}
-	///////////////////
 
 	_ani->opacity = _opacity;
 	_ani->updateImageData();

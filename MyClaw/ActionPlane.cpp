@@ -65,7 +65,7 @@
 #ifdef _DEBUG
 //#undef LOW_DETAILS
 #define NO_DEATH
-#define NO_ENEMIES
+//#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -274,15 +274,16 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	_physicsManager = DBG_NEW PhysicsManager(_wwd, this); // must be after WWD map loaded and before objects added
 
-	LevelPlane::readPlaneObjects(reader);
-	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
-
 	WwdObject playerData;
 	playerData.x = _wwd->startX;
 	playerData.y = _wwd->startY;
 	playerData.z = 4000;
-	player = DBG_NEW Player(playerData);
-	_objects.push_back(player);
+	player = DBG_NEW Player(playerData); // must be before LevelPlane::readPlaneObjects() because some of objects need player
+
+	LevelPlane::readPlaneObjects(reader);
+	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
+	
+	_objects.push_back(player); // must be after LevelPlane::readPlaneObjects() because we reset the objects vector there
 }
 void ActionPlane::addObject(const WwdObject& obj)
 {

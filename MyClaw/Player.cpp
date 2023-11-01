@@ -6,6 +6,7 @@
 #include "Objects/LavaMouth.h"
 #include "BaseEnemy.h"
 #include "Objects/EnemyProjectile.h"
+#include "Enemies/Aquatis.h"
 
 
 // TODO: find perfect values (if they are still not perfect :D )
@@ -31,17 +32,18 @@
 #define EXCLAMATION_MARK	_animations["exclamation-mark"] // it used when claw is speaking
 
 // code blocks for `collectItem`
+#define ADD_WEAPON(t, n) { _weaponsAmount[ClawProjectile::Types:: t] += n; return true; }
 #define ADD_HEALTH(n) \
 	if (_health < 100) { \
 		_health += n; \
 		if (_health > 100) _health = 100; \
 		return true; \
 	} break;
-#define SET_POWERUP(type) \
+#define SET_POWERUP(t) \
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Powerup); \
-	if (_currPowerup != Item:: type) _powerupLeftTime = 0; \
+	if (_currPowerup != Item:: t) _powerupLeftTime = 0; \
 	_powerupLeftTime += item->getDuration(); \
-	_currPowerup = Item:: type; \
+	_currPowerup = Item:: t; \
 	return true;
 
 #define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
@@ -854,13 +856,13 @@ bool Player::collectItem(Item* item)
 #endif
 	}	return true;
 
-	case Item::Ammo_Deathbag:	_weaponsAmount[ClawProjectile::Types::Pistol] += 25; return true;
-	case Item::Ammo_Shot:		_weaponsAmount[ClawProjectile::Types::Pistol] += 5; return true;
-	case Item::Ammo_Shotbag:	_weaponsAmount[ClawProjectile::Types::Pistol] += 10; return true;
-	case Item::Ammo_Magic_5:	_weaponsAmount[ClawProjectile::Types::Magic] += 5; return true;
-	case Item::Ammo_Magic_10:	_weaponsAmount[ClawProjectile::Types::Magic] += 10; return true;
-	case Item::Ammo_Magic_25:	_weaponsAmount[ClawProjectile::Types::Magic] += 25; return true;
-	case Item::Ammo_Dynamite:	_weaponsAmount[ClawProjectile::Types::Dynamite] += 5; return true;
+	case Item::Ammo_Deathbag:	ADD_WEAPON(Pistol, 25);
+	case Item::Ammo_Shot:		ADD_WEAPON(Pistol, 5);
+	case Item::Ammo_Shotbag:	ADD_WEAPON(Pistol, 10);
+	case Item::Ammo_Magic_5:	ADD_WEAPON(Magic,  5);
+	case Item::Ammo_Magic_10:	ADD_WEAPON(Magic, 10);
+	case Item::Ammo_Magic_25:	ADD_WEAPON(Magic, 25);
+	case Item::Ammo_Dynamite:	AquatisDynamite::playerTookDynamite(); ADD_WEAPON(Dynamite, 5);
 
 	case Item::Health_Level:	ADD_HEALTH(5);
 	case Item::Health_10:		ADD_HEALTH(10);

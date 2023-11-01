@@ -56,8 +56,11 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 
+	static void playerTookDynamite() { _playerTookDynamite = true; }
+
 private:
 	int _timeCounter;
+	static bool _playerTookDynamite; // flag to know if the player took the dynamite so he doesn't get 2 dynamites at the same time
 };
 
 
