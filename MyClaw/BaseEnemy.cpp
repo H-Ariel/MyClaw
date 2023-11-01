@@ -1,10 +1,9 @@
 #include "BaseEnemy.h"
-#include "Objects/Item.h"
-#include "Objects/Projectile.h"
+#include "ActionPlane.h"
+#include "EnemyHelp.h"
 #include "Player.h"
 #include "Assets-Managers/AssetsManager.h"
-#include "ActionPlane.h"
-#include "WindowManager.h"
+#include "Objects/Item.h"
 #include "Objects/EnemyProjectile.h"
 
 
@@ -17,102 +16,14 @@
 #define ANIMATION_SHOOT			_animations.at(_shootAniName)
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
-#define GEM_SPEED 0.2f
-
-
-//////////////////////////////
-// Help classes for enemies //
-//////////////////////////////
-
-// This class is responsible for leaving the enemy from the screen
-class DeadEnemy : public BaseDynamicPlaneObject
-{
-public:
-	DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni);
-	void Logic(uint32_t elapsedTime) override;
-};
-
-class BossGem : public Item
-{
-public:
-	BossGem(const WwdObject& obj);
-	void Logic(uint32_t elapsedTime) override;
-
-private:
-	D2D1_POINT_2F _destination;
-};
-
-DeadEnemy::DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni)
-	: BaseDynamicPlaneObject(obj)
-{
-	_ani = deadAni;
-	speed.x = obj.speedX / 1000.f;
-	speed.y = obj.speedY / 1000.f;
-	_isMirrored = obj.speedX < 0;
-}
-void DeadEnemy::Logic(uint32_t elapsedTime)
-{
-	position.x += speed.x * elapsedTime;
-	speed.y += GRAVITY * elapsedTime;
-	position.y += speed.y * elapsedTime;
-	_ani->position = position;
-	_ani->Logic(elapsedTime);
-	removeObject = !WindowManager::isInScreen(_ani->GetRect());
-}
-
-BossGem::BossGem(const WwdObject& obj)
-	: Item(obj, Item::Type::NineLivesGem), _destination({ (float)obj.minX, (float)obj.minY })
-{
-	float alpha = atan((position.y - _destination.y) / (position.x - _destination.x));
-
-	speed.x = cos(alpha) * GEM_SPEED;
-	speed.y = sin(alpha) * GEM_SPEED;
-
-	if (_destination.x == position.x)
-	{
-		speed.x = 0;
-		speed.y = GEM_SPEED;
-	}
-	else if (_destination.x < position.x)
-	{
-		speed.x = -speed.x;
-		speed.y = -speed.y;
-	}
-}
-void BossGem::Logic(uint32_t elapsedTime)
-{
-	if (speed.x == 0 && speed.y == 0)
-	{
-		if (GetRect().intersects(player->GetRect()))
-		{
-			player->collectItem(this);
-		}
-	}
-
-	if (abs(position.x - _destination.x) <= 5 && abs(position.y - _destination.y) <= 5)
-	{
-		position = _destination;
-		speed = {};
-	}
-	else
-	{
-		position.y += speed.y * elapsedTime;
-		position.x += speed.x * elapsedTime;
-	}
-}
-
-
-///////////////////////////////////////////
-// BaseEnemy and BaseBoss implementation //
-///////////////////////////////////////////
 
 // TODO: fit 'hithigh' and 'hitlow' to CC attack
 // TODO: fix the shoot to CC height
 
-BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage,
-	string walkAni, string hit1, string hit2, string fallDead, string strikeAni,
-	string strikeDuckAni, string shootAni, string shootDuckAni,
-	string projectileAniDir, float walkingSpeed, bool noTreasures)
+BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string& walkAni,
+	const string& hit1, const string& hit2, const string& fallDead, const string& strikeAni,
+	const string& strikeDuckAni, const string& shootAni, const string& shootDuckAni,
+	const string& projectileAniDir, float walkingSpeed, bool noTreasures)
 	: BaseCharacter(obj), _damage(damage), _isStanding(false), _strikeAniName(strikeAni),
 	_strikeDuckAniName(strikeDuckAni), _canStrike(!strikeAni.empty()),
 	_canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni),
@@ -150,7 +61,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage,
 		if (obj.logic != "Seagull" && obj.logic != "Fish")
 		{
 			// find enemy range
-			auto range = ActionPlane::getPhysicsManager().getEnemyRange(position, _minX, _maxX);
+			pair<float, float> range = ActionPlane::getPhysicsManager().getEnemyRange(position, _minX, _maxX);
 			myMemCpy(_minX, range.first);
 			myMemCpy(_maxX, range.second);
 		}
@@ -435,10 +346,11 @@ bool BaseEnemy::enemySeeClaw() const
 		);
 }
 
+
 // TODO: maybe this c'tor doesn't need get parameters...
-BaseBoss::BaseBoss(const WwdObject& obj,
-	int damage, string walkAni, string hit1, string hit2, string fallDead,
-	string strikeAni, string shootAni, string projectileAniDir)
+BaseBoss::BaseBoss(const WwdObject& obj, int damage, 
+	const string& walkAni, const string& hit1, const string& hit2, const string& fallDead,
+	const string& strikeAni, const string& shootAni, const string& projectileAniDir)
 	: BaseEnemy(obj, obj.health, damage, walkAni, hit1, hit2, fallDead,
 		strikeAni, "", shootAni, "", projectileAniDir, ENEMY_PATROL_SPEED, true),
 	_hitsCuonter(1), _blockClaw(false), _canJump(true), _gemPos({ obj.speedX, obj.speedY })

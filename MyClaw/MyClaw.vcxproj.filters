@@ -271,6 +271,9 @@
     <ClCompile Include="Enemies\RedTail.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyHelp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -518,6 +521,9 @@
     </ClInclude>
     <ClInclude Include="Enemies\RedTail.h">
       <Filter>Enemies\Bosses</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyHelp.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

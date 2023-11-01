@@ -66,7 +66,7 @@
 //#undef LOW_DETAILS
 #define NO_DEATH
 #define NO_ENEMIES
-//#define NO_OBSTACLES
+#define NO_OBSTACLES
 #endif
 
 
@@ -268,14 +268,14 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 {
 	// initialize global fields and then read objects: (we init here because now we have all data)
 
-	LevelPlane::readPlaneObjects(reader);
-	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
-
 	_planeSize.width = (float)TILE_SIZE * tilesOnAxisX;
 	_planeSize.height = (float)TILE_SIZE * tilesOnAxisY;
 
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	_physicsManager = DBG_NEW PhysicsManager(_wwd, this); // must be after WWD map loaded and before objects added
+
+	LevelPlane::readPlaneObjects(reader);
+	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
 
 	WwdObject playerData;
 	playerData.x = _wwd->startX;
@@ -363,10 +363,6 @@ void ActionPlane::addObject(const WwdObject& obj)
 			(int32_t&)obj.x += TILE_SIZE;
 			//myMemCpy(obj.x, obj.x + TILE_SIZE);
 		}
-
-		// set the tile to be clear so the PhysicsManager will not check collision with it
-		tileDesc.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tileDesc.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
 		|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"
@@ -390,14 +386,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "ConveyorBelt")
 	{
-		// get the match tile from the WWD map
-		WwdTileDescription& tileDesc = _wwd->tilesDescription[tiles[obj.y / TILE_SIZE][obj.x / TILE_SIZE]];
-
-		_objects.push_back(DBG_NEW ConveyorBelt(obj, tileDesc.rect));
-
-		// set the tile to be clear so the PhysicsManager will not check collision with it
-		tileDesc.insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tileDesc.outsideAttrib = WwdTileDescription::TileAttribute_Clear;
+		_objects.push_back(DBG_NEW ConveyorBelt(obj, _wwd->tilesDescription[tiles[obj.y / TILE_SIZE][obj.x / TILE_SIZE]].rect));
 	}
 #ifndef NO_ENEMIES
 	else if (obj.logic == "CrabNest")

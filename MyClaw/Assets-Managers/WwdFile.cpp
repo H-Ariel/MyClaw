@@ -277,6 +277,8 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
  * Minor change to tiles so they will be more accurate
    for reduce rectangles (in PhysicsManager)
  * In level 8 it's necessary to change the tiles for death blocks.
+ * In levels 5, 9, and 11 it's necessary to change the tiles to cancel the
+   groud-collision of the player with these tiles.
  * In ActionPlane::addObject we set the object rectangle to be 
    the same as the tile rectangle (and then we change it there)
  */
@@ -303,6 +305,10 @@ void WapWorld::fixTilesDescription()
 		tilesDescription[88].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 		tilesDescription[91].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
+	else if (levelNumber == 5)
+	{
+		tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	}
 	else if (levelNumber == 8)
 	{
 		for (shared_ptr<LevelPlane>& pln : planes)
@@ -311,6 +317,17 @@ void WapWorld::fixTilesDescription()
 				for (size_t i = 703; i < 720; pln->tiles[90][i++] = 184); // set death tiles behind Gabriel's ship
 				break;
 			}
+	}
+	else if (levelNumber == 9)
+	{
+		for (int i : { 103, 104, 105, 106, 107, 108, 159 })
+		{
+			tilesDescription[i].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		}
+	}
+	else if (levelNumber == 11)
+	{
+		tilesDescription[39].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 14)
 	{

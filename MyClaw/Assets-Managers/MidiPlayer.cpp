@@ -116,6 +116,14 @@ LARGE_INTEGER MidiPlayer::PerformanceFrequency = {};
 
 
 vector<uint8_t> xmiToMidi(vector<uint8_t> xmiFileData); // impleted in "XmiFile.cpp"
+// reverses the bytes order of `obj`
+template <class T>
+inline T reverseBytes(T t)
+{
+	uint8_t* ptr = (uint8_t*)(&t);
+	std::reverse(ptr, ptr + sizeof(T));
+	return t;
+}
 
 // prints the MIDI error and returns it for further use
 MMRESULT printMidiError(MMRESULT err, int line)

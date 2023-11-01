@@ -192,6 +192,7 @@
     <ClCompile Include="Enemies\Soldier.cpp" />
     <ClCompile Include="Enemies\TownGuard.cpp" />
     <ClCompile Include="Enemies\Wolvington.cpp" />
+    <ClCompile Include="EnemyHelp.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
     <ClCompile Include="LevelHUD.cpp" />
     <ClCompile Include="LevelPlane.cpp" />
@@ -275,6 +276,7 @@
     <ClInclude Include="Enemies\Soldier.h" />
     <ClInclude Include="Enemies\TownGuard.h" />
     <ClInclude Include="Enemies\Wolvington.h" />
+    <ClInclude Include="EnemyHelp.h" />
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameMainApp.h" />
