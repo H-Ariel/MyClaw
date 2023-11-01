@@ -36,11 +36,11 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 9196, 3958 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 16734, 1542 };
-	if (levelNumber == 2) BasePlaneObject::player->position = { 10881, 3382 };
+//	if (levelNumber == 2) BasePlaneObject::player->position = { 10881, 3382 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 593, 4086 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 17044, 3062 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 4596, 3958 };
-//	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
+	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
 
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
@@ -75,8 +75,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 //	if (levelNumber == 7) BasePlaneObject::player->position = { 25210, 7196 };
 
 //	if (levelNumber == 8) BasePlaneObject::player->position = { 4466, 5039 };
-//	if (levelNumber == 8) BasePlaneObject::player->position = { 6160, 5232 };
-	if (levelNumber == 8) BasePlaneObject::player->position = { 31535, 5267 }; // END OF LEVEL
+	if (levelNumber == 8) BasePlaneObject::player->position = { 6160, 5232 };
+//	if (levelNumber == 8) BasePlaneObject::player->position = { 31535, 5267 }; // END OF LEVEL
 //	if (levelNumber == 8) BasePlaneObject::player->position = { 9225, 5533 };
 
 //	if (levelNumber == 9) BasePlaneObject::player->position = { 5210, 7776 };

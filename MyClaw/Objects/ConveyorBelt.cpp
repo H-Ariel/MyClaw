@@ -50,7 +50,7 @@ void ConveyorBelt::GlobalInit()
 	// update belts' animation frames
 	for (ConveyorBelt* b : pConveyorBelts)
 	{
-		fc = b->_ani->getImagesCount();
+		fc = (int)b->_ani->getImagesCount();
 
 		x = (int)b->position.x / TILE_SIZE;
 		y = (int)b->position.y / TILE_SIZE;

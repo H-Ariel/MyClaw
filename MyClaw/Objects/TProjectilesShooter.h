@@ -6,7 +6,7 @@
 class TProjectilesShooter : public BaseStaticPlaneObject
 {
 public:
-	TProjectilesShooter(const WwdObject& obj);
+	TProjectilesShooter(const WwdObject& obj, int levelNumber);
 
 	void Logic(uint32_t elapsedTime) override;
 

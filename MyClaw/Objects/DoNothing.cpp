@@ -26,6 +26,4 @@ DoNothing::DoNothing(const WwdObject& obj)
 	{
 		_ani = AssetsManager::loadAnimation(PathManager::getAnimationPath(obj.animation), obj.imageSet);
 	}
-
-	// TODO: find perfect ZCoord for some of the objects (e.g. at level 11)
 }

@@ -200,61 +200,37 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	switch (globalState)
 	{
 	case GlobalState::ParrotAttackClaw:
-		// TODO: better code here
-		if (_Marrow->getSide() == Marrow::Side::Right)
+		if (position.y > _flyRect.bottom)
 		{
-			if (position.y > _flyRect.bottom)
-			{
-				position.y = _flyRect.bottom;
-				speed = { -PARROT_SPEED, 0 };
-			}
-			else if (position.y < _flyRect.top)
-			{
-				position.y = _flyRect.top;
-				speed = { PARROT_SPEED, 0 };
-			}
-			else if (position.x < _flyRect.left)
-			{
-				position.x = _flyRect.left;
-				speed = { 0, -PARROT_SPEED };
-			}
-			else if (position.x > _flyRect.right)
-			{
-				position.x = _flyRect.right;
-				speed = { 0, PARROT_SPEED };
-			}
-			else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
-			{
-				speed = { 0, -PARROT_SPEED };
-			}
+			position.y = _flyRect.bottom;
+			speed = { -PARROT_SPEED, 0 };
 		}
-		else // if (marrowSise == MarrowSise::Left)
+		else if (position.y < _flyRect.top)
 		{
-			if (position.y > _flyRect.bottom)
-			{
-				position.y = _flyRect.bottom;
-				speed = { PARROT_SPEED, 0 };
-			}
-			else if (position.y < _flyRect.top)
-			{
-				position.y = _flyRect.top;
-				speed = { -PARROT_SPEED, 0 };
-			}
-			else if (position.x < _flyRect.left)
-			{
-				position.x = _flyRect.left;
-				speed = { 0, PARROT_SPEED };
-			}
-			else if (position.x > _flyRect.right)
-			{
-				position.x = _flyRect.right;
-				speed = { 0, -PARROT_SPEED };
-			}
-			else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
-			{
-				speed = { 0, PARROT_SPEED };
-			}
+			position.y = _flyRect.top;
+			speed = { PARROT_SPEED, 0 };
 		}
+		else if (position.x < _flyRect.left)
+		{
+			position.x = _flyRect.left;
+			speed = { 0, -PARROT_SPEED };
+		}
+		else if (position.x > _flyRect.right)
+		{
+			position.x = _flyRect.right;
+			speed = { 0, PARROT_SPEED };
+		}
+		else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
+		{
+			speed = { 0, -PARROT_SPEED };
+		}
+
+		if (_Marrow->getSide() == Marrow::Side::Left)
+		{
+			speed.x = -speed.x;
+			speed.y = -speed.y;
+		}
+
 
 		if (_hitsCounter == 3)
 		{

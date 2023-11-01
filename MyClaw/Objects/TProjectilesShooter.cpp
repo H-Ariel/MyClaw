@@ -9,14 +9,14 @@
 #define OFFSET_Y 32.f
 
 
-TProjectilesShooter::TProjectilesShooter(const WwdObject& obj)
+TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 	: BaseStaticPlaneObject(obj), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
 	_damage(obj.damage > 0 ? obj.damage : 5), _projSpeed({ obj.speedX / 1000.f, obj.speedY / 1000.f }),
 	_restTime(0), _offset({}), _projIsOut(false)
 {
 	char frame[9];
 
-	if (PathManager::getImageSetPath("LEVEL_") == "LEVEL14/IMAGES/") // in level 14 the projectiles have animations
+	if (levelNumber == 14) // in level 14 the projectiles have animations
 	{
 		if (obj.userValue2 == 1)
 		{

@@ -20,7 +20,6 @@ public:
 	void readPlaneObjects(BufferReader& reader) override;
 	void addObject(const WwdObject& obj) override;
 
-	// TODO: make non-static
 	static void addPlaneObject(BasePlaneObject* obj);
 	static const PhysicsManager& getPhysicsManager() { return *(_instance->_physicsManager); }
 	static const vector<PowderKeg*>& getPowderKegs() { return _instance->_powderKegs; }
@@ -32,7 +31,6 @@ public:
 
 private:
 	void updatePosition();
-	
 	
 	enum class States : int8_t {
 		Play, // normal gameplay
@@ -55,7 +53,6 @@ private:
 	bool _deathAniWait; // waiting for disqualification animation to finish
 	bool _needSort, _isInBoss;
 	States _state;
-
 
 	static ActionPlane* _instance;
 };

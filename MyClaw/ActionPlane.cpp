@@ -65,7 +65,7 @@
 #ifdef _DEBUG
 //#undef LOW_DETAILS
 #define NO_DEATH
-//#define NO_ENEMIES
+#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -214,6 +214,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			}
 			else if (isinstance<PowderKeg>(obj))
 				eraseByValue(_powderKegs, obj);
+			else if (isbaseinstance<BaseDamageObject>(obj))
+				eraseByValue(_damageObjects, obj);
 
 			if (obj->removeObject) // we really want to delete this object
 			{
@@ -379,7 +381,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "SpringBoard" || obj.logic == "WaterRock")
 	{
-		_objects.push_back(DBG_NEW SpringBoard(obj));
+		_objects.push_back(DBG_NEW SpringBoard(obj, _wwd->levelNumber));
 	}
 	else if (obj.logic == "GroundBlower")
 	{
@@ -468,6 +470,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW TowerCannon(obj));
 	}
+	else if (obj.logic == "SkullCannon")
+	{
+		_objects.push_back(DBG_NEW SkullCannon(obj));
+	}
+	else if (obj.logic == "TProjectile")
+	{
+		_objects.push_back(DBG_NEW TProjectilesShooter(obj, _wwd->levelNumber));
+	}
 	else if (obj.logic == "GooVent")
 	{
 		ADD_DAMAGE_OBJECT(GooVent(obj));
@@ -475,22 +485,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (startsWith(obj.logic, "FloorSpike"))
 	{
 		ADD_DAMAGE_OBJECT(FloorSpike(obj));
-		}
+	}
 	else if (startsWith(obj.logic, "SawBlade"))
 	{
 		ADD_DAMAGE_OBJECT(SawBlade(obj));
-		}
+	}
 	else if (obj.logic == "LavaGeyser")
 	{
 		ADD_DAMAGE_OBJECT(LavaGeyser(obj));
-	}
-	else if (obj.logic == "TProjectile")
-	{
-		_objects.push_back(DBG_NEW TProjectilesShooter(obj));
-	}
-	else if (obj.logic == "SkullCannon")
-	{
-		_objects.push_back(DBG_NEW SkullCannon(obj));
 	}
 	else if (obj.logic == "Laser")
 	{
@@ -604,6 +606,12 @@ void ActionPlane::playerEnterToBoss()
 	for (auto& i : _instance->_enemies) i->removeObject = true;
 	for (auto& i : _instance->_projectiles) i->removeObject = true;
 	for (auto& i : _instance->_damageObjects) i->removeObject = true;
+	// TODO: find all objects that we don't need in boss and remove them
+	for (auto& i : _instance->_objects)
+	{
+		if (i->position.x < player->position.x)
+			i->removeObject = true;
+	}
 
 	// move all objects that we need in boss to the objects' list
 	for (auto& i : _instance->_bossObjects)

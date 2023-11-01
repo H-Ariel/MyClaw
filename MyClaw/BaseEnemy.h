@@ -32,7 +32,7 @@ protected:
 	virtual bool PreLogic(uint32_t elapsedTime); // called before `Logic`. returns `true` if we need do `Logic`
 	virtual void PostLogic(uint32_t elapsedTime); // called after `Logic`
 	virtual void makeAttack(float deltaX, float deltaY); // recieves the distance between the enemy and CC
-	virtual bool checkForHurts(); // returns `true` if the enemy hurt (by CC attack, projectiles, etc.)
+	virtual bool checkForHurts() override; // returns `true` if the enemy hurt (by CC attack, projectiles, etc.)
 
 	void makeAttack(); // calc deltaX and deltaY and call `makeAttack(float deltaX, float deltaY)`
 	bool enemySeeClaw() const;

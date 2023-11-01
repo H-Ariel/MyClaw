@@ -12,11 +12,12 @@ public:
 	virtual void Draw() override;
 	virtual Rectangle2D GetRect() override = 0;
 	virtual pair<Rectangle2D, int> GetAttackRect() = 0; // returns the attack rectangle and the damage it cause
+	virtual bool checkForHurts() = 0; // check if the character get hurt by player/enemy attack. returns `true` if the character get hurt
 
 	virtual bool isStanding() const;
 	virtual bool isDuck() const;
 	virtual bool isTakeDamage() const;
-	virtual bool isAttack() const { return _isAttack; }
+	virtual bool isAttack() const;
 
 
 protected:

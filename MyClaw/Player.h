@@ -88,7 +88,7 @@ private:
 	};
 
 	void jump();
-	bool checkForHurts(); // check for hits from enemies, projectiles, and exploding powder kegs
+	bool checkForHurts() override; // check for hits from enemies, projectiles, and exploding powder kegs
 	bool isWeaponAnimation() const;
 	void calcRect(); // calculate the player rectangle and save in `_saveCurrRect`
 	void calcAttackRect(); // calculate the player attack rectangle and save in `_saveCurrAttackRect`

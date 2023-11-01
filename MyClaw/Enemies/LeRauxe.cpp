@@ -146,7 +146,8 @@ void LeRauxe::stopFalling(float collisionSize)
 	
 	if (_ani == ANIMATION_JUMPBACK)
 	{
-		stopMovingLeft(0); // TODO: maybe use `stopMovingRight`? or both?
+		speed.x = ENEMY_PATROL_SPEED;
+		_isMirrored = false;
 		_ani = ANIMATION_WALK;
 	}
 }

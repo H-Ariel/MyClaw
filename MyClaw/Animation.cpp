@@ -46,7 +46,7 @@ vector<Animation::FrameData*> getAnimationImages(RezArchive* rezArchive, const s
 	for (uint32_t i = 0; i < framesCount; i++, soundFilePath = "")
 	{
 		aniFileReader->read(triggeredEventFlag);
-		useSoundFile = aniFileReader->read<uint8_t>();// != 0; todo: unremark
+		useSoundFile = aniFileReader->read<uint8_t>();// != 0; todo: unremark?
 		aniFileReader->skip(5);
 		aniFileReader->read(imageFileId);
 		aniFileReader->read(duration);
@@ -57,7 +57,7 @@ vector<Animation::FrameData*> getAnimationImages(RezArchive* rezArchive, const s
 			soundFilePath = aniFileReader->ReadNullTerminatedString();
 
 			if (endsWith(soundFilePath, "MLF") || endsWith(soundFilePath, "MRF"))
-			{ // the rat use this sounds, and i hate it
+			{ // the rat use this sounds, and I hate it
 				soundFilePath = "";
 			}
 			else if (!soundFilePath.empty() && useSoundFile)

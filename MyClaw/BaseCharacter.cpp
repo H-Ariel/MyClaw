@@ -20,6 +20,7 @@ void BaseCharacter::Draw()
 bool BaseCharacter::isStanding() const { return false; }
 bool BaseCharacter::isDuck() const { return false; }
 bool BaseCharacter::isTakeDamage() const { return false; }
+bool BaseCharacter::isAttack() const { return _isAttack; }
 
 Rectangle2D BaseCharacter::setRectByCenter(Rectangle2D rc, Rectangle2D rcCenter) const
 {

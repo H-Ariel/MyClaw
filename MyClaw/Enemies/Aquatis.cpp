@@ -8,8 +8,8 @@
 #define ANIMATION_HITHIGH	_animations["HITHIGH"]
 #define ANIMATION_HITLOW	_animations["HITLOW"]
 #define ANIMATION_KILLFALL	_animations["KILLFALL"]
-#define ANIMATION_STRIKE1	_animations["STRIKE1"] // punch up
-#define ANIMATION_STRIKE2	_animations["STRIKE2"] // punch down
+#define ANIMATION_PUNCH		_animations["PUNCH"]
+#define ANIMATION_IDLE		_animations["IDLE1"]
 
 
 static int activateAquatisStalactite = 0;
@@ -20,8 +20,15 @@ static vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that 
 Aquatis::Aquatis(const WwdObject& obj)
 	: BaseBoss(obj, 0, "", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1", "", "")
 {
-	_ani = _animations["IDLE1"];
+	_ani = ANIMATION_IDLE;
 	_isMirrored = true;
+
+	// create punch animation (punch up and punch down)
+	vector<Animation::FrameData*> images;
+	auto append = [&](const vector<Animation::FrameData*>& l) { images.insert(images.end(), l.begin(), l.end()); };
+	append(_animations["STRIKE1"]->getImagesList()); _animations.erase("STRIKE1");
+	append(_animations["STRIKE2"]->getImagesList()); _animations.erase("STRIKE2");
+	_animations["PUNCH"] = allocNewSharedPtr<Animation>(images);
 }
 Aquatis::~Aquatis()
 {
@@ -42,13 +49,32 @@ void Aquatis::Logic(uint32_t elapsedTime)
 		return;
 	}
 
-	if (isTakeDamage() && !_ani->isFinishAnimation())
+	if (_ani == ANIMATION_HITHIGH || _ani == ANIMATION_HITLOW) // hit animation
 	{
-		PostLogic(elapsedTime);
-		return;
+		if (!_ani->isFinishAnimation())
+		{
+			PostLogic(elapsedTime);
+			return;
+		}
+		else
+		{
+			_ani = ANIMATION_PUNCH;
+			_ani->reset();
+
+			_isAttack = true;
+		}
 	}
 
-	_ani = _animations["IDLE1"];
+	if (_ani == ANIMATION_PUNCH && !_ani->isFinishAnimation())
+	{
+		PostLogic(elapsedTime);
+		_isAttack = !_ani->isFinishAnimation();
+		return;
+	}
+	else
+	{
+		_ani = ANIMATION_IDLE;
+	}
 
 	Rectangle2D rc = GetRect();
 	for (AquatisStalactite* i : AquatisStalactitesList)
@@ -62,14 +88,19 @@ void Aquatis::Logic(uint32_t elapsedTime)
 		}
 	}
 
-
-	// TODO: punch CC after hit-animation is finished (and use tentacles)
-
-
 	PostLogic(elapsedTime);
 }
 pair<Rectangle2D, int> Aquatis::GetAttackRect()
 {
+	if (_ani == ANIMATION_PUNCH)
+	{
+		Rectangle2D rc = _ani->GetRect();
+		
+		if (_ani->getFrameNumber() > 4) // punch down
+			rc.top += 80;
+
+		return { rc, 10 };
+	}
 	return pair<Rectangle2D, int>();
 }
 bool Aquatis::checkForHurts()
@@ -100,6 +131,7 @@ AquatisTentacle::~AquatisTentacle()
 {
 	if (removeObject)
 	{
+		_killfall->reset();
 		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, _killfall));
 		AquatisTentaclesList.erase(find(AquatisTentaclesList.begin(), AquatisTentaclesList.end(), this));
 	}
@@ -183,13 +215,12 @@ Rectangle2D AquatisTentacle::GetRect()
 }
 bool AquatisTentacle::checkForHurts()
 {
-	// TODO: same to BaseEnemy, maybe we can combine them
+	const Rectangle2D thisRc = GetRect();
 
-	auto checkForHurt = [&](pair<Rectangle2D, int> hurtData)
-	{
+	auto checkForHurt = [&](pair<Rectangle2D, int> hurtData) {
 		if (hurtData.second > 0)
 		{
-			if (_lastAttackRect != hurtData.first && GetRect().intersects(hurtData.first))
+			if (_lastAttackRect != hurtData.first && thisRc.intersects(hurtData.first))
 			{
 				_lastAttackRect = hurtData.first;
 				return true;

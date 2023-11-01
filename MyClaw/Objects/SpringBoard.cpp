@@ -3,19 +3,17 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
-SpringBoard::SpringBoard(const WwdObject& obj)
+SpringBoard::SpringBoard(const WwdObject& obj, int levelNumber)
 	: BaseStaticPlaneObject(obj), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
 {
 	string anisPath;
 	if (obj.imageSet == "LEVEL_WATERROCK") // level 7,13
 	{
-		string lvlNumber = PathManager::getImageSetPath("LEVEL_");
-
-		if (lvlNumber == "LEVEL13/IMAGES/") // level 13
+		if (levelNumber == 13)
 		{
 			anisPath = PathManager::getAnimationSetPath(obj.imageSet);
 		}
-		else // level 7
+		else // if (levelNumber == 7)
 		{
 			anisPath = PathManager::getAnimationSetPath("LEVEL_ROCKSPRING");
 		}

@@ -1,7 +1,7 @@
 #include "AnimationsManager.h"
 
 
-static inline bool isEnemyAniations(string dirPath)
+static inline bool isEnemyAniations(const string& dirPath)
 {
 	return (
 		endsWith(dirPath, "/ANIS/OFFICER") ||
@@ -15,7 +15,9 @@ static inline bool isEnemyAniations(string dirPath)
 		endsWith(dirPath, "/ANIS/CRAZYHOOK") ||
 		endsWith(dirPath, "/ANIS/PEGLEG") ||
 		endsWith(dirPath, "/ANIS/MERCAT") ||
+		//endsWith(dirPath, "/ANIS/SIREN") || // she has only one animation so I don't worry about her
 		endsWith(dirPath, "/ANIS/FISH") ||
+		//endsWith(dirPath, "/ANIS/CHAMELEON") || // it has only one animation so I don't worry about it
 
 		endsWith(dirPath, "/ANIS/GABRIEL")
 		);

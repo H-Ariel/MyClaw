@@ -49,9 +49,8 @@ PunkRat::PunkRat(const WwdObject& obj)
 	_cannon = DBG_NEW Cannon(cannonData);
 	_cannon->position.y += 20;
 	_cannon->_ballOffset = 12;
-	if (_isMirrored) _cannon->_shootDirection = Cannon::ToLeft;
+	if (_cannon->_isMirrored) _cannon->_shootDirection = Cannon::ToLeft;
 	else _cannon->_shootDirection = Cannon::ToRight;
-	// TODO: at level 8 we need to change _isMirrored to !_isMirrored (the cannon direction is mirrored)
 	Rectangle2D cRc = _cannon->GetRect();
 	myMemCpy(_minX, cRc.left);
 	myMemCpy(_maxX, cRc.right);
