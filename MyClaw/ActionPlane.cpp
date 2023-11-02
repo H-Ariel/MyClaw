@@ -188,16 +188,16 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		}
 		else if (isinstance<StackedCrates>(obj))
 		{
-			vector<Item*> items = ((StackedCrates*)obj)->getItems();
-			_objects.insert(_objects.end(), items.begin(), items.end());
+			vector<BasePlaneObject*> items = ((StackedCrates*)obj)->getItems();
+			_objects += items;
 		}
 		else if (isbaseinstance<Crate>(obj))
 		{
 			Crate* crate = (Crate*)obj;
 			if (crate->isBreaking())
 			{
-				vector<Item*> items = crate->getItems();
-				_objects.insert(_objects.end(), items.begin(), items.end());
+				vector<BasePlaneObject*> items = crate->getItems();
+				_objects += items;
 			}
 		}
 

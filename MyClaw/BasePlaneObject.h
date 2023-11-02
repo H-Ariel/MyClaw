@@ -18,6 +18,7 @@ public:
 	virtual Rectangle2D GetRect() override;
 	virtual void Reset(); // this method is called after Captain Claw is dead. It can be used to reset the object
 
+	bool tryCatchPlayer(); // returns if successfully caught the player
 	bool isMirrored() const { return _isMirrored; }
 
 	const int32_t ZCoord;
@@ -26,8 +27,6 @@ public:
 	static Player* player;
 
 protected:
-	bool tryCatchPlayer(); // returns if successfully caught the player
-
 	shared_ptr<Animation> _ani;
 	bool _isMirrored, _isVisible;
 };

@@ -69,9 +69,9 @@ void Crate::Logic(uint32_t elapsedTime)
 
 	removeObject = _ani->isFinishAnimation();
 }
-vector<Item*> Crate::getItems()
+vector<BasePlaneObject*> Crate::getItems()
 {
-	vector<Item*> items;
+	vector<BasePlaneObject*> items;
 
 	if (!_itemsTaken)
 	{
@@ -82,9 +82,9 @@ vector<Item*> Crate::getItems()
 
 		for (int8_t t : _itemsTypes)
 		{
-			Item* itm = Item::getItem(newObj, t);
-			itm->speed.y = -0.6f;
-			items.push_back(itm);
+			Item* i = Item::getItem(newObj, t);
+			i->speed.y = -0.6f;
+			items.push_back(i);
 		}
 
 		_itemsTaken = true;
@@ -148,21 +148,21 @@ void StackedCrates::Draw()
 		c->Draw();
 	}
 }
-vector<Item*> StackedCrates::getItems()
+vector<BasePlaneObject*> StackedCrates::getItems()
 {
-	vector<Item*> allItems;
+	vector<BasePlaneObject*> allItems;
 	for (size_t i = 0; i < crates.size(); i++)
 	{
 		if (crates[i]->isBreaking())
 		{
-			vector<Item*> tmp = crates[i]->getItems();
+			vector<BasePlaneObject*> tmp = crates[i]->getItems();
 
-			for (Item* i : tmp)
+			for (BasePlaneObject* j : tmp)
 			{
-				i->speed.x = getRandomFloat(-0.25f, 0.25f);
+				((Item*)j)->speed.x = getRandomFloat(-0.25f, 0.25f);
 			}
 
-			allItems.insert(allItems.end(), tmp.begin(), tmp.end());
+			allItems += tmp;
 		}
 		if (crates[i]->removeObject)
 		{

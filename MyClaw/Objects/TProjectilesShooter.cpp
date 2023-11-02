@@ -48,7 +48,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 	
 	vector<Animation::FrameData*> imgs = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList(), newImgs;
 	newImgs.push_back(DBG_NEW Animation::FrameData("", 0)); // insert empty image at end
-	newImgs.insert(newImgs.end(), imgs.begin(), imgs.end());
+	newImgs += imgs;
 	_ani = allocNewSharedPtr<Animation>(newImgs);
 	_ani->updateFrames = false;
 

@@ -14,13 +14,13 @@ void Statue::Logic(uint32_t elapsedTime)
 		_ani->updateFrames = false;
 	}
 }
-vector<Item*> Statue::getItems()
+vector<BasePlaneObject*> Statue::getItems()
 {
-	vector<Item*> items = Crate::getItems();
+	vector<BasePlaneObject*> items = Crate::getItems();
 
-	for (Item* i : items)
+	for (BasePlaneObject* i : items)
 	{
-		i->speed.x = getRandomFloat(-0.25f, 0.25f);
+		((Item*)i)->speed.x = getRandomFloat(-0.25f, 0.25f);
 	}
 
 	return items;

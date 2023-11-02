@@ -102,6 +102,23 @@ inline bool FindInArray(ArrT arr, ValT val)
 	return find(begin(arr), arrEnd, val) != arrEnd;
 }
 
+// insert `v2` to end of `v1`
+template <class T>
+inline vector<T> operator+(const vector<T>& v1, const vector<T>& v2)
+{
+	vector<T> v = v1;
+	v.insert(v.end(), v2.begin(), v2.end());
+	return v;
+}
+
+// append `v2` to end of `v1`
+template <class T>
+inline vector<T>& operator+=(vector<T>& v1, const vector<T>& v2)
+{
+	v1 = v1 + v2;
+	return v1;
+}
+
 // safe release for COM objects
 template <class T>
 inline void SafeRelease(T*& p)

@@ -2,6 +2,17 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
+void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<Animation> ani)
+{
+	// catch player between the second and third quarters
+	size_t idx = ani->getFrameNumber() * 4, framesAmount = ani->getImagesCount();
+	if (idx <= framesAmount || framesAmount * 3 <= idx)
+	{
+		peg->tryCatchPlayer();
+	}
+}
+
+
 TogglePeg::TogglePeg(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _startTimeDelay(0)
 {
@@ -52,12 +63,11 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 	{
 		vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath)->getImagesList();
 		myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 1500));
-		images.insert(images.begin(), appearImages.begin(), appearImages.end());
+		images = appearImages + images;
 	}
 
 	_ani = allocNewSharedPtr<Animation>(images);
 	_ani->updateFrames = !isAlwaysOn;
-	_framesAmount = images.size();
 
 	setObjectRectangle();
 
@@ -76,13 +86,7 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 	}
 
 	_ani->Logic(elapsedTime);
-
-	// catch player between the second and third quarters
-	size_t idx = _ani->getFrameNumber() * 4;
-	if (idx <= _framesAmount || _framesAmount * 3 <= idx)
-	{
-		tryCatchPlayer();
-	}
+	pegTryCatchPlayer(this, _ani);
 }
 
 StartSteppingStone::StartSteppingStone(const WwdObject& obj)
@@ -94,7 +98,7 @@ StartSteppingStone::StartSteppingStone(const WwdObject& obj)
 	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1000));
 	vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, false)->getImagesList();
 	myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 2000));
-	images.insert(images.begin(), appearImages.begin(), appearImages.end());
+	images = appearImages + images;
 
 	_ani = allocNewSharedPtr<Animation>(images);
 
@@ -102,17 +106,22 @@ StartSteppingStone::StartSteppingStone(const WwdObject& obj)
 }
 void StartSteppingStone::Logic(uint32_t elapsedTime)
 {
-	if (tryCatchPlayer())
+	_ani->Logic(elapsedTime);
+
+	if (_ani->updateFrames)
 	{
-		_ani->updateFrames = true;
-	}
-	else
-	{
+		pegTryCatchPlayer(this, _ani);
+
 		if (_ani->getFrameNumber() == 0)
 			_ani->updateFrames = false;
 	}
-
-	_ani->Logic(elapsedTime);
+	else
+	{
+		if (tryCatchPlayer())
+		{
+			_ani->updateFrames = true;
+		}
+	}
 }
 
 CrumblingPeg::CrumblingPeg(const WwdObject& obj)

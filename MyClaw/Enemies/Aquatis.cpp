@@ -24,11 +24,8 @@ Aquatis::Aquatis(const WwdObject& obj)
 	_isMirrored = true;
 
 	// create punch animation (punch up and punch down)
-	vector<Animation::FrameData*> images;
-	auto append = [&](const vector<Animation::FrameData*>& l) { images.insert(images.end(), l.begin(), l.end()); };
-	append(_animations["STRIKE1"]->getImagesList()); _animations.erase("STRIKE1");
-	append(_animations["STRIKE2"]->getImagesList()); _animations.erase("STRIKE2");
-	_animations["PUNCH"] = allocNewSharedPtr<Animation>(images);
+	_animations["PUNCH"] = allocNewSharedPtr<Animation>(_animations["STRIKE1"]->getImagesList() + _animations["STRIKE2"]->getImagesList());
+	_animations.erase("STRIKE1"); _animations.erase("STRIKE2");
 }
 Aquatis::~Aquatis()
 {

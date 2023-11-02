@@ -10,7 +10,7 @@ public:
 	Crate(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	bool isBreaking() const { return _ani->updateFrames; }
-	virtual vector<Item*> getItems();
+	virtual vector<BasePlaneObject*> getItems();
 
 private:
 	vector<int8_t> _itemsTypes; // contents of the crate
@@ -26,7 +26,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 
-	vector<Item*> getItems();
+	vector<BasePlaneObject*> getItems();
 
 private:
 	vector<shared_ptr<Crate>> crates;

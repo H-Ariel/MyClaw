@@ -10,7 +10,6 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
-	size_t _framesAmount;
 	int32_t _startTimeDelay; // in milliseconds
 };
 

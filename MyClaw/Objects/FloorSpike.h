@@ -12,7 +12,6 @@ public:
 	bool isDamage() const override;
 
 protected:
-	size_t _framesAmount;
 	int32_t _startTimeDelay; // in milliseconds
 };
 
@@ -21,6 +20,8 @@ class SawBlade : public FloorSpike
 {
 public:
 	SawBlade(const WwdObject& obj);
+
+	bool isDamage() const override;
 };
 
 class LavaGeyser : public FloorSpike

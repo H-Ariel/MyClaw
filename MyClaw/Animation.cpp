@@ -179,3 +179,11 @@ vector<Animation::FrameData*> Animation::getImagesList() const
 	return newImages;
 	// WARNING: you should release that memory
 }
+size_t Animation::getTotalDuration() const
+{
+	size_t totalDuration = 0;
+	for (FrameData* i : _images)
+		totalDuration += i->duration;
+	return totalDuration;
+}
+
