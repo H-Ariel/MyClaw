@@ -10,7 +10,6 @@ class AudioManager
 {
 public:
 	AudioManager(RezArchive* rezArchive);
-	~AudioManager();
 
 	uint32_t playWavFile(string wavFilePath, bool infinite); // create wav player and returns its ID
 	void stopWavFile(uint32_t wavFileId);

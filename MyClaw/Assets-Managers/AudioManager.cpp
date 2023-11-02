@@ -9,14 +9,6 @@ AudioManager::AudioManager(RezArchive* rezArchive)
 	_midiPlayers[BackgroundMusicType::Credits] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("STATES/CREDITS/MUSIC/PLAY.XMI"));
 	_midiPlayers[BackgroundMusicType::Boss] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("LEVEL2/MUSIC/BOSS.XMI"));
 }
-AudioManager::~AudioManager() // todo: make sure we need this function...
-{
-	for (auto& w : _wavPlayers)
-		w.second->stop();
-	
-	if (_currBgMusic)
-		_currBgMusic->stop();
-}
 
 uint32_t AudioManager::getNewId()
 {
