@@ -8,7 +8,7 @@
 #define ANIMATION_SHOOT_HIGH _animations["STRIKE4"]
 
 
-// TODO: write real logig for this boss (combine Red-Tail and wind)
+// TODO: write real logic for this boss (combine Red-Tail and wind)
 RedTail::RedTail(const WwdObject& obj)
 	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE8",
 		"STRIKE4", "LEVEL_REDTAILBULLET")

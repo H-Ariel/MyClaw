@@ -18,18 +18,15 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 
 	if (levelNumber == 14) // in level 14 the projectiles have animations
 	{
-		if (obj.userValue2 == 1)
+		if (obj.userValue2 == 1) // shoot from right to left
 		{
 			(float&)_projSpeed.x = -_projSpeed.x;
-			(float&)_offset.x = -OFFSET_X * 2;
-		}
-		else
-		{
-			(float&)_offset.x = OFFSET_X * 2;
 		}
 
 		sprintf(frame, "/%d", obj.userValue2);
 		_projectileAni = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
+
+		_shootIndex = 1;
 	}
 	else // levels 9,10
 	{
@@ -38,17 +35,19 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 		{
 		case 1: myMemCpy(_offset.x, -OFFSET_X); break;
 		case 2: myMemCpy(_offset.x, OFFSET_X); myMemCpy(_projSpeed.x, -_projSpeed.x); break;
-		case 3: myMemCpy(_offset.y, -OFFSET_Y); break;
-		case 4: myMemCpy(_offset.y, OFFSET_Y); myMemCpy(_projSpeed.y, -_projSpeed.y); break;
+		case 3: myMemCpy(_offset.y, -18.f); break;
+		case 4: myMemCpy(_offset.y, 22.f); myMemCpy(_projSpeed.y, -_projSpeed.y); break;
 		}
 
 		sprintf(frame, "/%03d.PID", obj.userValue1);
 		_projectileAni = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
+
+		_shootIndex = 5;
 	}
-	
-	vector<Animation::FrameData*> imgs = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList(), newImgs;
+
+	vector<Animation::FrameData*> newImgs;
 	newImgs.push_back(DBG_NEW Animation::FrameData("", 0)); // insert empty image at end
-	newImgs += imgs;
+	newImgs += AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList();
 	_ani = allocNewSharedPtr<Animation>(newImgs);
 	_ani->updateFrames = false;
 
@@ -74,7 +73,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 		_ani->updateFrames = false;
 		_projIsOut = false;
 	}
-	else if (_ani->isPassedHalf() && !_projIsOut)
+	else if (_shootIndex == _ani->getFrameNumber() && !_projIsOut)
 	{
 		// shoot at middle of animation
 		ActionPlane::addPlaneObject(DBG_NEW TProjectile(_projectileAni->getCopy(),

@@ -21,7 +21,6 @@ BearSailor::BearSailor(const WwdObject& obj)
 		"HITLOW", "KILLFALL", "STRIKE1", "", "", "", "", ENEMY_PATROL_SPEED)
 {
 	// hug animation is too short, so we need to repeat it 3 times
-	// TODO: find better times for animations (maybe not repeat it 3 times)
 	vector<Animation::FrameData*> images;
 	for (int i = 0; i < 3; i++)
 		for (Animation::FrameData* frame : ANIMATION_HUG->getImagesList())

@@ -277,10 +277,13 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
  * Minor change to tiles so they will be more accurate
    for reduce rectangles (in PhysicsManager)
  * In level 8 it's necessary to change the tiles for death blocks.
- * In levels 5, 9, and 11 it's necessary to change the tiles to cancel the
-   groud-collision of the player with these tiles.
- * In ActionPlane::addObject we set the object rectangle to be 
-   the same as the tile rectangle (and then we change it there)
+ * In levels 5, 9, and 11 it's necessary to change the tiles to
+   cancel the groud-collision of the player with these tiles.
+ * In level 14 it's necessary to change the tiles to cancel the
+   groud-collision of projectiles with these tiles (and also to avoid
+   invisible solid tiles).
+ * In ActionPlane::addObject we set the BreakPlank rectangle to be 
+   the same as the tile rectangle.
  */
 void WapWorld::fixTilesDescription()
 {
@@ -334,5 +337,7 @@ void WapWorld::fixTilesDescription()
 		tilesDescription[49].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		tilesDescription[50].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 		tilesDescription[54].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[62].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[66].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 }
