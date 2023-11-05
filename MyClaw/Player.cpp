@@ -847,7 +847,7 @@ bool Player::collectItem(Item* item)
 		case 25000: i = 9; break;
 		}
 
-		vector<Animation::FrameData*> images = AssetsManager::createAnimationFromFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
+		vector<Animation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
 		myMemCpy(images[0]->duration, 1000U);
 		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, allocNewSharedPtr<Animation>(images));
 		myMemCpy(ani->ZCoord, item->ZCoord);
