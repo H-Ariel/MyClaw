@@ -6,15 +6,16 @@
 #define GEM_SPEED 0.2f
 
 
-DeadEnemy::DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni)
+EnemyFallDeath::EnemyFallDeath(const WwdObject& obj, shared_ptr<Animation> deadAni)
 	: BaseDynamicPlaneObject(obj)
 {
 	_ani = deadAni;
 	speed.x = obj.speedX / 1000.f;
 	speed.y = obj.speedY / 1000.f;
 	_isMirrored = obj.speedX < 0;
+	myMemCpy<int32_t>(ZCoord, DefaultZCoord::EnemyFallDeath);
 }
-void DeadEnemy::Logic(uint32_t elapsedTime)
+void EnemyFallDeath::Logic(uint32_t elapsedTime)
 {
 	position.x += speed.x * elapsedTime;
 	speed.y += GRAVITY * elapsedTime;

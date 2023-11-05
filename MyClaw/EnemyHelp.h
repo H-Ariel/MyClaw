@@ -8,10 +8,10 @@
 
 
 // This class is responsible for leaving the enemy from the screen
-class DeadEnemy : public BaseDynamicPlaneObject
+class EnemyFallDeath : public BaseDynamicPlaneObject
 {
 public:
-	DeadEnemy(const WwdObject& obj, shared_ptr<Animation> deadAni);
+	EnemyFallDeath(const WwdObject& obj, shared_ptr<Animation> deadAni);
 	void Logic(uint32_t elapsedTime) override;
 };
 

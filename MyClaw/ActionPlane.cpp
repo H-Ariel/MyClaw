@@ -63,9 +63,9 @@
 
 
 #ifdef _DEBUG
-//#undef LOW_DETAILS
+#undef LOW_DETAILS
 #define NO_DEATH
-#define NO_ENEMIES
+//#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -290,11 +290,11 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 void ActionPlane::addObject(const WwdObject& obj)
 {
 #ifndef LOW_DETAILS
-	if (obj.logic == "FrontCandy" || obj.logic == "BehindCandy" ||
-		obj.logic == "BehindAniCandy" || obj.logic == "FrontAniCandy" ||
+	if (obj.logic == "FrontCandy" || obj.logic == "FrontAniCandy" ||
+		obj.logic == "BehindCandy" || obj.logic == "BehindAniCandy" ||
 		obj.logic == "DoNothing" || obj.logic == "DoNothingNormal" ||
-		obj.logic == "AniCycle" || obj.logic == "GooCoverup" ||
-		obj.logic == "Sign" || obj.logic == "AniCycleNormal")
+		obj.logic == "AniCycle" || obj.logic == "AniCycleNormal" ||
+		obj.logic == "Sign" || obj.logic == "GooCoverup")
 	{
 		_objects.push_back(DBG_NEW DoNothing(obj));
 	}
@@ -596,7 +596,7 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 	_instance->_objects.push_back(obj);
 	_instance->_needSort = true;
 	if (isProjectile(obj)) _instance->_projectiles.push_back((Projectile*)obj);
-	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj); // TODO: make sure we need this
+	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
 }
 
 void ActionPlane::playerEnterToBoss()
@@ -606,11 +606,12 @@ void ActionPlane::playerEnterToBoss()
 	for (auto& i : _instance->_enemies) i->removeObject = true;
 	for (auto& i : _instance->_projectiles) i->removeObject = true;
 	for (auto& i : _instance->_damageObjects) i->removeObject = true;
-	// TODO: find all objects that we don't need in boss and remove them
-	for (auto& i : _instance->_objects)
+	
+	// find all objects that we don't need in boss and remove them (the boss is in the right side of the screen so it easy to find them)
+	for (auto& obj : _instance->_objects)
 	{
-		if (i->position.x < player->position.x)
-			i->removeObject = true;
+		if (obj->position.x < player->position.x)
+			obj->removeObject = true;
 	}
 
 	// move all objects that we need in boss to the objects' list

@@ -9,6 +9,7 @@ Checkpoint::Checkpoint(const WwdObject& obj)
 {
 	_ani = AssetsManager::createAnimationFromPidImage(_imageSetPath + "/001.PID");
 	setObjectRectangle();
+	myMemCpy<int32_t>(ZCoord, DefaultZCoord::CheckpointFlag);
 }
 void Checkpoint::Logic(uint32_t elapsedTime)
 {

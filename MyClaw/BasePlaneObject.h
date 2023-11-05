@@ -12,6 +12,20 @@ class Player;
 class BasePlaneObject : public UIBaseElement
 {
 public:
+	enum DefaultZCoord : int32_t {
+		BackCrate = 1000, BackCandy = 1000,
+		CheckpointFlag = 1000,
+		Elevators = 2000,
+		Pegs = 2000,
+		Characters = 4000,
+		FrontCrate = 5000, FrontCandy = 5000,
+		Items = 6000,
+		Columns = 7000, Structures = 7000,
+		Coverups = 8000,
+		EnemyFallDeath = 8500,
+		Interface = 9000
+	};
+
 	BasePlaneObject(const WwdObject& obj);
 	virtual void Logic(uint32_t elapsedTime) override = 0;
 	virtual void Draw() override;

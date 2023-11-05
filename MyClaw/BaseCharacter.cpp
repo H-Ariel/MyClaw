@@ -5,6 +5,7 @@
 BaseCharacter::BaseCharacter(const WwdObject& obj)
 	: BaseDynamicPlaneObject(obj), _health(obj.health), _isAttack(false)
 {
+	myMemCpy<int32_t>(ZCoord, DefaultZCoord::Characters);
 }
 
 void BaseCharacter::Draw()

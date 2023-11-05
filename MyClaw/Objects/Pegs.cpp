@@ -76,6 +76,8 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 	{
 		myMemCpy(_objRc.top, _objRc.top + 32);
 	}
+
+	myMemCpy<int32_t>(ZCoord, DefaultZCoord::Pegs);
 }
 void TogglePeg::Logic(uint32_t elapsedTime)
 {

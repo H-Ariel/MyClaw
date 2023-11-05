@@ -11,24 +11,23 @@
 #define ANIMATION_WALK			_animations.at(_walkAniName)
 #define ANIMATION_STRIKE_HIGH	_animations.at(_strikeAniName)
 #define ANIMATION_STRIKE_LOW	_animations.at(_strikeDuckAniName)
-#define ANIMATION_HITHIGH		_animations.at(_hit1AniName)
-#define ANIMATION_HITLOW		_animations.at(_hit2AniName)
+#define ANIMATION_HITHIGH		_animations.at(_hitHighAniName)
+#define ANIMATION_HITLOW		_animations.at(_hitLowAniName)
 #define ANIMATION_SHOOT			_animations.at(_shootAniName)
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
 
-// TODO: fit 'hithigh' and 'hitlow' to CC attack
 // TODO: fix the shoot to CC height
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string& walkAni,
-	const string& hit1, const string& hit2, const string& fallDead, const string& strikeAni,
+	const string& hithigh, const string& hitlow, const string& fallDead, const string& strikeAni,
 	const string& strikeDuckAni, const string& shootAni, const string& shootDuckAni,
 	const string& projectileAniDir, float walkingSpeed, bool noTreasures)
 	: BaseCharacter(obj), _damage(damage), _isStanding(false), _strikeAniName(strikeAni),
 	_strikeDuckAniName(strikeDuckAni), _canStrike(!strikeAni.empty()),
 	_canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni),
 	_canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()),
-	_projectileAniDir(projectileAniDir), _hit1AniName(hit1), _hit2AniName(hit2),
+	_projectileAniDir(projectileAniDir), _hitHighAniName(hithigh), _hitLowAniName(hitlow),
 	_fallDeadAniName(fallDead), _minX((float)obj.minX), _maxX((float)obj.maxX),
 	_isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0), _fallDead(true)
 {
@@ -79,7 +78,6 @@ BaseEnemy::~BaseEnemy()
 		WwdObject obj;
 		obj.x = (int32_t)position.x;
 		obj.y = (int32_t)position.y;
-		obj.z = ZCoord;
 
 		// add items
 		for (int8_t t : _itemsTypes)
@@ -87,13 +85,14 @@ BaseEnemy::~BaseEnemy()
 			Item* i = Item::getItem(obj, t);
 			i->speed.y = -0.6f;
 			i->speed.x = getRandomFloat(-0.25f, 0.25f);
+			myMemCpy<int32_t>(ZCoord, DefaultZCoord::Items);
 			ActionPlane::addPlaneObject(i);
 		}
 
 		// add dead enemy
 		obj.speedX = position.x < player->position.x ? -250 : 250;
 		obj.speedY = -500;
-		ActionPlane::addPlaneObject(DBG_NEW DeadEnemy(obj, _animations[_fallDeadAniName]));
+		ActionPlane::addPlaneObject(DBG_NEW ::EnemyFallDeath(obj, _animations[_fallDeadAniName]));
 	}
 }
 
@@ -225,7 +224,13 @@ bool BaseEnemy::PreLogic(uint32_t elapsedTime)
 
 	if (checkForHurts())
 	{
-		_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
+		// match hit-high / hit-low to attack height
+		//if (_saveCurrRect.top + (_saveCurrRect.top - _saveCurrRect.bottom) / 2 < _lastAttackRect.top)
+		if (3 * _saveCurrRect.top - _saveCurrRect.bottom < 2 * _lastAttackRect.top) // the magic of math :)
+			_ani = ANIMATION_HITHIGH;
+		else
+			_ani = ANIMATION_HITLOW;
+		
 		_ani->reset();
 		_ani->loopAni = false;
 		_ani->mirrored = !_isMirrored;
@@ -235,7 +240,7 @@ bool BaseEnemy::PreLogic(uint32_t elapsedTime)
 		_lastAttackRect = {};
 		return false;
 	}
-
+	
 	return true;
 }
 void BaseEnemy::PostLogic(uint32_t elapsedTime)
@@ -349,9 +354,9 @@ bool BaseEnemy::enemySeeClaw() const
 
 // TODO: maybe this c'tor doesn't need get parameters...
 BaseBoss::BaseBoss(const WwdObject& obj, int damage, 
-	const string& walkAni, const string& hit1, const string& hit2, const string& fallDead,
+	const string& walkAni, const string& hithigh, const string& hitlow, const string& fallDead,
 	const string& strikeAni, const string& shootAni, const string& projectileAniDir)
-	: BaseEnemy(obj, obj.health, damage, walkAni, hit1, hit2, fallDead,
+	: BaseEnemy(obj, obj.health, damage, walkAni, hithigh, hitlow, fallDead,
 		strikeAni, "", shootAni, "", projectileAniDir, ENEMY_PATROL_SPEED, true),
 	_hitsCuonter(1), _blockClaw(false), _canJump(true), _gemPos({ obj.speedX, obj.speedY })
 {

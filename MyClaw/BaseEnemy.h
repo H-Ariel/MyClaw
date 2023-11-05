@@ -11,7 +11,7 @@ class BaseEnemy : public BaseCharacter
 {
 public:
 	BaseEnemy(const WwdObject& obj, int health, int damage,
-		const string& walkAni, const string& hit1, const string& hit2, const string& fallDead,
+		const string& walkAni, const string& hithigh, const string& hitlow, const string& fallDead,
 		const string& strikeAni, const string& strikeDuckAni, const string& shootAni,
 		const string& shootDuckAni, const string& projectileAniDir,
 		float walkingSpeed, bool noTreasures = false);
@@ -40,7 +40,7 @@ protected:
 	bool checkForHurt(const pair<Rectangle2D, int>& hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
 	bool checkClawHit(); // returns `true` if the enemy hurt by CC
 
-	const string _walkAniName, _hit1AniName, _hit2AniName, _fallDeadAniName,
+	const string _walkAniName, _hitHighAniName, _hitLowAniName, _fallDeadAniName,
 		_strikeAniName, _strikeDuckAniName, _shootAniName, _shootDuckAniName,
 		_projectileAniDir, _idleAniName;
 	vector<int8_t> _itemsTypes;
@@ -59,7 +59,7 @@ class BaseBoss : public BaseEnemy
 public:
 	// same ot BaseEnemy c'tor
 	BaseBoss(const WwdObject& obj, int damage, const string& walkAni,
-		const string& hit1,  const string& hit2, const string& fallDead, 
+		const string& hithigh,  const string& hitlow, const string& fallDead, 
 		const string& strikeAni, const string& shootAni, 
 		const string& projectileAniDir);
 	~BaseBoss();
