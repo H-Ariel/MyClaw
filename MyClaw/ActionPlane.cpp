@@ -63,9 +63,9 @@
 
 
 #ifdef _DEBUG
-#undef LOW_DETAILS
+//#undef LOW_DETAILS
 #define NO_DEATH
-//#define NO_ENEMIES
+#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
