@@ -119,7 +119,7 @@ string Item::getItemPath(Type type, const string& imageSet)
 
 // TODO: activate WAV sound when item is picked up
 
-Item::Item(const WwdObject& obj, int8_t type)
+Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 	: BaseDynamicPlaneObject(obj), _type((Type)type), _useGlitter(false), _glitterAnimation(nullptr)
 {
 	if (_type == Type::Default)
@@ -132,7 +132,7 @@ Item::Item(const WwdObject& obj, int8_t type)
 	}
 
 #ifndef LOW_DETAILS
-	if (_type != Item::Type::BossWarp && _type != Item::Type::Warp)
+	if (isFromMap && _type != Type::BossWarp && _type != Type::Warp && _type != Type::Treasure_Coins)
 	{
 		_useGlitter = true;
 		_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
@@ -201,30 +201,9 @@ void Item::stopFalling(float collisionSize)
 	speed.y = 0;
 	speed.x = 0;
 	position.y -= collisionSize;
-}
 
-Item* Item::getItem(const WwdObject& obj, int8_t type)
-{
-	Type _type((Type)type);
-	if (_type == Type::Default)
-	{
-		_type = Type::Treasure_Coins;
-	}
-	if (_type == Type::None)
-	{
-		_type = ItemsMap.at(obj.imageSet);
-	}
-
-	if (_type == Type::Warp || _type == Type::BossWarp)
-	{
-		return DBG_NEW ::Warp(obj, type);
-	}
-
-	return DBG_NEW Item(obj, type);
-}
-void Item::resetItemsPaths()
-{
-	ItemsPaths.clear();
+	_useGlitter = true;
+	_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
 }
 uint32_t Item::getTreasureScore()
 {
@@ -236,44 +215,44 @@ uint32_t Item::getTreasureScore()
 
 	case Item::Treasure_Goldbars:
 		return 500;
-		
+
 	case Item::Treasure_Rings_Red:
 	case Item::Treasure_Rings_Green:
 	case Item::Treasure_Rings_Blue:
 	case Item::Treasure_Rings_Purple:
 		return 1500;
-		
+
 	case Item::Treasure_Necklace:
 	case Item::Treasure_Chalices_Red:
 	case Item::Treasure_Chalices_Green:
 	case Item::Treasure_Chalices_Blue:
 	case Item::Treasure_Chalices_Purple:
 		return 2500;
-		
+
 	case Item::Treasure_Crosses_Red:
 	case Item::Treasure_Crosses_Green:
 	case Item::Treasure_Crosses_Blue:
 	case Item::Treasure_Crosses_Purple:
 		return 5000;
-		
+
 	case Item::Treasure_Scepters_Red:
 	case Item::Treasure_Scepters_Green:
 	case Item::Treasure_Scepters_Blue:
 	case Item::Treasure_Scepters_Purple:
 		return 7500;
-		
+
 	case Item::Treasure_Geckos_Red:
 	case Item::Treasure_Geckos_Green:
 	case Item::Treasure_Geckos_Blue:
 	case Item::Treasure_Geckos_Purple:
 		return 10000;
-		
+
 	case Item::Treasure_Crowns_Red:
 	case Item::Treasure_Crowns_Green:
 	case Item::Treasure_Crowns_Blue:
 	case Item::Treasure_Crowns_Purple:
 		return 15000;
-		
+
 	case Item::Treasure_Skull_Red:
 	case Item::Treasure_Skull_Green:
 	case Item::Treasure_Skull_Blue:
@@ -284,8 +263,43 @@ uint32_t Item::getTreasureScore()
 	throw Exception("invalid treasure type");
 }
 
+Item* Item::getItem(const WwdObject& obj, bool isFromMap, int8_t type)
+{
+	Type _type((Type)type);
+	if (_type == Type::Default)
+	{
+		_type = Type::Treasure_Coins;
+	}
+	if (_type == Type::None)
+	{
+		_type = ItemsMap.at(obj.imageSet);
+	}
+	if (_type == Type::Warp || _type == Type::BossWarp)
+	{
+		return DBG_NEW ::Warp(obj, type);
+	}
+	return DBG_NEW Item(obj, type, isFromMap);
+}
+Item* Item::getItem(const WwdObject& obj, bool isFromMap)
+{
+	return getItem(obj, isFromMap, Type::None);
+}
+Item* Item::getItem(const WwdObject& obj, int8_t type)
+{
+	return getItem(obj, false, type);
+}
+Item* Item::getItem(const WwdObject& obj)
+{
+	return getItem(obj, false, Type::None);
+}
+void Item::resetItemsPaths()
+{
+	ItemsPaths.clear();
+}
+
+
 Warp::Warp(const WwdObject& obj, int8_t type)
-	: Item(obj, type), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)
+	: Item(obj, type, true), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)
 {
 }
 void Warp::Logic(uint32_t elapsedTime)

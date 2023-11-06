@@ -81,13 +81,16 @@ public:
 
 	Type getType() { return _type; }
 	int32_t getDuration() const { return _duration; }
-
-	static Item* getItem(const WwdObject& obj, int8_t type = Type::None);
-	static void resetItemsPaths();
 	uint32_t getTreasureScore();
 
+	static Item* getItem(const WwdObject& obj, bool isFromMap, int8_t type);
+	static Item* getItem(const WwdObject& obj, bool isFromMap);
+	static Item* getItem(const WwdObject& obj, int8_t type);
+	static Item* getItem(const WwdObject& obj);
+	static void resetItemsPaths();
+
 protected:
-	Item(const WwdObject& obj, int8_t type);
+	Item(const WwdObject& obj, int8_t type, bool isFromMap);
 
 	const Type _type;
 

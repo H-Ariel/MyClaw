@@ -373,7 +373,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 		|| obj.logic == "EndOfLevelPowerup" || obj.logic == "MagicPowerup"
 		/*|| obj.logic == "CursePowerup"*/)
 	{
-		_objects.push_back(Item::getItem(obj));
+		_objects.push_back(Item::getItem(obj, true));
 	}
 	else if (obj.logic == "AniRope")
 	{

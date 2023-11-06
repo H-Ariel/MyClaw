@@ -26,7 +26,7 @@ void EnemyFallDeath::Logic(uint32_t elapsedTime)
 }
 
 BossGem::BossGem(const WwdObject& obj)
-	: Item(obj, Item::Type::NineLivesGem), _destination({ (float)obj.minX, (float)obj.minY })
+	: Item(obj, Item::Type::NineLivesGem, false), _destination({ (float)obj.minX, (float)obj.minY })
 {
 	float a = atan((position.y - _destination.y) / (position.x - _destination.x));
 

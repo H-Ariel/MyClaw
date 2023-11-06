@@ -27,7 +27,10 @@ DoNothing::DoNothing(const WwdObject& obj)
 		_ani = AssetsManager::loadAnimation(PathManager::getAnimationPath(obj.animation), obj.imageSet);
 	}
 
+	/*
+	// TODO: fix ZCoord
 	if (startsWith(obj.logic, "Front")) myMemCpy<int32_t>(ZCoord, DefaultZCoord::FrontCrate);
 	else if (startsWith(obj.logic, "Behind")) myMemCpy<int32_t>(ZCoord, DefaultZCoord::BackCrate);
 	else if (obj.logic == "GooCoverup") myMemCpy<int32_t>(ZCoord, DefaultZCoord::Coverups);
+	*/
 }
