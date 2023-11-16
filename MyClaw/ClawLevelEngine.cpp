@@ -152,7 +152,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 
 	if (_state == State::Play)
 	{
-		if (key == VK_F1)
+		if (key == VK_F1) // open help
 		{
 			_elementsList.clear();
 			_elementsList.push_back(&_helpImage);
@@ -163,10 +163,24 @@ void ClawLevelEngine::OnKeyUp(int key)
 			WindowManager::PixelSize = 1;
 			_state = State::Pause;
 		}
-		else if (key == VK_ESCAPE)
+		else if (key == VK_ESCAPE) // open pause menu
 		{
 			// TODO: pause menu
+
+			if (MessageBox(nullptr, L"This will return you to the main menu.\nAre you sure?", L"Exit game", MB_YESNO | MB_ICONWARNING) == IDYES)
+				changeEngine<MenuEngine>();
 		}
+		/*else if (key == VK_RETURN)
+		{
+			static int i = 0;
+			i += 1;
+			
+			if (i == 3)
+			{
+				MessageBox(nullptr, L"now you are mega-player", L"cheat", 0);
+				i = 0;
+			}
+		}*/
 		else if (key == VK_ADD)
 		{
 			if (WindowManager::PixelSize <= 3.5f)
@@ -182,7 +196,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 			BasePlaneObject::player->keyUp(key);
 		}
 	}
-	else // if (_state == State::Pause)
+	else // if (_state == State::Pause) // back to game
 	{
 		_elementsList.clear();
 		for (shared_ptr<LevelPlane>& p : _wwd->planes)

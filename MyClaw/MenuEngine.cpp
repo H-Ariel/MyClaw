@@ -296,7 +296,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 			if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
 			{
 				onClick = [&](MouseButtons) {
-					_currMenu = &m;
+					_currMenu = &HierarchicalMenu::MainMenu; // reset the menu
 					while (_menusStack.size()) _menusStack.pop();
 					changeEngine<LevelLoadingEngine>((m.cmd & 0xf0) >> 4);
 				};
