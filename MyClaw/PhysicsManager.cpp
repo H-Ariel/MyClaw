@@ -171,9 +171,11 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj, function<void(vo
 			collisionsNumber++;
 		}
 	};
-	auto _onGround = [&]() { // same to `BasePlaneObject::tryCatchPlayer`
+	auto _onGround = [&]() {
 		float smallestBottom = collisionRc.getSmallest().bottom;
-		if (obj->isFalling() && (collisionRc.right > 0 || collisionRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
+		// when object is falling or when CC climb down and arrive to the ground
+		if ((obj->isFalling() || (isPlayer && BasePlaneObject::player->isClimbing())) &&
+			(collisionRc.right > 0 || collisionRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
 		{
 			_addCollision();
 		}

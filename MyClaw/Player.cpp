@@ -298,6 +298,11 @@ void Player::Logic(uint32_t elapsedTime)
 				speed.y += GRAVITY * elapsedTime;
 			}
 		}
+
+		// check if collision with ground so we need let CC stand
+		if (_isOnLadder)
+		{
+		}
 	}
 	else
 	{
