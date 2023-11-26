@@ -202,8 +202,10 @@ void Item::stopFalling(float collisionSize)
 	speed.x = 0;
 	position.y -= collisionSize;
 
+#ifndef LOW_DETAILS
 	_useGlitter = true;
 	_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
+#endif
 }
 uint32_t Item::getTreasureScore()
 {

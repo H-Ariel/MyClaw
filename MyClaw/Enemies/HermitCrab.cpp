@@ -19,6 +19,9 @@ HermitCrab::HermitCrab(const WwdObject& obj, bool isFromNest)
 		speed.y = obj.speedY / 1000.f;
 		_isMirrored = obj.speedX > 0;
 	}
+
+	// TODO: find black carbs (maybe `if (obj.smarts == 1)`)
+	// TODO: throw bombs only `if (obj.userValue1 == 1)`
 }
 
 void HermitCrab::Logic(uint32_t elapsedTime)

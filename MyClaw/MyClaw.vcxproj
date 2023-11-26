@@ -190,6 +190,7 @@
     <ClCompile Include="Enemies\Seagull.cpp" />
     <ClCompile Include="Enemies\Siren.cpp" />
     <ClCompile Include="Enemies\Soldier.cpp" />
+    <ClCompile Include="Enemies\TigerGuard.cpp" />
     <ClCompile Include="Enemies\TownGuard.cpp" />
     <ClCompile Include="Enemies\Wolvington.cpp" />
     <ClCompile Include="EnemyHelp.cpp" />
@@ -274,6 +275,7 @@
     <ClInclude Include="Enemies\Seagull.h" />
     <ClInclude Include="Enemies\Siren.h" />
     <ClInclude Include="Enemies\Soldier.h" />
+    <ClInclude Include="Enemies\TigerGuard.h" />
     <ClInclude Include="Enemies\TownGuard.h" />
     <ClInclude Include="Enemies\Wolvington.h" />
     <ClInclude Include="EnemyHelp.h" />

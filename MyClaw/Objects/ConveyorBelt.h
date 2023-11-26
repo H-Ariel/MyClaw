@@ -6,7 +6,7 @@
 class ConveyorBelt : public BaseStaticPlaneObject
 {
 public:
-	ConveyorBelt(const WwdObject& obj, const WwdRect& rect);
+	ConveyorBelt(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 	
 	static void GlobalInit();

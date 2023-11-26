@@ -8,14 +8,13 @@
 vector<ConveyorBelt*> ConveyorBelt::pConveyorBelts; // list of all conveyor belts in the current level
 
 
-ConveyorBelt::ConveyorBelt(const WwdObject& obj, const WwdRect& rect)
+ConveyorBelt::ConveyorBelt(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), speed(obj.speed / 1000.f),
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), obj.speed > 0, ANIMATION_DURATION);
 	if (!_canMoveCC) (int32_t&)ZCoord += 1; // handle the belts that can move CC first
-	float x = (float)obj.x - obj.x % TILE_SIZE, y = (float)obj.y - obj.y % TILE_SIZE;
-	myMemCpy(_objRc, Rectangle2D(x + rect.left, y + rect.top, x + rect.right, y + rect.bottom));
+	myMemCpy(_objRc, Rectangle2D(obj.moveRect.left, obj.moveRect.top, obj.moveRect.right, obj.moveRect.bottom)); // I calc `moveRect` in `LevelPlane::readPlaneObjects`
 	pConveyorBelts.push_back(this);
 }
 

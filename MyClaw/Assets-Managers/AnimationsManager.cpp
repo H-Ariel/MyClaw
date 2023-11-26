@@ -15,9 +15,12 @@ static inline bool isEnemyAniations(const string& dirPath)
 		endsWith(dirPath, "/ANIS/CRAZYHOOK") ||
 		endsWith(dirPath, "/ANIS/PEGLEG") ||
 		endsWith(dirPath, "/ANIS/MERCAT") ||
-		//endsWith(dirPath, "/ANIS/SIREN") || // she has only one animation so I don't worry about her
 		endsWith(dirPath, "/ANIS/FISH") ||
-		//endsWith(dirPath, "/ANIS/CHAMELEON") || // it has only one animation so I don't worry about it
+
+		// they has only one animation so I don't worry about it
+		//endsWith(dirPath, "/ANIS/SIREN") ||
+		//endsWith(dirPath, "/ANIS/CHAMELEON") ||
+		//endsWith(dirPath, "/ANIS/TIGER") || endsWith(dirPath, "/ANIS/TIGERWHITE") ||
 
 		endsWith(dirPath, "/ANIS/GABRIEL")
 		);

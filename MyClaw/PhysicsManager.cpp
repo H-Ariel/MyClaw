@@ -133,18 +133,18 @@ PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 void PhysicsManager::Draw()
 {
 #ifdef _DEBUG
-	ColorF clr(0);
+	ColorF color(0);
 	for (auto& p : _rects)
 	{
 		switch (p.second)
 		{
-		case WwdTileDescription::TileAttribute_Solid: clr = ColorF::Red; break;
-		case WwdTileDescription::TileAttribute_Ground: clr = ColorF::Magenta; break;
-		case WwdTileDescription::TileAttribute_Climb: clr = ColorF::Green; break;
-		case WwdTileDescription::TileAttribute_Death: clr = ColorF::Blue; break;
-		default: clr = ColorF(0, 0);
+		case WwdTileDescription::TileAttribute_Solid: color = ColorF::Red; break;
+		case WwdTileDescription::TileAttribute_Ground: color = ColorF::Magenta; break;
+		case WwdTileDescription::TileAttribute_Climb: color = ColorF::Green; break;
+		case WwdTileDescription::TileAttribute_Death: color = ColorF::Blue; break;
+		default: color = ColorF(0, 0);
 		}
-		WindowManager::drawRect(p.first, clr);
+		WindowManager::drawRect(p.first, color);
 	}
 #endif
 }

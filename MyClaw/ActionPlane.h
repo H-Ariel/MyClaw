@@ -47,7 +47,6 @@ private:
 	vector<Rectangle2D> _shakeRects;
 	D2D1_SIZE_F _planeSize;
 	PhysicsManager* _physicsManager;
-	WapWorld* _wwd;
 	int _shakeTime;
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish

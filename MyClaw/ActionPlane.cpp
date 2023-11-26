@@ -47,6 +47,7 @@
 #include "Enemies/Chameleon.h"
 #include "Enemies/Aquatis.h"
 #include "Enemies/RedTail.h"
+#include "Enemies/TigerGuard.h"
 
 
 #define RECT_SPEED			0.5f // speed of the rect that shows when CC is died
@@ -73,7 +74,7 @@
 ActionPlane* ActionPlane::_instance = nullptr;
 
 ActionPlane::ActionPlane(WapWorld* wwd)
-	: _planeSize({}), _physicsManager(nullptr), _wwd(wwd), _shakeTime(0), _holeRadius(0)
+	: LevelPlane(wwd), _planeSize({}), _physicsManager(nullptr), _shakeTime(0), _holeRadius(0)
 	, _deathAniWait(false), _needSort(true), _isInBoss(false), _state(States::Play)
 {
 	//if (_instance != nullptr) throw Exception("ActionPlane already exists");
@@ -239,6 +240,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			break;
 		}
 	}
+	// TODO: shake screen after explodes of ClawDynamit (and maybe poder-keg. I need explore the original game)
 #endif
 }
 void ActionPlane::Draw()
@@ -389,7 +391,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "ConveyorBelt")
 	{
-		_objects.push_back(DBG_NEW ConveyorBelt(obj, _wwd->tilesDescription[tiles[obj.y / TILE_SIZE][obj.x / TILE_SIZE]].rect));
+		_objects.push_back(DBG_NEW ConveyorBelt(obj));
 	}
 #ifndef NO_ENEMIES
 	else if (obj.logic == "CrabNest")
@@ -465,6 +467,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 		ADD_ENEMY(Chameleon(obj));
 	}
 #endif
+	else if (obj.logic == "TigerGuard")
+	{
+		ADD_ENEMY(TigerGuard(obj));
+	}
 #ifndef NO_OBSTACLES
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
 	{

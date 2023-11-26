@@ -274,6 +274,9 @@
     <ClCompile Include="EnemyHelp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Enemies\TigerGuard.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -524,6 +527,9 @@
     </ClInclude>
     <ClInclude Include="EnemyHelp.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\TigerGuard.h">
+      <Filter>Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

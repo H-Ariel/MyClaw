@@ -2,9 +2,10 @@
 #include "WindowManager.h"
 
 
-LevelPlane::LevelPlane()
-	: fillColor(0), tilesOnAxisX(0), tilesOnAxisY(0), maxTileIdxX(0), maxTileIdxY(0),
-	ZCoord(0), movementPercentX(0), movementPercentY(0), _isMainPlane(false)
+LevelPlane::LevelPlane(WapWorld* wwd)
+	: _wwd(wwd), fillColor(0), tilesOnAxisX(0), tilesOnAxisY(0),
+	maxTileIdxX(0), maxTileIdxY(0), ZCoord(0), movementPercentX(0),
+	movementPercentY(0), _isMainPlane(false)
 {
 }
 
@@ -119,15 +120,35 @@ void LevelPlane::readPlaneObjects(BufferReader& reader)
 		obj.logic = reader.ReadString(logicLength);
 		obj.imageSet = reader.ReadString(imageSetLength);
 		obj.animation = reader.ReadString(animationLength);
-
+		
 		try
 		{
+			updateObject(obj);
 			addObject(obj);
 		}
 		catch (const Exception& ex)
 		{
 			cout << "Error while reading object: " << ex.what() << endl;
 		}
+	}
+}
+
+// update objects data after reading them from the file so it be easier to use them
+void LevelPlane::updateObject(WwdObject& obj)
+{
+	if (obj.logic == "ConveyorBelt")
+	{
+		int32_t x = obj.x - obj.x % TILE_SIZE, y = obj.y - obj.y % TILE_SIZE;
+		obj.moveRect = _wwd->tilesDescription[tiles[obj.y / TILE_SIZE][obj.x / TILE_SIZE]].rect;
+		obj.moveRect.left += x;
+		obj.moveRect.right += x;
+		obj.moveRect.top += y;
+		obj.moveRect.bottom += y;
+	}
+	else if (obj.logic == "TigerGuard")
+	{
+		if (obj.smarts == 1)
+			obj.imageSet += "WHITE";
 	}
 }
 

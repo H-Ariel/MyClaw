@@ -169,7 +169,7 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		}
 		else
 		{
-			pln = allocNewSharedPtr<LevelPlane>();
+			pln = allocNewSharedPtr<LevelPlane>(this);
 		}
 
 		reader.skip(76); // 4 unk, 64 plane-name, 4 total pixel width, 4 total pixel height
