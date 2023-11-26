@@ -1,10 +1,10 @@
 #include "AnimationsManager.h"
 
 
+// return if we should update the enemy's idle animation
 static inline bool isEnemyAniations(const string& dirPath)
 {
-	return (
-		endsWith(dirPath, "/ANIS/OFFICER") ||
+	return (endsWith(dirPath, "/ANIS/OFFICER") ||
 		endsWith(dirPath, "/ANIS/SOLDIER") ||
 		endsWith(dirPath, "/ANIS/ROBBERTHIEF") ||
 		endsWith(dirPath, "/ANIS/CUTTHROAT") ||
@@ -16,16 +16,7 @@ static inline bool isEnemyAniations(const string& dirPath)
 		endsWith(dirPath, "/ANIS/PEGLEG") ||
 		endsWith(dirPath, "/ANIS/MERCAT") ||
 		endsWith(dirPath, "/ANIS/FISH") ||
-
-		// they has only one animation so I don't worry about it
-		//endsWith(dirPath, "/ANIS/SIREN") ||
-		//endsWith(dirPath, "/ANIS/CHAMELEON") ||
-		//endsWith(dirPath, "/ANIS/TIGER") || endsWith(dirPath, "/ANIS/TIGERWHITE") ||
-
-		endsWith(dirPath, "/ANIS/GABRIEL")
-		);
-
-	// TODO: add all of them
+		endsWith(dirPath, "/ANIS/GABRIEL"));
 }
 
 AnimationsManager::AnimationsManager(RezArchive* rezArchive) : _rezArchive(rezArchive) {}
