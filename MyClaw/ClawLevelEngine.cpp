@@ -170,7 +170,8 @@ void ClawLevelEngine::OnKeyUp(int key)
 			// TODO: pause menu
 
 		//	if (MessageBox(nullptr, L"This will return you to the main menu.\nAre you sure?", L"Exit game", MB_YESNO | MB_ICONWARNING) == IDYES)
-			changeEngine<MenuEngine>(_wpThis);
+			//changeEngine<MenuEngine>(_wpThis);
+			changeEngine<MenuEngine>();
 		}
 		/*else if (key == VK_RETURN)
 		{

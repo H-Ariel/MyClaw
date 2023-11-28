@@ -14,7 +14,8 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj)
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), obj.speed > 0, ANIMATION_DURATION);
 	if (!_canMoveCC) (int32_t&)ZCoord += 1; // handle the belts that can move CC first
-	myMemCpy(_objRc, Rectangle2D(obj.moveRect.left, obj.moveRect.top, obj.moveRect.right, obj.moveRect.bottom)); // I calc `moveRect` in `LevelPlane::readPlaneObjects`
+	myMemCpy(_objRc, Rectangle2D((float)obj.moveRect.left, (float)obj.moveRect.top,
+		(float)obj.moveRect.right, (float)obj.moveRect.bottom)); // I calc `moveRect` in `LevelPlane::readPlaneObjects`
 	pConveyorBelts.push_back(this);
 }
 

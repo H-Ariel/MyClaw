@@ -15,7 +15,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int)
 
 	try
 	{
-		GameMainApp().run();
+		GameMainApp app;
+		app.run();
 	}
 	catch (const Exception& ex)
 	{

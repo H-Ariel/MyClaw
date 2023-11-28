@@ -321,7 +321,10 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 
 		case HierarchicalMenu::BackToGame:
 			onClick = [&](MouseButtons) {
-				_currMenu = &HierarchicalMenu::MainMenu; // reset the menu
+				MessageBoxA(nullptr, "not impleted", "", 0);
+				return;
+
+				_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
 				while (_menusStack.size()) _menusStack.pop();
 				changeEngine(_clawLevelEngine);
 				/*
@@ -346,7 +349,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 			if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
 			{
 				onClick = [&](MouseButtons) {
-					_currMenu = &HierarchicalMenu::MainMenu; // reset the menu
+					_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
 					while (_menusStack.size()) _menusStack.pop();
 					changeEngine<LevelLoadingEngine>((m.cmd & 0xf0) >> 4);
 				};

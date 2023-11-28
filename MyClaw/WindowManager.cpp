@@ -36,7 +36,7 @@ void WindowManager::Finalize()
 	SafeRelease(_dWriteFactory);
 	SafeRelease(_wicImagingFactory);
 	CoUninitialize();
-};
+}
 
 void WindowManager::setWindowOffset(const D2D1_POINT_2F* offset)
 {
