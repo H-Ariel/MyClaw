@@ -120,6 +120,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 ClawLevelEngine::~ClawLevelEngine()
 {
 	delete _hud;
+	_spThis.reset();
 	AssetsManager::clearLevelAssets(_levelNumber);
 }
 
@@ -136,7 +137,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		{
 			if (BasePlaneObject::player->isFinishDeathAnimation())
 			{
-				MessageBoxA(nullptr, "You died", "", 0);
+				MessageBoxA(nullptr, "You died", "", 0); // TODO: show GAME OVER screen
 				StopEngine = true;
 			//	changeEngine<MenuEngine>();
 			}
@@ -214,4 +215,9 @@ void ClawLevelEngine::OnKeyDown(int key)
 {
 	if (_state == State::Play)
 		BasePlaneObject::player->keyDown(key);
+}
+
+void ClawLevelEngine::setSharedPtr(shared_ptr<ClawLevelEngine> spThis)
+{
+//	_spThis = spThis; // TODO: with that we have memory leak...
 }

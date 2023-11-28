@@ -49,41 +49,48 @@ class CreditsEngine : public MenuEngine
 {
 public:
 	CreditsEngine()
-		: MenuEngine(false, "STATES/CREDITS/SCREENS/CREDITS.PCX"), _yOffset(9800)
+		: MenuEngine(false, "STATES/CREDITS/SCREENS/CREDITS.PCX"),
+		_startY(9800 / 480.f * _bgImg->size.height), // `480` is the original image height
+		_endY(-9600 / 480.f * _bgImg->size.height)
 	{
+		_bgImg->Logic(0); // update _bgImg position
+
 		string creditsText = "Claw - Rewritten by Ariel Halili\n\n" + AssetsManager::getCreditsText();
-		_creditsTextElement.text = wstring(creditsText.begin(), creditsText.end());
-		_creditsTextElement.setColor(ColorF::White);
-		_elementsList.push_back(&_creditsTextElement);
+		FontData font;
+		font.size = _bgImg->size.height / 30;
+
+		_creditsTextElement = DBG_NEW UITextElement;
+		_creditsTextElement->text = wstring(creditsText.begin(), creditsText.end());
+		_creditsTextElement->setColor(ColorF::White);
+		_creditsTextElement->size = _bgImg->size;
+		_creditsTextElement->position.x = _bgImg->position.x;
+		_creditsTextElement->position.y = _bgImg->size.height / 2 + _startY;
+		_creditsTextElement->setFont(font);
+		_elementsList.push_back(_creditsTextElement);
 
 		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Credits);
 	}
 	~CreditsEngine()
 	{
 		AssetsManager::stopBackgroundMusic();
-		_elementsList.pop_back(); // remove the text element
 	}
 
-	void Logic(uint32_t elapsedTime) override 
+	void Logic(uint32_t elapsedTime) override
 	{
 		MenuEngine::Logic(elapsedTime);
 
-		_yOffset -= 0.07f * elapsedTime;
-		if (_yOffset < -9600)
-			backToMenu();
+		_creditsTextElement->position.y -= 0.07f * elapsedTime;
 
-		_creditsTextElement.size = _bgImg->size;
-		_creditsTextElement.position.x = _bgImg->position.x;
-		_creditsTextElement.position.y = _bgImg->size.height / 2 + _yOffset;
-		_creditsTextElement.font.size = _bgImg->size.height / 30;
+		if (_creditsTextElement->position.y < _endY)
+			backToMenu();
 	}
 	void OnKeyUp(int key) override { backToMenu(); }
 	void OnMouseButtonUp(MouseButtons btn) override { backToMenu(); }
 	void OnResize() override { backToMenu(); }
 
 private:
-	UITextElement _creditsTextElement;
-	float _yOffset;
+	UITextElement* _creditsTextElement;
+	const float _startY, _endY;
 };
 
 class MenuItem : virtual UIBaseButton, virtual UIBaseImage
@@ -111,7 +118,7 @@ public:
 		UIBaseButton::Logic(0);
 	}
 
-	// mul the size ratio by n
+	// multiply the size ratio by n
 	void mulImageSizeRatio(float n)
 	{
 		_sizeRatio.width *= n;
@@ -334,8 +341,11 @@ void LevelLoadingEngine::Logic(uint32_t elapsedTime)
 {
 	_bgImg->Logic(elapsedTime);
 	_totalTime += elapsedTime;
-	if (_isDrawn && _totalTime > 100)
-		changeEngine<ClawLevelEngine>(_lvlNo);
+	if (_isDrawn && _totalTime > 100) {
+		shared_ptr<ClawLevelEngine> levelEngine = allocNewSharedPtr<ClawLevelEngine>(_lvlNo);
+		levelEngine->setSharedPtr(levelEngine);
+		changeEngine(levelEngine);
+	}
 	_isDrawn = true; // After once it is sure to be drawn.
 }
 

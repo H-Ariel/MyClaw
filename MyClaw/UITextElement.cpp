@@ -11,17 +11,17 @@ UITextElement::UITextElement()
 	: text(L""), size({})
 {
 	_brush = WindowManager::createSolidBrush(ColorF::Black);
+	_textFormat = WindowManager::createTextFormat(_font);
 }
 UITextElement::~UITextElement()
 {
 	SafeRelease(_brush);
+	SafeRelease(_textFormat);
 }
 
 void UITextElement::Draw()
 {
-	IDWriteTextFormat* textFormat = WindowManager::createTextFormat(font);
-	WindowManager::drawText(text, textFormat, _brush, GetRect());
-	SafeRelease(textFormat);
+	WindowManager::drawText(text, _textFormat, _brush, GetRect());
 }
 Rectangle2D UITextElement::GetRect()
 {
@@ -29,6 +29,18 @@ Rectangle2D UITextElement::GetRect()
 		position.x - size.width / 2, position.y - size.height / 2,
 		position.x + size.width / 2, position.y + size.height / 2
 	);
+}
+
+void UITextElement::setFont(const FontData& font)
+{
+	_font = font;
+	if (_textFormat)
+		SafeRelease(_textFormat);
+	_textFormat = WindowManager::createTextFormat(_font);
+}
+FontData UITextElement::getFont() const
+{
+	return _font;
 }
 
 void UITextElement::setColor(ColorF color)

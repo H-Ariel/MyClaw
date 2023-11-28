@@ -27,13 +27,17 @@ public:
 	void Draw() override;
 	Rectangle2D GetRect() override;
 
+	void setFont(const FontData& font);
+	FontData getFont() const;
+
 	void setColor(ColorF color);
 	ColorF getColor() const;
-
-	FontData font;
+	
 	wstring text;
 	D2D1_SIZE_F size; // destination rectange size
 	
 private:
+	FontData _font;
 	ID2D1SolidColorBrush* _brush;
+	IDWriteTextFormat* _textFormat;
 };
