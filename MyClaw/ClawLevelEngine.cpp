@@ -218,5 +218,6 @@ void ClawLevelEngine::OnKeyDown(int key)
 
 void ClawLevelEngine::setSharedPtr(shared_ptr<ClawLevelEngine> wpThis)
 {
+	// TODO: with this line we have teribble memory leak :(
 	_wpThis = wpThis; // with shared_ptr we have memory leak... so we need to use weak_ptr instead of shared_ptr
 }
