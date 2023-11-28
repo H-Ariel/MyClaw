@@ -120,7 +120,6 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 ClawLevelEngine::~ClawLevelEngine()
 {
 	delete _hud;
-	_spThis.reset();
 	AssetsManager::clearLevelAssets(_levelNumber);
 }
 
@@ -137,9 +136,9 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		{
 			if (BasePlaneObject::player->isFinishDeathAnimation())
 			{
-				MessageBoxA(nullptr, "You died", "", 0); // TODO: show GAME OVER screen
-				StopEngine = true;
-			//	changeEngine<MenuEngine>();
+			//	MessageBoxA(nullptr, "You died", "", 0); // TODO: show GAME OVER screen
+			//	StopEngine = true;
+				changeEngine<MenuEngine>();
 			}
 		}
 		else if (BasePlaneObject::player->isFinishLevel())
@@ -170,8 +169,8 @@ void ClawLevelEngine::OnKeyUp(int key)
 		{
 			// TODO: pause menu
 
-			if (MessageBox(nullptr, L"This will return you to the main menu.\nAre you sure?", L"Exit game", MB_YESNO | MB_ICONWARNING) == IDYES)
-				changeEngine<MenuEngine>();
+		//	if (MessageBox(nullptr, L"This will return you to the main menu.\nAre you sure?", L"Exit game", MB_YESNO | MB_ICONWARNING) == IDYES)
+			changeEngine<MenuEngine>(_wpThis);
 		}
 		/*else if (key == VK_RETURN)
 		{
@@ -217,7 +216,7 @@ void ClawLevelEngine::OnKeyDown(int key)
 		BasePlaneObject::player->keyDown(key);
 }
 
-void ClawLevelEngine::setSharedPtr(shared_ptr<ClawLevelEngine> spThis)
+void ClawLevelEngine::setSharedPtr(shared_ptr<ClawLevelEngine> wpThis)
 {
-//	_spThis = spThis; // TODO: with that we have memory leak...
+	_wpThis = wpThis; // with shared_ptr we have memory leak... so we need to use weak_ptr instead of shared_ptr
 }

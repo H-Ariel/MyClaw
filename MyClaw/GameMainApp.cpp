@@ -3,6 +3,7 @@
 #include "WindowManager.h"
 #include "ClawLevelEngine.h"
 #include "MenuEngine.h"
+#include "ClawLevelEngine.h"
 #include <chrono>
 
 
@@ -59,6 +60,12 @@ void GameMainApp::run()
 	_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
 	runEngine();
 #endif
+
+	BaseEngine* eng = _pEngine.get();
+	if (eng && isinstance<ClawLevelEngine>(eng))
+	{
+		((ClawLevelEngine*)eng)->setSharedPtr(nullptr);
+	}
 }
 
 void GameMainApp::runEngine()

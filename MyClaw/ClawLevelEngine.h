@@ -22,7 +22,7 @@ private:
 	enum class State : int8_t { Play, Pause };
 
 	shared_ptr<WapWorld> _wwd;
-	shared_ptr<ClawLevelEngine> _spThis; // save `this` as `shared_ptr`. used when switchto menu.
+	shared_ptr<ClawLevelEngine> _wpThis; // save `this` as `shared_ptr`. used when switch to menu.
 	D2D1_POINT_2F* _mainPlanePosition;
 	LevelHUD* _hud;
 	MenuBackgroundImage _helpImage;

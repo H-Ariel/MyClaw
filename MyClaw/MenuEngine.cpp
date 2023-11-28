@@ -6,8 +6,9 @@
 
 
 #define DEFAULT_BG_IMAGE	"STATES/MENU/SCREENS/MENU.PCX"
-#define MENU_ROOT			"STATES/MENU/IMAGES/MAIN/"
-#define SINGLEPLAYER_ROOT	MENU_ROOT "SINGLEPLAYER/"
+#define MAIN_MENU_ROOT		"STATES/MENU/IMAGES/MAIN/"
+#define SINGLEPLAYER_ROOT	MAIN_MENU_ROOT "SINGLEPLAYER/"
+#define INGAME_MENU_ROOT	"GAME/IMAGES/INGAMEMENU/MAIN/"
 
 
 static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE{ 800.f, 600.f };
@@ -157,7 +158,11 @@ struct HierarchicalMenu
 		OpenLevel_11 = OpenLevel | (0xB0),
 		OpenLevel_12 = OpenLevel | (0xC0),
 		OpenLevel_13 = OpenLevel | (0xD0),
-		OpenLevel_14 = OpenLevel | (0xE0)
+		OpenLevel_14 = OpenLevel | (0xE0),
+
+		BackToGame = OpenLevel + 1,
+		EndLife,
+		EndGame
 	};
 
 	HierarchicalMenu(string pcxPath, uint8_t cmd, float xRatio, float yRatio, vector<HierarchicalMenu> subMenus = {})
@@ -168,12 +173,12 @@ struct HierarchicalMenu
 	float xRatio, yRatio;
 	uint8_t cmd;
 
-	static HierarchicalMenu MainMenu;
+	static HierarchicalMenu MainMenu, InGameMenu;
 };
 
 HierarchicalMenu HierarchicalMenu::MainMenu("", MenuIn, 0, 0, {
-	HierarchicalMenu(MENU_ROOT "014_TITLE.PCX", Nop, 0, -0.15f),
-	HierarchicalMenu(MENU_ROOT "001_SINGLEPLAYER.PCX", MenuIn, 0, -0.05f, {
+	HierarchicalMenu(MAIN_MENU_ROOT "014_TITLE.PCX", Nop, 0, -0.15f),
+	HierarchicalMenu(MAIN_MENU_ROOT "001_SINGLEPLAYER.PCX", MenuIn, 0, -0.05f, {
 		HierarchicalMenu(SINGLEPLAYER_ROOT "014_TITLE.PCX", Nop, 0, -0.15f),
 		HierarchicalMenu(SINGLEPLAYER_ROOT "001_NEWGAME.PCX", MenuIn, 0, -0.05f, {
 			HierarchicalMenu(SINGLEPLAYER_ROOT "NEW/001_TITLE.PCX", Nop, 0, -0.15f),
@@ -202,17 +207,32 @@ HierarchicalMenu HierarchicalMenu::MainMenu("", MenuIn, 0, 0, {
 		HierarchicalMenu(SINGLEPLAYER_ROOT "009_UPLOADSCORES.PCX", NotImpleted, 0, 0.31f),
 		HierarchicalMenu(SINGLEPLAYER_ROOT "012_PREVIOUSMENU.PCX", MenuOut, 0, 0.4f),
 	}),
-	HierarchicalMenu(MENU_ROOT "003_MULTIPLAYER.PCX", NotImpleted, 0, 0.03f),
-	HierarchicalMenu(MENU_ROOT "005_REPLAYMOVIES.PCX", NotImpleted, 0, 0.11f),
-	HierarchicalMenu(MENU_ROOT "008_OPTIONS.PCX", NotImpleted, 0, 0.19f),
-	HierarchicalMenu(MENU_ROOT "015_CREDITS.PCX", Credits, 0, 0.27f),
-	HierarchicalMenu(MENU_ROOT "010_HELP.PCX", Help, 0, 0.35f),
-	HierarchicalMenu(MENU_ROOT "012_QUIT.PCX", MenuIn, 0, 0.43f, {
-		HierarchicalMenu(MENU_ROOT "QUIT/005_AREYOUSURE.PCX", Nop, 0, 0),
-		HierarchicalMenu(MENU_ROOT "QUIT/001_YES.PCX", ExitApp, 0, 0.15f),
-		HierarchicalMenu(MENU_ROOT "QUIT/003_NO.PCX", MenuOut, 0, 0.22f),
+	HierarchicalMenu(MAIN_MENU_ROOT "003_MULTIPLAYER.PCX", NotImpleted, 0, 0.03f),
+	HierarchicalMenu(MAIN_MENU_ROOT "005_REPLAYMOVIES.PCX", NotImpleted, 0, 0.11f),
+	HierarchicalMenu(MAIN_MENU_ROOT "008_OPTIONS.PCX", NotImpleted, 0, 0.19f),
+	HierarchicalMenu(MAIN_MENU_ROOT "015_CREDITS.PCX", Credits, 0, 0.27f),
+	HierarchicalMenu(MAIN_MENU_ROOT "010_HELP.PCX", Help, 0, 0.35f),
+	HierarchicalMenu(MAIN_MENU_ROOT "012_QUIT.PCX", MenuIn, 0, 0.43f, {
+		HierarchicalMenu(MAIN_MENU_ROOT "QUIT/005_AREYOUSURE.PCX", Nop, 0, 0),
+		HierarchicalMenu(MAIN_MENU_ROOT "QUIT/001_YES.PCX", ExitApp, 0, 0.15f),
+		HierarchicalMenu(MAIN_MENU_ROOT "QUIT/003_NO.PCX", MenuOut, 0, 0.22f),
 	})
 });
+HierarchicalMenu HierarchicalMenu::InGameMenu("", MenuIn, 0, 0, {
+	HierarchicalMenu(INGAME_MENU_ROOT "001.PID", BackToGame, 0, -0.12f),
+	HierarchicalMenu(INGAME_MENU_ROOT "003.PID", MenuIn, 0, -0.06f, {
+			HierarchicalMenu(INGAME_MENU_ROOT "CLAWICIDE/005.PID", Nop, 0, -0.08f),
+			HierarchicalMenu(INGAME_MENU_ROOT "CLAWICIDE/001.PID", EndLife, 0, 0.04f),
+			HierarchicalMenu(INGAME_MENU_ROOT "CLAWICIDE/003.PID", MenuOut, 0, 0.10f),
+		}),
+	HierarchicalMenu(INGAME_MENU_ROOT "005.PID", NotImpleted, 0,0),
+	HierarchicalMenu(INGAME_MENU_ROOT "007.PID", Help, 0, 0.06f),
+	HierarchicalMenu(INGAME_MENU_ROOT "009.PID", MenuIn, 0, 0.12f, {
+			HierarchicalMenu(INGAME_MENU_ROOT "ENDGAME/005.PID", Nop, 0, -0.08f),
+			HierarchicalMenu(INGAME_MENU_ROOT "ENDGAME/001.PID", EndGame, 0, 0.04f),
+			HierarchicalMenu(INGAME_MENU_ROOT "ENDGAME/003.PID", MenuOut, 0, 0.10f),
+		}),
+	});
 
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
@@ -237,7 +257,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 	{
 		_cursor = cursor;
 	}
-	else if (_currMenu == &HierarchicalMenu::MainMenu)
+	else if (_currMenu == &HierarchicalMenu::MainMenu || _currMenu == &HierarchicalMenu::InGameMenu)
 	{
 		AssetsManager::loadPidPalette("LEVEL1/PALETTES/MAIN.PAL");
 		_cursor = AssetsManager::loadAnimation("STATES/MENU/ANIS/CURSOR.ANI");
@@ -257,6 +277,32 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 			onClick = [](MouseButtons) { MessageBoxA(nullptr, "not impleted", "", 0); };
 			break;
 
+		case HierarchicalMenu::MenuIn:
+			onClick = [&](MouseButtons) {
+				_menusStack.push(_currMenu);
+				_currMenu = &m;
+				changeEngine<MenuEngine>(mousePosition, _cursor);
+				};
+			break;
+
+		case HierarchicalMenu::MenuOut:
+			onClick = [&](MouseButtons) {
+				if (_menusStack.size() > 0)
+				{
+					_currMenu = _menusStack.top();
+					_menusStack.pop();
+					changeEngine<MenuEngine>(mousePosition, _cursor);
+				}
+				};
+			break;
+
+		case HierarchicalMenu::ExitApp:
+			onClick = [&](MouseButtons) {
+				_nextEngine = nullptr;
+				StopEngine = true;
+				};
+			break;
+
 		case HierarchicalMenu::Help:
 			onClick = [&](MouseButtons) {
 				_menusStack.push(_currMenu);
@@ -273,29 +319,26 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 			};
 			break;
 
-		case HierarchicalMenu::MenuIn:
+		case HierarchicalMenu::BackToGame:
 			onClick = [&](MouseButtons) {
-				_menusStack.push(_currMenu);
-				_currMenu = &m;
-				changeEngine<MenuEngine>(mousePosition, _cursor);
+				_currMenu = &HierarchicalMenu::MainMenu; // reset the menu
+				while (_menusStack.size()) _menusStack.pop();
+				changeEngine(_clawLevelEngine);
+				/*
+				TODO: when back to game, it display only the background color, and
+				not the level itself (the level is not drawn). so we need to fix it.
+				*/
 			};
 			break;
 
-		case HierarchicalMenu::MenuOut:
-			onClick = [&](MouseButtons) {
-				if (_menusStack.size() > 0)
-				{
-					_currMenu = _menusStack.top();
-					_menusStack.pop();
-					changeEngine<MenuEngine>(mousePosition, _cursor);
-				}
-			};
+		case HierarchicalMenu::EndLife:
 			break;
 
-		case HierarchicalMenu::ExitApp:
+		case HierarchicalMenu::EndGame:
 			onClick = [&](MouseButtons) {
-				_nextEngine = nullptr;
-				StopEngine = true;
+				_currMenu = &HierarchicalMenu::MainMenu; // reset the menu
+				while (_menusStack.size()) _menusStack.pop();
+				changeEngine<MenuEngine>();
 			};
 			break;
 
@@ -319,6 +362,11 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 		_elementsList.push_back(_cursor.get());
 	}
 }
+MenuEngine::MenuEngine(shared_ptr<ClawLevelEngine> clawLevelEngine)
+	: MenuEngine()
+{
+	_clawLevelEngine = clawLevelEngine;
+}
 MenuEngine::~MenuEngine() {
 	if (_cursor) _elementsList.pop_back(); // remove the cursor
 	for (UIBaseElement* i : _elementsList) delete i;
@@ -334,8 +382,8 @@ void MenuEngine::backToMenu()
 	changeEngine<MenuEngine>();
 }
 
-LevelLoadingEngine::LevelLoadingEngine(int lvlNo) :
-	MenuEngine(false, "LEVEL" + to_string(lvlNo) + "/SCREENS/LOADING.PCX"),
+LevelLoadingEngine::LevelLoadingEngine(int lvlNo)
+	: MenuEngine(false, "LEVEL" + to_string(lvlNo) + "/SCREENS/LOADING.PCX"),
 	_totalTime(0), _lvlNo(lvlNo), _isDrawn(false) {}
 void LevelLoadingEngine::Logic(uint32_t elapsedTime)
 {
@@ -345,6 +393,7 @@ void LevelLoadingEngine::Logic(uint32_t elapsedTime)
 		shared_ptr<ClawLevelEngine> levelEngine = allocNewSharedPtr<ClawLevelEngine>(_lvlNo);
 		levelEngine->setSharedPtr(levelEngine);
 		changeEngine(levelEngine);
+		_currMenu = &HierarchicalMenu::InGameMenu;
 	}
 	_isDrawn = true; // After once it is sure to be drawn.
 }
@@ -412,7 +461,7 @@ static const char* const scorenumbersPaths[] = {
 
 // TODO: draw cool animation of map/gem before showing score
 
-LevelEndEngine::LevelEndEngine(int lvlNum, map<Item::Type, uint32_t> collectedTreasures)
+LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures)
 	: MenuEngine(false, getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start)
 {
 	WindowManager::setBackgroundColor(ColorF::Black);

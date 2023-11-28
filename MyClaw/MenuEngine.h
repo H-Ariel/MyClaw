@@ -6,6 +6,7 @@
 
 
 struct HierarchicalMenu;
+class ClawLevelEngine;
 
 
 // an image whose size is determined by window's size
@@ -25,6 +26,7 @@ class MenuEngine : public BaseEngine
 public:
 	MenuEngine(bool allocChildren = true, const string& bgPcxPath = "");
 	MenuEngine(D2D1_POINT_2U mousePosition, shared_ptr<Animation> cursor, bool allocChildren = true, const string& bgPcxPath = "");
+	MenuEngine(shared_ptr<ClawLevelEngine> clawLevelEngine);
 	~MenuEngine();
 
 	void Logic(uint32_t elapsedTime) override;
@@ -36,6 +38,7 @@ protected:
 	static const HierarchicalMenu* _currMenu;
 
 	shared_ptr<Animation> _cursor;
+	shared_ptr<ClawLevelEngine> _clawLevelEngine;
 	MenuBackgroundImage* _bgImg;
 };
 
@@ -56,7 +59,7 @@ private:
 class LevelEndEngine : public MenuEngine
 {
 public:
-	LevelEndEngine(int lvlNum, map<Item::Type, uint32_t> collectedTreasures);
+	LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures);
 
 	void Logic(uint32_t elapsedTime) override;
 
