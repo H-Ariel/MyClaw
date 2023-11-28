@@ -57,6 +57,7 @@ void GameMainApp::run()
 		runEngine();
 	}
 #else
+	runApp = true;
 	_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
 	runEngine();
 #endif
