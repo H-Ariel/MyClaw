@@ -60,12 +60,6 @@ void GameMainApp::run()
 	_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
 	runEngine();
 #endif
-
-	BaseEngine* eng = _pEngine.get();
-	if (eng && isinstance<ClawLevelEngine>(eng))
-	{
-		((ClawLevelEngine*)eng)->setSharedPtr(nullptr);
-	}
 }
 
 void GameMainApp::runEngine()

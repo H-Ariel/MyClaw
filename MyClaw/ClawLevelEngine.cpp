@@ -1,25 +1,37 @@
 #include "ClawLevelEngine.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "WindowManager.h"
-#include "MenuEngine.h"
+#include "LevelPlane.h"
+
+
+ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
+	: _mainPlanePosition(nullptr), _helpImage("/STATES/HELP/SCREENS/HELP.PCX"),
+	_hud(nullptr), _saveBgColor(0), _levelNumber(levelNumber), _savePixelSize(0)
+{
+}
+ClawLevelEngineFields::~ClawLevelEngineFields()
+{
+	delete _hud;
+	AssetsManager::clearLevelAssets(_levelNumber);
+}
 
 
 ClawLevelEngine::ClawLevelEngine(int levelNumber)
-	: _state(State::Play), _saveBgColor(0), _levelNumber(levelNumber),
-	_mainPlanePosition(nullptr), _helpImage("/STATES/HELP/SCREENS/HELP.PCX")
 {
-	_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
-	for (shared_ptr<LevelPlane>& pln : _wwd->planes)
+	_fields = allocNewSharedPtr<ClawLevelEngineFields>(levelNumber);
+
+	_fields->_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
+	for (shared_ptr<LevelPlane>& pln : _fields->_wwd->planes)
 	{
 		if (pln->isMainPlane())
-			_mainPlanePosition = &pln->position;
+			_fields->_mainPlanePosition = &pln->position;
 		_elementsList.push_back(pln.get());
 	}
 
-	if (_mainPlanePosition == nullptr) throw Exception("no main plane found");
+	if (_fields->_mainPlanePosition == nullptr) throw Exception("no main plane found");
 
-	_elementsList.push_back(_hud = DBG_NEW LevelHUD(*_mainPlanePosition));
-	WindowManager::setWindowOffset(_mainPlanePosition);
+	_elementsList.push_back(_fields->_hud = DBG_NEW LevelHUD(*_fields->_mainPlanePosition));
+	WindowManager::setWindowOffset(_fields->_mainPlanePosition);
 
 #ifdef _DEBUG
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
@@ -117,34 +129,36 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	if (levelNumber == 14) BasePlaneObject::player->position = { 8004, 2482 };
 #endif
 }
-ClawLevelEngine::~ClawLevelEngine()
+ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
+	: _fields(fields)
 {
-	delete _hud;
-	AssetsManager::clearLevelAssets(_levelNumber);
+	for (shared_ptr<LevelPlane>& pln : _fields->_wwd->planes)
+		_elementsList.push_back(pln.get());
+	_elementsList.push_back(_fields->_hud);
+	WindowManager::setWindowOffset(_fields->_mainPlanePosition);
+	WindowManager::setBackgroundColor(_fields->_saveBgColor);
+	WindowManager::PixelSize = _fields->_savePixelSize;
 }
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
 	BaseEngine::Logic(elapsedTime);
 
-	for (shared_ptr<LevelPlane>& p : _wwd->planes)
-		p->position = *_mainPlanePosition;
+	for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+		p->position = *_fields->_mainPlanePosition;
 
-	if (_state == State::Play)
+	if (!BasePlaneObject::player->hasLives())
 	{
-		if (!BasePlaneObject::player->hasLives())
+		if (BasePlaneObject::player->isFinishDeathAnimation())
 		{
-			if (BasePlaneObject::player->isFinishDeathAnimation())
-			{
-			//	MessageBoxA(nullptr, "You died", "", 0); // TODO: show GAME OVER screen
-			//	StopEngine = true;
-				changeEngine<MenuEngine>();
-			}
+			MessageBoxA(nullptr, "You died", "", 0);
+			// TODO: show GAME OVER screen and then go to menu
+			changeEngine<MenuEngine>();
 		}
-		else if (BasePlaneObject::player->isFinishLevel())
-		{
-			changeEngine<LevelEndEngine>(_levelNumber, BasePlaneObject::player->getCollectedTreasures());
-		}
+	}
+	else if (BasePlaneObject::player->isFinishLevel())
+	{
+		changeEngine<LevelEndEngine>(_fields->_levelNumber, BasePlaneObject::player->getCollectedTreasures());
 	}
 }
 
@@ -152,73 +166,45 @@ void ClawLevelEngine::OnKeyUp(int key)
 {
 	if (key == 0xFF) return; // `Fn` key
 
-	if (_state == State::Play)
+	if (key == VK_F1) // open help
 	{
-		if (key == VK_F1) // open help
-		{
-			_elementsList.clear();
-			_elementsList.push_back(&_helpImage);
-			_saveBgColor = WindowManager::getBackgroundColor();
-			WindowManager::setWindowOffset(nullptr);
-			WindowManager::setBackgroundColor(ColorF::Black);
-			_savePixelSize = WindowManager::PixelSize;
-			WindowManager::PixelSize = 1;
-			_state = State::Pause;
-		}
-		else if (key == VK_ESCAPE) // open pause menu
-		{
-			// TODO: pause menu
-
-		//	if (MessageBox(nullptr, L"This will return you to the main menu.\nAre you sure?", L"Exit game", MB_YESNO | MB_ICONWARNING) == IDYES)
-			//changeEngine<MenuEngine>(_wpThis);
-			changeEngine<MenuEngine>();
-		}
-		/*else if (key == VK_RETURN)
-		{
-			static int i = 0;
-			i += 1;
-			
-			if (i == 3)
-			{
-				MessageBox(nullptr, L"now you are mega-player", L"cheat", 0);
-				i = 0;
-			}
-		}*/
-		else if (key == VK_ADD)
-		{
-			if (WindowManager::PixelSize <= 3.5f)
-				WindowManager::PixelSize += 0.5f;
-		}
-		else if (key == VK_SUBTRACT)
-		{
-			if (WindowManager::PixelSize >= 1)
-				WindowManager::PixelSize -= 0.5f;
-		}
-		else
-		{
-			BasePlaneObject::player->keyUp(key);
-		}
+		_fields->_saveBgColor = WindowManager::getBackgroundColor();
+		_fields->_savePixelSize = WindowManager::PixelSize;
+		changeEngine<HelpEngine>(_fields);
 	}
-	else // if (_state == State::Pause) // back to game
+	else if (key == VK_ESCAPE) // open pause menu
 	{
-		_elementsList.clear();
-		for (shared_ptr<LevelPlane>& p : _wwd->planes)
-			_elementsList.push_back(p.get());
-		_elementsList.push_back(_hud);
-		WindowManager::setWindowOffset(_mainPlanePosition);
-		WindowManager::setBackgroundColor(_saveBgColor);
-		WindowManager::PixelSize = _savePixelSize;
-		_state = State::Play;
+		_fields->_saveBgColor = WindowManager::getBackgroundColor();
+		_fields->_savePixelSize = WindowManager::PixelSize;
+		changeEngine<MenuEngine>(_fields);
+	}
+	/*else if (key == VK_RETURN)
+	{
+		static int i = 0;
+		i += 1;
+
+		if (i == 3)
+		{
+			MessageBox(nullptr, L"now you are mega-player", L"cheat", 0);
+			i = 0;
+		}
+	}*/
+	else if (key == VK_ADD)
+	{
+		if (WindowManager::PixelSize <= 3.5f)
+			WindowManager::PixelSize += 0.5f;
+	}
+	else if (key == VK_SUBTRACT)
+	{
+		if (WindowManager::PixelSize >= 1)
+			WindowManager::PixelSize -= 0.5f;
+	}
+	else
+	{
+		BasePlaneObject::player->keyUp(key);
 	}
 }
 void ClawLevelEngine::OnKeyDown(int key)
 {
-	if (_state == State::Play)
-		BasePlaneObject::player->keyDown(key);
-}
-
-void ClawLevelEngine::setSharedPtr(shared_ptr<ClawLevelEngine> wpThis)
-{
-	// TODO: with this line we have teribble memory leak :(
-	_wpThis = wpThis; // with shared_ptr we have memory leak... so we need to use weak_ptr instead of shared_ptr
+	BasePlaneObject::player->keyDown(key);
 }

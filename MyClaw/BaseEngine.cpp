@@ -22,4 +22,8 @@ void BaseEngine::Draw()
 	WindowManager::EndDraw();
 }
 
-shared_ptr<BaseEngine> BaseEngine::getNextEngine() { StopEngine = false; return _nextEngine; }
+shared_ptr<BaseEngine> BaseEngine::getNextEngine()
+{
+	StopEngine = false;
+	return _nextEngine;
+}

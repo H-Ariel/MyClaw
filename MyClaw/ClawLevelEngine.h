@@ -1,33 +1,36 @@
 #pragma once
 
 #include "MenuEngine.h"
-#include "LevelPlane.h"
 #include "LevelHUD.h"
 
 
-class ClawLevelEngine : public BaseEngine
+struct ClawLevelEngineFields
 {
-public:
-	ClawLevelEngine(int levelNumber);
-	~ClawLevelEngine() override;
-
-	void Logic(uint32_t elapsedTime) override;
-
-	void OnKeyUp(int key) override;
-	void OnKeyDown(int key) override;
-
-	void setSharedPtr(shared_ptr<ClawLevelEngine> spThis);
-
-private:
-	enum class State : int8_t { Play, Pause };
+	ClawLevelEngineFields(int levelNumber);
+	~ClawLevelEngineFields();
 
 	shared_ptr<WapWorld> _wwd;
-	shared_ptr<ClawLevelEngine> _wpThis; // save `this` as `shared_ptr`. used when switch to menu.
 	D2D1_POINT_2F* _mainPlanePosition;
 	LevelHUD* _hud;
 	MenuBackgroundImage _helpImage;
 	ColorF _saveBgColor;
 	float _savePixelSize;
 	const int _levelNumber;
-	State _state;
+};
+
+class ClawLevelEngine : public BaseEngine
+{
+public:
+	ClawLevelEngine(int levelNumber);
+	ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields);
+
+	void Logic(uint32_t elapsedTime) override;
+
+	void OnKeyUp(int key) override;
+	void OnKeyDown(int key) override;
+
+	shared_ptr<ClawLevelEngineFields> getFields() const { return _fields; }
+
+private:
+	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu
 };

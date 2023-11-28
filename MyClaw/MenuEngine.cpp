@@ -37,13 +37,23 @@ void MenuBackgroundImage::Logic(uint32_t)
 }
 
 
-class HelpEngine : public MenuEngine
+HelpEngine::HelpEngine() : MenuEngine(false, "STATES/HELP/SCREENS/HELP.PCX"), _isInGame(false) {}
+HelpEngine::HelpEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields)
+	: MenuEngine(clawLevelEngineFields, false, "STATES/HELP/SCREENS/HELP.PCX"), _isInGame(true)
 {
-public:
-	HelpEngine() : MenuEngine(false, "STATES/HELP/SCREENS/HELP.PCX") {}
-	void OnKeyUp(int key) override { backToMenu(); }
-	void OnMouseButtonUp(MouseButtons btn) override { backToMenu(); }
-};
+}
+void HelpEngine::OnKeyUp(int key) { backToMenu(); }
+void HelpEngine::OnMouseButtonUp(MouseButtons btn) { backToMenu(); }
+void HelpEngine::backToMenu()
+{
+	if (_isInGame)
+	{
+		//_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
+		changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
+	}
+	else
+		MenuEngine::backToMenu();
+}
 
 
 class CreditsEngine : public MenuEngine
@@ -236,6 +246,7 @@ HierarchicalMenu HierarchicalMenu::InGameMenu("", MenuIn, 0, 0, {
 
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
+shared_ptr<ClawLevelEngineFields> MenuEngine::_clawLevelEngineFields;
 
 MenuEngine::MenuEngine(bool allocChildren, const string& bgPcxPath) : MenuEngine({}, nullptr, allocChildren, bgPcxPath) {}
 MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool allocChildren, const string& bgPcxPath)
@@ -246,6 +257,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 	_nextEngine = nullptr;
 	WindowManager::setTitle("Claw");
 	WindowManager::setWindowOffset(nullptr);
+	WindowManager::setBackgroundColor(ColorF::Black);
 	WindowManager::PixelSize = 1;
 
 	if (!allocChildren)
@@ -321,20 +333,14 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 
 		case HierarchicalMenu::BackToGame:
 			onClick = [&](MouseButtons) {
-				MessageBoxA(nullptr, "not impleted", "", 0);
-				return;
-
 				_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
 				while (_menusStack.size()) _menusStack.pop();
-				changeEngine(_clawLevelEngine);
-				/*
-				TODO: when back to game, it display only the background color, and
-				not the level itself (the level is not drawn). so we need to fix it.
-				*/
+				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
 			};
 			break;
 
-		case HierarchicalMenu::EndLife:
+		case HierarchicalMenu::EndLife: // TODO
+			onClick = [](MouseButtons) { MessageBoxA(nullptr, "not impleted", "", 0); };
 			break;
 
 		case HierarchicalMenu::EndGame:
@@ -351,6 +357,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 				onClick = [&](MouseButtons) {
 					_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
 					while (_menusStack.size()) _menusStack.pop();
+					_clawLevelEngineFields.reset(); // do not recycle the fields!
 					changeEngine<LevelLoadingEngine>((m.cmd & 0xf0) >> 4);
 				};
 			}
@@ -365,12 +372,13 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 		_elementsList.push_back(_cursor.get());
 	}
 }
-MenuEngine::MenuEngine(shared_ptr<ClawLevelEngine> clawLevelEngine)
-	: MenuEngine()
+MenuEngine::MenuEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields, bool allocChildren, const string& bgPcxPath)
+	: MenuEngine(allocChildren, bgPcxPath)
 {
-	_clawLevelEngine = clawLevelEngine;
+	_clawLevelEngineFields = clawLevelEngineFields;
 }
-MenuEngine::~MenuEngine() {
+MenuEngine::~MenuEngine()
+{
 	if (_cursor) _elementsList.pop_back(); // remove the cursor
 	for (UIBaseElement* i : _elementsList) delete i;
 }
@@ -393,9 +401,7 @@ void LevelLoadingEngine::Logic(uint32_t elapsedTime)
 	_bgImg->Logic(elapsedTime);
 	_totalTime += elapsedTime;
 	if (_isDrawn && _totalTime > 100) {
-		shared_ptr<ClawLevelEngine> levelEngine = allocNewSharedPtr<ClawLevelEngine>(_lvlNo);
-		levelEngine->setSharedPtr(levelEngine);
-		changeEngine(levelEngine);
+		changeEngine<ClawLevelEngine>(_lvlNo);
 		_currMenu = &HierarchicalMenu::InGameMenu;
 	}
 	_isDrawn = true; // After once it is sure to be drawn.

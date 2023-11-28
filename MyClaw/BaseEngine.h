@@ -31,13 +31,6 @@ protected:
 		_nextEngine = allocNewSharedPtr<NextEngine>(args...);
 		StopEngine = true;
 	}
-	
-	template <class NextEngine>
-	void changeEngine(shared_ptr<NextEngine> nextEngine)
-	{
-		_nextEngine = nextEngine;
-		StopEngine = true;
-	}
 
 	vector<UIBaseElement*> _elementsList;
 	shared_ptr<BaseEngine> _nextEngine;

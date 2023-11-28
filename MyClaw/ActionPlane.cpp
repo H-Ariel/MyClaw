@@ -77,7 +77,14 @@ ActionPlane::ActionPlane(WapWorld* wwd)
 	: LevelPlane(wwd), _planeSize({}), _physicsManager(nullptr), _shakeTime(0), _holeRadius(0)
 	, _deathAniWait(false), _needSort(true), _isInBoss(false), _state(States::Play)
 {
-	//if (_instance != nullptr) throw Exception("ActionPlane already exists");
+	if (_instance != nullptr)
+	{
+#ifdef _DEBUG
+		cout << "Warning: ActionPlane already exists (level " << _wwd->levelNumber << ")" << endl;
+#endif
+		//throw Exception("ActionPlane already exists");
+	}
+
 	_instance = this;
 }
 ActionPlane::~ActionPlane()
