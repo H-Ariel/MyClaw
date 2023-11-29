@@ -25,7 +25,6 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 	_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(bgPcxPath.empty() ? DEFAULT_BG_IMAGE : bgPcxPath));
 
 	mousePosition = mPos;
-	_nextEngine = nullptr;
 	WindowManager::setTitle("Claw");
 	WindowManager::setWindowOffset(nullptr);
 	WindowManager::setBackgroundColor(ColorF::Black);
@@ -170,4 +169,11 @@ void MenuEngine::backToMenu()
 	_currMenu = _menusStack.top();
 	_menusStack.pop();
 	changeEngine<MenuEngine>();
+}
+
+
+void MenuEngine::backToMainMenu()
+{
+	_currMenu = &HierarchicalMenu::MainMenu;
+	while (_menusStack.size()) _menusStack.pop();
 }

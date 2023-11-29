@@ -1,7 +1,7 @@
 #include "PidPalette.h"
 
 
-PidPalette::PidPalette(vector<uint8_t> palData)
+PidPalette::PidPalette(const vector<uint8_t>& palData)
 	: colors()
 {
 	if (palData.size() == PALETTE_SIZE_BYTES)
@@ -15,4 +15,10 @@ PidPalette::PidPalette(vector<uint8_t> palData)
 		}
 		myMemCpy<uint8_t>(colors[0].a, 0); // first pixel in palette is transparent
 	}
+}
+
+PidPalette::PidPalette(ColorRGBA palColors[COLORS_IN_PALETTE])
+	: colors()
+{
+	memcpy((ColorRGBA*)colors, palColors, sizeof(colors));
 }

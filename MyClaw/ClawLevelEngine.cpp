@@ -152,8 +152,9 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	{
 		if (BasePlaneObject::player->isFinishDeathAnimation())
 		{
-			MessageBoxA(nullptr, "You died", "", 0);
+			MessageBoxA(nullptr, "GAME OVER", "", 0);
 			// TODO: show GAME OVER screen and then go to menu
+			MenuEngine::backToMainMenu();
 			changeEngine<MenuEngine>();
 		}
 	}

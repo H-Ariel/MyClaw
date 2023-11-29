@@ -182,6 +182,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	}
 
 	BasePlaneObject* obj;
+	bool exploseShake = false; // shake screen after explodes of ClawDynamit and poder-keg
 
 	for (size_t i = 0; i < _objects.size(); i++)
 	{
@@ -216,21 +217,29 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			else if (isProjectile(obj))
 			{
 				if (isinstance<Stalactite>(obj))
+				{
 					obj->removeObject = false; // we don't want to delete this object
+					continue;
+				}
 				else
+				{
 					eraseByValue(_projectiles, obj);
+
+					if (isinstance<ClawDynamite>(obj))
+						exploseShake = true;
+				}
 			}
 			else if (isinstance<PowderKeg>(obj))
+			{
 				eraseByValue(_powderKegs, obj);
+				exploseShake = true;
+			}
 			else if (isbaseinstance<BaseDamageObject>(obj))
 				eraseByValue(_damageObjects, obj);
 
-			if (obj->removeObject) // we really want to delete this object
-			{
-				delete obj;
-				_objects.erase(_objects.begin() + i);
-				i--; // cancel `i++`
-			}
+			delete obj;
+			_objects.erase(_objects.begin() + i);
+			i--; // cancel `i++`
 		}
 	}
 
@@ -244,10 +253,13 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		{
 			_shakeTime = SHAKE_TIME;
 			_shakeRects.erase(i);
+			exploseShake = false; // we don't want to shake the screen twice
 			break;
 		}
 	}
-	// TODO: shake screen after explodes of ClawDynamit (and maybe poder-keg. I need explore the original game)
+
+	if (exploseShake) // TODO: sync explose with animation (before remove the object)
+		_shakeTime = 500;
 #endif
 }
 void ActionPlane::Draw()
@@ -338,6 +350,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else
 #endif
+		if (obj.logic == "PowderKeg")
+		{
+			PowderKeg* p = DBG_NEW PowderKeg(obj);
+			_objects.push_back(p); _powderKegs.push_back(p);
+		}
 	if (endsWith(obj.logic, "Elevator"))
 	{
 		_objects.push_back(Elevator::create(obj, _wwd->levelNumber));
@@ -473,11 +490,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_ENEMY(Chameleon(obj));
 	}
-#endif
 	else if (obj.logic == "TigerGuard")
 	{
 		ADD_ENEMY(TigerGuard(obj));
 	}
+#endif
 #ifndef NO_OBSTACLES
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
 	{

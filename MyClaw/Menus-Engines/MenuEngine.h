@@ -21,6 +21,8 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 
+	static void backToMainMenu();
+
 protected:
 	virtual void backToMenu();
 
