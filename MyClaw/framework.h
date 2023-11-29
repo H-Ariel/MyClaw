@@ -40,7 +40,7 @@
 #include <set>
 
 #include "Exception.hpp"
-#include "Rectangle2D.h"
+#include "GUI/Rectangle2D.h"
 #include "Assets-Managers/PathManager.h"
 
 
@@ -54,6 +54,9 @@
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 #endif
+
+
+static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE{ 800.f, 600.f };
 
 
 enum class MouseButtons

@@ -1,5 +1,5 @@
 #include "EnemyHelp.h"
-#include "WindowManager.h"
+#include "GUI/WindowManager.h"
 #include "Player.h"
 
 

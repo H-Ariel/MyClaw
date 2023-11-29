@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MenuEngine.h"
+#include "BaseEngine.h"
 #include "LevelHUD.h"
 
 
@@ -12,7 +12,6 @@ struct ClawLevelEngineFields
 	shared_ptr<WapWorld> _wwd;
 	D2D1_POINT_2F* _mainPlanePosition;
 	LevelHUD* _hud;
-	MenuBackgroundImage _helpImage;
 	ColorF _saveBgColor;
 	float _savePixelSize;
 	const int _levelNumber;

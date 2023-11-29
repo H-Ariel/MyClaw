@@ -1,12 +1,13 @@
 #include "ClawLevelEngine.h"
 #include "Assets-Managers/AssetsManager.h"
-#include "WindowManager.h"
+#include "GUI/WindowManager.h"
 #include "LevelPlane.h"
+#include "Menus-Engines/HelpScreenEngine.h"
+#include "Menus-Engines/LevelEndEngine.h"
 
 
 ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
-	: _mainPlanePosition(nullptr), _helpImage("/STATES/HELP/SCREENS/HELP.PCX"),
-	_hud(nullptr), _saveBgColor(0), _levelNumber(levelNumber), _savePixelSize(0)
+	: _mainPlanePosition(nullptr), _hud(nullptr), _saveBgColor(0), _levelNumber(levelNumber), _savePixelSize(0)
 {
 }
 ClawLevelEngineFields::~ClawLevelEngineFields()
@@ -159,7 +160,6 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	else if (BasePlaneObject::player->isFinishLevel())
 	{
 		changeEngine<LevelEndEngine>(_fields->_levelNumber, BasePlaneObject::player->getCollectedTreasures());
-		// TODO: if finish level 14 (the last level) then show the credits screen
 	}
 }
 
@@ -171,7 +171,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 	{
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_savePixelSize = WindowManager::PixelSize;
-		changeEngine<HelpEngine>(_fields);
+		changeEngine<HelpScreenEngine>(_fields);
 	}
 	else if (key == VK_ESCAPE) // open pause menu
 	{

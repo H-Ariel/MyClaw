@@ -11,7 +11,7 @@ ID2D1HwndRenderTarget* WindowManager::_renderTarget = nullptr;
 IWICImagingFactory* WindowManager::_wicImagingFactory = nullptr;
 const D2D1_POINT_2F* WindowManager::_windowOffset = &defaultWindowOffset;
 ColorF WindowManager::_backgroundColor(0);
-D2D1_SIZE_F WindowManager::realSize = { 800, 600 };
+D2D1_SIZE_F WindowManager::realSize = DEFAULT_WINDOW_SIZE;
 
 // throw exception if `func` failed
 #define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);

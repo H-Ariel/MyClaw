@@ -1,5 +1,5 @@
 #include "ActionPlane.h"
-#include "WindowManager.h"
+#include "GUI/WindowManager.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "Player.h"
 #include "Objects/Checkpoint.h"

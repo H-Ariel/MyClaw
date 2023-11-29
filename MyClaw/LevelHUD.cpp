@@ -1,6 +1,6 @@
 #include "LevelHUD.h"
 #include "Assets-Managers/AssetsManager.h"
-#include "WindowManager.h"
+#include "GUI/WindowManager.h"
 #include "ActionPlane.h"
 
 // TODO: draw boss health bar

@@ -1,6 +1,6 @@
 #include "WwdFile.h"
 #include "AssetsManager.h"
-#include "../WindowManager.h"
+#include "../GUI/WindowManager.h"
 #include "../ActionPlane.h"
 
 

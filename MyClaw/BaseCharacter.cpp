@@ -1,5 +1,5 @@
 #include "BaseCharacter.h"
-#include "WindowManager.h"
+#include "GUI/WindowManager.h"
 
 
 BaseCharacter::BaseCharacter(const WwdObject& obj)

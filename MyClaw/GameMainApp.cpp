@@ -1,10 +1,13 @@
 #include "GameMainApp.h"
 #include "Assets-Managers/AssetsManager.h"
-#include "WindowManager.h"
-#include "ClawLevelEngine.h"
-#include "MenuEngine.h"
-#include "ClawLevelEngine.h"
+#include "GUI/WindowManager.h"
+#include "Menus-Engines/OpeningScreenEngine.h"
 #include <chrono>
+
+#ifdef _DEBUG
+#include "Menus-Engines/LevelLoadingEngine.h"
+#endif 
+
 
 
 #define WINDOW_CLASS_NAME L"MyGameWindow"
@@ -52,6 +55,7 @@ void GameMainApp::run()
 	else
 	{
 		runApp = true;
+		//_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
 		_pEngine = allocNewSharedPtr<MenuEngine>();
 		//_pEngine = allocNewSharedPtr<LevelLoadingEngine>(14);
 		runEngine();

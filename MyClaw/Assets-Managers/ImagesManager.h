@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../UIBaseImage.h"
+#include "../GUI/UIBaseImage.h"
 #include "PidPalette.h"
 
 

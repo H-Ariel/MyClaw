@@ -71,20 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -148,7 +148,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActionPlane.cpp" />
-    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
     <ClCompile Include="Assets-Managers\AssetsManager.cpp" />
     <ClCompile Include="Assets-Managers\AudioManager.cpp" />
@@ -195,10 +194,25 @@
     <ClCompile Include="Enemies\Wolvington.cpp" />
     <ClCompile Include="EnemyHelp.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
+    <ClCompile Include="GUI\Animation.cpp" />
+    <ClCompile Include="GUI\Rectangle2D.cpp" />
+    <ClCompile Include="GUI\UIBaseButton.cpp" />
+    <ClCompile Include="GUI\UIBaseElement.cpp" />
+    <ClCompile Include="GUI\UIBaseImage.cpp" />
+    <ClCompile Include="GUI\UITextElement.cpp" />
+    <ClCompile Include="GUI\WindowManager.cpp" />
     <ClCompile Include="LevelHUD.cpp" />
     <ClCompile Include="LevelPlane.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MenuEngine.cpp" />
+    <ClCompile Include="Menus-Engines\CreditsEngine.cpp" />
+    <ClCompile Include="Menus-Engines\HelpScreenEngine.cpp" />
+    <ClCompile Include="Menus-Engines\HierarchicalMenu.cpp" />
+    <ClCompile Include="Menus-Engines\LevelEndEngine.cpp" />
+    <ClCompile Include="Menus-Engines\LevelLoadingEngine.cpp" />
+    <ClCompile Include="Menus-Engines\MenuBackgroundImage.cpp" />
+    <ClCompile Include="Menus-Engines\MenuEngine.cpp" />
+    <ClCompile Include="Menus-Engines\MenuItem.cpp" />
+    <ClCompile Include="Menus-Engines\OpeningScreenEngine.cpp" />
     <ClCompile Include="Objects\AmbientSound.cpp" />
     <ClCompile Include="Objects\Cannon.cpp" />
     <ClCompile Include="Objects\Checkpoint.cpp" />
@@ -226,16 +240,9 @@
     <ClCompile Include="Objects\TProjectilesShooter.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Rectangle2D.cpp" />
-    <ClCompile Include="UIBaseButton.cpp" />
-    <ClCompile Include="UIBaseElement.cpp" />
-    <ClCompile Include="UIBaseImage.cpp" />
-    <ClCompile Include="UITextElement.cpp" />
-    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h" />
-    <ClInclude Include="Animation.h" />
     <ClInclude Include="Assets-Managers\AnimationsManager.h" />
     <ClInclude Include="Assets-Managers\AssetsManager.h" />
     <ClInclude Include="Assets-Managers\AudioManager.h" />
@@ -282,9 +289,24 @@
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameMainApp.h" />
+    <ClInclude Include="GUI\Animation.h" />
+    <ClInclude Include="GUI\Rectangle2D.h" />
+    <ClInclude Include="GUI\UIBaseButton.h" />
+    <ClInclude Include="GUI\UIBaseElement.h" />
+    <ClInclude Include="GUI\UIBaseImage.h" />
+    <ClInclude Include="GUI\UITextElement.h" />
+    <ClInclude Include="GUI\WindowManager.h" />
     <ClInclude Include="LevelHUD.h" />
     <ClInclude Include="LevelPlane.h" />
-    <ClInclude Include="MenuEngine.h" />
+    <ClInclude Include="Menus-Engines\CreditsEngine.h" />
+    <ClInclude Include="Menus-Engines\HelpScreenEngine.h" />
+    <ClInclude Include="Menus-Engines\HierarchicalMenu.h" />
+    <ClInclude Include="Menus-Engines\LevelEndEngine.h" />
+    <ClInclude Include="Menus-Engines\LevelLoadingEngine.h" />
+    <ClInclude Include="Menus-Engines\MenuBackgroundImage.h" />
+    <ClInclude Include="Menus-Engines\MenuEngine.h" />
+    <ClInclude Include="Menus-Engines\MenuItem.h" />
+    <ClInclude Include="Menus-Engines\OpeningScreenEngine.h" />
     <ClInclude Include="Objects\AmbientSound.h" />
     <ClInclude Include="Objects\Cannon.h" />
     <ClInclude Include="Objects\Checkpoint.h" />
@@ -312,12 +334,6 @@
     <ClInclude Include="Objects\TProjectilesShooter.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Rectangle2D.h" />
-    <ClInclude Include="UIBaseButton.h" />
-    <ClInclude Include="UIBaseElement.h" />
-    <ClInclude Include="UIBaseImage.h" />
-    <ClInclude Include="UITextElement.h" />
-    <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

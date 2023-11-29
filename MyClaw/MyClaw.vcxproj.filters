@@ -20,6 +20,9 @@
     <Filter Include="Enemies\Bosses">
       <UniqueIdentifier>{1c7d5223-a64e-44b5-b5df-53149334a50d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Menus-Engines">
+      <UniqueIdentifier>{f8272b00-1ad2-4884-a7da-6dd7fe0c4aa6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ActionPlane.cpp">
@@ -43,13 +46,7 @@
     <ClCompile Include="LevelHUD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LevelPlane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MenuEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
@@ -117,24 +114,6 @@
     </ClCompile>
     <ClCompile Include="PhysicsManager.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowManager.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="UIBaseImage.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="UIBaseElement.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="UIBaseButton.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Rectangle2D.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="BaseEnemy.cpp">
       <Filter>Source Files</Filter>
@@ -235,9 +214,6 @@
     <ClCompile Include="objects\Stalactite.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="UITextElement.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\AmbientSound.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -276,6 +252,57 @@
     </ClCompile>
     <ClCompile Include="Enemies\TigerGuard.cpp">
       <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Animation.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Rectangle2D.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\UIBaseButton.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\UIBaseElement.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\UIBaseImage.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\UITextElement.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\WindowManager.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\HelpScreenEngine.cpp">
+      <Filter>Menus-Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\LevelLoadingEngine.cpp">
+      <Filter>Menus-Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\HierarchicalMenu.cpp">
+      <Filter>Menus-Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\OpeningScreenEngine.cpp">
+      <Filter>Menus-Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\LevelEndEngine.cpp">
+      <Filter>Menus-Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\CreditsEngine.cpp">
+      <Filter>Menus-Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\MenuItem.cpp">
+      <Filter>Menus-Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\MenuBackgroundImage.cpp">
+      <Filter>Menus-Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="Menus-Engines\MenuEngine.cpp">
+      <Filter>Menus-Engines</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -339,24 +366,6 @@
     <ClInclude Include="Objects\GooVent.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="WindowManager.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="UIBaseImage.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="UIBaseElement.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="UIBaseButton.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Rectangle2D.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="ActionPlane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -382,12 +391,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="LevelHUD.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelPlane.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuEngine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsManager.h">
@@ -489,9 +492,6 @@
     <ClInclude Include="objects\Stalactite.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="UITextElement.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="Objects\AmbientSound.h">
       <Filter>Objects</Filter>
     </ClInclude>
@@ -530,6 +530,57 @@
     </ClInclude>
     <ClInclude Include="Enemies\TigerGuard.h">
       <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Animation.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Rectangle2D.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\UIBaseButton.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\UIBaseElement.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\UIBaseImage.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\UITextElement.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\WindowManager.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelPlane.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\HelpScreenEngine.h">
+      <Filter>Menus-Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\LevelLoadingEngine.h">
+      <Filter>Menus-Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\HierarchicalMenu.h">
+      <Filter>Menus-Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\OpeningScreenEngine.h">
+      <Filter>Menus-Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\LevelEndEngine.h">
+      <Filter>Menus-Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\CreditsEngine.h">
+      <Filter>Menus-Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\MenuItem.h">
+      <Filter>Menus-Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\MenuBackgroundImage.h">
+      <Filter>Menus-Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus-Engines\MenuEngine.h">
+      <Filter>Menus-Engines</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
