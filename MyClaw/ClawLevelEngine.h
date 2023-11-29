@@ -29,7 +29,6 @@ public:
 	void OnKeyUp(int key) override;
 	void OnKeyDown(int key) override;
 
-	shared_ptr<ClawLevelEngineFields> getFields() const { return _fields; }
 
 private:
 	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu

@@ -159,6 +159,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	else if (BasePlaneObject::player->isFinishLevel())
 	{
 		changeEngine<LevelEndEngine>(_fields->_levelNumber, BasePlaneObject::player->getCollectedTreasures());
+		// TODO: if finish level 14 (the last level) then show the credits screen
 	}
 }
 

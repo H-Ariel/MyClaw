@@ -3,6 +3,7 @@
 #include "WindowManager.h"
 #include "UIBaseButton.h"
 #include "ClawLevelEngine.h"
+#include "BasePlaneObject.h"
 
 
 #define DEFAULT_BG_IMAGE	"STATES/MENU/SCREENS/MENU.PCX"
@@ -37,7 +38,7 @@ void MenuBackgroundImage::Logic(uint32_t)
 }
 
 
-HelpEngine::HelpEngine() : MenuEngine(false, "STATES/HELP/SCREENS/HELP.PCX"), _isInGame(false) {}
+HelpEngine::HelpEngine() : MenuEngine("STATES/HELP/SCREENS/HELP.PCX"), _isInGame(false) {}
 HelpEngine::HelpEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields)
 	: MenuEngine(clawLevelEngineFields, false, "STATES/HELP/SCREENS/HELP.PCX"), _isInGame(true)
 {
@@ -60,7 +61,7 @@ class CreditsEngine : public MenuEngine
 {
 public:
 	CreditsEngine()
-		: MenuEngine(false, "STATES/CREDITS/SCREENS/CREDITS.PCX"),
+		: MenuEngine("STATES/CREDITS/SCREENS/CREDITS.PCX"),
 		_startY(9800 / 480.f * _bgImg->size.height), // `480` is the original image height
 		_endY(-9600 / 480.f * _bgImg->size.height)
 	{
@@ -248,6 +249,8 @@ stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 shared_ptr<ClawLevelEngineFields> MenuEngine::_clawLevelEngineFields;
 
+MenuEngine::MenuEngine() : MenuEngine(true, "") {}
+MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine(false, bgPcxPath) {}
 MenuEngine::MenuEngine(bool allocChildren, const string& bgPcxPath) : MenuEngine({}, nullptr, allocChildren, bgPcxPath) {}
 MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool allocChildren, const string& bgPcxPath)
 {
@@ -294,7 +297,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 				_menusStack.push(_currMenu);
 				_currMenu = &m;
 				changeEngine<MenuEngine>(mousePosition, _cursor);
-				};
+			};
 			break;
 
 		case HierarchicalMenu::MenuOut:
@@ -305,14 +308,14 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 					_menusStack.pop();
 					changeEngine<MenuEngine>(mousePosition, _cursor);
 				}
-				};
+			};
 			break;
 
 		case HierarchicalMenu::ExitApp:
 			onClick = [&](MouseButtons) {
 				_nextEngine = nullptr;
 				StopEngine = true;
-				};
+			};
 			break;
 
 		case HierarchicalMenu::Help:
@@ -339,12 +342,18 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 			};
 			break;
 
-		case HierarchicalMenu::EndLife: // TODO
-			onClick = [](MouseButtons) { MessageBoxA(nullptr, "not impleted", "", 0); };
+		case HierarchicalMenu::EndLife:
+			onClick = [&](MouseButtons) {
+				BasePlaneObject::player->loseLife();
+				_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
+				while (_menusStack.size()) _menusStack.pop();
+				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
+			};
 			break;
 
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MouseButtons) {
+				AssetsManager::stopBackgroundMusic();
 				_currMenu = &HierarchicalMenu::MainMenu; // reset the menu
 				while (_menusStack.size()) _menusStack.pop();
 				changeEngine<MenuEngine>();
@@ -614,7 +623,7 @@ void LevelEndEngine::playNextLevel()
 
 
 OpeningScreenEngine::OpeningScreenEngine()
-	: MenuEngine(false, "STATES/ATTRACT/SCREENS/TITLE.PCX")
+	: MenuEngine("STATES/ATTRACT/SCREENS/TITLE.PCX")
 {
 	_wavId = AssetsManager::playWavFile("STATES/ATTRACT/SOUNDS/TITLE.WAV");
 	_totalTime = (int)AssetsManager::getWavFileDuration(_wavId);

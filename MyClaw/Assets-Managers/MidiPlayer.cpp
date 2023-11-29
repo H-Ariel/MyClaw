@@ -165,6 +165,7 @@ MidiPlayer::~MidiPlayer()
 void MidiPlayer::stop()
 {
 	_mutex.lock();
+	usleep(100000); // wait for the last note to finish playing (so mutex won't crash)
 	_isPlaying = false;
 	midiOutReset(_midiOut); // turn off all notes and reset the MIDI device
 	_mutex.unlock();
@@ -352,7 +353,7 @@ MidiPlayer::MidiEvent MidiPlayer::getNextEvent() const
 
 	buf += bytesread;
 
-	MidiEvent evt;
+	MidiEvent evt = {};
 	evt.absolute_time = track.absolute_time + time;
 	evt.data = buf;
 	evt.event = *buf;
