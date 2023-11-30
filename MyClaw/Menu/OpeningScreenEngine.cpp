@@ -1,9 +1,10 @@
 #include "OpeningScreenEngine.h"
+#include "MenuEngine.h"
 #include "../Assets-Managers/AssetsManager.h"
 
 
 OpeningScreenEngine::OpeningScreenEngine()
-	: MenuEngine("STATES/ATTRACT/SCREENS/TITLE.PCX")
+	: ScreenEngine("STATES/ATTRACT/SCREENS/TITLE.PCX")
 {
 	_wavId = AssetsManager::playWavFile("STATES/ATTRACT/SOUNDS/TITLE.WAV");
 	_totalTime = (int)AssetsManager::getWavFileDuration(_wavId);

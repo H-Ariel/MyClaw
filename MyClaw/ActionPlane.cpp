@@ -163,14 +163,14 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		return;
 	}
 
-	if (!player->isInDeathAnimation())
+	/*if (!player->isInDeathAnimation())
 	{
 		_physicsManager->checkCollides(player, [&] {
 #ifndef NO_DEATH
 			player->loseLife();
 #endif
 		});
-	}
+	}*/
 
 	if (_shakeTime > 0)
 		_shakeTime -= elapsedTime;
@@ -189,7 +189,18 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		obj = _objects[i];
 		obj->Logic(elapsedTime);
 
-		if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
+		if (obj == player)
+		{
+			if (!player->isInDeathAnimation())
+			{
+				_physicsManager->checkCollides(player, [&] {
+#ifndef NO_DEATH
+					player->loseLife();
+#endif
+					});
+			}
+		}
+		else if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
 			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{

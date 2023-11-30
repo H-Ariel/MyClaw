@@ -67,9 +67,9 @@ static string getBGImgPath2(int l)
 // TODO: draw cool animation of map/gem before showing score
 
 LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures)
-	: MenuEngine(getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start)
+	: ScreenEngine(getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start)
 {
-	MenuEngine::_clawLevelEngineFields.reset(); // clear level data (if player enter menu from level)
+	clearClawLevelEngineFields(); // clear level data (if player enter menu from level)
 
 	for (auto& i : collectedTreasures)
 	{
@@ -145,7 +145,7 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 }
 void LevelEndEngine::Logic(uint32_t elapsedTime)
 {
-	MenuEngine::Logic(elapsedTime);
+	ScreenEngine::Logic(elapsedTime);
 
 	uint8_t digits[3] = {}; // we have only 3 digits to display
 	MenuItem* item;

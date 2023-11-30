@@ -1,10 +1,10 @@
 #pragma once
 
-#include "MenuEngine.h"
+#include "ScreenEngine.h"
 #include "../Objects/Item.h"
 
 
-class LevelEndEngine : public MenuEngine
+class LevelEndEngine : public ScreenEngine
 {
 public:
 	LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures);

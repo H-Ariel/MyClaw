@@ -1,10 +1,10 @@
 #pragma once
 
-#include "MenuEngine.h"
+#include "ScreenEngine.h"
 #include "../GUI/UITextElement.h"
 
 
-class CreditsEngine : public MenuEngine
+class CreditsEngine : public ScreenEngine
 {
 public:
 	CreditsEngine();

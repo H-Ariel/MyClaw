@@ -1,24 +1,26 @@
 #include "WindowManager.h"
 
 
-static D2D1_POINT_2F defaultWindowOffset = {};
-
-float WindowManager::PixelSize = 1; // min value: 1
-HWND WindowManager::_hWnd = nullptr;
-ID2D1Factory* WindowManager::_d2dFactory = nullptr;
-IDWriteFactory* WindowManager::_dWriteFactory = nullptr;
-ID2D1HwndRenderTarget* WindowManager::_renderTarget = nullptr;
-IWICImagingFactory* WindowManager::_wicImagingFactory = nullptr;
-const D2D1_POINT_2F* WindowManager::_windowOffset = &defaultWindowOffset;
-ColorF WindowManager::_backgroundColor(0);
-D2D1_SIZE_F WindowManager::realSize = DEFAULT_WINDOW_SIZE;
-
 // throw exception if `func` failed
 #define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
 
+static const D2D1_POINT_2F defaultWindowOffset = {}; // empty point
 
-void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
+
+float WindowManager::PixelSize = 1; // min value: 1
+WindowManager* WindowManager::instance = nullptr;
+
+
+WindowManager::WindowManager(const TCHAR WindowClassName[], void* lpParam)
+	: _backgroundColor(0)
 {
+	_d2dFactory = nullptr;
+	_dWriteFactory = nullptr;
+	_renderTarget = nullptr;
+	_wicImagingFactory = nullptr;
+	_windowOffset = &defaultWindowOffset;
+	realSize = DEFAULT_WINDOW_SIZE;
+
 	_hWnd = CreateWindow(WindowClassName, L"", WS_OVERLAPPEDWINDOW, 100, 100, (int)realSize.width, (int)realSize.height, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
 	if (!_hWnd) throw Exception("Failed to create window");
 	ShowWindow(_hWnd, SW_SHOWDEFAULT);
@@ -28,8 +30,9 @@ void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
 	TRY_HRESULT(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(_dWriteFactory), (IUnknown**)(&_dWriteFactory)), "Faild to create write-factory");
 	TRY_HRESULT(CoInitialize(nullptr), "Failed to initialize COM");
 	TRY_HRESULT(CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)(&_wicImagingFactory)), "Failed to create WIC imaging factory");
+
 }
-void WindowManager::Finalize()
+WindowManager::~WindowManager()
 {
 	SafeRelease(_renderTarget);
 	SafeRelease(_d2dFactory);
@@ -38,29 +41,80 @@ void WindowManager::Finalize()
 	CoUninitialize();
 }
 
+void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
+{
+	if (instance == nullptr)
+		instance = DBG_NEW WindowManager(WindowClassName, lpParam);
+}
+void WindowManager::Finalize()
+{
+	if (instance)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+}
+
+void WindowManager::setTitle(const string& title) 
+{
+	SetWindowText(instance->_hWnd, wstring(title.begin(), title.end()).c_str());
+}
 void WindowManager::setWindowOffset(const D2D1_POINT_2F* offset)
 {
 	if (offset)
-		_windowOffset = offset;
+		instance->_windowOffset = offset;
 	else
-		_windowOffset = &defaultWindowOffset;
+		instance->_windowOffset = &defaultWindowOffset;
+}
+void WindowManager::setBackgroundColor(ColorF bgColor) 
+{
+	instance->_backgroundColor = bgColor; 
+}
+ColorF WindowManager::getBackgroundColor()
+{
+	return instance->_backgroundColor; 
+}
+D2D1_SIZE_F WindowManager::getSize() 
+{
+	return { instance->realSize.width / PixelSize, instance->realSize.height / PixelSize };
+}
+D2D1_SIZE_F WindowManager::getRealSize() 
+{ 
+	return instance->realSize;
+}
+HWND WindowManager::getHwnd() 
+{ 
+	return instance->_hWnd;
+}
+
+bool WindowManager::isInScreen(Rectangle2D rc)
+{
+	return _isInScreen(rc);
 }
 
 void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
 {
-	if (_renderTarget)
+	if (instance && instance->_renderTarget)
 	{
-		realSize = { (float)newSize.width, (float)newSize.height };
-		_renderTarget->Resize(newSize);
+		instance->realSize = { (float)newSize.width, (float)newSize.height };
+		instance->_renderTarget->Resize(newSize);
 	}
 }
-
+void WindowManager::BeginDraw()
+{
+	instance->_renderTarget->BeginDraw();
+	instance->_renderTarget->Clear(instance->_backgroundColor);
+}
+void WindowManager::EndDraw()
+{
+	instance->_renderTarget->EndDraw();
+}
 void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)
 {
 	if (!_isInScreen(dst)) return;
 
 	ID2D1SolidColorBrush* brush = nullptr;
-	_renderTarget->CreateSolidColorBrush(color, &brush);
+	instance->_renderTarget->CreateSolidColorBrush(color, &brush);
 	if (brush)
 	{
 		dst.top *= PixelSize;
@@ -68,7 +122,7 @@ void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)
 		dst.left *= PixelSize;
 		dst.right *= PixelSize;
 
-		_renderTarget->DrawRectangle(dst, brush, width);
+		instance->_renderTarget->DrawRectangle(dst, brush, width);
 		SafeRelease(brush);
 	}
 }
@@ -81,7 +135,7 @@ void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
 	if (!_isInScreen(dst)) return;
 
 	ID2D1SolidColorBrush* brush = nullptr;
-	_renderTarget->CreateSolidColorBrush(color, &brush);
+	instance->_renderTarget->CreateSolidColorBrush(color, &brush);
 	if (brush)
 	{
 		dst.top *= PixelSize;
@@ -89,7 +143,7 @@ void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
 		dst.left *= PixelSize;
 		dst.right *= PixelSize;
 
-		_renderTarget->FillRectangle(dst, brush);
+		instance->_renderTarget->FillRectangle(dst, brush);
 		SafeRelease(brush);
 	}
 }
@@ -115,21 +169,21 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 		// set to draw mirrored
 		D2D1_MATRIX_3X2_F transformMatrix = Matrix3x2F::Identity();
 		transformMatrix._11 = -1;
-		_renderTarget->SetTransform(transformMatrix);
+		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 
-	_renderTarget->DrawBitmap(bitmap, dst, opacity);
+	instance->_renderTarget->DrawBitmap(bitmap, dst, opacity);
 
 	if (mirrored)
 	{
 		// back to normal
-		_renderTarget->SetTransform(Matrix3x2F::Identity());
+		instance->_renderTarget->SetTransform(Matrix3x2F::Identity());
 	}
 }
 void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat, ID2D1SolidColorBrush* brush, const Rectangle2D& layoutRect)
 {
 	if (!textFormat || !brush) return;
-	_renderTarget->DrawText(text.c_str(), (UINT32)text.length(), textFormat, layoutRect, brush);
+	instance->_renderTarget->DrawText(text.c_str(), (UINT32)text.length(), textFormat, layoutRect, brush);
 }
 void WindowManager::drawText(const wstring& text, const FontData& font, const Rectangle2D& layoutRect, ColorF color)
 {
@@ -145,12 +199,12 @@ ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uin
 	ID2D1Bitmap* bitmap = nullptr;
 	IWICBitmap* wicBitmap = nullptr;
 
-	TRY_HRESULT(_wicImagingFactory->CreateBitmapFromMemory(
+	TRY_HRESULT(instance->_wicImagingFactory->CreateBitmapFromMemory(
 		width, height, GUID_WICPixelFormat32bppPRGBA,
 		width * 4, width * height * 4, (BYTE*)buffer,
 		&wicBitmap), "Failed to create WIC bitmap from buffer");
 
-	TRY_HRESULT(_renderTarget->CreateBitmapFromWicBitmap(wicBitmap, &bitmap), "Failed to create D2D bitmap from WIC bitmap");
+	TRY_HRESULT(instance->_renderTarget->CreateBitmapFromWicBitmap(wicBitmap, &bitmap), "Failed to create D2D bitmap from WIC bitmap");
 
 	SafeRelease(wicBitmap);
 
@@ -159,7 +213,7 @@ ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uin
 IDWriteTextFormat* WindowManager::createTextFormat(const FontData& font)
 {
 	IDWriteTextFormat* textFormat = nullptr;
-	_dWriteFactory->CreateTextFormat(font.family.c_str(), nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+	instance->_dWriteFactory->CreateTextFormat(font.family.c_str(), nullptr, DWRITE_FONT_WEIGHT_NORMAL,
 		DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, font.size, L"", &textFormat);
 
 	if (textFormat)
@@ -183,21 +237,16 @@ IDWriteTextFormat* WindowManager::createTextFormat(const FontData& font)
 ID2D1SolidColorBrush* WindowManager::createSolidBrush(ColorF color)
 {
 	ID2D1SolidColorBrush* brush = nullptr;
-	_renderTarget->CreateSolidColorBrush(color, &brush);
+	instance->_renderTarget->CreateSolidColorBrush(color, &brush);
 	return brush;
 }
 
-
-bool WindowManager::isInScreen(Rectangle2D rc)
-{
-	return _isInScreen(rc);
-}
 bool WindowManager::_isInScreen(Rectangle2D& rc)
 {
-	rc.top -= _windowOffset->y;
-	rc.bottom -= _windowOffset->y;
-	rc.left -= _windowOffset->x;
-	rc.right -= _windowOffset->x;
+	rc.top -= instance->_windowOffset->y;
+	rc.bottom -= instance->_windowOffset->y;
+	rc.left -= instance->_windowOffset->x;
+	rc.right -= instance->_windowOffset->x;
 
 	const D2D1_SIZE_F wndSz = getSize();
 	return (0 <= rc.right && rc.left < wndSz.width && 0 <= rc.bottom && rc.top < wndSz.height);

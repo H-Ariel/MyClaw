@@ -20,7 +20,7 @@
     <Filter Include="Enemies\Bosses">
       <UniqueIdentifier>{1c7d5223-a64e-44b5-b5df-53149334a50d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Menus-Engines">
+    <Filter Include="Menu">
       <UniqueIdentifier>{f8272b00-1ad2-4884-a7da-6dd7fe0c4aa6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -277,32 +277,35 @@
     <ClCompile Include="LevelPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\HelpScreenEngine.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\HierarchicalMenu.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\LevelLoadingEngine.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\LevelEndEngine.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\HierarchicalMenu.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\LevelLoadingEngine.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\OpeningScreenEngine.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\MenuBackgroundImage.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\LevelEndEngine.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\MenuEngine.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\CreditsEngine.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\MenuItem.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\MenuItem.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\OpeningScreenEngine.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\MenuBackgroundImage.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\CreditsEngine.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menus-Engines\MenuEngine.cpp">
-      <Filter>Menus-Engines</Filter>
+    <ClCompile Include="Menu\HelpScreenEngine.cpp">
+      <Filter>Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu\ScreenEngine.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -555,32 +558,35 @@
     <ClInclude Include="LevelPlane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\HelpScreenEngine.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\HelpScreenEngine.h">
+      <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\LevelLoadingEngine.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\HierarchicalMenu.h">
+      <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\HierarchicalMenu.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\LevelEndEngine.h">
+      <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\OpeningScreenEngine.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\LevelLoadingEngine.h">
+      <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\LevelEndEngine.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\MenuBackgroundImage.h">
+      <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\CreditsEngine.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\MenuEngine.h">
+      <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\MenuItem.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\MenuItem.h">
+      <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\MenuBackgroundImage.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\OpeningScreenEngine.h">
+      <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menus-Engines\MenuEngine.h">
-      <Filter>Menus-Engines</Filter>
+    <ClInclude Include="Menu\CreditsEngine.h">
+      <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu\ScreenEngine.h">
+      <Filter>Menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 
 
 MenuItem::MenuItem(string pcxPath, float xRatio, float yRatio, function<void(MouseButtons)> onClick,
-	MenuBackgroundImage* bgImg, MenuEngine* parent)
+	MenuBackgroundImage* bgImg, ScreenEngine* parent)
 	: UIBaseButton(onClick, parent), UIBaseImage(*AssetsManager::loadImage(pcxPath)),
 	_posRatio({ xRatio, yRatio }), _bgImg(bgImg)
 {

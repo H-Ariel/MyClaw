@@ -529,8 +529,8 @@ void Player::Logic(uint32_t elapsedTime)
 
 		if (_raisedPowderKeg)
 		{
-			if (isStanding())
-				speed.y = 0;
+			//if (isStanding())
+			//	speed.y = 0;
 			_raisedPowderKeg->position.x = position.x;
 			_raisedPowderKeg->position.y = position.y - 104;
 		}
@@ -908,7 +908,8 @@ bool Player::collectItem(Item* item)
 
 bool Player::isFalling() const
 {
-	return speed.y > 0 && !_isOnLadder;
+	// `20` is MAX_ITER_TIME at `GameMainApp`. `20*GRAVITY` is the speed when CC starts falling
+	return speed.y > (20 * GRAVITY) && !_isOnLadder;
 }
 bool Player::isStanding() const
 {

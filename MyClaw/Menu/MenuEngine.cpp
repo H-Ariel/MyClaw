@@ -10,25 +10,19 @@
 #include "MenuItem.h"
 
 
-#define DEFAULT_BG_IMAGE "STATES/MENU/SCREENS/MENU.PCX"
-
-
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
-shared_ptr<ClawLevelEngineFields> MenuEngine::_clawLevelEngineFields;
+
 
 MenuEngine::MenuEngine() : MenuEngine(true, "") {}
 MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine(false, bgPcxPath) {}
 MenuEngine::MenuEngine(bool allocChildren, const string& bgPcxPath) : MenuEngine({}, nullptr, allocChildren, bgPcxPath) {}
 MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool allocChildren, const string& bgPcxPath)
+	: ScreenEngine(bgPcxPath)
 {
-	_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(bgPcxPath.empty() ? DEFAULT_BG_IMAGE : bgPcxPath));
-
 	mousePosition = mPos;
-	WindowManager::setTitle("Claw");
-	WindowManager::setWindowOffset(nullptr);
-	WindowManager::setBackgroundColor(ColorF::Black);
-	WindowManager::PixelSize = 1;
+	WindowManager::setTitle("Claw"); // TODO: change title according to the menu
+	
 
 	if (!allocChildren)
 	{
@@ -156,24 +150,9 @@ MenuEngine::MenuEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields, 
 MenuEngine::~MenuEngine()
 {
 	if (_cursor) _elementsList.pop_back(); // remove the cursor
-	for (UIBaseElement* i : _elementsList) delete i;
 }
 
 void MenuEngine::Logic(uint32_t elapsedTime) {
 	if (_cursor) _cursor->position = { mousePosition.x + 16.f, mousePosition.y + 17.f };
-	BaseEngine::Logic(elapsedTime);
-}
-
-void MenuEngine::backToMenu()
-{
-	_currMenu = _menusStack.top();
-	_menusStack.pop();
-	changeEngine<MenuEngine>();
-}
-
-
-void MenuEngine::backToMainMenu()
-{
-	_currMenu = &HierarchicalMenu::MainMenu;
-	while (_menusStack.size()) _menusStack.pop();
+	ScreenEngine::Logic(elapsedTime);
 }

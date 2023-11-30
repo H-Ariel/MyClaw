@@ -1,11 +1,12 @@
 #include "GameMainApp.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "GUI/WindowManager.h"
-#include "Menus-Engines/OpeningScreenEngine.h"
+#include "Menu/OpeningScreenEngine.h"
 #include <chrono>
 
 #ifdef _DEBUG
-#include "Menus-Engines/LevelLoadingEngine.h"
+#include "Menu/LevelLoadingEngine.h"
+#include "Menu/MenuEngine.h"
 #endif 
 
 

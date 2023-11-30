@@ -1,15 +1,11 @@
 #pragma once
 
-#include "../BaseEngine.h"
 #include "../GUI/Animation.h"
-#include "MenuBackgroundImage.h"
 #include "HierarchicalMenu.h"
+#include "ScreenEngine.h"
 
 
-struct ClawLevelEngineFields;
-
-
-class MenuEngine : public BaseEngine
+class MenuEngine : public ScreenEngine
 {
 public:
 	MenuEngine(); // default background image with children
@@ -21,15 +17,11 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 
-	static void backToMainMenu();
-
 protected:
-	virtual void backToMenu();
-
 	static stack<const HierarchicalMenu*> _menusStack;
 	static const HierarchicalMenu* _currMenu;
-	static shared_ptr<ClawLevelEngineFields> _clawLevelEngineFields;
 
 	shared_ptr<Animation> _cursor;
-	MenuBackgroundImage* _bgImg;
+
+	friend class ScreenEngine;
 };

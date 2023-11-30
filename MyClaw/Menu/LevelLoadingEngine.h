@@ -1,9 +1,9 @@
 #pragma once
 
-#include "MenuEngine.h"
+#include "ScreenEngine.h"
 
 
-class LevelLoadingEngine : public MenuEngine
+class LevelLoadingEngine : public ScreenEngine
 {
 public:
 	LevelLoadingEngine(int lvlNo);

@@ -2,8 +2,9 @@
 #include "Assets-Managers/AssetsManager.h"
 #include "GUI/WindowManager.h"
 #include "LevelPlane.h"
-#include "Menus-Engines/HelpScreenEngine.h"
-#include "Menus-Engines/LevelEndEngine.h"
+#include "Menu/HelpScreenEngine.h"
+#include "Menu/LevelEndEngine.h"
+#include "Menu/MenuEngine.h"
 
 
 ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
@@ -154,7 +155,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		{
 			MessageBoxA(nullptr, "GAME OVER", "", 0);
 			// TODO: show GAME OVER screen and then go to menu
-			MenuEngine::backToMainMenu();
+			MenuEngine::setMainMenu();
 			changeEngine<MenuEngine>();
 		}
 	}
@@ -170,7 +171,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 
 	if (key == VK_F1) // open help
 	{
-		_fields->_saveBgColor = WindowManager::getBackgroundColor();
+		_fields->_saveBgColor = WindowManager::getBackgroundColor(); // TODO: move to HelpScreenEngine ?
 		_fields->_savePixelSize = WindowManager::PixelSize;
 		changeEngine<HelpScreenEngine>(_fields);
 	}

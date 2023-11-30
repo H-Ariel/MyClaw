@@ -3,7 +3,7 @@
 
 
 CreditsEngine::CreditsEngine()
-	: MenuEngine("STATES/CREDITS/SCREENS/CREDITS.PCX"),
+	: ScreenEngine("STATES/CREDITS/SCREENS/CREDITS.PCX"),
 	_startY(9800 / 480.f * _bgImg->size.height), // `480` is the original image height
 	_endY(-9600 / 480.f * _bgImg->size.height)
 {
@@ -31,7 +31,7 @@ CreditsEngine::~CreditsEngine()
 
 void CreditsEngine::Logic(uint32_t elapsedTime)
 {
-	MenuEngine::Logic(elapsedTime);
+	ScreenEngine::Logic(elapsedTime);
 
 	_creditsTextElement->position.y -= 0.07f * elapsedTime;
 

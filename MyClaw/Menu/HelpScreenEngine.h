@@ -1,9 +1,9 @@
 #pragma once
 
-#include "MenuEngine.h"
+#include "ScreenEngine.h"
 
 
-class HelpScreenEngine : public MenuEngine
+class HelpScreenEngine : public ScreenEngine
 {
 public:
 	HelpScreenEngine();
