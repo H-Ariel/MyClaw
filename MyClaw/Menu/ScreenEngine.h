@@ -10,7 +10,7 @@ class ScreenEngine : public BaseEngine
 {
 public:
 	ScreenEngine(const string& bgPcxPath = "");
-	ScreenEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields, const string& bgPcxPath);
+	ScreenEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath);
 	~ScreenEngine();
 
 	static void setIngameMenu();

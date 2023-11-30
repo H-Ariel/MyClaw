@@ -8,18 +8,21 @@
 class MenuEngine : public ScreenEngine
 {
 public:
-	MenuEngine(); // default background image with children
-	MenuEngine(const string& bgPcxPath); // just image without children
-	MenuEngine(bool allocChildren, const string& bgPcxPath);
-	MenuEngine(D2D1_POINT_2U mousePosition, shared_ptr<Animation> cursor, bool allocChildren = true, const string& bgPcxPath = "");
-	MenuEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields, bool allocChildren = true, const string& bgPcxPath = "");
+	MenuEngine(const string& bgPcxPath = "");
+	MenuEngine(D2D1_POINT_2U mousePosition, shared_ptr<Animation> cursor, const string& bgPcxPath = "");
+	MenuEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath = "");
 	~MenuEngine();
 
 	void Logic(uint32_t elapsedTime) override;
+	void OnKeyUp(int key) override;
 
 protected:
 	static stack<const HierarchicalMenu*> _menusStack;
 	static const HierarchicalMenu* _currMenu;
+
+	void menuIn(const HierarchicalMenu* newMenu);
+	void menuOut();
+	void backToGame();
 
 	shared_ptr<Animation> _cursor;
 

@@ -17,16 +17,11 @@ stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
 
-MenuEngine::MenuEngine() : MenuEngine(true, "") {}
-MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine(false, bgPcxPath) {}
-MenuEngine::MenuEngine(bool allocChildren, const string& bgPcxPath) : MenuEngine({}, nullptr, allocChildren, bgPcxPath) {}
-MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool allocChildren, const string& bgPcxPath)
+MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine({}, nullptr, bgPcxPath) {}
+MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const string& bgPcxPath)
 	: ScreenEngine(bgPcxPath)
 {
 	mousePosition = mPos;
-
-	if (!allocChildren)
-		return;
 
 	if (cursor)
 	{
@@ -56,22 +51,11 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 			break;
 
 		case HierarchicalMenu::MenuIn:
-			onClick = [&](MouseButtons) {
-				_menusStack.push(_currMenu);
-				_currMenu = &m;
-				changeEngine<MenuEngine>(mousePosition, _cursor);
-			};
+			onClick = [&](MouseButtons) { menuIn(&m); };
 			break;
 
 		case HierarchicalMenu::MenuOut:
-			onClick = [&](MouseButtons) {
-				if (_menusStack.size() > 0)
-				{
-					_currMenu = _menusStack.top();
-					_menusStack.pop();
-					changeEngine<MenuEngine>(mousePosition, _cursor);
-				}
-			};
+			onClick = [&](MouseButtons) { menuOut(); };
 			break;
 
 		case HierarchicalMenu::ExitApp:
@@ -98,11 +82,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 			break;
 
 		case HierarchicalMenu::BackToGame:
-			onClick = [&](MouseButtons) {
-				CLEAR_MENUS_STACK;
-				_currMenu = &HierarchicalMenu::InGameMenu;
-				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
-			};
+			onClick = [&](MouseButtons) { backToGame(); };
 			break;
 
 		case HierarchicalMenu::EndLife:
@@ -145,10 +125,10 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 		_elementsList.push_back(_cursor.get());
 	}
 }
-MenuEngine::MenuEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields, bool allocChildren, const string& bgPcxPath)
-	: MenuEngine(allocChildren, bgPcxPath)
+MenuEngine::MenuEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath)
+	: MenuEngine(bgPcxPath)
 {
-	_clawLevelEngineFields = clawLevelEngineFields; // I don't have another way...
+	_clawLevelEngineFields = fields; // I don't have another way...
 }
 MenuEngine::~MenuEngine()
 {
@@ -158,4 +138,44 @@ MenuEngine::~MenuEngine()
 void MenuEngine::Logic(uint32_t elapsedTime) {
 	if (_cursor) _cursor->position = { mousePosition.x + 16.f, mousePosition.y + 17.f };
 	ScreenEngine::Logic(elapsedTime);
+}
+void MenuEngine::OnKeyUp(int key)
+{
+	if (key == VK_ESCAPE)
+	{
+		if (_currMenu == &HierarchicalMenu::MainMenu)
+		{
+			menuIn(&HierarchicalMenu::MainMenu.subMenus[7]); // quit-menu
+		}
+		else if (_currMenu == &HierarchicalMenu::MainMenu.subMenus[7])
+		{
+			menuOut(); // back to main-menu
+		}
+		else if (_currMenu == &HierarchicalMenu::InGameMenu)
+		{
+			backToGame();
+		}
+	}
+}
+
+void MenuEngine::menuIn(const HierarchicalMenu* newMenu)
+{
+	_menusStack.push(_currMenu);
+	_currMenu = newMenu;
+	changeEngine<MenuEngine>(mousePosition, _cursor);
+}
+void MenuEngine::menuOut()
+{
+	if (_menusStack.size() > 0)
+	{
+		_currMenu = _menusStack.top();
+		_menusStack.pop();
+		changeEngine<MenuEngine>(mousePosition, _cursor);
+	}
+}
+void MenuEngine::backToGame()
+{
+	CLEAR_MENUS_STACK;
+	_currMenu = &HierarchicalMenu::InGameMenu;
+	changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
 }

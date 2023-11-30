@@ -20,7 +20,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int)
 	}
 	catch (const Exception& ex)
 	{
+#ifdef _DEBUG
 		cout << "Error: " << ex.what() << endl;
+#else
+		MessageBoxA(nullptr, ex.what().c_str(), "Error", MB_OK | MB_ICONERROR);
+#endif
 	}
 
 #ifdef _DEBUG

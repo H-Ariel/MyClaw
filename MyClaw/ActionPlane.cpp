@@ -266,7 +266,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	if (exploseShake) // TODO: sync explose with animation (before remove the object)
+	if (exploseShake)
 		_shakeTime = 500;
 #endif
 }

@@ -57,9 +57,9 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
 
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
-//	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
+	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 2396, 1168 };
-	if (levelNumber == 3) BasePlaneObject::player->position = { 2201, 10756 };
+//	if (levelNumber == 3) BasePlaneObject::player->position = { 2201, 10756 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 9693, 8528 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 12289, 8144 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 11054, 8720 };
@@ -171,7 +171,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 
 	if (key == VK_F1) // open help
 	{
-		_fields->_saveBgColor = WindowManager::getBackgroundColor(); // TODO: move to HelpScreenEngine ?
+		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_savePixelSize = WindowManager::PixelSize;
 		changeEngine<HelpScreenEngine>(_fields);
 	}

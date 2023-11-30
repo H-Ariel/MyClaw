@@ -49,8 +49,10 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 		catch (const Exception&)
 		{
 			img = allocNewSharedPtr<UIBaseImage>(nullptr); // empty image
+#ifdef _DEBUG
 			//cout << "WARNING: error while loading image \"" << path << "\". message: " << ex.what() << endl;
 			cout << "WARNING: a blank image has been inserted. image path: \"" << path << '"' << endl;
+#endif
 		}
 
 		_loadedBitmaps[path] = { img->_bitmap, img->offset };

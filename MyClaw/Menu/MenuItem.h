@@ -9,7 +9,7 @@ class MenuItem : virtual UIBaseButton, virtual UIBaseImage
 	using UIBaseImage::Draw;
 
 public:
-	MenuItem(string pcxPath, float xRatio, float yRatio,
+	MenuItem(const string& pcxPath, float xRatio, float yRatio,
 		function<void(MouseButtons)> onClick, MenuBackgroundImage* bgImg, ScreenEngine* parent);
 
 	void Logic(uint32_t) override;

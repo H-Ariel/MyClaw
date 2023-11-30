@@ -2,8 +2,8 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
-MenuItem::MenuItem(string pcxPath, float xRatio, float yRatio, function<void(MouseButtons)> onClick,
-	MenuBackgroundImage* bgImg, ScreenEngine* parent)
+MenuItem::MenuItem(const string& pcxPath, float xRatio, float yRatio,
+	function<void(MouseButtons)> onClick, MenuBackgroundImage* bgImg, ScreenEngine* parent)
 	: UIBaseButton(onClick, parent), UIBaseImage(*AssetsManager::loadImage(pcxPath)),
 	_posRatio({ xRatio, yRatio }), _bgImg(bgImg)
 {
@@ -18,7 +18,7 @@ void MenuItem::Logic(uint32_t)
 	UIBaseButton::position.y = _bgImg->position.y + _posRatio.y * _bgImg->size.height;
 	UIBaseImage::position = UIBaseButton::position;
 	UIBaseImage::size = UIBaseButton::size;
-	UIBaseButton::Logic(0);
+	UIBaseButton::Logic(0); // just to update the size and position
 }
 
 void MenuItem::mulImageSizeRatio(float n)

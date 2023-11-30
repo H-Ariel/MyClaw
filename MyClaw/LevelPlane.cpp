@@ -128,7 +128,9 @@ void LevelPlane::readPlaneObjects(BufferReader& reader)
 		}
 		catch (const Exception& ex)
 		{
+#ifdef _DEBUG
 			cout << "Error while reading object: " << ex.what() << endl;
+#endif
 		}
 	}
 }

@@ -7,7 +7,7 @@
 
 
 // based on OpenClaw
-static D2D1_POINT_2F ropeFrameIndexToRopeHandleOffset[120] = {
+static D2D1_POINT_2F RopeFrameIndexToRopeHandleOffset[120] = {
 	{ -173,  22 }, { -172,  23 }, { -172,  24 }, { -170,  27 }, { -169,  29 },
 	{ -168,  31 }, { -166,  35 }, { -164,  39 }, { -163,  44 }, { -162,  47 },
 	{ -161,  52 }, { -155,  57 }, { -149,  63 }, { -144,  71 }, { -139,  76 },
@@ -35,23 +35,18 @@ static D2D1_POINT_2F ropeFrameIndexToRopeHandleOffset[120] = {
 };
 
 
-// TODO: somthibg is wrong with rope animation and CC movement
 Rope::Rope(const WwdObject& obj)
 	: BasePlaneObject(obj), _edgePos({})
 {
-//	myMemCpy(this->ZCoord, player->ZCoord + 1);
-	int32_t speed = obj.speedX / 60;
-	if (speed == 0)
-		speed = 25;
-	
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, speed);
+	myMemCpy(ZCoord, player->ZCoord + 1);
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, obj.speedX ? (obj.speedX / 60) : 25);
 }
 
 void Rope::Logic(uint32_t elapsedTime)
 {
-	size_t idx = _ani->getFrameNumber();
-	_edgePos.x = position.x + ropeFrameIndexToRopeHandleOffset[idx].x;
-	_edgePos.y = position.y + ropeFrameIndexToRopeHandleOffset[idx].y;
+	D2D1_POINT_2F offset = RopeFrameIndexToRopeHandleOffset[_ani->getFrameNumber()];
+	_edgePos.x = position.x + offset.x;
+	_edgePos.y = position.y + offset.y;
 
 	if (!player->isJumping() && player->GetRect().intersects(GetRect()))
 	{

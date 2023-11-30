@@ -17,10 +17,10 @@ ScreenEngine::ScreenEngine(const string& bgPcxPath)
 	WindowManager::setBackgroundColor(ColorF::Black);
 	WindowManager::PixelSize = 1;
 }
-ScreenEngine::ScreenEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields, const string& bgPcxPath)
+ScreenEngine::ScreenEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath)
 	: ScreenEngine(bgPcxPath)
 {
-	_clawLevelEngineFields = clawLevelEngineFields;
+	_clawLevelEngineFields = fields;
 }
 
 ScreenEngine::~ScreenEngine()
