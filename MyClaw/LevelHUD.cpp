@@ -3,7 +3,9 @@
 #include "GUI/WindowManager.h"
 #include "ActionPlane.h"
 
-// TODO: draw boss health bar
+
+int LevelHUD::_bossInitialHealth = 0;
+
 
 LevelHUD::LevelHUD(const D2D1_POINT_2F& offset)
 	: _offset(offset)
@@ -27,6 +29,10 @@ LevelHUD::LevelHUD(const D2D1_POINT_2F& offset)
 		sprintf(imgPath, "GAME/IMAGES/INTERFACE/SCORENUMBERS/%03d.PID", i);
 		_scoreNumbers[i] = AssetsManager::loadImage(imgPath);
 	}
+}
+LevelHUD::~LevelHUD()
+{
+	_bossInitialHealth = 0;
 }
 
 void LevelHUD::Draw()
@@ -70,6 +76,19 @@ void LevelHUD::Draw()
 		_bossBar->position.y = _offset.y + 0.9f * wndSz.height;
 		_bossBar->updateImageData();
 		_bossBar->Draw();
+
+		// find the health bar rect (inside the boss bar frame)
+		Rectangle2D rc = _bossBar->GetRect();
+		rc.top += 12;
+		rc.bottom -= 11;
+		rc.left += 18;
+		rc.right -= 18;
+
+		float width = rc.right - rc.left;
+		float percent = (float)ActionPlane::getBossHealth() / _bossInitialHealth;
+		rc.right = rc.left + width * percent;
+
+		WindowManager::fillRect(rc, ColorF::Red); // draw the health bar
 	}
 }
 
@@ -81,7 +100,7 @@ void LevelHUD::drawNumbers(uint32_t amount, int numOfDigits, shared_ptr<UIBaseIm
 	if (!isScore) _strrev(str);
 	else {
 		char tmp[9];
-		strcpy(tmp, str + 8 - numOfDigits);
+		strcpy(tmp, str + 8 - numOfDigits); // save only what we need
 		strcpy(str, tmp);
 	}
 	

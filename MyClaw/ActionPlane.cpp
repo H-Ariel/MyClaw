@@ -1,4 +1,5 @@
 #include "ActionPlane.h"
+#include "LevelHUD.h"
 #include "GUI/WindowManager.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "Player.h"
@@ -75,12 +76,12 @@ ActionPlane* ActionPlane::_instance = nullptr;
 
 ActionPlane::ActionPlane(WapWorld* wwd)
 	: LevelPlane(wwd), _planeSize({}), _physicsManager(nullptr), _shakeTime(0), _holeRadius(0)
-	, _deathAniWait(false), _needSort(true), _isInBoss(false), _state(States::Play)
+	, _deathAniWait(false), _needSort(true), _isInBoss(false), _state(States::Play), _boss(nullptr)
 {
 	if (_instance != nullptr)
 	{
 #ifdef _DEBUG
-		cout << "Warning: ActionPlane already exists (level " << _wwd->levelNumber << ")" << endl;
+		cout << "Warning: ActionPlane already exists (level " << _instance->_wwd->levelNumber << ")" << endl;
 #endif
 		//throw Exception("ActionPlane already exists");
 	}
@@ -656,7 +657,11 @@ void ActionPlane::playerEnterToBoss()
 	{
 		_instance->_objects.push_back(i);
 		if (isbaseinstance<BaseEnemy>(i))
+		{
+			if (isbaseinstance<BaseBoss>(i)) // TODO: i think that this condition is not needed...
+				_instance->_boss = (BaseBoss*)i;
 			_instance->_enemies.push_back((BaseEnemy*)i);
+		}
 		else if (isProjectile(i))
 			_instance->_projectiles.push_back((Projectile*)i);
 		else if (isbaseinstance<BaseDamageObject>(i))
@@ -664,7 +669,9 @@ void ActionPlane::playerEnterToBoss()
 	}
 	_instance->_bossObjects.clear();
 	_instance->_needSort = true;
-	_instance->_isInBoss = true;
+	_instance->_isInBoss = true; // TODO: delete this field and use `_boss != nullptr` instead
+
+	LevelHUD::setBossInitialHealth(_instance->_boss->getHealth());
 
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Boss);
 }

@@ -2,11 +2,9 @@
 
 #include "LevelPlane.h"
 #include "Player.h"
+#include "BaseEnemy.h"
 #include "PhysicsManager.h"
 #include "Objects/PowderKeg.h"
-
-
-class BaseEnemy;
 
 
 class ActionPlane : public LevelPlane
@@ -28,6 +26,7 @@ public:
 	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
 	static void playerEnterToBoss();
 	static bool isInBoss() { return _instance->_isInBoss; }
+	static int getBossHealth() { return _instance->_boss->getHealth(); }
 
 private:
 	void updatePosition();
@@ -47,6 +46,7 @@ private:
 	vector<Rectangle2D> _shakeRects;
 	D2D1_SIZE_F _planeSize;
 	PhysicsManager* _physicsManager;
+	BaseBoss* _boss;
 	int _shakeTime;
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish

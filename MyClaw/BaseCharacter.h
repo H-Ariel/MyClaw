@@ -19,6 +19,8 @@ public:
 	virtual bool isTakeDamage() const;
 	virtual bool isAttack() const;
 
+	int getHealth() const { return _health; }
+
 
 protected:
 	Rectangle2D setRectByCenter(Rectangle2D rc) const;
