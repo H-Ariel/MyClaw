@@ -81,3 +81,7 @@ int ClawDynamite::getDamage() const
 		return ClawProjectile::getDamage();
 	return 0;
 }
+bool ClawDynamite::isStartExplode() const
+{
+	return _state == State::Explos && _ani->getFrameNumber() == 1;
+}

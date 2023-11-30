@@ -182,7 +182,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	}
 
 	BasePlaneObject* obj;
-	bool exploseShake = false; // shake screen after explodes of ClawDynamit and poder-keg
+	bool exploseShake = false; // shake screen after explodes of Claw's dynamit and powder-kegs
 
 	for (size_t i = 0; i < _objects.size(); i++)
 	{
@@ -221,6 +221,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			}
 		}
 
+		if (_shakeTime <= 0 &&
+			(isinstance<PowderKeg>(obj) && ((PowderKeg*)obj)->isStartExplode()) ||
+			(isinstance<ClawDynamite>(obj) && ((ClawDynamite*)obj)->isStartExplode()))
+			exploseShake = true;
+
 		if (obj->removeObject)
 		{
 			if (isbaseinstance<BaseEnemy>(obj))
@@ -233,18 +238,10 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 					continue;
 				}
 				else
-				{
 					eraseByValue(_projectiles, obj);
-
-					if (isinstance<ClawDynamite>(obj))
-						exploseShake = true;
-				}
 			}
 			else if (isinstance<PowderKeg>(obj))
-			{
 				eraseByValue(_powderKegs, obj);
-				exploseShake = true;
-			}
 			else if (isbaseinstance<BaseDamageObject>(obj))
 				eraseByValue(_damageObjects, obj);
 
@@ -359,13 +356,12 @@ void ActionPlane::addObject(const WwdObject& obj)
 		PowderKeg* p = DBG_NEW PowderKeg(obj);
 		_objects.push_back(p); _powderKegs.push_back(p);
 	}
-	else
+	else if (obj.logic == "PowderKeg")
+	{
+		PowderKeg* p = DBG_NEW PowderKeg(obj);
+		_objects.push_back(p); _powderKegs.push_back(p);
+	}
 #endif
-		if (obj.logic == "PowderKeg")
-		{
-			PowderKeg* p = DBG_NEW PowderKeg(obj);
-			_objects.push_back(p); _powderKegs.push_back(p);
-		}
 	if (endsWith(obj.logic, "Elevator"))
 	{
 		_objects.push_back(Elevator::create(obj, _wwd->levelNumber));

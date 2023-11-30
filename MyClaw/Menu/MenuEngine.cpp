@@ -10,6 +10,9 @@
 #include "MenuItem.h"
 
 
+#define CLEAR_MENUS_STACK for (; _menusStack.size(); _menusStack.pop())
+
+
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
@@ -21,13 +24,9 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 	: ScreenEngine(bgPcxPath)
 {
 	mousePosition = mPos;
-	WindowManager::setTitle("Claw"); // TODO: change title according to the menu
-	
 
 	if (!allocChildren)
-	{
 		return;
-	}
 
 	if (cursor)
 	{
@@ -38,6 +37,9 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 		AssetsManager::loadPidPalette("LEVEL1/PALETTES/MAIN.PAL");
 		_cursor = AssetsManager::loadAnimation("STATES/MENU/ANIS/CURSOR.ANI");
 	}
+
+	if (_currMenu == &HierarchicalMenu::MainMenu)
+		WindowManager::setTitle("Claw");
 
 	function<void(MouseButtons)> onClick;
 
@@ -97,17 +99,17 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 
 		case HierarchicalMenu::BackToGame:
 			onClick = [&](MouseButtons) {
-				_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
-				while (_menusStack.size()) _menusStack.pop();
+				CLEAR_MENUS_STACK;
+				_currMenu = &HierarchicalMenu::InGameMenu;
 				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
 			};
 			break;
 
 		case HierarchicalMenu::EndLife:
 			onClick = [&](MouseButtons) {
-				BasePlaneObject::player->loseLife();
-				_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
-				while (_menusStack.size()) _menusStack.pop();
+				BasePlaneObject::player->loseLife(); // TODO: fall death
+				CLEAR_MENUS_STACK;
+				_currMenu = &HierarchicalMenu::InGameMenu;
 				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
 			};
 			break;
@@ -115,8 +117,9 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MouseButtons) {
 				AssetsManager::stopBackgroundMusic();
-				_currMenu = &HierarchicalMenu::MainMenu; // reset the menu
-				while (_menusStack.size()) _menusStack.pop();
+				CLEAR_MENUS_STACK;
+				_currMenu = &HierarchicalMenu::MainMenu;
+				_clawLevelEngineFields.reset();
 				changeEngine<MenuEngine>();
 			};
 			break;
@@ -125,8 +128,8 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 			if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
 			{
 				onClick = [&](MouseButtons) {
-					_currMenu = &HierarchicalMenu::InGameMenu; // reset the menu
-					while (_menusStack.size()) _menusStack.pop();
+					CLEAR_MENUS_STACK;
+					_currMenu = &HierarchicalMenu::InGameMenu;
 					_clawLevelEngineFields.reset(); // do not recycle the fields!
 					changeEngine<LevelLoadingEngine>((m.cmd & 0xf0) >> 4);
 				};
@@ -145,7 +148,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, bool al
 MenuEngine::MenuEngine(shared_ptr<ClawLevelEngineFields> clawLevelEngineFields, bool allocChildren, const string& bgPcxPath)
 	: MenuEngine(allocChildren, bgPcxPath)
 {
-	_clawLevelEngineFields = clawLevelEngineFields;
+	_clawLevelEngineFields = clawLevelEngineFields; // I don't have another way...
 }
 MenuEngine::~MenuEngine()
 {

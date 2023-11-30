@@ -29,12 +29,17 @@ class ClawDynamite : public ClawProjectile
 {
 public:
 	ClawDynamite(const WwdObject& obj);
+	
 	void Logic(uint32_t elapsedTime) override;
+	
 	void stopFalling(float collisionSize) override;
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
 	void bounceTop() override;
+	
 	int getDamage() const override;
+	
+	bool isStartExplode() const;
 
 private:
 	enum class State : int8_t { Fly, Wait, Explos };

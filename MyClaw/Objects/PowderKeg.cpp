@@ -33,11 +33,68 @@ void PowderKeg::Logic(uint32_t elapsedTime)
 		removeObject = _ani->isFinishAnimation();
 	}
 }
+
+void PowderKeg::stopFalling(float collisionSize)
+{
+	speed = {};
+	if (_state != State::Explos)
+		position.y -= collisionSize;
+}
+void PowderKeg::stopMovingLeft(float collisionSize)
+{
+	speed.x = -speed.x;
+	speed.y = 0;
+	if (_state != State::Explos)
+		position.x += collisionSize;
+}
+void PowderKeg::stopMovingRight(float collisionSize)
+{
+	speed.x = -speed.x;
+	speed.y = 0;
+	if (_state != State::Explos)
+		position.x -= collisionSize;
+}
+void PowderKeg::bounceTop()
+{
+	speed.y = abs(speed.y);
+}
+
 int PowderKeg::getDamage() const
 {
 	if (_state == State::Explos && !_ani->isPassedHalf())
 		return 15;
 	return 0;
+}
+
+bool PowderKeg::raise()
+{
+	if (_state != State::Stand)
+		return false;
+
+	_state = State::Raised;
+	_ani = AssetsManager::createCopyAnimationFromPidImage(PathManager::getImageSetPath(_imageSet) + "/014.PID");
+
+	return true;
+}
+void PowderKeg::thrown(bool forward)
+{
+	_state = State::Thrown;
+	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI", _imageSet);
+	_ani->loopAni = false;
+
+	speed.x = forward ? 0.35f : -0.35f;
+	speed.y = -0.40f;
+}
+void PowderKeg::fall()
+{
+	_state = State::Thrown;
+	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI", _imageSet);
+	_ani->loopAni = false;
+	speed.y = 0.01f; // almost no speed
+}
+bool PowderKeg::isStartExplode() const
+{
+	return _state == State::Explos && _ani->getFrameNumber() == 1;
 }
 
 bool PowderKeg::shouldMakeExplos()
@@ -74,35 +131,3 @@ bool PowderKeg::shouldMakeExplos()
 
 	return false;
 }
-
-bool PowderKeg::raise()
-{
-	if (_state != State::Stand)
-		return false;
-
-	_state = State::Raised;
-	_ani = AssetsManager::createCopyAnimationFromPidImage(PathManager::getImageSetPath(_imageSet) + "/014.PID");
-
-	return true;
-}
-void PowderKeg::thrown(bool forward)
-{
-	_state = State::Thrown;
-	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI", _imageSet);
-	_ani->loopAni = false;
-
-	speed.x = forward ? 0.35f : -0.35f;
-	speed.y = -0.40f;
-}
-void PowderKeg::fall()
-{
-	_state = State::Thrown;
-	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationSetPath(_imageSet) + "/THROWN.ANI", _imageSet);
-	_ani->loopAni = false;
-	speed.y = 0.01f; // almost no speed
-}
-
-void PowderKeg::stopFalling(float collisionSize) { speed = {}; if (_state != State::Explos) position.y -= collisionSize; }
-void PowderKeg::stopMovingLeft(float collisionSize) { speed.x = -speed.x; speed.y = 0; if (_state != State::Explos) position.x += collisionSize; }
-void PowderKeg::stopMovingRight(float collisionSize) { speed.x = -speed.x; speed.y = 0; if (_state != State::Explos) position.x -= collisionSize; }
-void PowderKeg::bounceTop() { speed.y = abs(speed.y); }
