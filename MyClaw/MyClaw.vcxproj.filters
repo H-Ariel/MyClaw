@@ -307,6 +307,9 @@
     <ClCompile Include="Menu\ScreenEngine.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
+    <ClCompile Include="SavedGameManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -587,6 +590,9 @@
     </ClInclude>
     <ClInclude Include="Menu\ScreenEngine.h">
       <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="SavedGameManager.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

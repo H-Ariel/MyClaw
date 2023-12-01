@@ -37,6 +37,7 @@ public:
 	
 
 	static float PixelSize;
+	static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE;
 
 private:
 	static bool _isInScreen(Rectangle2D& rc); // return if `rc` is in the window area and subtracts the window-offset from it

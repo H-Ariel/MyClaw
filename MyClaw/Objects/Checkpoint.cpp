@@ -1,15 +1,21 @@
 #include "Checkpoint.h"
 #include "../Player.h"
 #include "../Assets-Managers/AssetsManager.h"
+#include "../SavedGameManager.h"
 
 
 Checkpoint::Checkpoint(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _state(States::Down),
-	_imageSetPath(PathManager::getImageSetPath(obj.imageSet)), _isSuperCheckpoint(contains(obj.logic, "Super"))
+	_imageSetPath(PathManager::getImageSetPath(obj.imageSet)), _superCheckpoint(0), _isSaved(false)
 {
 	_ani = AssetsManager::createAnimationFromPidImage(_imageSetPath + "/001.PID");
 	setObjectRectangle();
 	myMemCpy<int32_t>(ZCoord, DefaultZCoord::CheckpointFlag);
+
+	if (obj.logic == "FirstSuperCheckpoint")
+		_superCheckpoint = 1;
+	else if (obj.logic == "SecondSuperCheckpoint") 
+		_superCheckpoint = 2;
 }
 void Checkpoint::Logic(uint32_t elapsedTime)
 {
@@ -23,9 +29,12 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 			_state = States::Rise;
 			player->startPosition = position;
 
-			if (_isSuperCheckpoint)
+			if (_superCheckpoint)
 			{
 				// TODO: save player state (only in the first time)
+				SavedGameManager::GameData data = {}; // player->getData();
+				data.savePoint = (SavedGameManager::SavePoints)_superCheckpoint;
+				SavedGameManager::save(data);
 			}
 		}
 		break;

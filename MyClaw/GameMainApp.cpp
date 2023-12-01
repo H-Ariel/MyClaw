@@ -58,7 +58,7 @@ void GameMainApp::run()
 		runApp = true;
 		//_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
 		//_pEngine = allocNewSharedPtr<MenuEngine>();
-		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(2);
+		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(1);
 		runEngine();
 	}
 #else
@@ -153,7 +153,10 @@ LRESULT CALLBACK GameMainApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 	switch (message)
 	{
 	case WM_CREATE:			SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)(((LPCREATESTRUCT)lParam)->lpCreateParams)); break;
-	case WM_GETMINMAXINFO:	((LPMINMAXINFO)lParam)->ptMinTrackSize = { 640,480 }; break;
+	case WM_GETMINMAXINFO:	((LPMINMAXINFO)lParam)->ptMinTrackSize = {
+			(LONG)WindowManager::DEFAULT_WINDOW_SIZE.width,
+			(LONG)WindowManager::DEFAULT_WINDOW_SIZE.height
+		}; break;
 	case WM_DISPLAYCHANGE:	InvalidateRect(hwnd, nullptr, false); break;
 	case WM_CLOSE:			PostQuitMessage(0); break;
 	case WM_SETCURSOR:		SetCursor(NULL); return TRUE;

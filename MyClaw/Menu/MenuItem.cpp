@@ -1,5 +1,6 @@
 #include "MenuItem.h"
 #include "../Assets-Managers/AssetsManager.h"
+#include "../GUI/WindowManager.h"
 
 
 MenuItem::MenuItem(const string& pcxPath, float xRatio, float yRatio,
@@ -7,7 +8,10 @@ MenuItem::MenuItem(const string& pcxPath, float xRatio, float yRatio,
 	: UIBaseButton(onClick, parent), UIBaseImage(*AssetsManager::loadImage(pcxPath)),
 	_posRatio({ xRatio, yRatio }), _bgImg(bgImg)
 {
-	_sizeRatio = { DEFAULT_WINDOW_SIZE.width / UIBaseImage::size.width, DEFAULT_WINDOW_SIZE.height / UIBaseImage::size.height };
+	_sizeRatio = {
+		WindowManager::DEFAULT_WINDOW_SIZE.width / UIBaseImage::size.width,
+		WindowManager::DEFAULT_WINDOW_SIZE.height / UIBaseImage::size.height
+	};
 }
 
 void MenuItem::Logic(uint32_t)

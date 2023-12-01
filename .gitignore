@@ -399,3 +399,4 @@ FodyWeavers.xsd
 
 # Claw resource file
 *.rez
+*.dat

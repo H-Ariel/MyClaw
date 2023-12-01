@@ -318,9 +318,12 @@ void Player::Logic(uint32_t elapsedTime)
 
 	if (!isInDeathAnimation())
 	{
-		// update position based on speed, but make sure we don't go outside the level
-		position.x += speed.x * elapsedTime;
-		position.y += speed.y * elapsedTime;
+		if (!lookup)
+		{
+			// update position based on speed, but make sure we don't go outside the level
+			position.x += speed.x * elapsedTime;
+			position.y += speed.y * elapsedTime;
+		}
 
 		// select animation
 

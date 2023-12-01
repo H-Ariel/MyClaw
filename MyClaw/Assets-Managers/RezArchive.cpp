@@ -84,7 +84,7 @@ const RezFile* RezDirectory::getChildFile(const string& filename) const
 }
 
 RezArchive::RezArchive(const string& filename)
-	: _rezFileStream(filename, ifstream::binary)
+	: _rezFileStream(filename, ios::binary)
 {
 	if (!_rezFileStream.is_open())
 	{

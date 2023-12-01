@@ -56,9 +56,6 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #endif
 
 
-static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE{ 800.f, 600.f };
-
-
 enum class MouseButtons
 {
 	Left,

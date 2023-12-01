@@ -7,7 +7,8 @@
 static const D2D1_POINT_2F defaultWindowOffset = {}; // empty point
 
 
-float WindowManager::PixelSize = 1; // min value: 1
+float WindowManager::PixelSize = 1; // min value: 1 // TODO: rename to `WindowScale`
+const D2D1_SIZE_F WindowManager::DEFAULT_WINDOW_SIZE = { 640.f, 480.f };
 WindowManager* WindowManager::instance = nullptr;
 
 
