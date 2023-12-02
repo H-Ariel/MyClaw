@@ -19,7 +19,8 @@ bool isFileExists(const char* fileName)
 
 int getOffset(int32_t level, SavedGameManager::SavePoints savePoint)
 {
-	return (level - 1) * 3 + (int)savePoint;
+	int offset = (level - 1) * 3 + (int)savePoint;
+	return offset * sizeof(SavedGameManager::GameData);
 }
 
 
@@ -31,11 +32,10 @@ bool SavedGameManager::hasSavedGame()
 void SavedGameManager::save(const GameData& data)
 {
 	// check if the file exists:
-
 	if (!hasSavedGame())
 	{
 		// initialize the file with empty data:
-		ofstream file(SAVE_FILE_NAME, ios::binary);
+		fstream file(SAVE_FILE_NAME, ios::binary | ios::out);
 		GameData data = {};
 		int n = 14 * 3; // 14 levels, 3 save points per level
 		for (int i = 0; i < n; i++)
@@ -56,13 +56,12 @@ void SavedGameManager::save(const GameData& data)
 
 	if (data.level < 1 || 14 < data.level) return;
 
-	// TODO: save but not in the order i want (it reset the file)
-	ofstream file(SAVE_FILE_NAME, ios::binary);
-	file.seekp(getOffset(data.level, data.savePoint) * sizeof(GameData));
+	fstream file(SAVE_FILE_NAME, ios::binary | ios::in | ios::out);
+	file.seekp(getOffset(data.level, data.savePoint));
 	file.write((char*)&data, sizeof(GameData));
 
 	// TDOD: write to screen that the game was saved
-	MessageBox(nullptr, L"Game saved", L"Saved", MB_OK | MB_ICONINFORMATION);
+	//MessageBox(nullptr, L"Game saved", L"Saved", MB_OK | MB_ICONINFORMATION);
 }
 
 bool SavedGameManager::canLoadGame(int32_t level, SavePoints savePoint)
@@ -73,7 +72,7 @@ bool SavedGameManager::canLoadGame(int32_t level, SavePoints savePoint)
 	ifstream file(SAVE_FILE_NAME, ios::binary);
 
 	GameData data = {};
-	file.seekg(getOffset(level, savePoint) * sizeof(GameData));
+	file.seekg(getOffset(level, savePoint));
 	file.read((char*)&data, sizeof(GameData));
 
 	return (data.level == level && data.savePoint == savePoint);
@@ -86,7 +85,7 @@ SavedGameManager::GameData SavedGameManager::load(int32_t level, SavePoints save
 	ifstream file(SAVE_FILE_NAME, ios::binary);
 
 	GameData data = {};
-	file.seekg(getOffset(level, savePoint) * sizeof(GameData));
+	file.seekg(getOffset(level, savePoint));
 	file.read((char*)&data, sizeof(GameData));
 
 	return data;

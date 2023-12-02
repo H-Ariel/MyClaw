@@ -4,6 +4,7 @@
 #define SINGLEPLAYER_ROOT	MAIN_MENU_ROOT "SINGLEPLAYER/"
 #define INGAME_MENU_ROOT	"GAME/IMAGES/INGAMEMENU/MAIN/"
 
+// TODO: find perfect positions
 
 HierarchicalMenu HierarchicalMenu::MainMenu("", MenuIn, 0, 0, {
 	HierarchicalMenu(MAIN_MENU_ROOT "014_TITLE.PCX", Nop, 0, -0.15f),

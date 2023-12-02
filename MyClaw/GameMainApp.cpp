@@ -76,7 +76,7 @@ void GameMainApp::runEngine()
 
 #ifdef _DEBUG
 	// for FPS
-	char fpsText[14] = {};
+	char fpsText[16] = {};
 	uint32_t framesTime = 0, frames = 0;
 #endif
 
