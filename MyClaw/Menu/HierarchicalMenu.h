@@ -2,6 +2,11 @@
 
 #include "../framework.h"
 
+#define MAIN_MENU_ROOT			"STATES/MENU/IMAGES/MAIN/"
+#define SINGLEPLAYER_ROOT		MAIN_MENU_ROOT "SINGLEPLAYER/"
+#define LOAD_CHECKPOINT_ROOT	SINGLEPLAYER_ROOT "LOAD/CHECKPOINTS/"
+#define INGAME_MENU_ROOT		"GAME/IMAGES/INGAMEMENU/MAIN/"
+
 
 struct HierarchicalMenu
 {
@@ -11,10 +16,12 @@ struct HierarchicalMenu
 		NotImpleted,
 		MenuIn, // go to next sub-menu
 		MenuOut, // back to previous menu
+		SelectLevel,
 		ExitApp,
 		Help,
 		Credits,
 		OpenLevel, // `OpenLevel | (<lvlNo> << 4)`
+		LoadCheckpoint, // `LoadCheckpoint | (<chkPntNo> << 4)`
 
 		OpenLevel_1  = OpenLevel | (0x10),
 		OpenLevel_2  = OpenLevel | (0x20),
@@ -31,6 +38,10 @@ struct HierarchicalMenu
 		OpenLevel_13 = OpenLevel | (0xD0),
 		OpenLevel_14 = OpenLevel | (0xE0),
 
+		LoadCheckpoint_Start = LoadCheckpoint | (0x10),
+		LoadCheckpoint_1     = LoadCheckpoint | (0x20),
+		LoadCheckpoint_2     = LoadCheckpoint | (0x30),
+
 		// ingame menu commands:
 		BackToGame = OpenLevel + 1,
 		EndLife,
@@ -46,4 +57,5 @@ struct HierarchicalMenu
 	uint8_t cmd;
 
 	static HierarchicalMenu MainMenu, InGameMenu;
+	static HierarchicalMenu SelectLevelMenu, SelectCheckpoint;
 };

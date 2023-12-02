@@ -58,6 +58,18 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 			onClick = [&](MouseButtons) { menuOut(); };
 			break;
 
+		case HierarchicalMenu::SelectLevel:
+			onClick = [&](MouseButtons) {
+				// change the title image:
+				string dir = "";
+				if (endsWith(m.pcxPath, "NEWGAME.PCX")) dir = "NEW";
+				else if (endsWith(m.pcxPath, "LOADGAME.PCX")) dir = "LOAD";
+				//else throw Exception("invalid pcx path: " + m.pcxPath);
+				HierarchicalMenu::SelectLevelMenu.subMenus[0].pcxPath = SINGLEPLAYER_ROOT + dir + "/001_TITLE.PCX";
+				menuIn(&HierarchicalMenu::SelectLevelMenu);
+			};
+			break;
+
 		case HierarchicalMenu::ExitApp:
 			onClick = [&](MouseButtons) {
 				_nextEngine = nullptr;
@@ -106,15 +118,44 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 			break;
 
 		default:
-			if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
+			// here we play with bits, string, and paths to get the level number and checkpoint number:
+
+			if ((m.cmd & HierarchicalMenu::LoadCheckpoint) == HierarchicalMenu::LoadCheckpoint)
 			{
 				onClick = [&](MouseButtons) {
-					CLEAR_MENUS_STACK;
-					_currMenu = &HierarchicalMenu::InGameMenu;
-					_clawLevelEngineFields.reset(); // do not recycle the fields!
-					changeEngine<LevelLoadingEngine>((m.cmd & 0xf0) >> 4);
+					int level = stoi(HierarchicalMenu::SelectCheckpoint.subMenus[0]
+						.pcxPath.substr(strlen(LOAD_CHECKPOINT_ROOT), 3)) - 10;
+					int checkpoint = (m.cmd & 0xf0) >> 4;
+					char text[64] = {};
+					sprintf(text, "load level %d checkpoint %d", level, checkpoint);
+					MessageBoxA(nullptr, text, "not impleted", 0);
+
+					// TODO: LevelLoadingEngine and checkpoint loading
 				};
 			}
+			else if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
+			{
+				onClick = [&](MouseButtons) {
+					int level = (m.cmd & 0xf0) >> 4;
+
+					if (contains(_currMenu->subMenus[0].pcxPath, "NEW")) // new game
+					{
+						CLEAR_MENUS_STACK;
+						_currMenu = &HierarchicalMenu::InGameMenu; // TODO: in LevelLoadingEngine ?
+						_clawLevelEngineFields.reset(); // do not recycle the fields! // TODO: in LevelLoadingEngine ?
+						changeEngine<LevelLoadingEngine>(level);
+					}
+					else if (contains(_currMenu->subMenus[0].pcxPath, "LOAD")) // load checkpoint
+					{
+						// set title:
+						char num[64] = {}; sprintf(num, "%03d", level + 10);
+						HierarchicalMenu::SelectCheckpoint.subMenus[0].pcxPath = LOAD_CHECKPOINT_ROOT + string(num) + "_TITLE.PCX";
+						// TODO: check which checkpoints are available and change the menu-buttons accordingly
+						menuIn(&HierarchicalMenu::SelectCheckpoint);
+					}
+				};
+			}
+			
 			break;
 		}
 
