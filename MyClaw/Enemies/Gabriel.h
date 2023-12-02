@@ -55,7 +55,7 @@ private:
 class GabrielRedTailPirate : public BaseDynamicPlaneObject
 {
 public:
-	GabrielRedTailPirate(Player* player);
+	GabrielRedTailPirate();
 	void Logic(uint32_t elapsedTime) override;
 	void stopFalling(float collisionSize) override;
 

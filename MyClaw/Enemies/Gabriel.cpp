@@ -83,7 +83,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		_sendPiratesTime -= elapsedTime;
 		if (_sendPiratesTime <= 0)
 		{
-			ActionPlane::addPlaneObject(DBG_NEW GabrielRedTailPirate(player));
+			ActionPlane::addPlaneObject(DBG_NEW GabrielRedTailPirate());
 			_ani = ANIMATION_SEND_PIRATES;
 			_ani->reset();
 			_ani->loopAni = false;
@@ -271,7 +271,7 @@ void GabrielCannonButton::Logic(uint32_t elapsedTime)
 }
 
 
-GabrielRedTailPirate::GabrielRedTailPirate(Player* player)
+GabrielRedTailPirate::GabrielRedTailPirate()
 	: BaseDynamicPlaneObject({}), _isJumping(false)
 {
 	position = { 43479, 5020 };

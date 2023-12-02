@@ -16,8 +16,10 @@ public:
 #pragma pack(push, 1)
 	struct GameData
 	{
+		// save point data:
 		int32_t level;
 		SavePoints savePoint;
+		// player data:
 		int32_t lives;
 		int32_t health;
 		int32_t score;

@@ -90,6 +90,8 @@ ActionPlane::ActionPlane(WapWorld* wwd)
 }
 ActionPlane::~ActionPlane()
 {
+	eraseByValue(_objects, player.get()); // we don't want to delete the player because we save him for the next level
+
 	for (BasePlaneObject* i : _objects)
 		delete i;
 	for (BasePlaneObject* i : _bossObjects)
@@ -190,11 +192,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		obj = _objects[i];
 		obj->Logic(elapsedTime);
 
-		if (obj == player)
+		if (obj == player.get())
 		{
 			if (!player->isInDeathAnimation())
 			{
-				_physicsManager->checkCollides(player, [&] {
+				_physicsManager->checkCollides(player.get(), [&] {
 #ifndef NO_DEATH
 					player->loseLife();
 #endif
@@ -306,16 +308,26 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	_physicsManager = DBG_NEW PhysicsManager(_wwd, this); // must be after WWD map loaded and before objects added
 
-	WwdObject playerData;
-	playerData.x = _wwd->startX;
-	playerData.y = _wwd->startY;
-	playerData.z = 4000;
-	player = DBG_NEW Player(playerData); // must be before LevelPlane::readPlaneObjects() because some of objects need player
+	// player's initializtion must be before LevelPlane::readPlaneObjects() because some of objects need player
+	if (player)
+	{
+		player->startPosition.x = (float)_wwd->startX;
+		player->startPosition.y = (float)_wwd->startY;
+		player->nextLevel();
+	}
+	else
+	{
+		WwdObject playerData;
+		playerData.x = _wwd->startX;
+		playerData.y = _wwd->startY;
+		playerData.z = 4000;
+		player = allocNewSharedPtr<Player>(playerData);
+	}
 
 	LevelPlane::readPlaneObjects(reader);
 	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
 	
-	_objects.push_back(player); // must be after LevelPlane::readPlaneObjects() because we reset the objects vector there
+	_objects.push_back(player.get()); // must be after LevelPlane::readPlaneObjects() because we reset the objects vector there
 }
 void ActionPlane::addObject(const WwdObject& obj)
 {
@@ -369,7 +381,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (endsWith(obj.logic, "Checkpoint"))
 	{
-		_objects.push_back(DBG_NEW Checkpoint(obj));
+		_objects.push_back(DBG_NEW Checkpoint(obj, _wwd->levelNumber));
 	}
 	else if (obj.logic == "StartSteppingStone")
 	{

@@ -1,9 +1,9 @@
 #include "RedTailPirate.h"
 
 
-RedTailPirate::RedTailPirate(const WwdObject& obj, bool noTreasures)
+RedTailPirate::RedTailPirate(const WwdObject& obj, bool isFromGabriel)
 	: BaseEnemy(obj, 12, 10, "FASTADVANCE", "HITHIGH",
-		"HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "", "", "", 0.2f, noTreasures)
+		"HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "", "", "", 0.2f, isFromGabriel)
 {
 }
 

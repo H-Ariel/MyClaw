@@ -8,7 +8,7 @@ File format:
   - all the data of the save point
   * repeat for all levels
 */
-#define SAVE_FILE_NAME "claw_save.dat"
+#define SAVE_FILE_NAME "CLAW_SAVE.DAT"
 
 
 bool isFileExists(const char* fileName)
@@ -31,7 +31,7 @@ bool SavedGameManager::hasSavedGame()
 void SavedGameManager::save(const GameData& data)
 {
 	// check if the file exists:
-	
+
 	if (!hasSavedGame())
 	{
 		// initialize the file with empty data:
@@ -56,11 +56,13 @@ void SavedGameManager::save(const GameData& data)
 
 	if (data.level < 1 || 14 < data.level) return;
 
+	// TODO: save but not in the order i want (it reset the file)
 	ofstream file(SAVE_FILE_NAME, ios::binary);
 	file.seekp(getOffset(data.level, data.savePoint) * sizeof(GameData));
 	file.write((char*)&data, sizeof(GameData));
 
 	// TDOD: write to screen that the game was saved
+	MessageBox(nullptr, L"Game saved", L"Saved", MB_OK | MB_ICONINFORMATION);
 }
 
 bool SavedGameManager::canLoadGame(int32_t level, SavePoints savePoint)

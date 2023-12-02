@@ -4,8 +4,8 @@
 #include "../SavedGameManager.h"
 
 
-Checkpoint::Checkpoint(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _state(States::Down),
+Checkpoint::Checkpoint(const WwdObject& obj, int levelNumber)
+	: BaseStaticPlaneObject(obj), _state(States::Down), _levelNumber(levelNumber),
 	_imageSetPath(PathManager::getImageSetPath(obj.imageSet)), _superCheckpoint(0), _isSaved(false)
 {
 	_ani = AssetsManager::createAnimationFromPidImage(_imageSetPath + "/001.PID");
@@ -29,12 +29,14 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 			_state = States::Rise;
 			player->startPosition = position;
 
-			if (_superCheckpoint)
+			if (_superCheckpoint && !_isSaved)
 			{
 				// TODO: save player state (only in the first time)
-				SavedGameManager::GameData data = {}; // player->getData();
+				SavedGameManager::GameData data = player->getGameData();
+				data.level = _levelNumber;
 				data.savePoint = (SavedGameManager::SavePoints)_superCheckpoint;
 				SavedGameManager::save(data);
+				_isSaved = true;
 			}
 		}
 		break;

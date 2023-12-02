@@ -101,6 +101,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 				_currMenu = &HierarchicalMenu::MainMenu;
 				_clawLevelEngineFields.reset();
 				changeEngine<MenuEngine>();
+				BasePlaneObject::player = nullptr; // do not recycle the player in new game
 			};
 			break;
 

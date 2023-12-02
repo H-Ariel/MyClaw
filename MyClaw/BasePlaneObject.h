@@ -38,7 +38,7 @@ public:
 	const int32_t ZCoord;
 	bool removeObject;
 
-	static Player* player;
+	static shared_ptr<Player> player;
 
 protected:
 	shared_ptr<Animation> _ani;

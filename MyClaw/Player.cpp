@@ -32,19 +32,19 @@
 #define EXCLAMATION_MARK	_animations["exclamation-mark"] // it used when claw is speaking
 
 // code blocks for `collectItem`
-#define ADD_WEAPON(t, n) { _weaponsAmount[ClawProjectile::Types:: t] += n; return true; }
-#define ADD_HEALTH(n) \
+#define ADD_WEAPON(t, n) { _weaponsAmount. t += n; return true; }
+#define ADD_HEALTH(n) { \
 	if (_health < 100) { \
 		_health += n; \
 		if (_health > 100) _health = 100; \
 		return true; \
-	} break;
-#define SET_POWERUP(t) \
+	} break; }
+#define SET_POWERUP(t) { \
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Powerup); \
 	if (_currPowerup != Item:: t) _powerupLeftTime = 0; \
 	_powerupLeftTime += item->getDuration(); \
 	_currPowerup = Item:: t; \
-	return true;
+	return true; }
 
 #define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
 
@@ -95,14 +95,37 @@ void Player::PowerupSparkles::Draw() {
 }
 
 
+Player::WeaponsAmount::WeaponsAmount(int pistol, int magic, int dynamite)
+	: pistol(pistol), magic(magic), dynamite(dynamite) {}
+
+int& Player::WeaponsAmount::operator[](ClawProjectile::Types type)
+{
+	switch (type)
+	{
+	case ClawProjectile::Types::Pistol: return pistol;
+	case ClawProjectile::Types::Magic: return magic;
+	case ClawProjectile::Types::Dynamite: return dynamite;
+	default: throw exception("invalid weapon type");
+	}
+}
+int Player::WeaponsAmount::operator[](ClawProjectile::Types type) const
+{
+	switch (type)
+	{
+	case ClawProjectile::Types::Pistol: return pistol;
+	case ClawProjectile::Types::Magic: return magic;
+	case ClawProjectile::Types::Dynamite: return dynamite;
+	default: throw exception("invalid weapon type");
+	}
+}
+
+
 Player::Player(const WwdObject& obj)
 	: BaseCharacter(obj), _currWeapon(ClawProjectile::Types::Pistol), 
-	_finishLevel(false), _powerupSparkles(&_saveCurrRect)
+	_finishLevel(false), _powerupSparkles(&_saveCurrRect),
+	_weaponsAmount(10, 5, 3)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
-	_weaponsAmount[ClawProjectile::Types::Pistol] = 10;
-	_weaponsAmount[ClawProjectile::Types::Magic] = 5;
-	_weaponsAmount[ClawProjectile::Types::Dynamite] = 3;
 	startPosition = position;
 	_lives = 6;
 	_score = 0;
@@ -864,13 +887,13 @@ bool Player::collectItem(Item* item)
 #endif
 	}	return true;
 
-	case Item::Ammo_Deathbag:	ADD_WEAPON(Pistol, 25);
-	case Item::Ammo_Shot:		ADD_WEAPON(Pistol, 5);
-	case Item::Ammo_Shotbag:	ADD_WEAPON(Pistol, 10);
-	case Item::Ammo_Magic_5:	ADD_WEAPON(Magic,  5);
-	case Item::Ammo_Magic_10:	ADD_WEAPON(Magic, 10);
-	case Item::Ammo_Magic_25:	ADD_WEAPON(Magic, 25);
-	case Item::Ammo_Dynamite:	AquatisDynamite::playerTookDynamite(); ADD_WEAPON(Dynamite, 5);
+	case Item::Ammo_Deathbag:	ADD_WEAPON(pistol, 25);
+	case Item::Ammo_Shot:		ADD_WEAPON(pistol, 5);
+	case Item::Ammo_Shotbag:	ADD_WEAPON(pistol, 10);
+	case Item::Ammo_Magic_5:	ADD_WEAPON(magic,  5);
+	case Item::Ammo_Magic_10:	ADD_WEAPON(magic, 10);
+	case Item::Ammo_Magic_25:	ADD_WEAPON(magic, 25);
+	case Item::Ammo_Dynamite:	AquatisDynamite::playerTookDynamite(); ADD_WEAPON(dynamite, 5);
 
 	case Item::Health_Level:	ADD_HEALTH(5);
 	case Item::Health_10:		ADD_HEALTH(10);
@@ -970,8 +993,6 @@ void Player::backToLife()
 	_freezeTime = 0;
 
 	calcRect();
-	_saveCurrAttackRect = {};
-
 	Logic(0); // update position and animation
 }
 void Player::loseLife()
@@ -988,6 +1009,12 @@ void Player::loseLife()
 		_currPowerup = Item::None;
 		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
 	}
+}
+void Player::nextLevel()
+{
+	_finishLevel = false;
+	_collectedTreasures.clear();
+	backToLife();
 }
 
 void Player::shootSwordProjectile()
@@ -1010,6 +1037,20 @@ void Player::shootSwordProjectile()
 	obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 	obj.damage = 25;
 	ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
+}
+
+SavedGameManager::GameData Player::getGameData() const
+{
+	SavedGameManager::GameData data = {};
+
+	data.lives = _lives;
+	data.health = _health;
+	data.score = _score;
+	data.pistolAmount = _weaponsAmount.pistol;
+	data.magicAmount = _weaponsAmount.magic;
+	data.dynamiteAmount = _weaponsAmount.dynamite;
+
+	return data;
 }
 
 void Player::keyUp(int key)
@@ -1048,7 +1089,7 @@ void Player::keyDown(int key)
 	case 'Z':		if (!rope) _zPressed = true; break;
 	case VK_MENU:	if (!rope && !_raisedPowderKeg) {
 		if (!_altPressed) _holdAltTime = 0;
-		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount[ClawProjectile::Types::Dynamite] > 0);
+		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount.dynamite > 0);
 	} break;
 	}
 }
@@ -1122,6 +1163,8 @@ bool Player::checkForHurts()
 
 	for (PowderKeg* p : ActionPlane::getPowderKegs())
 	{
+		// TODO: use _lastattackrect instead of _lastPowderKegExplos
+		
 		if (p != _lastPowderKegExplos && (damage = p->getDamage()) > 0)
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))

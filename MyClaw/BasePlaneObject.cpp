@@ -3,7 +3,7 @@
 #include "Assets-Managers/AssetsManager.h"
 
 
-Player* BasePlaneObject::player = nullptr;
+shared_ptr<Player> BasePlaneObject::player = nullptr;
 
 
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)

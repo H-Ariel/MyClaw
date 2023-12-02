@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseCharacter.h"
+#include "SavedGameManager.h"
 #include "Objects/Item.h"
 #include "Objects/ClawProjectile.h"
 
@@ -47,15 +48,18 @@ public:
 	bool hasLives() const { return _lives > 0; }
 	void loseLife();
 	void setLadderFlags(bool isOnLadderTop) { _isOnLadderTop = isOnLadderTop; _isCollideWithLadder = true; }
+	void nextLevel();
 
 	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
 	int getHealthAmount() const { return _health; }
 	int getLivesAmount() const { return _lives; }
-	int getWeaponAmount() const { return _weaponsAmount.at(_currWeapon); }
-	int getDynamiteAmount() const { return _weaponsAmount.at(ClawProjectile::Types::Dynamite); }
+	int getWeaponAmount() const { return _weaponsAmount[_currWeapon]; }
+	int getDynamiteAmount() const { return _weaponsAmount.dynamite; }
 	uint32_t getScore() const { return _score; }
 	int32_t getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
 	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }
+
+	SavedGameManager::GameData getGameData() const;
 
 	// used to move player
 	void keyUp(int key);
@@ -87,6 +91,17 @@ private:
 		shared_ptr<Animation> _sparkles[30]; // all sparkles' list
 	};
 
+	struct WeaponsAmount
+	{
+		int pistol;
+		int magic;
+		int dynamite;
+
+		WeaponsAmount(int pistol, int magic, int dynamite);
+		int& operator[](ClawProjectile::Types type);
+		int operator[](ClawProjectile::Types type) const;
+	};
+
 	void jump();
 	bool checkForHurts() override; // check for hits from enemies, projectiles, and exploding powder kegs
 	bool isWeaponAnimation() const;
@@ -98,8 +113,8 @@ private:
 	vector<string> AttackAnimations, NoLoopAnimations;
 	map<Item::Type, uint32_t> _collectedTreasures; // save all collected treasures and their amount
 	PowerupSparkles _powerupSparkles;
-	map<ClawProjectile::Types, int> _weaponsAmount;
 	pair<Rectangle2D, int> _saveCurrAttackRect;
+	WeaponsAmount _weaponsAmount;
 	PowderKeg* _lastPowderKegExplos; // saves the last explos so he does not take damage over and over again.
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
 	uint32_t _score;
