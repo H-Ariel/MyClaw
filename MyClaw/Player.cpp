@@ -123,10 +123,9 @@ int Player::WeaponsAmount::operator[](ClawProjectile::Types type) const
 Player::Player()
 	: BaseCharacter({}), _currWeapon(ClawProjectile::Types::Pistol),
 	_finishLevel(false), _powerupSparkles(&_saveCurrRect),
-	_weaponsAmount(10, 5, 3)
+	_weaponsAmount(10, 5, 3), startPosition({})
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
-	startPosition = position;
 	_lives = 6;
 	_score = 0;
 

@@ -117,7 +117,154 @@ string Item::getItemPath(Type type, const string& imageSet)
 	return "";
 }
 
-// TODO: activate WAV sound when item is picked up
+
+void playItemSound(Item::Type type)
+{
+	string path;
+
+	switch (type)
+	{
+	case Item::Default:
+	case Item::Treasure_Coins:
+		path = "GAME/SOUNDS/COIN.WAV";
+		break;
+	
+	case Item::Treasure_Goldbars:
+		path = "GAME/SOUNDS/TREASURE.WAV";
+		break;
+
+	case Item::Treasure_Rings_Red:
+	case Item::Treasure_Rings_Green:
+	case Item::Treasure_Rings_Blue:
+	case Item::Treasure_Rings_Purple:
+		path = "GAME/SOUNDS/RINGS.WAV";
+		break;
+	
+	case Item::Treasure_Necklace:
+	case Item::Treasure_Chalices_Red:
+	case Item::Treasure_Chalices_Green:
+	case Item::Treasure_Chalices_Blue:
+	case Item::Treasure_Chalices_Purple:
+		path = "GAME/SOUNDS/PICKUP1.WAV";
+		break;
+
+	case Item::Treasure_Crosses_Red:
+	case Item::Treasure_Crosses_Green:
+	case Item::Treasure_Crosses_Blue:
+	case Item::Treasure_Crosses_Purple:
+		path = "GAME/SOUNDS/CROSS.WAV";
+		break;
+
+	case Item::Treasure_Scepters_Red:
+	case Item::Treasure_Scepters_Green:
+	case Item::Treasure_Scepters_Blue:
+	case Item::Treasure_Scepters_Purple:
+		path = "GAME/SOUNDS/SCEPTER.WAV";
+		break;
+
+	case Item::Treasure_Geckos_Red:
+	case Item::Treasure_Geckos_Green:
+	case Item::Treasure_Geckos_Blue:
+	case Item::Treasure_Geckos_Purple:
+		path = "GAME/SOUNDS/PICKUP2.WAV";
+		break;
+
+	case Item::Treasure_Crowns_Red:
+	case Item::Treasure_Crowns_Green:
+	case Item::Treasure_Crowns_Blue:
+	case Item::Treasure_Crowns_Purple:
+		path = "GAME/SOUNDS/PICKUP1.WAV";
+		break;
+
+	case Item::Treasure_Skull_Red:
+	case Item::Treasure_Skull_Green:
+	case Item::Treasure_Skull_Blue:
+	case Item::Treasure_Skull_Purple:
+		path = "GAME/SOUNDS/PICKUP1.WAV";
+		break;
+
+	case Item::Ammo_Deathbag:
+	case Item::Ammo_Shot:
+	case Item::Ammo_Shotbag:
+		path = "GAME/SOUNDS/AMMUNITION.WAV";
+		break;
+
+	case Item::Ammo_Magic_5:
+	case Item::Ammo_Magic_10:
+	case Item::Ammo_Magic_25:
+		path = "GAME/SOUNDS/MAGICPOWERUP.WAV";
+		break;
+
+	case Item::Health_Level:
+		path = "GAME/SOUNDS/FOODITEM.WAV";
+		break;
+	
+	case Item::Health_25:
+	case Item::Health_10:
+	case Item::Health_15:
+		path = "GAME/SOUNDS/MILK.WAV";
+		break;
+	
+	case Item::MapPiece:
+	case Item::NineLivesGem:
+		path = "GAME/SOUNDS/MAPPIECE.WAV";
+		break;
+
+	case Item::Warp:
+	case Item::BossWarp:
+		path = "GAME/SOUNDS/WARP.WAV";
+		break;
+		
+	case Item::Powerup_FireSword:
+		path = "CLAW/SOUNDS/1110001.WAV";
+		break;
+	case Item::Powerup_LightningSword:
+		path = "CLAW/SOUNDS/1110022.WAV";
+		break;
+	case Item::Powerup_IceSword:
+		path = "CLAW/SOUNDS/1110012.WAV";
+		break;
+	case Item::Powerup_ExtraLife:
+		path = "GAME/SOUNDS/EXTRALIFE.WAV";
+		break;
+
+		/*
+	case Item::Ammo_Dynamite:
+		break;
+
+	case Item::Powerup_Catnip_White:
+		break;
+	case Item::Powerup_Catnip_Red:
+		break;
+	case Item::Powerup_Invisibility:
+		break;
+	case Item::Powerup_Invincibility:
+		break;
+
+	case Item::Curse_Ammo:
+		break;
+	case Item::Curse_Magic:
+		break;
+	case Item::Curse_Health:
+		break;
+	case Item::Curse_Life:
+		break;
+	case Item::Curse_Treasure:
+		break;
+	case Item::Curse_Freeze:
+		break;
+		*/
+
+	default:
+		break;
+	}
+
+	if (path != "")
+	{
+		AssetsManager::playWavFile(path);
+	}
+}
+
 
 Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 	: BaseDynamicPlaneObject(obj), _type((Type)type), _useGlitter(false), _glitterAnimation(nullptr)
@@ -172,6 +319,7 @@ void Item::Logic(uint32_t elapsedTime)
 		{
 			// if the player collect the item it will be removed
 			removeObject = player->collectItem(this);
+			playItemSound(_type);
 		}
 	}
 
@@ -318,6 +466,7 @@ void Warp::Logic(uint32_t elapsedTime)
 			player->startPosition = _destination;
 		}
 
+		playItemSound(_type);
 		// TODO: cool animation
 	}
 }

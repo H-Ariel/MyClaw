@@ -113,6 +113,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 	if (_deathAniWait)
 	{
+		// TODO: sound on close/open
+
 		switch (_state)
 		{
 		case States::Close:
@@ -202,7 +204,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 #ifndef NO_DEATH
 					player->loseLife();
 #endif
-					});
+				});
 			}
 		}
 		else if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
@@ -322,8 +324,8 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 		// TODO: empty ctor for player
 
 		player = allocNewSharedPtr<Player>();
-		player->position.x = (float)_wwd->startX;
-		player->position.y = (float)_wwd->startY;
+		player->position.x = player->startPosition.x = (float)_wwd->startX;
+		player->position.y = player->startPosition.y = (float)_wwd->startY;
 	}
 
 	LevelPlane::readPlaneObjects(reader);
