@@ -38,7 +38,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	_elementsList.push_back(_fields->_hud = DBG_NEW LevelHUD(*_fields->_mainPlanePosition));
 	WindowManager::setWindowOffset(_fields->_mainPlanePosition);
 
-#ifdef _DEBUG1
+#ifdef _DEBUG
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL

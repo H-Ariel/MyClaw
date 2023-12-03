@@ -110,7 +110,7 @@ string fixFileName(const string& filename)
 {
 	size_t i = 0;
 	while (!isdigit(filename[i]) && i < filename.length()) i += 1;
-	if (i < filename.length())
+	if (i < filename.length()) // found a number in filename
 	{
 		int num = stoi(filename.substr(i));
 		char str[4];
@@ -150,7 +150,7 @@ void RezArchive::readRezDirectory(unique_ptr<RezDirectory>& dir, uint32_t dirOff
 			_rezFileStream.ignore(1); // another null
 
 			string newName = name;
-			if (strcmp(ext, "PID") == 0)
+			if (strcmp(ext, "PID") == 0 || strcmp(ext, "PCX") == 0)
 				newName = fixFileName(name);
 
 			newName = newName + '.' + ext;

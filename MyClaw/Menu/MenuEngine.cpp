@@ -2,7 +2,6 @@
 #include "../Assets-Managers/AssetsManager.h"
 #include "../GUI/WindowManager.h"
 #include "../ClawLevelEngine.h"
-#include "../BasePlaneObject.h"
 #include "HierarchicalMenu.h"
 #include "HelpScreenEngine.h"
 #include "CreditsEngine.h"
@@ -62,13 +61,32 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 			onClick = [&](MouseButtons) {
 				// change the title image:
 				string dir = "";
-				if (endsWith(m.pcxPath, "NEWGAME.PCX")) dir = "NEW";
-				else if (endsWith(m.pcxPath, "LOADGAME.PCX")) dir = "LOAD";
+				if (endsWith(m.pcxPath, "001.PCX")) dir = "NEW";
+				else if (endsWith(m.pcxPath, "003.PCX")) dir = "LOAD";
 				//else throw Exception("invalid pcx path: " + m.pcxPath);
-				HierarchicalMenu::SelectLevelMenu.subMenus[0].pcxPath = SINGLEPLAYER_ROOT + dir + "/001_TITLE.PCX";
+				HierarchicalMenu::SelectLevelMenu.subMenus[0].pcxPath = SINGLEPLAYER_ROOT + dir + "/001.PCX";
 			
-				// TODO: check which levels are available and change the menu-buttons accordingly
-				
+#ifndef _DEBUG // in debug mode, all levels are available for me :)
+				// check which levels are available and change the menu-buttons accordingly
+				for (int i = 2; i <= 14; i++) // i=2 because level 1 must be available by default
+				{
+					int n = i * 3;
+					if (SavedGameManager::canLoadGame(i, 0))
+					{
+						HierarchicalMenu::SelectLevelMenu.subMenus[i].cmd = HierarchicalMenu::OpenLevel | (i << 4);
+						n -= 2;
+					}
+					else
+					{
+						HierarchicalMenu::SelectLevelMenu.subMenus[i].cmd = HierarchicalMenu::Nop;
+					}
+
+					char path[52] = {};
+					sprintf(path, SINGLEPLAYER_ROOT "LEVELS/%03d.PCX", n);
+					HierarchicalMenu::SelectLevelMenu.subMenus[i].pcxPath = path;
+				}
+#endif
+
 				menuIn(&HierarchicalMenu::SelectLevelMenu);
 			};
 			break;
@@ -144,29 +162,30 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 					else if (contains(_currMenu->subMenus[0].pcxPath, "LOAD")) // load checkpoint
 					{
 						// set title:
-						char num[64] = {}; sprintf(num, "%03d", level + 10);
-						HierarchicalMenu::SelectCheckpoint.subMenus[0].pcxPath = LOAD_CHECKPOINT_ROOT + string(num) + "_TITLE.PCX";
+						char path[64] = {};
+						sprintf(path, LOAD_CHECKPOINT_ROOT "%03d.PCX", level + 10);
+						HierarchicalMenu::SelectCheckpoint.subMenus[0].pcxPath = path;
 						
 						// check which checkpoints are available and change the menu-buttons accordingly
 						if (SavedGameManager::canLoadGame(level, 1))
 						{
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].cmd = HierarchicalMenu::LoadCheckpoint_1;
-							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "003_SAVEONE.PCX";
+							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "003.PCX";
 						}
 						else
 						{
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].cmd = HierarchicalMenu::Nop;
-							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "005_SAVEONE.PCX";
+							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "005.PCX";
 						}
 						if (SavedGameManager::canLoadGame(level, 2))
 						{
 							HierarchicalMenu::SelectCheckpoint.subMenus[3].cmd = HierarchicalMenu::LoadCheckpoint_2;
-							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "006_SAVETWO.PCX";
+							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "006.PCX";
 						}
 						else
 						{
 							HierarchicalMenu::SelectCheckpoint.subMenus[3].cmd = HierarchicalMenu::Nop;
-							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "008_SAVETWO.PCX";
+							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "008.PCX";
 						}
 						
 						menuIn(&HierarchicalMenu::SelectCheckpoint);

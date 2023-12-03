@@ -2,6 +2,8 @@
 #include "LevelLoadingEngine.h"
 #include "CreditsEngine.h"
 #include "MenuItem.h"
+#include "../SavedGameManager.h"
+#include "../Player.h"
 
 
 #define NUM_OF_TREASURES 9
@@ -17,15 +19,15 @@
 
 
 static const pair<Item::Type, const char*> treasuresData[NUM_OF_TREASURES] = {
-	{ type_Treasure_Skull, "STATES/BOOTY/IMAGES/TREASURE/JEWELEDSKULL/BLUE/002.PID" },
-	{ type_Treasure_Crowns, "STATES/BOOTY/IMAGES/TREASURE/CROWNS/GREEN/003.PID" },
-	{ type_Treasure_Geckos, "STATES/BOOTY/IMAGES/TREASURE/GECKOS/RED/001.PID" },
-	{ type_Treasure_Scepters, "STATES/BOOTY/IMAGES/TREASURE/SCEPTERS/RED/001.PID" },
-	{ type_Treasure_Crosses, "STATES/BOOTY/IMAGES/TREASURE/CROSSES/BLUE/002.PID" },
-	{ type_Treasure_Chalices, "STATES/BOOTY/IMAGES/TREASURE/CHALICES/GREEN/003.PID" },
-	{ type_Treasure_Rings, "STATES/BOOTY/IMAGES/TREASURE/RINGS/PURPLE/004.PID" },
-	{ type_Treasure_Goldbars, "STATES/BOOTY/IMAGES/TREASURE/GOLDBARS/001.PID" },
-	{ type_Treasure_Coins, "STATES/BOOTY/IMAGES/TREASURE/COINS/001.PID" }
+	{ type_Treasure_Skull,		"STATES/BOOTY/IMAGES/TREASURE/JEWELEDSKULL/BLUE/002.PID" },
+	{ type_Treasure_Crowns,		"STATES/BOOTY/IMAGES/TREASURE/CROWNS/GREEN/003.PID" },
+	{ type_Treasure_Geckos,		"STATES/BOOTY/IMAGES/TREASURE/GECKOS/RED/001.PID" },
+	{ type_Treasure_Scepters,	"STATES/BOOTY/IMAGES/TREASURE/SCEPTERS/RED/001.PID" },
+	{ type_Treasure_Crosses,	"STATES/BOOTY/IMAGES/TREASURE/CROSSES/BLUE/002.PID" },
+	{ type_Treasure_Chalices,	"STATES/BOOTY/IMAGES/TREASURE/CHALICES/GREEN/003.PID" },
+	{ type_Treasure_Rings,		"STATES/BOOTY/IMAGES/TREASURE/RINGS/PURPLE/004.PID" },
+	{ type_Treasure_Goldbars,	"STATES/BOOTY/IMAGES/TREASURE/GOLDBARS/001.PID" },
+	{ type_Treasure_Coins,		"STATES/BOOTY/IMAGES/TREASURE/COINS/001.PID" }
 };
 
 static const char* const scorenumbersPaths[] = {
@@ -42,26 +44,15 @@ static const char* const scorenumbersPaths[] = {
 };
 
 
-static string getBGImgPath1(int l)
+static string getBGImgPath(int l, int img)
 {
-	string path = "STATES/BOOTY/SCREENS/";
-	char num3[4]; sprintf(num3, "%03d", l * 2 - 1);
-	path += num3;
-	if (l % 2 && l != 13) path += "MAP";
-	else path += "AMULET";
-	path += ".PCX";
+	char path[30];
+	sprintf(path, "STATES/BOOTY/SCREENS/%03d.PCX", img);
 	return path;
 }
-static string getBGImgPath2(int l)
-{
-	string path = "STATES/BOOTY/SCREENS/";
-	char num3[4]; sprintf(num3, "%03d", l * 2);
-	path += num3;
-	if (l % 2 && l != 13) path += "MAP";
-	else path += "AMULET";
-	path += ".PCX";
-	return path;
-}
+
+static string getBGImgPath1(int l) { return getBGImgPath(l, l * 2 - 1); }
+static string getBGImgPath2(int l) { return getBGImgPath(l, l * 2); }
 
 
 // TODO: draw cool animation of map/gem before showing score
@@ -69,6 +60,15 @@ static string getBGImgPath2(int l)
 LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures)
 	: ScreenEngine(getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start)
 {
+	if (_lvlNum != 14)
+	{
+		// save as checkpoint:
+		SavedGameManager::GameData data = BasePlaneObject::player->getGameData();
+		data.level = _lvlNum + 1;
+		data.savePoint = SavedGameManager::SavePoints::Start;
+		SavedGameManager::save(data);
+	}
+
 	clearClawLevelEngineFields(); // clear level data (if player enter menu from level)
 
 	for (auto& i : collectedTreasures)
