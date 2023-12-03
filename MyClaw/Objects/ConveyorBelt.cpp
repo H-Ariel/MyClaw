@@ -13,7 +13,7 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj)
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), obj.speed > 0, ANIMATION_DURATION);
-	if (!_canMoveCC) (int32_t&)ZCoord += 1; // handle the belts that can move CC first
+	if (!_canMoveCC) myMemCpy(ZCoord, ZCoord + 1); // handle the belts that can move CC first
 	myMemCpy(_objRc, Rectangle2D((float)obj.moveRect.left, (float)obj.moveRect.top,
 		(float)obj.moveRect.right, (float)obj.moveRect.bottom)); // I calc `moveRect` in `LevelPlane::readPlaneObjects`
 	pConveyorBelts.push_back(this);
@@ -24,7 +24,7 @@ void ConveyorBelt::Logic(uint32_t elapsedTime)
 	if (tryCatchPlayer())
 	{
 		if (_canMoveCC)
-			player->position.x += speed * elapsedTime;
+			player->position.x += speed * elapsedTime; // TODO: find perfect speed
 	}
 
 	_ani->Logic(elapsedTime);

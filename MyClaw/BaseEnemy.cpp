@@ -85,7 +85,7 @@ BaseEnemy::~BaseEnemy()
 			Item* i = Item::getItem(obj, t);
 			i->speed.y = -0.6f;
 			i->speed.x = getRandomFloat(-0.25f, 0.25f);
-			myMemCpy<int32_t>(ZCoord, DefaultZCoord::Items);
+			myMemCpy<int>(ZCoord, DefaultZCoord::Items);
 			ActionPlane::addPlaneObject(i);
 		}
 

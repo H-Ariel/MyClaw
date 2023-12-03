@@ -162,7 +162,7 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 	_ani = AssetsManager::createAnimationFromDirectory(getItemPath(_type, obj.imageSet));
 	_ani->updateFrames = FindInArray(UpdateFramesTypes, _type);
 
-	myMemCpy<int32_t>(ZCoord, DefaultZCoord::Items);
+	myMemCpy<int>(ZCoord, DefaultZCoord::Items);
 }
 void Item::Logic(uint32_t elapsedTime)
 {

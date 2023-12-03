@@ -17,9 +17,9 @@ bool isFileExists(const char* fileName)
 	return file.is_open();
 }
 
-int getOffset(int32_t level, SavedGameManager::SavePoints savePoint)
+int getOffset(int level, int savePoint)
 {
-	int offset = (level - 1) * 3 + (int)savePoint;
+	int offset = (level - 1) * 3 + savePoint;
 	return offset * sizeof(SavedGameManager::GameData);
 }
 
@@ -64,7 +64,7 @@ void SavedGameManager::save(const GameData& data)
 	//MessageBox(nullptr, L"Game saved", L"Saved", MB_OK | MB_ICONINFORMATION);
 }
 
-bool SavedGameManager::canLoadGame(int32_t level, SavePoints savePoint)
+bool SavedGameManager::canLoadGame(int level, int savePoint)
 {
 	if (!hasSavedGame()) return false;
 	if (level < 1 || 14 < level) return false;
@@ -78,10 +78,8 @@ bool SavedGameManager::canLoadGame(int32_t level, SavePoints savePoint)
 	return (data.level == level && data.savePoint == savePoint);
 }
 
-SavedGameManager::GameData SavedGameManager::load(int32_t level, SavePoints savePoint)
+SavedGameManager::GameData SavedGameManager::load(int level, int savePoint)
 {
-	if (!canLoadGame(level, savePoint)) throw Exception("cannot load game");
-
 	ifstream file(SAVE_FILE_NAME, ios::binary);
 
 	GameData data = {};

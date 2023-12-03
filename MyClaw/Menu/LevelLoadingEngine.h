@@ -6,11 +6,11 @@
 class LevelLoadingEngine : public ScreenEngine
 {
 public:
-	LevelLoadingEngine(int lvlNo);
+	LevelLoadingEngine(int level, int checkpoint = -1);
 	void Logic(uint32_t elapsedTime);
 
 private:
-	uint32_t _totalTime;
-	const int _lvlNo;
+	const int _level, _checkpoint;
+	int _totalTime;
 	bool _isDrawn;
 };

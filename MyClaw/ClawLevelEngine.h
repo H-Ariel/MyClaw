@@ -20,7 +20,7 @@ struct ClawLevelEngineFields
 class ClawLevelEngine : public BaseEngine
 {
 public:
-	ClawLevelEngine(int levelNumber);
+	ClawLevelEngine(int levelNumber, int checkpoint);
 	ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields);
 
 	void Logic(uint32_t elapsedTime) override;

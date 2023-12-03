@@ -120,8 +120,8 @@ int Player::WeaponsAmount::operator[](ClawProjectile::Types type) const
 }
 
 
-Player::Player(const WwdObject& obj)
-	: BaseCharacter(obj), _currWeapon(ClawProjectile::Types::Pistol), 
+Player::Player()
+	: BaseCharacter({}), _currWeapon(ClawProjectile::Types::Pistol),
 	_finishLevel(false), _powerupSparkles(&_saveCurrRect),
 	_weaponsAmount(10, 5, 3)
 {
@@ -1051,6 +1051,15 @@ SavedGameManager::GameData Player::getGameData() const
 	data.dynamiteAmount = _weaponsAmount.dynamite;
 
 	return data;
+}
+void Player::setGameData(const SavedGameManager::GameData& data)
+{
+	_lives = data.lives;
+	_health = data.health;
+	_score = data.score;
+	_weaponsAmount.pistol = data.pistolAmount;
+	_weaponsAmount.magic = data.magicAmount;
+	_weaponsAmount.dynamite = data.dynamiteAmount;
 }
 
 void Player::keyUp(int key)

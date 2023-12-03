@@ -2,7 +2,6 @@
 #include "LevelHUD.h"
 #include "GUI/WindowManager.h"
 #include "Assets-Managers/AssetsManager.h"
-#include "Player.h"
 #include "Objects/Checkpoint.h"
 #include "Objects/Elevator.h"
 #include "Objects/Crate.h"
@@ -73,10 +72,12 @@
 
 
 ActionPlane* ActionPlane::_instance = nullptr;
+shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
+
 
 ActionPlane::ActionPlane(WapWorld* wwd)
 	: LevelPlane(wwd), _planeSize({}), _physicsManager(nullptr), _shakeTime(0), _holeRadius(0)
-	, _deathAniWait(false), _needSort(true), _isInBoss(false), _state(States::Play), _boss(nullptr)
+	, _deathAniWait(false), _needSort(true), _state(States::Play), _boss(nullptr)
 {
 	if (_instance != nullptr)
 	{
@@ -101,6 +102,7 @@ ActionPlane::~ActionPlane()
 
 	// because it static member and we don't want recycle objects...
 	_instance = nullptr;
+	_loadGameData = nullptr;
 }
 
 void ActionPlane::Logic(uint32_t elapsedTime)
@@ -317,16 +319,21 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 	}
 	else
 	{
-		WwdObject playerData;
-		playerData.x = _wwd->startX;
-		playerData.y = _wwd->startY;
-		playerData.z = 4000;
-		player = allocNewSharedPtr<Player>(playerData);
+		// TODO: empty ctor for player
+
+		player = allocNewSharedPtr<Player>();
+		player->position.x = (float)_wwd->startX;
+		player->position.y = (float)_wwd->startY;
 	}
 
 	LevelPlane::readPlaneObjects(reader);
 	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
-	
+
+	if (_loadGameData)
+	{
+		player->setGameData(*_loadGameData.get());
+		_loadGameData = nullptr;
+	}
 	_objects.push_back(player.get()); // must be after LevelPlane::readPlaneObjects() because we reset the objects vector there
 }
 void ActionPlane::addObject(const WwdObject& obj)
@@ -382,6 +389,17 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (endsWith(obj.logic, "Checkpoint"))
 	{
 		_objects.push_back(DBG_NEW Checkpoint(obj, _wwd->levelNumber));
+
+		if (_loadGameData)
+		{
+			if (
+				(_loadGameData->savePoint == 1 && obj.logic == "FirstSuperCheckpoint") ||
+				(_loadGameData->savePoint == 2 && obj.logic == "SecondSuperCheckpoint")
+				)
+			{
+				player->position = player->startPosition = ((Checkpoint*)_objects.back())->position;
+			}
+		}
 	}
 	else if (obj.logic == "StartSteppingStone")
 	{
@@ -648,7 +666,15 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 	if (isProjectile(obj)) _instance->_projectiles.push_back((Projectile*)obj);
 	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
 }
-
+void ActionPlane::loadGame(int level, int checkpoint)
+{
+	SavedGameManager::GameData data = SavedGameManager::load(level, checkpoint);
+	if (data.level == level && data.savePoint == checkpoint)
+	{
+		// success to load checkpoint
+		_loadGameData = allocNewSharedPtr<SavedGameManager::GameData>(data);
+	}
+}
 void ActionPlane::playerEnterToBoss()
 {
 	// clear all objects that we don't need in boss
@@ -681,7 +707,6 @@ void ActionPlane::playerEnterToBoss()
 	}
 	_instance->_bossObjects.clear();
 	_instance->_needSort = true;
-	_instance->_isInBoss = true; // TODO: delete this field and use `_boss != nullptr` instead
 
 	LevelHUD::setBossInitialHealth(_instance->_boss->getHealth());
 

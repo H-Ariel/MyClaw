@@ -15,7 +15,7 @@ class PowerupSparkle;
 class Player : public BaseCharacter // The legendary Captain Claw !
 {
 public:
-	Player(const WwdObject& obj);
+	Player();
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
@@ -60,6 +60,7 @@ public:
 	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }
 
 	SavedGameManager::GameData getGameData() const;
+	void setGameData(const SavedGameManager::GameData& data);
 
 	// used to move player
 	void keyUp(int key);

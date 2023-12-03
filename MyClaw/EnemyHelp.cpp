@@ -13,7 +13,7 @@ EnemyFallDeath::EnemyFallDeath(const WwdObject& obj, shared_ptr<Animation> deadA
 	speed.x = obj.speedX / 1000.f;
 	speed.y = obj.speedY / 1000.f;
 	_isMirrored = obj.speedX < 0;
-	myMemCpy<int32_t>(ZCoord, DefaultZCoord::EnemyFallDeath);
+	myMemCpy<int>(ZCoord, DefaultZCoord::EnemyFallDeath);
 }
 void EnemyFallDeath::Logic(uint32_t elapsedTime)
 {

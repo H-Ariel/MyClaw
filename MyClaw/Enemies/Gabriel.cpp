@@ -275,7 +275,7 @@ GabrielRedTailPirate::GabrielRedTailPirate()
 	: BaseDynamicPlaneObject({}), _isJumping(false)
 {
 	position = { 43479, 5020 };
-	myMemCpy(ZCoord, 2000);
+	myMemCpy<int>(ZCoord, DefaultZCoord::Characters); //myMemCpy(ZCoord, 2000); // TODO
 	speed.x = -0.3f;
 	_ani = AssetsManager::loadCopyAnimation("LEVEL8/ANIS/REDTAILPIRATE/ADVANCE.ANI", "LEVEL8/IMAGES/REDTAILPIRATE");
 }

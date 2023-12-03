@@ -35,7 +35,7 @@ public:
 	bool tryCatchPlayer(); // returns if successfully caught the player
 	bool isMirrored() const { return _isMirrored; }
 
-	const int32_t ZCoord;
+	const int ZCoord;
 	bool removeObject;
 
 	static shared_ptr<Player> player;

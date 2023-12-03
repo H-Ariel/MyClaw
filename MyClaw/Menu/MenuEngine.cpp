@@ -66,6 +66,9 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 				else if (endsWith(m.pcxPath, "LOADGAME.PCX")) dir = "LOAD";
 				//else throw Exception("invalid pcx path: " + m.pcxPath);
 				HierarchicalMenu::SelectLevelMenu.subMenus[0].pcxPath = SINGLEPLAYER_ROOT + dir + "/001_TITLE.PCX";
+			
+				// TODO: check which levels are available and change the menu-buttons accordingly
+				
 				menuIn(&HierarchicalMenu::SelectLevelMenu);
 			};
 			break;
@@ -125,12 +128,8 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 				onClick = [&](MouseButtons) {
 					int level = stoi(HierarchicalMenu::SelectCheckpoint.subMenus[0]
 						.pcxPath.substr(strlen(LOAD_CHECKPOINT_ROOT), 3)) - 10;
-					int checkpoint = (m.cmd & 0xf0) >> 4;
-					char text[64] = {};
-					sprintf(text, "load level %d checkpoint %d", level, checkpoint);
-					MessageBoxA(nullptr, text, "not impleted", 0);
-
-					// TODO: LevelLoadingEngine and checkpoint loading
+					int checkpoint = ((m.cmd & 0xf0) >> 4) - 1;
+					changeEngine<LevelLoadingEngine>(level, checkpoint);
 				};
 			}
 			else if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
@@ -140,9 +139,6 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 
 					if (contains(_currMenu->subMenus[0].pcxPath, "NEW")) // new game
 					{
-						CLEAR_MENUS_STACK;
-						_currMenu = &HierarchicalMenu::InGameMenu; // TODO: in LevelLoadingEngine ?
-						_clawLevelEngineFields.reset(); // do not recycle the fields! // TODO: in LevelLoadingEngine ?
 						changeEngine<LevelLoadingEngine>(level);
 					}
 					else if (contains(_currMenu->subMenus[0].pcxPath, "LOAD")) // load checkpoint
@@ -150,7 +146,29 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 						// set title:
 						char num[64] = {}; sprintf(num, "%03d", level + 10);
 						HierarchicalMenu::SelectCheckpoint.subMenus[0].pcxPath = LOAD_CHECKPOINT_ROOT + string(num) + "_TITLE.PCX";
-						// TODO: check which checkpoints are available and change the menu-buttons accordingly
+						
+						// check which checkpoints are available and change the menu-buttons accordingly
+						if (SavedGameManager::canLoadGame(level, 1))
+						{
+							HierarchicalMenu::SelectCheckpoint.subMenus[2].cmd = HierarchicalMenu::LoadCheckpoint_1;
+							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "003_SAVEONE.PCX";
+						}
+						else
+						{
+							HierarchicalMenu::SelectCheckpoint.subMenus[2].cmd = HierarchicalMenu::Nop;
+							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "005_SAVEONE.PCX";
+						}
+						if (SavedGameManager::canLoadGame(level, 2))
+						{
+							HierarchicalMenu::SelectCheckpoint.subMenus[3].cmd = HierarchicalMenu::LoadCheckpoint_2;
+							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "006_SAVETWO.PCX";
+						}
+						else
+						{
+							HierarchicalMenu::SelectCheckpoint.subMenus[3].cmd = HierarchicalMenu::Nop;
+							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "008_SAVETWO.PCX";
+						}
+						
 						menuIn(&HierarchicalMenu::SelectCheckpoint);
 					}
 				};

@@ -6,7 +6,7 @@
 class SavedGameManager
 {
 public:
-	enum class SavePoints
+	enum SavePoints
 	{
 		Start,
 		SuperCheckpoint1,
@@ -18,7 +18,7 @@ public:
 	{
 		// save point data:
 		int32_t level;
-		SavePoints savePoint;
+		int32_t savePoint;
 		// player data:
 		int32_t lives;
 		int32_t health;
@@ -31,6 +31,6 @@ public:
 
 	static bool hasSavedGame();
 	static void save(const GameData& data);
-	static bool canLoadGame(int32_t level, SavePoints savePoint);
-	static GameData load(int32_t level, SavePoints savePoint);
+	static bool canLoadGame(int level, int savePoint);
+	static GameData load(int level, int savePoint); // if can't load, return empty data
 };

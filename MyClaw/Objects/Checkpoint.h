@@ -12,7 +12,7 @@ public:
 private:
 	enum class States : int8_t { Down, Rise, Wave };
 	const string _imageSetPath;
+	int _levelNumber, _superCheckpoint;
 	States _state;
-	int _superCheckpoint, _levelNumber;
 	bool _isSaved;
 };

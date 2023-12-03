@@ -1,7 +1,7 @@
 #include "ClawLevelEngine.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "GUI/WindowManager.h"
-#include "LevelPlane.h"
+#include "ActionPlane.h"
 #include "Menu/HelpScreenEngine.h"
 #include "Menu/LevelEndEngine.h"
 #include "Menu/MenuEngine.h"
@@ -18,8 +18,11 @@ ClawLevelEngineFields::~ClawLevelEngineFields()
 }
 
 
-ClawLevelEngine::ClawLevelEngine(int levelNumber)
+ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 {
+	if (checkpoint != -1) // according to LevelLoadingEngine
+		ActionPlane::loadGame(levelNumber, checkpoint);
+
 	_fields = allocNewSharedPtr<ClawLevelEngineFields>(levelNumber);
 
 	_fields->_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
@@ -35,7 +38,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber)
 	_elementsList.push_back(_fields->_hud = DBG_NEW LevelHUD(*_fields->_mainPlanePosition));
 	WindowManager::setWindowOffset(_fields->_mainPlanePosition);
 
-#ifdef _DEBUG
+#ifdef _DEBUG1
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL

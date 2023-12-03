@@ -3,6 +3,7 @@
 #include "LevelPlane.h"
 #include "Player.h"
 #include "BaseEnemy.h"
+#include "SavedGameManager.h"
 #include "PhysicsManager.h"
 #include "Objects/PowderKeg.h"
 
@@ -19,13 +20,14 @@ public:
 	void addObject(const WwdObject& obj) override;
 
 	static void addPlaneObject(BasePlaneObject* obj);
+	static void loadGame(int level, int checkpoint);
+	static void playerEnterToBoss();
 	static const PhysicsManager& getPhysicsManager() { return *(_instance->_physicsManager); }
 	static const vector<PowderKeg*>& getPowderKegs() { return _instance->_powderKegs; }
 	static const vector<BaseEnemy*>& getEnemies() { return _instance->_enemies; }
 	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }
 	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
-	static void playerEnterToBoss();
-	static bool isInBoss() { return _instance->_isInBoss; }
+	static bool isInBoss() { return _instance->_boss != nullptr; }
 	static int getBossHealth() { return _instance->_boss->getHealth(); }
 
 private:
@@ -50,8 +52,9 @@ private:
 	int _shakeTime;
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish
-	bool _needSort, _isInBoss;
+	bool _needSort;
 	States _state;
 
 	static ActionPlane* _instance;
+	static shared_ptr<SavedGameManager::GameData> _loadGameData;
 };
