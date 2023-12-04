@@ -43,6 +43,7 @@ public:
 
 private:
 	enum class State : int8_t { Fly, Wait, Explos };
-	int32_t _delayBeforeExplos; // in milliseconds
+	int _delayBeforeExplos; // in milliseconds
 	State _state;
+	bool _isPlaySound;
 };

@@ -28,4 +28,5 @@ private:
 	enum class State : int8_t { Stand, Explos, Raised, Thrown };
 	const string _imageSet;
 	State _state;
+	bool _isPlaySound;
 };

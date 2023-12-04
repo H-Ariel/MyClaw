@@ -21,7 +21,7 @@ public:
 	string ReadString(size_t len);
 	string ReadNullTerminatedString();
 
-	vector<uint8_t> ReadVector(size_t n); // read `n` bytes
+	vector<uint8_t> ReadVector(size_t n, bool alwaysRead = false); // read `n` bytes. if `alwaysRead` is `false`, it will throw exception if it can't read `n` bytes.
 };
 
 

@@ -81,10 +81,7 @@ ActionPlane::ActionPlane(WapWorld* wwd)
 {
 	if (_instance != nullptr)
 	{
-#ifdef _DEBUG
-		cout << "Warning: ActionPlane already exists (level " << _instance->_wwd->levelNumber << ")" << endl;
-#endif
-		//throw Exception("ActionPlane already exists");
+		DBG_PRINT("Warning: ActionPlane already exists (level %d)", _instance->_wwd->levelNumber);
 	}
 
 	_instance = this;
@@ -378,11 +375,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 		PowderKeg* p = DBG_NEW PowderKeg(obj);
 		_objects.push_back(p); _powderKegs.push_back(p);
 	}
-	else if (obj.logic == "PowderKeg")
-	{
-		PowderKeg* p = DBG_NEW PowderKeg(obj);
-		_objects.push_back(p); _powderKegs.push_back(p);
-	}
+	else
 #endif
 	if (endsWith(obj.logic, "Elevator"))
 	{

@@ -29,7 +29,7 @@ WavPlayer::WavPlayer(shared_ptr<BufferReader> wavReader)
 	wavReader->read(fmt.wBitsPerSample);
 	wavReader->skip(4);
 	wavReader->read(soundDataLength);
-	_wavSoundData = wavReader->ReadVector(soundDataLength);
+	_wavSoundData = wavReader->ReadVector(soundDataLength, true);
 
 	myMemCpy(_fmt, fmt);
 	_duration = soundDataLength / fmt.nAvgBytesPerSec * 1000; // duartion in milliseconds
@@ -43,19 +43,21 @@ void WavPlayer::play(bool infinite)
 {
 	stop();
 	
-	_tryPlaying = true;
-	WAV_CALL(waveOutOpen(&_wav, WAVE_MAPPER, &_fmt, (DWORD_PTR)waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION));
-	if (_wav)
-	{
-		WAV_CALL(waveOutPrepareHeader(_wav, &_hdr, sizeof(_hdr)));
-		_hdr.lpData = (LPSTR)_wavSoundData.data();
-		_hdr.dwBufferLength = (DWORD)_wavSoundData.size();
-		WAV_CALL(waveOutSetVolume(_wav, _volume));
-		WAV_CALL(waveOutWrite(_wav, &_hdr, sizeof(_hdr)));
-		_isPlaying = true;
-		_tryPlaying = false;
-		_infinite = infinite;
-	}
+	thread([&](bool infinite) {
+		_tryPlaying = true;
+		WAV_CALL(waveOutOpen(&_wav, WAVE_MAPPER, &_fmt, (DWORD_PTR)waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION));
+		if (_wav)
+		{
+			WAV_CALL(waveOutPrepareHeader(_wav, &_hdr, sizeof(_hdr)));
+			_hdr.lpData = (LPSTR)_wavSoundData.data();
+			_hdr.dwBufferLength = (DWORD)_wavSoundData.size();
+			WAV_CALL(waveOutSetVolume(_wav, _volume));
+			WAV_CALL(waveOutWrite(_wav, &_hdr, sizeof(_hdr)));
+			_isPlaying = true;
+			_tryPlaying = false;
+			_infinite = infinite;
+		}
+		}, infinite).detach();
 }
 
 void WavPlayer::stop()
@@ -92,7 +94,7 @@ void WavPlayer::WavError(MMRESULT mmResult)
 #ifdef _DEBUG
 	char text[512];
 	waveOutGetErrorTextA(mmResult, text, sizeof(text));
-	cout << "WaveError: " << text << endl;
+	DBG_PRINT("WaveError: %s\n", text);
 #endif
 }
 

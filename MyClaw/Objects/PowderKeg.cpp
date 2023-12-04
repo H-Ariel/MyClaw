@@ -6,7 +6,7 @@
 
 
 PowderKeg::PowderKeg(const WwdObject& obj)
-	: BaseDynamicPlaneObject(obj), _imageSet(obj.imageSet), _state(State::Stand)
+	: BaseDynamicPlaneObject(obj), _imageSet(obj.imageSet), _state(State::Stand), _isPlaySound(false)
 {
 	_ani = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath(_imageSet) + "/001.PID")->getCopy();
 }
@@ -31,6 +31,11 @@ void PowderKeg::Logic(uint32_t elapsedTime)
 	{
 		_ani->Logic(elapsedTime);
 		removeObject = _ani->isFinishAnimation();
+		if (!_isPlaySound)
+		{
+			AssetsManager::playWavFile("GAME/SOUNDS/KEGBOOM.WAV");
+			_isPlaySound = true;
+		}
 	}
 }
 

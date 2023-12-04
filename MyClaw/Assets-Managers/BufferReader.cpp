@@ -39,10 +39,18 @@ string BufferReader::ReadNullTerminatedString()
 	return str;
 }
 
-vector<uint8_t> BufferReader::ReadVector(size_t n)
+vector<uint8_t> BufferReader::ReadVector(size_t n, bool alwaysRead)
 {
 	if (_idx + n > _size)
-		throw Exception("unable to read data (reached to end of buffer)");
+	{
+		if (alwaysRead)
+		{
+			DBG_PRINT("WARNING at " __FUNCTION__ ": unable to read data (reached to end of buffer)\n");
+			n = _size - _idx;
+		}
+		else
+			throw Exception("unable to read data (reached to end of buffer)");
+	}
 
 	vector<uint8_t> vec(n);
 	memcpy(vec.data(), _data + _idx, n);

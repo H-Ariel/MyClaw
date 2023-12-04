@@ -120,7 +120,7 @@ string Item::getItemPath(Type type, const string& imageSet)
 
 void playItemSound(Item::Type type)
 {
-	string path;
+	const char* path = nullptr;
 
 	switch (type)
 	{
@@ -128,7 +128,7 @@ void playItemSound(Item::Type type)
 	case Item::Treasure_Coins:
 		path = "GAME/SOUNDS/COIN.WAV";
 		break;
-	
+
 	case Item::Treasure_Goldbars:
 		path = "GAME/SOUNDS/TREASURE.WAV";
 		break;
@@ -139,7 +139,7 @@ void playItemSound(Item::Type type)
 	case Item::Treasure_Rings_Purple:
 		path = "GAME/SOUNDS/RINGS.WAV";
 		break;
-	
+
 	case Item::Treasure_Necklace:
 	case Item::Treasure_Chalices_Red:
 	case Item::Treasure_Chalices_Green:
@@ -198,13 +198,13 @@ void playItemSound(Item::Type type)
 	case Item::Health_Level:
 		path = "GAME/SOUNDS/FOODITEM.WAV";
 		break;
-	
+
 	case Item::Health_25:
 	case Item::Health_10:
 	case Item::Health_15:
 		path = "GAME/SOUNDS/MILK.WAV";
 		break;
-	
+
 	case Item::MapPiece:
 	case Item::NineLivesGem:
 		path = "GAME/SOUNDS/MAPPIECE.WAV";
@@ -214,7 +214,7 @@ void playItemSound(Item::Type type)
 	case Item::BossWarp:
 		path = "GAME/SOUNDS/WARP.WAV";
 		break;
-		
+
 	case Item::Powerup_FireSword:
 		path = "CLAW/SOUNDS/1110001.WAV";
 		break;
@@ -259,9 +259,11 @@ void playItemSound(Item::Type type)
 		break;
 	}
 
-	if (path != "")
+	if (path)
 	{
 		AssetsManager::playWavFile(path);
+		if (!strcmp(path, "GAME/SOUNDS/MAPPIECE.WAV"))
+			Sleep(1520); // wait until the sound ends
 	}
 }
 
@@ -318,8 +320,8 @@ void Item::Logic(uint32_t elapsedTime)
 		if (GetRect().intersects(player->GetRect()))
 		{
 			// if the player collect the item it will be removed
-			removeObject = player->collectItem(this);
-			playItemSound(_type);
+			if (removeObject = player->collectItem(this)) // NOTE: `=` not `==`
+				playItemSound(_type); // sound only if the player collect the item
 		}
 	}
 

@@ -900,9 +900,7 @@ bool Player::collectItem(Item* item)
 	case Item::Health_25:		ADD_HEALTH(25);
 
 	case Item::MapPiece:
-	case Item::NineLivesGem:
-		_finishLevel = true;
-		break;
+	case Item::NineLivesGem:	_finishLevel = true; return true;
 
 	case Item::Powerup_Catnip_White:
 	case Item::Powerup_Catnip_Red:		SET_POWERUP(Powerup_Catnip);

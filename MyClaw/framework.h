@@ -56,6 +56,13 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #endif
 
 
+#ifdef _DEBUG
+	#define DBG_PRINT(...) printf(__VA_ARGS__)
+#else
+	#define DBG_PRINT(...)
+#endif
+
+
 enum class MouseButtons
 {
 	Left,

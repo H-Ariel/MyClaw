@@ -20,7 +20,7 @@ ClawProjectile::ClawProjectile(const WwdObject& obj, const string& aniDirPath, T
 
 ClawDynamite::ClawDynamite(const WwdObject& obj)
 	: ClawProjectile(obj, "GAME/ANIS/DYNAMITELIT.ANI", Types::Dynamite),
-	_delayBeforeExplos(500), _state(State::Fly) {}
+	_delayBeforeExplos(500), _state(State::Fly), _isPlaySound(false) {}
 void ClawDynamite::Logic(uint32_t elapsedTime)
 {
 	switch (_state)
@@ -44,6 +44,11 @@ void ClawDynamite::Logic(uint32_t elapsedTime)
 
 	case State::Explos:
 		removeObject = _ani->isFinishAnimation();
+		if (!_isPlaySound)
+		{
+			AssetsManager::playWavFile("GAME/SOUNDS/KEGBOOM.WAV");
+			_isPlaySound = true;
+		}
 		break;
 	}
 

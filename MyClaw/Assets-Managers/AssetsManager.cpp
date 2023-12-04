@@ -124,8 +124,7 @@ shared_ptr<MidiPlayer> AssetsManager::getMidiPlayer(const string& xmiFilePath)
 	return allocNewSharedPtr<MidiPlayer>(instance->_rezArchive->getFileData(xmiFilePath));
 }
 
-// if debug - no sound
-#ifndef _DEBUG
+#ifndef _DEBUG // if debug - no sounds
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int32_t volume, bool infinite)
 {
 	uint32_t id = -1;
@@ -136,9 +135,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int32_t volume, b
 	}
 	catch (const Exception& ex)
 	{
-#ifdef _DEBUG
-		cout << __FUNCTION__ " - Error for wavFilePath=\"" << wavFilePath << "\": " << ex.what() << endl;
-#endif
+		DBG_PRINT(__FUNCTION__ " - Error for wavFilePath=\"%s\": %s\n", wavFilePath.c_str(), ex.what().c_str());
 	}
 	return id;
 }
@@ -146,6 +143,12 @@ void AssetsManager::stopWavFile(uint32_t wavFileId)
 {
 	instance->_audioManager->stopWavFile(wavFileId);
 }
+#else
+uint32_t AssetsManager::playWavFile(const string& wavFilePath, int32_t volume, bool infinite) { return -1; }
+void AssetsManager::stopWavFile(uint32_t wavFileId) {}
+#endif
+
+#ifndef _DEBUG // if debug - no background music
 void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type)
 {
 	thread(&AudioManager::setBackgroundMusic, instance->_audioManager, type).detach();
@@ -155,8 +158,6 @@ void AssetsManager::stopBackgroundMusic()
 	instance->_audioManager->stopBackgroundMusic();
 }
 #else
-uint32_t AssetsManager::playWavFile(const string& wavFilePath, int32_t volume, bool infinite) { return -1; }
-void AssetsManager::stopWavFile(uint32_t wavFileId) {}
 void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type) {}
 void AssetsManager::stopBackgroundMusic() {}
 #endif
