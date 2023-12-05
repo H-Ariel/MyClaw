@@ -12,5 +12,4 @@ public:
 private:
 	const int _level, _checkpoint;
 	int _totalTime;
-	bool _isDrawn;
 };
