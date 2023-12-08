@@ -52,7 +52,7 @@ private:
 	int _shakeTime;
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish
-	bool _needSort;
+	bool _needSort, _playDeathSound;
 	States _state;
 
 	static ActionPlane* _instance;

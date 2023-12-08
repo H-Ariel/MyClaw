@@ -31,14 +31,21 @@
 
 #define EXCLAMATION_MARK	_animations["exclamation-mark"] // it used when claw is speaking
 
+#define MAX_WEAPON_AMOUNT	99
+#define MAX_HEALTH			100
+
 // code blocks for `collectItem`
-#define ADD_WEAPON(t, n) { _weaponsAmount. t += n; return true; }
-#define ADD_HEALTH(n) { \
-	if (_health < 100) { \
-		_health += n; \
-		if (_health > 100) _health = 100; \
+
+#define ADD_VALUE(dst, n, max) { \
+	if (dst < max) { \
+		dst += n; \
+		if (dst > max) \
+			dst = max; \
 		return true; \
 	} break; }
+
+#define ADD_WEAPON(t, n)	ADD_VALUE(_weaponsAmount. t, n, MAX_WEAPON_AMOUNT)
+#define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH)
 #define SET_POWERUP(t) { \
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Powerup); \
 	if (_currPowerup != Item:: t) _powerupLeftTime = 0; \
@@ -97,7 +104,6 @@ void Player::PowerupSparkles::Draw() {
 
 Player::WeaponsAmount::WeaponsAmount(int pistol, int magic, int dynamite)
 	: pistol(pistol), magic(magic), dynamite(dynamite) {}
-
 int& Player::WeaponsAmount::operator[](ClawProjectile::Types type)
 {
 	switch (type)
@@ -220,7 +226,7 @@ void Player::Logic(uint32_t elapsedTime)
 		speedX = SpeedX_LiftPowderKeg;
 
 	_damageRest -= elapsedTime;
-	if (checkForHurts())
+	if (checkForHurts() || _health <= 0)
 	{
 		if (_health <= 0)
 		{
@@ -1012,6 +1018,10 @@ void Player::nextLevel()
 	_finishLevel = false;
 	_collectedTreasures.clear();
 	backToLife();
+}
+void Player::endLife()
+{
+	_health = 0;
 }
 
 void Player::shootSwordProjectile()

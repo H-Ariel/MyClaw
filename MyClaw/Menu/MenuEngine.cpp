@@ -120,7 +120,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 
 		case HierarchicalMenu::EndLife:
 			onClick = [&](MouseButtons) {
-				BasePlaneObject::player->loseLife(); // TODO: fall death
+				BasePlaneObject::player->endLife();
 				CLEAR_MENUS_STACK;
 				_currMenu = &HierarchicalMenu::InGameMenu;
 				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);

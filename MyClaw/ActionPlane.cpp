@@ -50,8 +50,8 @@
 #include "Enemies/TigerGuard.h"
 
 
-#define RECT_SPEED			0.5f // speed of the rect that shows when CC is died
-#define CC_FALLDEATH_SPEED	0.7f // speed of CC when he falls out the window
+#define RECT_SPEED (0.5f / WindowManager::PixelSize) // speed of the rect that shows when CC is died
+#define CC_FALLDEATH_SPEED 0.7f // speed of CC when he falls out the window
 
 #define SHAKE_TIME 3000 // time of shaking screen (ms)
 
@@ -77,7 +77,7 @@ shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
 
 ActionPlane::ActionPlane(WapWorld* wwd)
 	: LevelPlane(wwd), _planeSize({}), _physicsManager(nullptr), _shakeTime(0), _holeRadius(0)
-	, _deathAniWait(false), _needSort(true), _state(States::Play), _boss(nullptr)
+	, _deathAniWait(false), _needSort(true), _state(States::Play), _boss(nullptr), _playDeathSound(false)
 {
 	if (_instance != nullptr)
 	{
@@ -110,15 +110,20 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 	if (_deathAniWait)
 	{
-		// TODO: sound on close/open
-
 		switch (_state)
 		{
 		case States::Close:
+			if (!_playDeathSound)
+			{
+				AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
+				_playDeathSound = true;
+			}
+
 			_holeRadius -= RECT_SPEED * elapsedTime;
 			if (_holeRadius <= 0)
 			{
 				_state = States::Open;
+				_playDeathSound = false;
 				player->backToLife();
 				updatePosition();
 
@@ -128,11 +133,18 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			break;
 
 		case States::Open:
+			if (!_playDeathSound)
+			{
+				AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
+				_playDeathSound = true;
+			}
+
 			_holeRadius += RECT_SPEED * elapsedTime;
 			if (player->position.x - position.x < _holeRadius)
 			{
 				_deathAniWait = false;
 				_state = States::Play;
+				_playDeathSound = false;
 			}
 			break;
 

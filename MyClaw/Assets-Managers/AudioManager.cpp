@@ -2,6 +2,9 @@
 #include "MidiPlayer.h"
 
 
+// TODO: do not load every time the same .WAV file, cache it (map by path)
+
+
 AudioManager::AudioManager(RezArchive* rezArchive)
 	: _rezArchive(rezArchive), _currBgMusicType(BackgroundMusicType::None)
 {

@@ -49,6 +49,7 @@ public:
 	void loseLife();
 	void setLadderFlags(bool isOnLadderTop) { _isOnLadderTop = isOnLadderTop; _isCollideWithLadder = true; }
 	void nextLevel();
+	void endLife(); // at ingame-menu
 
 	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
 	int getHealthAmount() const { return _health; }
