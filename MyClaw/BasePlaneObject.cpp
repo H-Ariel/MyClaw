@@ -64,6 +64,8 @@ void BaseDynamicPlaneObject::stopFalling(float collisionSize) { speed.y = 0; pos
 void BaseDynamicPlaneObject::stopMovingLeft(float collisionSize) { speed.x = 0; position.x += collisionSize; }
 void BaseDynamicPlaneObject::stopMovingRight(float collisionSize) { speed.x = 0; position.x -= collisionSize; }
 void BaseDynamicPlaneObject::bounceTop() { speed.y = abs(speed.y); }
+void BaseDynamicPlaneObject::whenTouchDeath() { removeObject = true; }
+
 
 
 BaseDamageObject::BaseDamageObject(const WwdObject& obj, int damage)

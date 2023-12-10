@@ -73,6 +73,7 @@ public:
 	virtual void stopMovingLeft(float collisionSize);
 	virtual void stopMovingRight(float collisionSize);
 	virtual void bounceTop();
+	virtual void whenTouchDeath(); // when the object touch tile with `TileAttribute_Death` flag
 
 	// speed.x -> speed of X-axis, speed.y -> speed of Y-axis
 	// the speed units are pixels per milliseconds

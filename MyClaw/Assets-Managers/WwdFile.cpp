@@ -274,8 +274,9 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
 }
 
 /*
- * Minor change to tiles so they will be more accurate
-   for reduce rectangles (in PhysicsManager)
+ * Minor change to tiles:
+ * In level 2 it's necessary to change the tiles for tower-cannons
+   so the buullets will not collide with solid tiles.
  * In level 8 it's necessary to change the tiles for death blocks.
  * In levels 5, 9, and 11 it's necessary to change the tiles to
    cancel the groud-collision of the player with these tiles.
@@ -287,23 +288,7 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
  */
 void WapWorld::fixTilesDescription()
 {
-	if (levelNumber == 1)
-	{
-		WwdTileDescription& t401 = tilesDescription[401];
-		WwdTileDescription& t406 = tilesDescription[406];
-
-		t401.rect.right = 28;
-		t401.rect.bottom = 63;
-		t401.insideAttrib = WwdTileDescription::TileAttribute_Solid;
-		t401.type = WwdTileDescription::TileType_Double;
-
-		t406.rect.left = 40;
-		t406.rect.right = 63;
-		t406.rect.bottom = 63;
-		t406.insideAttrib = WwdTileDescription::TileAttribute_Solid;
-		t406.type = WwdTileDescription::TileType_Double;
-	}
-	else if (levelNumber == 2)
+	if (levelNumber == 2)
 	{
 		tilesDescription[88].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
 		tilesDescription[91].insideAttrib = WwdTileDescription::TileAttribute_Clear;
@@ -323,10 +308,13 @@ void WapWorld::fixTilesDescription()
 	}
 	else if (levelNumber == 9)
 	{
-		for (int i : { 103, 104, 105, 106, 107, 108, 159 })
-		{
-			tilesDescription[i].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		}
+		tilesDescription[103].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[104].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[105].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[106].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[107].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[108].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[159].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 11)
 	{

@@ -65,8 +65,7 @@
 
 #ifdef _DEBUG
 //#undef LOW_DETAILS
-#define NO_DEATH
-#define NO_ENEMIES
+//#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -181,11 +180,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 	/*if (!player->isInDeathAnimation())
 	{
-		_physicsManager->checkCollides(player, [&] {
-#ifndef NO_DEATH
-			player->loseLife();
-#endif
-		});
+		_physicsManager->checkCollides(player);
 	}*/
 
 	if (_shakeTime > 0)
@@ -209,18 +204,14 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		{
 			if (!player->isInDeathAnimation())
 			{
-				_physicsManager->checkCollides(player.get(), [&] {
-#ifndef NO_DEATH
-					player->loseLife();
-#endif
-				});
+				_physicsManager->checkCollides(player.get());
 			}
 		}
 		else if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
 			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{
-			_physicsManager->checkCollides((BaseDynamicPlaneObject*)obj, [obj] { obj->removeObject = true; });
+			_physicsManager->checkCollides((BaseDynamicPlaneObject*)obj);
 		}
 		else if (isinstance<StackedCrates>(obj))
 		{

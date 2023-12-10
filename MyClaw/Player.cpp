@@ -808,6 +808,12 @@ void Player::stopMovingRight(float collisionSize)
 	}
 	elevator = nullptr;
 }
+void Player::whenTouchDeath()
+{
+#ifndef _DEBUG // in debug mode CC can't die
+	player->loseLife();
+#endif
+}
 void Player::jump(float force)
 {
 	if (_aniName == "LOOKUP" || isDuck() || _raisedPowderKeg) return;
