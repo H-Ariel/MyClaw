@@ -40,7 +40,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 
 #ifdef _DEBUG
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
-//	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
+	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 5775, 4347 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 9696, 772 };
@@ -157,7 +157,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		if (BasePlaneObject::player->isFinishDeathAnimation())
 		{
 			MessageBoxA(nullptr, "GAME OVER", "", 0);
-			// TODO: show GAME OVER screen and then go to menu
+			// TODO: show GAME OVER screen and then go to menu / use ActionPlaneMessage ?
 			MenuEngine::setMainMenu();
 			changeEngine<MenuEngine>();
 		}

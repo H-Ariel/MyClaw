@@ -59,9 +59,6 @@ void SavedGameManager::save(const GameData& data)
 	fstream file(SAVE_FILE_NAME, ios::binary | ios::in | ios::out);
 	file.seekp(getOffset(data.level, data.savePoint));
 	file.write((char*)&data, sizeof(GameData));
-
-	// TDOD: write to screen that the game was saved
-	//MessageBox(nullptr, L"Game saved", L"Saved", MB_OK | MB_ICONINFORMATION);
 }
 
 bool SavedGameManager::canLoadGame(int level, int savePoint)

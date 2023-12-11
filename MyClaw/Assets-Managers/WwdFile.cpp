@@ -251,12 +251,12 @@ void WapWorld::readTileDescriptions(BufferReader& reader)
 		switch (tileDesc.type)
 		{
 		case WwdTileDescription::TileType_Single:
-			reader.read(tileDesc.insideAttrib);
+			reader.read(tileDesc.inAttr);
 			break;
 
 		case WwdTileDescription::TileType_Double:
-			reader.read(tileDesc.outsideAttrib);
-			reader.read(tileDesc.insideAttrib);
+			reader.read(tileDesc.outAttr);
+			reader.read(tileDesc.inAttr);
 			reader.read(tileDesc.rect);
 			if (tileDesc.rect.left < 0 || TILE_SIZE < tileDesc.rect.left ||
 				tileDesc.rect.top < 0 || TILE_SIZE < tileDesc.rect.top ||
@@ -290,12 +290,12 @@ void WapWorld::fixTilesDescription()
 {
 	if (levelNumber == 2)
 	{
-		tilesDescription[88].outsideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[91].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[88].outAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[91].inAttr = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 5)
 	{
-		tilesDescription[509].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[509].inAttr = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 8)
 	{
@@ -308,24 +308,24 @@ void WapWorld::fixTilesDescription()
 	}
 	else if (levelNumber == 9)
 	{
-		tilesDescription[103].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[104].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[105].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[106].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[107].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[108].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[159].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[103].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[104].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[105].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[106].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[107].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[108].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[159].inAttr = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 11)
 	{
-		tilesDescription[39].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[39].inAttr = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 14)
 	{
-		tilesDescription[49].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[50].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[54].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[62].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tilesDescription[66].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[49].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[50].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[54].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[62].inAttr = WwdTileDescription::TileAttribute_Clear;
+		tilesDescription[66].inAttr = WwdTileDescription::TileAttribute_Clear;
 	}
 }

@@ -144,10 +144,9 @@ struct WwdTileDescription
 	};
 
 	uint32_t type; // WwdTileTypeFlags single value
-	uint32_t insideAttrib; // WwdTileAttributeFlags
-
+	uint32_t inAttr; // inside WwdTileAttributeFlags
 	// `outside_attrib` and `rect` used only if `type == TileType_DOUBLE`
-	uint32_t outsideAttrib; // WwdTileAttributeFlags
+	uint32_t outAttr; // outside WwdTileAttributeFlags
 	WwdRect rect;
 };
 

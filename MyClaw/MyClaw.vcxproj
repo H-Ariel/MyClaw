@@ -194,6 +194,7 @@
     <ClCompile Include="Enemies\Wolvington.cpp" />
     <ClCompile Include="EnemyHelp.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
+    <ClCompile Include="GUI\ActionPlaneMessage.cpp" />
     <ClCompile Include="GUI\Animation.cpp" />
     <ClCompile Include="GUI\Rectangle2D.cpp" />
     <ClCompile Include="GUI\UIBaseButton.cpp" />
@@ -291,6 +292,7 @@
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameMainApp.h" />
+    <ClInclude Include="GUI\ActionPlaneMessage.h" />
     <ClInclude Include="GUI\Animation.h" />
     <ClInclude Include="GUI\Rectangle2D.h" />
     <ClInclude Include="GUI\UIBaseButton.h" />

@@ -21,8 +21,8 @@ protected:
 	map<int32_t, shared_ptr<UIBaseImage>> tilesImages; // [id]=image
 	WapWorld* _wwd;
 	ColorF fillColor;
-	uint32_t tilesOnAxisX, tilesOnAxisY;
-	uint32_t maxTileIdxX, maxTileIdxY;
+	int32_t tilesOnAxisX, tilesOnAxisY;
+	int32_t maxTileIdxX, maxTileIdxY;
 	int32_t ZCoord;
 	float movementPercentX, movementPercentY;
 	bool _isMainPlane;

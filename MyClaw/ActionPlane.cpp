@@ -281,8 +281,6 @@ void ActionPlane::Draw()
 {
 	LevelPlane::Draw();
 
-	_physicsManager->Draw();
-
 	if (_state == States::Close || _state == States::Open)
 	{
 		const D2D1_SIZE_F wndSz = WindowManager::getSize();
@@ -321,8 +319,6 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 	}
 	else
 	{
-		// TODO: empty ctor for player
-
 		player = allocNewSharedPtr<Player>();
 		player->position.x = player->startPosition.x = (float)_wwd->startX;
 		player->position.y = player->startPosition.y = (float)_wwd->startY;
