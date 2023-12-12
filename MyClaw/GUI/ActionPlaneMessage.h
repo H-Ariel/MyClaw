@@ -7,7 +7,7 @@
 class ActionPlaneMessage : public BasePlaneObject
 {
 public:
-	ActionPlaneMessage(const wstring& message, int timeout);
+	ActionPlaneMessage(const wstring& message, int timeout = 2000);
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;

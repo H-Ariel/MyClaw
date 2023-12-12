@@ -38,7 +38,7 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 				data.savePoint = (SavedGameManager::SavePoints)_superCheckpoint;
 				SavedGameManager::save(data);
 				_isSaved = true;
-				ActionPlane::addPlaneObject(DBG_NEW ActionPlaneMessage(L"Your game has been saved", 2000));
+				ActionPlane::addPlaneObject(DBG_NEW ActionPlaneMessage(L"Your game has been saved"));
 			}
 		}
 		break;

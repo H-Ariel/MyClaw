@@ -311,7 +311,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GUI\ActionPlaneMessage.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

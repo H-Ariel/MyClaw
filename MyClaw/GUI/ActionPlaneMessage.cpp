@@ -21,7 +21,7 @@ void ActionPlaneMessage::Logic(uint32_t elapsedTime)
 
 	text.size = WindowManager::getRealSize();
 	text.position.x = text.size.width / 2;
-	text.position.y = text.size.height / 2;
+	text.position.y = text.size.height / 3;
 }
 
 void ActionPlaneMessage::Draw() { text.Draw(); }
