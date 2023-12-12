@@ -27,8 +27,8 @@ void ClawDynamite::Logic(uint32_t elapsedTime)
 	{
 	case State::Fly:
 		position.x += speed.x * elapsedTime;
-		position.y += speed.y * elapsedTime;
 		speed.y += GRAVITY * elapsedTime;
+		position.y += speed.y * elapsedTime;
 		break;
 
 	case State::Wait:

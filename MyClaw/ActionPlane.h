@@ -4,7 +4,6 @@
 #include "Player.h"
 #include "BaseEnemy.h"
 #include "SavedGameManager.h"
-#include "PhysicsManager.h"
 #include "Objects/PowderKeg.h"
 
 
@@ -22,7 +21,6 @@ public:
 	static void addPlaneObject(BasePlaneObject* obj);
 	static void loadGame(int level, int checkpoint);
 	static void playerEnterToBoss();
-	static const PhysicsManager& getPhysicsManager() { return *(_instance->_physicsManager); }
 	static const vector<PowderKeg*>& getPowderKegs() { return _instance->_powderKegs; }
 	static const vector<BaseEnemy*>& getEnemies() { return _instance->_enemies; }
 	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }
@@ -47,7 +45,6 @@ private:
 	vector<BaseDamageObject*> _damageObjects;
 	vector<Rectangle2D> _shakeRects;
 	D2D1_SIZE_F _planeSize;
-	PhysicsManager* _physicsManager;
 	BaseBoss* _boss;
 	int _shakeTime;
 	float _holeRadius; // the radius of the hole that remains until closed

@@ -1,5 +1,6 @@
 #include "ActionPlane.h"
 #include "LevelHUD.h"
+#include "PhysicsManager.h"
 #include "GUI/WindowManager.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "Objects/Checkpoint.h"
@@ -55,8 +56,10 @@
 
 #define SHAKE_TIME 3000 // time of shaking screen (ms)
 
+#define player	BasePlaneObject::player
+#define physics	BasePlaneObject::physics
+
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
-#define player BasePlaneObject::player
 
 #define ADD_ENEMY(p) { BaseEnemy* enemy = DBG_NEW p; _objects.push_back(enemy); _enemies.push_back(enemy); }
 #define ADD_DAMAGE_OBJECT(p) { BaseDamageObject* dObj = DBG_NEW p; _objects.push_back(dObj); _damageObjects.push_back(dObj); }
@@ -75,7 +78,7 @@ shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
 
 
 ActionPlane::ActionPlane(WapWorld* wwd)
-	: LevelPlane(wwd), _planeSize({}), _physicsManager(nullptr), _shakeTime(0), _holeRadius(0)
+	: LevelPlane(wwd), _planeSize({}), _shakeTime(0), _holeRadius(0)
 	, _deathAniWait(false), _needSort(true), _state(States::Play), _boss(nullptr), _playDeathSound(false)
 {
 	if (_instance != nullptr)
@@ -93,8 +96,6 @@ ActionPlane::~ActionPlane()
 		delete i;
 	for (BasePlaneObject* i : _bossObjects)
 		delete i;
-
-	SafeDelete(_physicsManager);
 
 	// because it static member and we don't want recycle objects...
 	_instance = nullptr;
@@ -180,7 +181,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 	/*if (!player->isInDeathAnimation())
 	{
-		_physicsManager->checkCollides(player);
+		physics->checkCollides(player);
 	}*/
 
 	if (_shakeTime > 0)
@@ -204,14 +205,15 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		{
 			if (!player->isInDeathAnimation())
 			{
-				_physicsManager->checkCollides(player.get());
+				physics->checkCollides(player.get());
 			}
 		}
 		else if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
 			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{
-			_physicsManager->checkCollides((BaseDynamicPlaneObject*)obj);
+			// TODO: delete this `else if` statement
+			physics->checkCollides((BaseDynamicPlaneObject*)obj);
 		}
 		else if (isinstance<StackedCrates>(obj))
 		{
@@ -308,7 +310,7 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 	_planeSize.height = (float)TILE_SIZE * tilesOnAxisY;
 
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
-	_physicsManager = DBG_NEW PhysicsManager(_wwd, this); // must be after WWD map loaded and before objects added
+	physics = allocNewSharedPtr<PhysicsManager>(_wwd, this); // must be after WWD map loaded and before objects added
 
 	// player's initializtion must be before LevelPlane::readPlaneObjects() because some of objects need player
 	if (player)

@@ -23,7 +23,7 @@ PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 
 	WwdTileDescription tileDesc;
 	Rectangle2D tileRc;
-	uint32_t i, j;
+	int i, j;
 	float x1, x2, y1, y2;
 
 	// add rectangle to list and merge it with previous rectangle if possible
@@ -55,12 +55,12 @@ PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 		}
 		};
 
-	for (i = 0; i < plane->tilesOnAxisY; i++)
+	for (i = 0; i < tilesOnAxisY; i++)
 	{
-		for (j = 0; j < plane->tilesOnAxisX; j++)
+		for (j = 0; j < tilesOnAxisX; j++)
 		{
-			if (plane->tiles[i][j] == EMPTY_TILE) tileDesc = {};
-			else tileDesc = wwd->tilesDescription[plane->tiles[i][j]];
+			if (tiles[i][j] == EMPTY_TILE) tileDesc = {};
+			else tileDesc = tilesDescription[tiles[i][j]];
 
 			tileRc.left = (float)(j * TILE_SIZE);
 			tileRc.top = (float)(i * TILE_SIZE);
@@ -137,15 +137,21 @@ PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 	}
 }
 
-// TODO: use these functions:
-void PhysicsManager::moveX(BaseDynamicPlaneObject* obj, float d) const
+// TODO: use these functions. the problem: CC can't jump. need check for all objects
+void PhysicsManager::moveX(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const
 {
-	obj->position.x += d;
+	obj->position.x += obj->speed.x * elapsedTime;
 	checkCollides(obj);
 }
-void PhysicsManager::moveY(BaseDynamicPlaneObject* obj, float d) const
+void PhysicsManager::moveY(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const
 {
-	obj->position.y += d;
+	obj->position.y += obj->speed.y * elapsedTime;
+	checkCollides(obj);
+}
+void PhysicsManager::move(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const
+{
+	obj->position.x += obj->speed.x * elapsedTime;
+	obj->position.y += obj->speed.y * elapsedTime;
 	checkCollides(obj);
 }
 
@@ -159,10 +165,10 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj) const
 	Rectangle2D collisions[9];
 	Rectangle2D cumulatedCollision, tileRc, collisionRc;
 	int collisionsNumber = 0, i, j;
-	const int minX = max((int)(objRc.left / TILE_SIZE) - 1, 0);
-	const int maxX = min((int)(objRc.right / TILE_SIZE) + 1, tilesOnAxisX - 1);
-	const int minY = max((int)(objRc.top / TILE_SIZE) - 1, 0);
-	const int maxY = min((int)(objRc.bottom / TILE_SIZE) + 1, tilesOnAxisY - 1);
+	const int minX = max((int)objRc.left / TILE_SIZE - 1, 0);
+	const int maxX = min((int)objRc.right / TILE_SIZE + 1, tilesOnAxisX - 1);
+	const int minY = max((int)objRc.top / TILE_SIZE - 1, 0);
+	const int maxY = min((int)objRc.bottom / TILE_SIZE + 1, tilesOnAxisY - 1);
 	float x0, x1, x2, x3;
 	float y0, y1, y2, y3;
 	const bool isPlayer = isinstance<Player>(obj);

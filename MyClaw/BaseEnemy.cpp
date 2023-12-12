@@ -1,6 +1,7 @@
 #include "BaseEnemy.h"
 #include "ActionPlane.h"
 #include "EnemyHelp.h"
+#include "PhysicsManager.h"
 #include "Player.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "Objects/Item.h"
@@ -60,7 +61,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string&
 		if (obj.logic != "Seagull" && obj.logic != "Fish")
 		{
 			// find enemy range
-			pair<float, float> range = ActionPlane::getPhysicsManager().getEnemyRange(position, _minX, _maxX);
+			pair<float, float> range = physics->getEnemyRange(position, _minX, _maxX);
 			myMemCpy(_minX, range.first);
 			myMemCpy(_maxX, range.second);
 		}
@@ -124,7 +125,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 
 	speed.y += GRAVITY * elapsedTime;
 	position.y += speed.y * elapsedTime;
-	
+
 
 	if (_isAttack)
 	{

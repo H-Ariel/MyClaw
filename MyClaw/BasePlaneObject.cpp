@@ -1,9 +1,11 @@
 #include "BasePlaneObject.h"
+#include "PhysicsManager.h"
 #include "Player.h"
 #include "Assets-Managers/AssetsManager.h"
 
 
-shared_ptr<Player> BasePlaneObject::player = nullptr;
+shared_ptr<Player> BasePlaneObject::player;
+shared_ptr<PhysicsManager> BasePlaneObject::physics;
 
 
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)

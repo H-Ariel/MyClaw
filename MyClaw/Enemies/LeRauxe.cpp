@@ -182,8 +182,8 @@ bool LeRauxe::PreLogic(uint32_t elapsedTime)
 		else
 		{
 			position.x += speed.x * elapsedTime;
-			position.y += speed.y * elapsedTime;
 			speed.y += GRAVITY * elapsedTime;
+			position.y += speed.y * elapsedTime;
 
 			PostLogic(elapsedTime);
 			return false;

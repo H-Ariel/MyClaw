@@ -1,4 +1,5 @@
 #include "HermitCrab.h"
+#include "../PhysicsManager.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
 #include "../Objects/EnemyProjectile.h"
@@ -66,7 +67,7 @@ void HermitCrab::stopFalling(float collisionSize)
 	if (_isFromNest)
 	{
 		// find enemy range (copied from BaseEnemy)
-		auto range = ActionPlane::getPhysicsManager().getEnemyRange(position, _minX, _maxX);
+		auto range = physics->getEnemyRange(position, _minX, _maxX);
 		myMemCpy(_minX, range.first);
 		myMemCpy(_maxX, range.second);
 		speed.x = ENEMY_PATROL_SPEED;

@@ -5,7 +5,9 @@
 
 #define GRAVITY 2048e-6f //(2.048f/1000)
 
+
 class Player;
+class PhysicsManager;
 
 
 // the base class for all objects that are used in the game
@@ -39,6 +41,7 @@ public:
 	bool removeObject;
 
 	static shared_ptr<Player> player;
+	static shared_ptr<PhysicsManager> physics;
 
 protected:
 	shared_ptr<Animation> _ani;
