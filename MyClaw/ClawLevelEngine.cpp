@@ -1,7 +1,8 @@
 #include "ClawLevelEngine.h"
+#include "ActionPlane.h"
+#include "CheatsManager.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "GUI/WindowManager.h"
-#include "ActionPlane.h"
 #include "Menu/HelpScreenEngine.h"
 #include "Menu/LevelEndEngine.h"
 #include "Menu/MenuEngine.h"
@@ -135,10 +136,10 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 22852, 2421 };
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 22477, 2244 };
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 3104, 3311 };
-//	if (levelNumber == 14) BasePlaneObject::player->position = { 31043, 2317 }; // END OF LEVEL
+	if (levelNumber == 14) BasePlaneObject::player->position = { 31043, 2317 }; // END OF LEVEL
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 41194, 1964 }; // in boss
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 2858, 3371 };
-	if (levelNumber == 14) BasePlaneObject::player->position = { 8004, 2482 };
+//	if (levelNumber == 14) BasePlaneObject::player->position = { 8004, 2482 };
 #endif
 }
 ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
@@ -154,11 +155,6 @@ ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
-	BaseEngine::Logic(elapsedTime);
-
-	for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
-		p->position = *_fields->_mainPlanePosition;
-
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
 	const float initialHoleRadius = max(wndSz.width, wndSz.height) * WindowManager::PixelSize / 2;
 
@@ -231,6 +227,11 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		return;
 	}
 
+	
+	BaseEngine::Logic(elapsedTime);
+
+	for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+		p->position = *_fields->_mainPlanePosition;
 
 	if (!player->hasLives())
 	{
@@ -256,6 +257,7 @@ void ClawLevelEngine::Draw()
 	
 	if (_state == States::Close || _state == States::Open)
 		WindowManager::drawHole(player->position, _holeRadius, ColorF::Black);
+		// TODO: sometimes it draw white hole instead of black
 	
 	WindowManager::EndDraw();
 }
@@ -263,6 +265,8 @@ void ClawLevelEngine::Draw()
 void ClawLevelEngine::OnKeyUp(int key)
 {
 	if (key == 0xFF) return; // `Fn` key
+
+	CheatsManager::addKey(key);
 
 	if (key == VK_F1) // open help
 	{
@@ -276,17 +280,6 @@ void ClawLevelEngine::OnKeyUp(int key)
 		_fields->_savePixelSize = WindowManager::PixelSize;
 		changeEngine<MenuEngine>(_fields);
 	}
-	/*else if (key == VK_RETURN)
-	{
-		static int i = 0;
-		i += 1;
-
-		if (i == 3)
-		{
-			MessageBox(nullptr, L"now you are mega-player", L"cheat", 0);
-			i = 0;
-		}
-	}*/
 	else if (key == VK_ADD)
 	{
 		if (WindowManager::PixelSize <= 3.5f)

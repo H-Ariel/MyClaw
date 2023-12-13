@@ -806,7 +806,7 @@ void Player::stopMovingRight(float collisionSize)
 }
 void Player::whenTouchDeath()
 {
-#ifndef _DEBUG__ // in debug mode CC can't die
+#ifndef _DEBUG // in debug mode CC can't die
 	player->loseLife();
 #endif
 }

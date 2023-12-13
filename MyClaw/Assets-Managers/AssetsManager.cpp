@@ -97,14 +97,14 @@ map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const 
 	const RezDirectory* dir = instance->_rezArchive->getDirectory(planeImagesPath);
 	if (dir)
 	{
-		string name;
-		for (auto& i : dir->_files)
+		string newname;
+		for (auto& [filename, file] : dir->_files)
 		{
-			name = i.second->name.substr(0, i.second->name.length() - 4); // remove ".PID"
+			newname = filename.substr(0, filename.length() - 4); // remove ".PID"
 			// the files path format is "LEVEL<N>/TILES/<PLN>/<XXX>.PID"
-			if (i.second->isPidFile() && isNumber(name))
+			if (file->isPidFile() && isNumber(newname))
 			{
-				images[stoi(name)] = loadImage(i.second->getFullPath());
+				images[stoi(newname)] = loadImage(file->getFullPath());
 			}
 		}
 	}

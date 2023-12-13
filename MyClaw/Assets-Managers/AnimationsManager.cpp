@@ -52,13 +52,13 @@ map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirector
 		if (dir)
 		{
 			string path;
-			for (auto& i : dir->_files)
+			for (auto& [name, file] : dir->_files)
 			{
-				path = i.second->getFullPath();
+				path = file->getFullPath();
 				if (endsWith(path, ".ANI"))
 				{
 					// get the animation's name (without the extension) and load it
-					anis[i.second->name.substr(0, i.second->name.length() - 4)] = loadAnimation(path, imageSetPath, false);
+					anis[name.substr(0, name.length() - 4)] = loadAnimation(path, imageSetPath, false);
 				}
 			}
 		}
@@ -112,8 +112,8 @@ map<string, shared_ptr<Animation>> AnimationsManager::loadAnimationsFromDirector
 		anis.clear();
 	}
 
-	for (auto& i : _savedAniDirs[dirPath])
-		anis[i.first] = i.second->getCopy();
+	for (auto& [name, ani] : _savedAniDirs[dirPath])
+		anis[name] = ani->getCopy();
 	return anis;
 }
 shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
@@ -129,11 +129,11 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromDirectory(const stri
 			throw Exception("dir=null. path=" + dirPath);
 		}
 
-		for (auto& i : dir->_files)
+		for (auto& [name, file] : dir->_files)
 		{
-			if (i.second->isPidFile())
+			if (file->isPidFile())
 			{
-				images.push_back(DBG_NEW Animation::FrameData(i.second->getFullPath(), duration));
+				images.push_back(DBG_NEW Animation::FrameData(file->getFullPath(), duration));
 			}
 		}
 
@@ -160,10 +160,8 @@ shared_ptr<Animation> AnimationsManager::createAnimationFromPidImage(const strin
 
 void AnimationsManager::callAnimationsLogic(uint32_t elapsedTime)
 {
-	for (auto& i : _loadedAnimations)
-	{
-		i.second->Logic(elapsedTime);
-	}
+	for (auto& [name, ani] : _loadedAnimations)
+		ani->Logic(elapsedTime);
 }
 
 void AnimationsManager::clearLevelAnimations(const string& prefix)

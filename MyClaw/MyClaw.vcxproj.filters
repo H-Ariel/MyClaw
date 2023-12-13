@@ -313,6 +313,9 @@
     <ClCompile Include="GUI\ActionPlaneMessage.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="CheatsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\PowderKeg.h">
@@ -599,6 +602,9 @@
     </ClInclude>
     <ClInclude Include="GUI\ActionPlaneMessage.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="CheatsManager.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -221,11 +221,14 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj) const
 
 		if (isPlayer) // let Captain Claw climb
 		{
-			BasePlaneObject::player->setLadderFlags(isOnLadderTop);
-			if (BasePlaneObject::player->isClimbing())
+			if (!collisionRc.getSmallest().isEmpty())
 			{
-				// set the player position on the ladder easily for the user
-				BasePlaneObject::player->position.x = (tileRc.left + tileRc.right) / 2;
+				BasePlaneObject::player->setLadderFlags(isOnLadderTop);
+				if (BasePlaneObject::player->isClimbing())
+				{
+					// set the player position on the ladder easily for the user
+					BasePlaneObject::player->position.x = (tileRc.left + tileRc.right) / 2;
+				}
 			}
 		}
 	};
