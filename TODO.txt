@@ -3,7 +3,6 @@
 * use pegs/elevators/etc. as ground for enemies/treasures/etc. too
 * find perfect speeds for enemies
 * catch and throw enemies (like a powder-keg)
-* when CC die draw circle (not square)
 * add "ADVANCE.ANI" for enemies (before they attack)
 * play all objects WAV file
 * add all objects

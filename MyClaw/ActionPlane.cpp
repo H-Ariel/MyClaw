@@ -285,20 +285,7 @@ void ActionPlane::Draw()
 
 	if (_state == States::Close || _state == States::Open)
 	{
-		const D2D1_SIZE_F wndSz = WindowManager::getSize();
-		const float wp = wndSz.width + position.x, hp = wndSz.height + position.y;
-		const Rectangle2D rc1(position.x, position.y, player->position.x - _holeRadius, hp);
-		const Rectangle2D rc2(rc1.right, position.y, wp, player->position.y - _holeRadius);
-		const Rectangle2D rc3(rc1.right, player->position.y + _holeRadius, wp, hp);
-		const Rectangle2D rc4(player->position.x + _holeRadius, rc2.bottom, wp, rc3.top);
-
-		WindowManager::fillRect(rc1, ColorF::Black);
-		WindowManager::fillRect(rc2, ColorF::Black);
-		WindowManager::fillRect(rc3, ColorF::Black);
-		WindowManager::fillRect(rc4, ColorF::Black);
-
-		// TODO: draw circle, not 4 rectangles
-		//WindowManager::drawCircle(player->position, _holeRadius, ColorF::Black, 20);
+		WindowManager::drawHole(player->position, _holeRadius, ColorF::Black);
 	}
 }
 

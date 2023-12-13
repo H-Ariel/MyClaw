@@ -23,14 +23,17 @@ public:
 	static void resizeRenderTarget(D2D1_SIZE_U newSize);
 	static void BeginDraw();
 	static void EndDraw();
+
 	static void drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width = 1);
 	static void drawRect(Rectangle2D dst, ColorF color, float width = 1);
 	static void fillRect(Rectangle2D dst, D2D1_COLOR_F color);
 	static void fillRect(Rectangle2D dst, ColorF color);
+	static void drawHole(D2D1_POINT_2F center, float radius, ColorF color); // draw around the circle with `color` and fill the circle with transparent
 	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity = 1);
 	static void drawText(const wstring& text, IDWriteTextFormat* textFormat, ID2D1SolidColorBrush* brush, const Rectangle2D& layoutRect);
 	static void drawText(const wstring& text, const FontData& font, const Rectangle2D& layoutRect, ColorF color);
 
+	// create D2D1 objects. NOTE: you need to release them manually
 	static ID2D1Bitmap* createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height);
 	static IDWriteTextFormat* createTextFormat(const FontData& font);
 	static ID2D1SolidColorBrush* createSolidBrush(ColorF color);

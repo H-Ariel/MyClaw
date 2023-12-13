@@ -1,5 +1,8 @@
 #include "WindowManager.h"
 
+// TODO: cache brushes
+// TODO: save all D2D1 objects in a list and release them in `WindowManager::Finalize`
+
 
 // throw exception if `func` failed
 #define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
@@ -151,6 +154,37 @@ void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
 void WindowManager::fillRect(Rectangle2D dst, ColorF color)
 {
 	fillRect(dst, (D2D1_COLOR_F)color);
+}
+
+void WindowManager::drawHole(D2D1_POINT_2F center, float radius, ColorF color)
+{
+	ID2D1EllipseGeometry* hole = nullptr;
+	ID2D1RectangleGeometry* background = nullptr;
+	ID2D1GeometryGroup* group = nullptr;
+	ID2D1Geometry* groupItems[2] = {};
+	ID2D1SolidColorBrush* brush = nullptr;
+
+	center.x -= instance->_windowOffset->x;
+	center.y -= instance->_windowOffset->y;
+	instance->_d2dFactory->CreateEllipseGeometry(Ellipse(center, radius, radius), &hole);
+	instance->_d2dFactory->CreateRectangleGeometry(RectF(instance->realSize.width, instance->realSize.height), &background);
+	if (!hole || !background) goto end;
+
+	groupItems[0] = background;
+	groupItems[1] = hole;
+	instance->_d2dFactory->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE, groupItems, ARRAYSIZE(groupItems), &group);
+	if (!group) goto end;
+
+	instance->_renderTarget->CreateSolidColorBrush(color, &brush);
+	if (!brush) goto end;
+
+	instance->_renderTarget->FillGeometry(group, brush);
+
+end:
+	SafeRelease(group);
+	SafeRelease(background);
+	SafeRelease(hole);
+	SafeRelease(brush);
 }
 void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity)
 {

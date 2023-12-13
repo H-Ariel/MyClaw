@@ -168,9 +168,10 @@ void Player::Logic(uint32_t elapsedTime)
 	}
 
 	if (_aniName == "LIFT" || _aniName == "THROW" || _aniName == "FALLDEATH" ||
-		_aniName == "EMPTYPOSTDYNAMITE" || _aniName == "DUCKEMPTYPOSTDYNAMITE")
+		_aniName == "EMPTYPOSTDYNAMITE" || _aniName == "DUCKEMPTYPOSTDYNAMITE" ||
+		_aniName == "SPIKEDEATH")
 	{
-		if (!_ani->isFinishAnimation() || _aniName == "FALLDEATH")
+		if (!_ani->isFinishAnimation() || _aniName == "FALLDEATH"|| _aniName == "SPIKEDEATH")
 		{
 			_ani->position = position;
 			_ani->Logic(elapsedTime);
@@ -805,7 +806,7 @@ void Player::stopMovingRight(float collisionSize)
 }
 void Player::whenTouchDeath()
 {
-#ifndef _DEBUG // in debug mode CC can't die
+#ifndef _DEBUG__ // in debug mode CC can't die
 	player->loseLife();
 #endif
 }
@@ -1009,6 +1010,7 @@ void Player::loseLife()
 		_aniName = "SPIKEDEATH";
 		_ani = _animations[_aniName];
 		_ani->reset();
+		_ani->loopAni = false;
 		_powerupLeftTime = 0;
 		_currPowerup = Item::None;
 		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
