@@ -7,6 +7,12 @@
 #include "Menu/MenuEngine.h"
 
 
+#define RECT_SPEED 0.5f // speed of the rect that shows when CC is died
+#define CC_FALLDEATH_SPEED 0.7f // speed of CC when he falls out the window
+
+#define player BasePlaneObject::player
+
+
 ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
 	: _mainPlanePosition(nullptr), _hud(nullptr), _saveBgColor(0), _levelNumber(levelNumber), _savePixelSize(0)
 {
@@ -19,6 +25,7 @@ ClawLevelEngineFields::~ClawLevelEngineFields()
 
 
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
+	: _holeRadius(0), _deathAniWait(false), _playDeathSound(false), _state(States::Play)
 {
 	if (checkpoint != -1) // according to LevelLoadingEngine
 		ActionPlane::loadGame(levelNumber, checkpoint);
@@ -135,7 +142,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 #endif
 }
 ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
-	: _fields(fields)
+	: _fields(fields), _holeRadius(0), _deathAniWait(false), _playDeathSound(false), _state(States::Play)
 {
 	for (shared_ptr<LevelPlane>& pln : _fields->_wwd->planes)
 		_elementsList.push_back(pln.get());
@@ -152,9 +159,82 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
 		p->position = *_fields->_mainPlanePosition;
 
-	if (!BasePlaneObject::player->hasLives())
+	const D2D1_SIZE_F wndSz = WindowManager::getSize();
+	const float initialHoleRadius = max(wndSz.width, wndSz.height) * WindowManager::PixelSize / 2;
+
+	if (_deathAniWait)
 	{
-		if (BasePlaneObject::player->isFinishDeathAnimation())
+		switch (_state)
+		{
+		case States::Close:
+			if (!_playDeathSound)
+			{
+				AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
+				_playDeathSound = true;
+			}
+
+			_holeRadius -= RECT_SPEED * elapsedTime;
+			if (_holeRadius <= 0)
+			{
+				_state = States::Open;
+				_playDeathSound = false;
+				player->backToLife();
+				
+				ActionPlane::resetObjects();
+			}
+			break;
+
+		case States::Open:
+			if (!_playDeathSound)
+			{
+				AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
+				_playDeathSound = true;
+			}
+
+			_holeRadius += RECT_SPEED * elapsedTime;
+			if (initialHoleRadius < _holeRadius)
+			{
+				_deathAniWait = false;
+				_state = States::Play;
+				_playDeathSound = false;
+			}
+			break;
+
+		case States::Fall:
+			player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
+			player->Logic(0); // update position of animation
+			if (player->position.y - _fields->_mainPlanePosition->y > wndSz.height)
+			{
+				player->loseLife();
+				_state = States::Close;
+				_deathAniWait = true;
+				_holeRadius = initialHoleRadius;
+			}
+			break;
+		}
+		return;
+	}
+
+	if (player->isFinishDeathAnimation() && player->hasLives() && _state == States::Play)
+	{
+		if (player->isSpikeDeath())
+		{
+			_state = States::Close;
+			_holeRadius = initialHoleRadius;
+		}
+		else //if (player->isFallDeath())
+		{
+			_state = States::Fall;
+		}
+
+		_deathAniWait = true;
+		return;
+	}
+
+
+	if (!player->hasLives())
+	{
+		if (player->isFinishDeathAnimation())
 		{
 			MessageBoxA(nullptr, "GAME OVER", "", 0);
 			// TODO: show GAME OVER screen and then go to menu / use ActionPlaneMessage ?
@@ -162,10 +242,22 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			changeEngine<MenuEngine>();
 		}
 	}
-	else if (BasePlaneObject::player->isFinishLevel())
+	else if (player->isFinishLevel())
 	{
-		changeEngine<LevelEndEngine>(_fields->_levelNumber, BasePlaneObject::player->getCollectedTreasures());
+		changeEngine<LevelEndEngine>(_fields->_levelNumber, player->getCollectedTreasures());
 	}
+}
+void ClawLevelEngine::Draw()
+{
+	WindowManager::BeginDraw();
+	
+	for (UIBaseElement* e : _elementsList)
+		e->Draw();
+	
+	if (_state == States::Close || _state == States::Open)
+		WindowManager::drawHole(player->position, _holeRadius, ColorF::Black);
+	
+	WindowManager::EndDraw();
 }
 
 void ClawLevelEngine::OnKeyUp(int key)
@@ -207,10 +299,10 @@ void ClawLevelEngine::OnKeyUp(int key)
 	}
 	else
 	{
-		BasePlaneObject::player->keyUp(key);
+		player->keyUp(key);
 	}
 }
 void ClawLevelEngine::OnKeyDown(int key)
 {
-	BasePlaneObject::player->keyDown(key);
+	player->keyDown(key);
 }

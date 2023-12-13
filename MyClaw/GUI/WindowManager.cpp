@@ -1,13 +1,16 @@
 #include "WindowManager.h"
 
-// TODO: cache brushes
-// TODO: save all D2D1 objects in a list and release them in `WindowManager::Finalize`
+// TODO: save all D2D1 objects (ID2D1Bitmap, IDWriteTextFormat) in a list and release them in `WindowManager::Finalize`
 
 
 // throw exception if `func` failed
 #define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
 
 static const D2D1_POINT_2F defaultWindowOffset = {}; // empty point
+
+
+bool operator<(ColorF a, ColorF b) { return memcmp(&a, &b, sizeof(ColorF)) < 0; }
+bool operator==(ColorF a, ColorF b) { return memcmp(&a, &b, sizeof(ColorF)) == 0; }
 
 
 float WindowManager::PixelSize = 1; // min value: 1 // TODO: rename to `WindowScale`
@@ -38,6 +41,8 @@ WindowManager::WindowManager(const TCHAR WindowClassName[], void* lpParam)
 }
 WindowManager::~WindowManager()
 {
+	for (auto& i : brushes)
+		SafeRelease(i.second);
 	SafeRelease(_renderTarget);
 	SafeRelease(_d2dFactory);
 	SafeRelease(_dWriteFactory);
@@ -118,16 +123,14 @@ void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)
 	if (!_isInScreen(dst)) return;
 
 	ID2D1SolidColorBrush* brush = nullptr;
-	instance->_renderTarget->CreateSolidColorBrush(color, &brush);
+	brush = getBrush(color);
 	if (brush)
 	{
 		dst.top *= PixelSize;
 		dst.bottom *= PixelSize;
 		dst.left *= PixelSize;
 		dst.right *= PixelSize;
-
 		instance->_renderTarget->DrawRectangle(dst, brush, width);
-		SafeRelease(brush);
 	}
 }
 void WindowManager::drawRect(Rectangle2D dst, ColorF color, float width)
@@ -138,17 +141,14 @@ void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
 {
 	if (!_isInScreen(dst)) return;
 
-	ID2D1SolidColorBrush* brush = nullptr;
-	instance->_renderTarget->CreateSolidColorBrush(color, &brush);
+	ID2D1SolidColorBrush* brush = getBrush(color);
 	if (brush)
 	{
 		dst.top *= PixelSize;
 		dst.bottom *= PixelSize;
 		dst.left *= PixelSize;
 		dst.right *= PixelSize;
-
 		instance->_renderTarget->FillRectangle(dst, brush);
-		SafeRelease(brush);
 	}
 }
 void WindowManager::fillRect(Rectangle2D dst, ColorF color)
@@ -164,8 +164,8 @@ void WindowManager::drawHole(D2D1_POINT_2F center, float radius, ColorF color)
 	ID2D1Geometry* groupItems[2] = {};
 	ID2D1SolidColorBrush* brush = nullptr;
 
-	center.x -= instance->_windowOffset->x;
-	center.y -= instance->_windowOffset->y;
+	center.x = (center.x - instance->_windowOffset->x) * PixelSize;
+	center.y = (center.y - instance->_windowOffset->y) * PixelSize;
 	instance->_d2dFactory->CreateEllipseGeometry(Ellipse(center, radius, radius), &hole);
 	instance->_d2dFactory->CreateRectangleGeometry(RectF(instance->realSize.width, instance->realSize.height), &background);
 	if (!hole || !background) goto end;
@@ -175,7 +175,7 @@ void WindowManager::drawHole(D2D1_POINT_2F center, float radius, ColorF color)
 	instance->_d2dFactory->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE, groupItems, ARRAYSIZE(groupItems), &group);
 	if (!group) goto end;
 
-	instance->_renderTarget->CreateSolidColorBrush(color, &brush);
+	brush = getBrush(color);
 	if (!brush) goto end;
 
 	instance->_renderTarget->FillGeometry(group, brush);
@@ -184,7 +184,6 @@ end:
 	SafeRelease(group);
 	SafeRelease(background);
 	SafeRelease(hole);
-	SafeRelease(brush);
 }
 void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity)
 {
@@ -203,7 +202,7 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 
 		// set to draw mirrored
 		D2D1_MATRIX_3X2_F transformMatrix = Matrix3x2F::Identity();
-		transformMatrix._11 = -1;
+		transformMatrix.m11 = -1;
 		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 
@@ -220,15 +219,30 @@ void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat,
 	if (!textFormat || !brush) return;
 	instance->_renderTarget->DrawText(text.c_str(), (UINT32)text.length(), textFormat, layoutRect, brush);
 }
-void WindowManager::drawText(const wstring& text, const FontData& font, const Rectangle2D& layoutRect, ColorF color)
+void WindowManager::drawText(const wstring& text, const FontData& font, ColorF color, const Rectangle2D& layoutRect)
 {
 	IDWriteTextFormat* textFormat = createTextFormat(font);
-	ID2D1SolidColorBrush* brush = createSolidBrush(color);
-	drawText(text, textFormat, brush, layoutRect);
-	SafeRelease(brush);
+	drawText(text, textFormat, getBrush(color), layoutRect);
 	SafeRelease(textFormat);
 }
 
+ID2D1SolidColorBrush* WindowManager::getBrush(D2D1_COLOR_F color)
+{
+	return getBrush(*((ColorF*)&color));
+}
+ID2D1SolidColorBrush* WindowManager::getBrush(ColorF color)
+{
+	if (instance->brushes.count(color) == 0)
+	{
+		ID2D1SolidColorBrush* brush = nullptr;
+		instance->_renderTarget->CreateSolidColorBrush(color, &brush);
+
+		if (brush)
+			instance->brushes[color] = brush;
+	}
+
+	return instance->brushes[color];
+}
 ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height)
 {
 	ID2D1Bitmap* bitmap = nullptr;
@@ -268,12 +282,6 @@ IDWriteTextFormat* WindowManager::createTextFormat(const FontData& font)
 	}
 
 	return textFormat;
-}
-ID2D1SolidColorBrush* WindowManager::createSolidBrush(ColorF color)
-{
-	ID2D1SolidColorBrush* brush = nullptr;
-	instance->_renderTarget->CreateSolidColorBrush(color, &brush);
-	return brush;
 }
 
 bool WindowManager::_isInScreen(Rectangle2D& rc)

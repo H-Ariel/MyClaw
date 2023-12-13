@@ -14,12 +14,12 @@ public:
 	~ActionPlane();
 
 	void Logic(uint32_t elapsedTime) override;
-	void Draw() override;
 	void readPlaneObjects(BufferReader& reader) override;
 	void addObject(const WwdObject& obj) override;
 
 	static void addPlaneObject(BasePlaneObject* obj);
 	static void loadGame(int level, int checkpoint);
+	static void resetObjects(); // reset objects after CC die
 	static void playerEnterToBoss();
 	static const vector<PowderKeg*>& getPowderKegs() { return _instance->_powderKegs; }
 	static const vector<BaseEnemy*>& getEnemies() { return _instance->_enemies; }
@@ -30,13 +30,6 @@ public:
 
 private:
 	void updatePosition();
-	
-	enum class States : int8_t {
-		Play, // normal gameplay
-		Fall, // CC falls out the window
-		Close, // close the screen
-		Open // open the screen
-	};
 
 	vector<BasePlaneObject*> _bossObjects;
 	vector<PowderKeg*> _powderKegs;
@@ -47,10 +40,7 @@ private:
 	D2D1_SIZE_F _planeSize;
 	BaseBoss* _boss;
 	int _shakeTime;
-	float _holeRadius; // the radius of the hole that remains until closed
-	bool _deathAniWait; // waiting for disqualification animation to finish
-	bool _needSort, _playDeathSound;
-	States _state;
+	bool _needSort;
 
 	static ActionPlane* _instance;
 	static shared_ptr<SavedGameManager::GameData> _loadGameData;

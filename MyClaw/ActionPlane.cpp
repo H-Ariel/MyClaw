@@ -51,9 +51,6 @@
 #include "Enemies/TigerGuard.h"
 
 
-#define RECT_SPEED (0.5f / WindowManager::PixelSize) // speed of the rect that shows when CC is died
-#define CC_FALLDEATH_SPEED 0.7f // speed of CC when he falls out the window
-
 #define SHAKE_TIME 3000 // time of shaking screen (ms)
 
 #define player	BasePlaneObject::player
@@ -78,8 +75,7 @@ shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
 
 
 ActionPlane::ActionPlane(WapWorld* wwd)
-	: LevelPlane(wwd), _planeSize({}), _shakeTime(0), _holeRadius(0)
-	, _deathAniWait(false), _needSort(true), _state(States::Play), _boss(nullptr), _playDeathSound(false)
+	: LevelPlane(wwd), _planeSize({}), _boss(nullptr), _shakeTime(0), _needSort(true)
 {
 	if (_instance != nullptr)
 	{
@@ -105,79 +101,6 @@ ActionPlane::~ActionPlane()
 void ActionPlane::Logic(uint32_t elapsedTime)
 {
 	if (player->isFinishLevel()) return;
-
-	const D2D1_SIZE_F wndSz = WindowManager::getSize();
-
-	if (_deathAniWait)
-	{
-		switch (_state)
-		{
-		case States::Close:
-			if (!_playDeathSound)
-			{
-				AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
-				_playDeathSound = true;
-			}
-
-			_holeRadius -= RECT_SPEED * elapsedTime;
-			if (_holeRadius <= 0)
-			{
-				_state = States::Open;
-				_playDeathSound = false;
-				player->backToLife();
-				updatePosition();
-
-				for (BasePlaneObject* obj : _objects)
-					obj->Reset();
-			}
-			break;
-
-		case States::Open:
-			if (!_playDeathSound)
-			{
-				AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
-				_playDeathSound = true;
-			}
-
-			_holeRadius += RECT_SPEED * elapsedTime;
-			if (player->position.x - position.x < _holeRadius)
-			{
-				_deathAniWait = false;
-				_state = States::Play;
-				_playDeathSound = false;
-			}
-			break;
-
-		case States::Fall:
-			player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
-			player->Logic(0); // update position of animation
-			if (player->position.y - position.y > wndSz.height)
-			{
-				player->loseLife();
-				_state = States::Close;
-				_deathAniWait = true;
-				_holeRadius = max(wndSz.width, wndSz.height) / 2;
-			}
-			break;
-		}
-		return;
-	}
-
-	if (player->isFinishDeathAnimation() && player->hasLives() && _state == States::Play)
-	{
-		if (player->isSpikeDeath())
-		{
-			_state = States::Close;
-			_holeRadius = max(wndSz.width, wndSz.height) / 2;
-		}
-		else //if (player->isFallDeath())
-		{
-			_state = States::Fall;
-		}
-
-		_deathAniWait = true;
-		return;
-	}
 
 	/*if (!player->isInDeathAnimation())
 	{
@@ -278,15 +201,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	if (exploseShake)
 		_shakeTime = 500;
 #endif
-}
-void ActionPlane::Draw()
-{
-	LevelPlane::Draw();
-
-	if (_state == States::Close || _state == States::Open)
-	{
-		WindowManager::drawHole(player->position, _holeRadius, ColorF::Black);
-	}
 }
 
 void ActionPlane::readPlaneObjects(BufferReader& reader)
@@ -657,6 +571,11 @@ void ActionPlane::loadGame(int level, int checkpoint)
 		// success to load checkpoint
 		_loadGameData = allocNewSharedPtr<SavedGameManager::GameData>(data);
 	}
+}
+void ActionPlane::resetObjects()
+{
+	for (BasePlaneObject* obj : _instance->_objects)
+		obj->Reset();
 }
 void ActionPlane::playerEnterToBoss()
 {

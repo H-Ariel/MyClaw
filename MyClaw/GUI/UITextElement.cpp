@@ -10,12 +10,11 @@ FontData::FontData()
 UITextElement::UITextElement()
 	: text(L""), size({})
 {
-	_brush = WindowManager::createSolidBrush(ColorF::Black);
+	_brush = WindowManager::getBrush(ColorF::Black);
 	_textFormat = WindowManager::createTextFormat(_font);
 }
 UITextElement::~UITextElement()
 {
-	SafeRelease(_brush);
 	SafeRelease(_textFormat);
 }
 

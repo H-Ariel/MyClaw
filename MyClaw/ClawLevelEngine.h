@@ -24,11 +24,23 @@ public:
 	ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields);
 
 	void Logic(uint32_t elapsedTime) override;
+	void Draw() override;
 
 	void OnKeyUp(int key) override;
 	void OnKeyDown(int key) override;
 
 
 private:
+	enum class States : int8_t {
+		Play,	// normal gameplay
+		Fall,	// CC falls out the window
+		Close,	// close the screen
+		Open	// open the screen
+	};
+
 	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu
+	float _holeRadius; // the radius of the hole that remains until closed
+	bool _deathAniWait; // waiting for disqualification animation to finish
+	bool _playDeathSound;
+	States _state;
 };
