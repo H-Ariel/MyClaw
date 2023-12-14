@@ -291,6 +291,8 @@ void AquatisDynamite::Logic(uint32_t elapsedTime)
 
 		if (_playerTookDynamite && !player->isFalling() && !player->isJumping()) // make sure player not in the air so he can take 2 dynamites at the same time
 		{
+			// TODO: maybe use regualr item with `damage` filed (make `respawning` field in `Item`)
+
 			_playerTookDynamite = false;
 			_timeCounter = 10000; // every 10 seconds respawn the dynamite supply
 

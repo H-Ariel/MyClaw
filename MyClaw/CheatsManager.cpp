@@ -23,6 +23,7 @@ enum CheatType
 	None,
 	FireSword,
 	IceSword,
+	LightningSword,
 	Catnip
 };
 
@@ -32,6 +33,7 @@ vector<int> CheatsManager::keys;
 map<int, vector<int>> CheatsManager::cheatKeys = {
 	{ CheatType::FireSword, vectorFromString("FIRE") },
 	{ CheatType::IceSword, vectorFromString("ICE") },
+	{ CheatType::LightningSword, vectorFromString("LIGHT") },
 	{ CheatType::Catnip, vectorFromString("CATNIP") }
 };
 
@@ -50,6 +52,7 @@ void CheatsManager::addKey(int key)
 	{
 	case CheatType::FireSword:	fireSword(); break;
 	case CheatType::IceSword:	iceSword(); break;
+	case CheatType::LightningSword: lightningSword(); break;
 	case CheatType::Catnip:		catnip(); break;
 
 	default: break;
@@ -90,6 +93,11 @@ inline void CheatsManager::iceSword()
 {
 	addPowerup(Item::Type::Powerup_IceSword);
 	ActionPlane::addPlaneObject(DBG_NEW ActionPlaneMessage(L"Ice sword rules..."));
+}
+inline void CheatsManager::lightningSword()
+{
+	addPowerup(Item::Type::Powerup_LightningSword);
+	ActionPlane::addPlaneObject(DBG_NEW ActionPlaneMessage(L"Lightning sword rules..."));
 }
 inline void CheatsManager::catnip()
 {

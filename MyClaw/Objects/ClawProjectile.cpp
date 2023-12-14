@@ -17,6 +17,21 @@ ClawProjectile* ClawProjectile::createNew(Types type, const WwdObject& data)
 }
 ClawProjectile::ClawProjectile(const WwdObject& obj, const string& aniDirPath, Types type)
 	: Projectile(obj, aniDirPath), type(type) {}
+Rectangle2D ClawProjectile::GetRect()
+{
+	Rectangle2D rc = Projectile::GetRect();
+	if (type == Types::FireSword || type == Types::IceSword || type == Types::LightningSword)
+	{
+		// ignore the tail of the projectile:
+		if (_isMirrored) rc.right -= 64;
+		else rc.left += 64;
+
+		// ignore the border of the projectile:
+		rc.top = position.y - 15;
+		rc.bottom = position.y + 15;
+	}
+	return rc;
+}
 
 ClawDynamite::ClawDynamite(const WwdObject& obj)
 	: ClawProjectile(obj, "GAME/ANIS/DYNAMITELIT.ANI", Types::Dynamite),

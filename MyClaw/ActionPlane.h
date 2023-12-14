@@ -20,7 +20,7 @@ public:
 	static void addPlaneObject(BasePlaneObject* obj);
 	static void loadGame(int level, int checkpoint);
 	static void resetObjects(); // reset objects after CC die
-	static void playerEnterToBoss();
+	static void playerEnterToBoss(float bossWarpX);
 	static const vector<PowderKeg*>& getPowderKegs() { return _instance->_powderKegs; }
 	static const vector<BaseEnemy*>& getEnemies() { return _instance->_enemies; }
 	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }

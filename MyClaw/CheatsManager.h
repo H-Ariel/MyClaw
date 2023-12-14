@@ -13,6 +13,7 @@ private:
 
 	static void fireSword();
 	static void iceSword();
+	static void lightningSword();
 	static void catnip();
 
 	static void addPowerup(int8_t powerupType);

@@ -18,6 +18,8 @@ public:
 	};
 	static ClawProjectile* createNew(Types type, const WwdObject& data);
 
+	Rectangle2D GetRect() override;
+
 	const Types type;
 
 protected:

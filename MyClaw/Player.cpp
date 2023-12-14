@@ -866,7 +866,7 @@ bool Player::collectItem(Item* item)
 	case Item::Treasure_Skull_Blue:
 	case Item::Treasure_Skull_Purple: {
 		_collectedTreasures[type] += 1;
-		uint32_t tScore = item->getTreasureScore();
+		int tScore = item->getTreasureScore();
 		_score += tScore;
 
 #ifndef LOW_DETAILS

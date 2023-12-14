@@ -94,6 +94,7 @@ BaseEnemy::~BaseEnemy()
 		obj.speedX = position.x < player->position.x ? -250 : 250;
 		obj.speedY = -500;
 		ActionPlane::addPlaneObject(DBG_NEW ::EnemyFallDeath(obj, _animations[_fallDeadAniName]));
+		// TODO: fit enemy death animation to the enemy (regular, ice, etc.)
 	}
 }
 

@@ -29,8 +29,13 @@ ScreenEngine::~ScreenEngine()
 }
 void ScreenEngine::backToMenu()
 {
-	MenuEngine::_currMenu = MenuEngine::_menusStack.top();
-	MenuEngine::_menusStack.pop();
+	if (MenuEngine::_menusStack.empty())
+		MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
+	else
+	{
+		MenuEngine::_currMenu = MenuEngine::_menusStack.top();
+		MenuEngine::_menusStack.pop();
+	}
 	changeEngine<MenuEngine>();
 }
 

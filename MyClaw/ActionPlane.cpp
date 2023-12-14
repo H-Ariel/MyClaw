@@ -49,6 +49,7 @@
 #include "Enemies/Aquatis.h"
 #include "Enemies/RedTail.h"
 #include "Enemies/TigerGuard.h"
+#include "Enemies/LordOmar.h"
 
 
 #define SHAKE_TIME 3000 // time of shaking screen (ms)
@@ -551,6 +552,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		ADD_BOSS_OBJECT(RedTailWind(obj));
 	}
+	else if (obj.logic == "Omar")
+	{
+		ADD_BOSS_OBJECT(LordOmar(obj));
+	}
 
 //	throw Exception("TODO: logic=" + obj.logic);
 }
@@ -577,7 +582,7 @@ void ActionPlane::resetObjects()
 	for (BasePlaneObject* obj : _instance->_objects)
 		obj->Reset();
 }
-void ActionPlane::playerEnterToBoss()
+void ActionPlane::playerEnterToBoss(float bossWarpX)
 {
 	// clear all objects that we don't need in boss
 	for (auto& i : _instance->_powderKegs) i->removeObject = true;
@@ -585,10 +590,11 @@ void ActionPlane::playerEnterToBoss()
 	for (auto& i : _instance->_projectiles) i->removeObject = true;
 	for (auto& i : _instance->_damageObjects) i->removeObject = true;
 	
-	// find all objects that we don't need in boss and remove them (the boss is in the right side of the screen so it easy to find them)
+	// find all objects that we don't need in boss and remove them (the boss-warp 
+	// and boss area are in the right side of the screen so it easy to find them)
 	for (auto& obj : _instance->_objects)
 	{
-		if (obj->position.x < player->position.x)
+		if (obj->position.x < bossWarpX)
 			obj->removeObject = true;
 	}
 

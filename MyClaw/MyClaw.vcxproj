@@ -182,6 +182,7 @@
     <ClCompile Include="Enemies\Marrow.cpp" />
     <ClCompile Include="Enemies\Mercat.cpp" />
     <ClCompile Include="Enemies\Officer.cpp" />
+    <ClCompile Include="Enemies\LordOmar.cpp" />
     <ClCompile Include="Enemies\PegLeg.cpp" />
     <ClCompile Include="Enemies\Rat.cpp" />
     <ClCompile Include="Enemies\RedTail.cpp" />
@@ -279,6 +280,7 @@
     <ClInclude Include="Enemies\Marrow.h" />
     <ClInclude Include="Enemies\Mercat.h" />
     <ClInclude Include="Enemies\Officer.h" />
+    <ClInclude Include="Enemies\LordOmar.h" />
     <ClInclude Include="Enemies\PegLeg.h" />
     <ClInclude Include="Enemies\Rat.h" />
     <ClInclude Include="Enemies\RedTail.h" />

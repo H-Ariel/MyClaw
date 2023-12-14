@@ -269,7 +269,7 @@ void playItemSound(Item::Type type)
 
 
 Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
-	: BaseDynamicPlaneObject(obj), _type((Type)type), _useGlitter(false), _glitterAnimation(nullptr)
+	: BaseDynamicPlaneObject(obj), _type((Type)type), _delayBeforeRespawn(0), _useGlitter(false)
 {
 	if (_type == Type::Default)
 	{
@@ -287,6 +287,8 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 		_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
 	}
 #endif
+
+	_respawning = obj.damage;
 
 	_duration = obj.smarts;
 	if (_duration == 0)
@@ -317,11 +319,20 @@ void Item::Logic(uint32_t elapsedTime)
 {
 	if (speed.x == 0 && speed.y == 0)
 	{
-		if (GetRect().intersects(player->GetRect()))
+		if (_delayBeforeRespawn > 0)
+			_delayBeforeRespawn -= elapsedTime;
+
+		if (!_respawning || _delayBeforeRespawn <= 0)
 		{
-			// if the player collect the item it will be removed
-			if (removeObject = player->collectItem(this)) // NOTE: `=` not `==`
-				playItemSound(_type); // sound only if the player collect the item
+			if (GetRect().intersects(player->GetRect()))
+			{
+				if (player->collectItem(this))
+				{
+					playItemSound(_type);
+					removeObject = !_respawning;
+					_delayBeforeRespawn = 10000; // respawn after 10 seconds
+				}
+			}
 		}
 	}
 
@@ -337,13 +348,16 @@ void Item::Logic(uint32_t elapsedTime)
 }
 void Item::Draw()
 {
-	BaseDynamicPlaneObject::Draw();
-
-	if (_useGlitter)
+	if (_delayBeforeRespawn <= 0) // draw only if playr can take it
 	{
-		_glitterAnimation->position = position;
-		_glitterAnimation->updateImageData();
-		_glitterAnimation->Draw();
+		BaseDynamicPlaneObject::Draw();
+
+		if (_useGlitter)
+		{
+			_glitterAnimation->position = position;
+			_glitterAnimation->updateImageData();
+			_glitterAnimation->Draw();
+		}
 	}
 }
 void Item::stopFalling(float collisionSize)
@@ -357,7 +371,7 @@ void Item::stopFalling(float collisionSize)
 	_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
 #endif
 }
-uint32_t Item::getTreasureScore()
+int Item::getTreasureScore()
 {
 	switch (_type)
 	{
@@ -464,7 +478,7 @@ void Warp::Logic(uint32_t elapsedTime)
 
 		if (_type == Type::BossWarp)
 		{
-			ActionPlane::playerEnterToBoss();
+			ActionPlane::playerEnterToBoss(position.x);
 			player->startPosition = _destination;
 		}
 

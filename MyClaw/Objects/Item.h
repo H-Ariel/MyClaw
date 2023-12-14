@@ -80,8 +80,8 @@ public:
 	void stopFalling(float collisionSize) override;
 
 	Type getType() { return _type; }
-	int32_t getDuration() const { return _duration; }
-	uint32_t getTreasureScore();
+	int getDuration() const { return _duration; }
+	int getTreasureScore();
 
 	static Item* getItem(const WwdObject& obj, bool isFromMap, int8_t type);
 	static Item* getItem(const WwdObject& obj, bool isFromMap);
@@ -96,8 +96,9 @@ protected:
 
 private:
 	shared_ptr<Animation> _glitterAnimation;
-	int32_t _duration; // (in milliseconds). used in Catnip, Fire-Sword, etc.
-	// TODO: use `obj.damage` - [not] respawning (see "Logics.pdf" 2.170)
+	int _duration; // (in milliseconds). used in Catnip, Fire-Sword, etc.
+	int _delayBeforeRespawn; // (in milliseconds)
+	bool _respawning;
 	bool _useGlitter;
 
 	static string getItemPath(Item::Type type, const string& imageSet);

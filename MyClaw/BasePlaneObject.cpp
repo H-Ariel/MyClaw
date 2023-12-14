@@ -109,7 +109,7 @@ BaseSoundObject::BaseSoundObject(const WwdObject& obj)
 
 	myMemCpy(_objRc, newRc);
 }
-void BaseSoundObject::Draw() { } // these objects are invisible so no need to draw them
+void BaseSoundObject::Draw() {} // these objects are invisible so no need to draw them
 
 
 OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani)
