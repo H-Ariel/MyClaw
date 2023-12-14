@@ -8,24 +8,27 @@ class LordOmar : public BaseBoss
 {
 public:
 	LordOmar(const WwdObject& obj);
+	~LordOmar();
 
 	void Logic(uint32_t elapsedTime) override;
 
 	Rectangle2D GetRect() override;
 	pair<Rectangle2D, int> GetAttackRect() override;
-	bool checkForHurts() override;
 
 private:
+	bool checkForHurts() override;
 	void advanceState();
 
 	enum States : int8_t
 	{
-		FireShield_1,
-		IceShield_1,
-		FireShield_2,
-		IceShield_2,
+		Shield_1,
+		Shield_2,
+		Shield_3,
+		Shield_4,
 		Bullet_1,
 		Bullet_2,
+		Bullet_3,
+		Bullet_4,
 		End
 	};
 

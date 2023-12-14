@@ -101,9 +101,9 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 
 //	if (levelNumber == 8) BasePlaneObject::player->position = { 4466, 5039 };
 //	if (levelNumber == 8) BasePlaneObject::player->position = { 6160, 5232 };
-//	if (levelNumber == 8) BasePlaneObject::player->position = { 31535, 5267 }; // END OF LEVEL
+	if (levelNumber == 8) BasePlaneObject::player->position = { 31535, 5267 }; // END OF LEVEL
 //	if (levelNumber == 8) BasePlaneObject::player->position = { 9225, 5533 };
-	if (levelNumber == 8) BasePlaneObject::player->position = { 7153, 5725 };
+//	if (levelNumber == 8) BasePlaneObject::player->position = { 7153, 5725 };
 
 //	if (levelNumber == 9) BasePlaneObject::player->position = { 5210, 7776 };
 //	if (levelNumber == 9) BasePlaneObject::player->position = { 4220, 6484 };
@@ -177,7 +177,11 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 				_playDeathSound = false;
 				player->backToLife();
 				
+				// update position of all objects
 				ActionPlane::resetObjects();
+				BaseEngine::Logic(elapsedTime);
+				for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+					p->position = *_fields->_mainPlanePosition;
 			}
 			break;
 
@@ -251,16 +255,10 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 }
 void ClawLevelEngine::Draw()
 {
-	WindowManager::BeginDraw();
-	
-	for (UIBaseElement* e : _elementsList)
-		e->Draw();
+	BaseEngine::Draw();
 	
 	if (_state == States::Close || _state == States::Open)
 		WindowManager::drawHole(player->position, _holeRadius, ColorF::Black);
-		// TODO: sometimes it draw white hole instead of black
-	
-	WindowManager::EndDraw();
 }
 
 void ClawLevelEngine::OnKeyUp(int key)

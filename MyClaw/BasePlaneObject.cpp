@@ -112,22 +112,23 @@ BaseSoundObject::BaseSoundObject(const WwdObject& obj)
 void BaseSoundObject::Draw() {} // these objects are invisible so no need to draw them
 
 
-OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani)
-	: BasePlaneObject({})
+OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani, bool removeAtEnd)
+	: BasePlaneObject({}), _removeAtEnd(removeAtEnd)
 {
 	_ani = ani;
 	_ani->loopAni = false;
-	_ani->position = pos;
+	_ani->position = pos; // TODO: remove this line and set the ani's position before create this object
 }
-OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, const string& aniPath, const string& imageSet)
+OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, const string& aniPath, const string& imageSet, bool removeAtEnd)
 	: OneTimeAnimation(pos, AssetsManager::loadCopyAnimation(
-		PathManager::getAnimationPath(aniPath), PathManager::getImageSetPath(imageSet)))
+		PathManager::getAnimationPath(aniPath), PathManager::getImageSetPath(imageSet)), removeAtEnd)
 {
 }
 void OneTimeAnimation::Logic(uint32_t elapsedTime)
 {
 	_ani->Logic(elapsedTime);
-	removeObject = _ani->isFinishAnimation();
+	if (_removeAtEnd)
+		removeObject = _ani->isFinishAnimation();
 }
 void OneTimeAnimation::Draw()
 {

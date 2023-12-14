@@ -58,7 +58,7 @@ void GameMainApp::run()
 		runApp = true;
 		//_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
 		//_pEngine = allocNewSharedPtr<MenuEngine>();
-		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(14);
+		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(8);
 		runEngine();
 	}
 #else
@@ -110,7 +110,9 @@ void GameMainApp::runEngine()
 		}
 
 		_pEngine->Logic(min(elapsedTime, MAX_ITER_TIME));
+		WindowManager::BeginDraw();
 		_pEngine->Draw();
+		WindowManager::EndDraw();
 
 		if (_pEngine->StopEngine)
 		{

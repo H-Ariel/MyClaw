@@ -7,13 +7,14 @@ class Gabriel : public BaseBoss
 {
 public:
 	Gabriel(const WwdObject& obj);
+	~Gabriel();
 	void Logic(uint32_t elapsedTime) override;
 	pair<Rectangle2D, int> GetAttackRect() override;
 
 private:
 	bool checkForHurts() override;
 
-	int32_t _throwBombsTime, _sendPiratesTime;
+	int _throwBombsTime, _sendPiratesTime;
 	bool _canThrowBombs, _canSendPirates;
 };
 
@@ -36,7 +37,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
-	int32_t _switchCannonTime;
+	int _switchCannonTime;
 };
 
 

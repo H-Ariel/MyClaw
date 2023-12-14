@@ -1,12 +1,11 @@
 #include "Player.h"
-#include "Assets-Managers/AssetsManager.h"
 #include "ActionPlane.h"
+#include "BaseEnemy.h"
+#include "Assets-Managers/AssetsManager.h"
+#include "Objects/EnemyProjectile.h"
+#include "Objects/LavaMouth.h"
 #include "Objects/Rope.h"
 #include "Objects/Stalactite.h"
-#include "Objects/LavaMouth.h"
-#include "BaseEnemy.h"
-#include "Objects/EnemyProjectile.h"
-#include "Enemies/Aquatis.h"
 
 
 // TODO: find perfect values (if they are still not perfect :D )
@@ -900,7 +899,7 @@ bool Player::collectItem(Item* item)
 	case Item::Ammo_Magic_5:	ADD_WEAPON(magic,  5);
 	case Item::Ammo_Magic_10:	ADD_WEAPON(magic, 10);
 	case Item::Ammo_Magic_25:	ADD_WEAPON(magic, 25);
-	case Item::Ammo_Dynamite:	AquatisDynamite::playerTookDynamite(); ADD_WEAPON(dynamite, 5);
+	case Item::Ammo_Dynamite:	ADD_WEAPON(dynamite, 5);
 
 	case Item::Health_Level:	ADD_HEALTH(5);
 	case Item::Health_10:		ADD_HEALTH(10);

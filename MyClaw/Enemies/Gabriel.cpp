@@ -11,6 +11,7 @@ static bool cannonIsUp = false;
 static bool operateCannon = false;
 static bool GabrielChangeSwitch = false;
 static bool makeGabrielHurt = false;
+static bool GabrielIsAlive = false;
 
 
 #define ANIMATION_HITLOW		_animations["HITLOW"]
@@ -24,7 +25,37 @@ static bool makeGabrielHurt = false;
 #define SEND_PIRATES_TIME	2000
 
 
-// TODO: change the `KILLFALL4` to the original death animations' sequence (use `OneTimeAnimation`)
+class DeadGabriel : public OneTimeAnimation
+{
+public:
+	DeadGabriel(D2D1_POINT_2F pos, shared_ptr<Animation> ani, int firstPartDuration)
+		: OneTimeAnimation(pos, ani, false), _delay(firstPartDuration), _moved(false)
+	{
+		myMemCpy(ZCoord, DefaultZCoord::Characters + 1);
+	}
+	void Logic(uint32_t elapsedTime) override
+	{
+		if (!_moved)
+		{
+			_delay -= elapsedTime;
+			if (_delay <= 0)
+			{
+				// TODO: add flip in air before stay in this position
+				_ani->position = { 42992, 5240 };
+				_ani->mirrored = true;
+				_moved = true;
+			}
+		}
+
+		_ani->Logic(elapsedTime);
+	}
+
+private:
+	int _delay;
+	bool _moved;
+};
+
+
 Gabriel::Gabriel(const WwdObject& obj)
 	: BaseBoss(obj, 10, "", "HITHIGH", "HITLOW", "KILLFALL4", "", "", "")
 	, _throwBombsTime(THROW_BOMBS_TIME), _canThrowBombs(true)
@@ -34,6 +65,20 @@ Gabriel::Gabriel(const WwdObject& obj)
 	_isMirrored = true;
 	_ani = _animations["IDLE"];
 	_health = 5; // we need hurt Gabriel only 5 times to win
+	GabrielIsAlive = true;
+}
+Gabriel::~Gabriel()
+{
+	GabrielIsAlive = false;
+	_fallDead = false;
+	ActionPlane::addPlaneObject(DBG_NEW DeadGabriel(position, 
+		allocNewSharedPtr<Animation>(
+			_animations["KILLFALL1"]->getImagesList() +
+			_animations["KILLFALL2"]->getImagesList() +
+			_animations["KILLFALL3"]->getImagesList() +
+			_animations["KILLFALL4"]->getImagesList()
+		),
+		_animations["KILLFALL1"]->getTotalDuration()));
 }
 void Gabriel::Logic(uint32_t elapsedTime)
 {
@@ -57,7 +102,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 			obj.damage = 5;
 			obj.speedY = -800;
 
-			int32_t speedXs[] = {
+			int speedXs[] = {
 				getRandomInt(-600, -467),
 				getRandomInt(-467, -334),
 				getRandomInt(-334, -200)
@@ -235,6 +280,8 @@ GabrielCannonSwitch::GabrielCannonSwitch(const WwdObject& obj)
 }
 void GabrielCannonSwitch::Logic(uint32_t elapsedTime)
 {
+	if (!GabrielIsAlive) return;
+
 	_switchCannonTime -= elapsedTime;
 	if (_switchCannonTime <= 0) // use cannon every OPERATE_CANNON_TIME milliseconds
 	{

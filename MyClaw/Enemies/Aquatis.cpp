@@ -22,6 +22,7 @@ Aquatis::Aquatis(const WwdObject& obj)
 {
 	_ani = ANIMATION_IDLE;
 	_isMirrored = true;
+	_health = 5;
 
 	// create punch animation (punch up and punch down)
 	_animations["PUNCH"] = allocNewSharedPtr<Animation>(_animations["STRIKE1"]->getImagesList() + _animations["STRIKE2"]->getImagesList());
@@ -82,6 +83,7 @@ void Aquatis::Logic(uint32_t elapsedTime)
 			_ani = getRandomInt(0, 1) == 1 ? ANIMATION_HITLOW : ANIMATION_HITHIGH;
 			_ani->reset();
 			_ani->loopAni = false;
+			_health -= 1;
 		}
 	}
 
@@ -270,36 +272,6 @@ void AquatisCrack::Logic(uint32_t elapsedTime)
 		{
 			_lastDynamite = p;
 			activateAquatisStalactite += 1;
-		}
-	}
-}
-
-
-bool AquatisDynamite::_playerTookDynamite;
-
-AquatisDynamite::AquatisDynamite(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _timeCounter(0) 
-{
-	_playerTookDynamite = true;
-}
-void AquatisDynamite::Logic(uint32_t elapsedTime)
-{
-	_timeCounter -= elapsedTime;
-	if (_timeCounter <= 0)
-	{
-		// put new dynamite only if the previous dynamite is taken
-
-		if (_playerTookDynamite && !player->isFalling() && !player->isJumping()) // make sure player not in the air so he can take 2 dynamites at the same time
-		{
-			// TODO: maybe use regualr item with `damage` filed (make `respawning` field in `Item`)
-
-			_playerTookDynamite = false;
-			_timeCounter = 10000; // every 10 seconds respawn the dynamite supply
-
-			WwdObject obj;
-			obj.x = (int32_t)position.x;
-			obj.y = (int32_t)position.y;
-			ActionPlane::addPlaneObject(Item::getItem(obj, Item::Ammo_Dynamite));
 		}
 	}
 }

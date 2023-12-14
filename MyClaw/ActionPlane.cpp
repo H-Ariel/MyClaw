@@ -534,7 +534,8 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "AquatisDynamite")
 	{
-		ADD_BOSS_OBJECT(AquatisDynamite(obj));
+		(int32_t&)obj.damage = 1; // respawn object
+		_bossObjects.push_back(Item::getItem(obj, true));
 	}
 	else if (obj.logic == "AquatisStalactite")
 	{

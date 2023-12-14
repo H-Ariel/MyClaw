@@ -13,13 +13,13 @@ void BaseEngine::OnResize() {}
 
 void BaseEngine::Logic(uint32_t elapsedTime)
 {
-	for (UIBaseElement* e : _elementsList) e->Logic(elapsedTime);
+	for (UIBaseElement* e : _elementsList)
+		e->Logic(elapsedTime);
 }
 void BaseEngine::Draw()
 {
-	WindowManager::BeginDraw();
-	for (UIBaseElement* e : _elementsList) e->Draw();
-	WindowManager::EndDraw();
+	for (UIBaseElement* e : _elementsList)
+		e->Draw();
 }
 
 shared_ptr<BaseEngine> BaseEngine::getNextEngine()
