@@ -30,14 +30,11 @@ public:
 	void setFont(const FontData& font);
 	FontData getFont() const;
 
-	void setColor(ColorF color);
-	ColorF getColor() const;
-	
 	wstring text;
+	ColorF color;
 	D2D1_SIZE_F size; // destination rectange size
 	
 private:
 	FontData _font;
-	ID2D1SolidColorBrush* _brush;
 	IDWriteTextFormat* _textFormat;
 };

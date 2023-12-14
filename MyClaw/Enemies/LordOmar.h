@@ -3,11 +3,11 @@
 #include "../BaseEnemy.h"
 
 
+class LordOmarShield;
 class LordOmar : public BaseBoss
 {
 public:
 	LordOmar(const WwdObject& obj);
-	~LordOmar();
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -16,7 +16,9 @@ public:
 	bool checkForHurts() override;
 
 private:
-	enum class States
+	void advanceState();
+
+	enum States : int8_t
 	{
 		FireShield_1,
 		IceShield_1,
@@ -27,5 +29,7 @@ private:
 		End
 	};
 
-	States _state;
+	LordOmarShield* _shield;
+	int8_t _state;
+	bool stateInited;
 };

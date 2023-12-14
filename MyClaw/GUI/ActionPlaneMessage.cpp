@@ -6,7 +6,7 @@ ActionPlaneMessage::ActionPlaneMessage(const wstring& message, int timeout)
 	: BasePlaneObject({}), _timeLeft(timeout)
 {
 	text.text = message;
-	text.setColor(ColorF::White);
+	text.color = ColorF::White;
 	FontData font; font.size = 20;
 	text.setFont(font);
 

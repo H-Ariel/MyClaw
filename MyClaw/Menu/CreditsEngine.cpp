@@ -15,7 +15,7 @@ CreditsEngine::CreditsEngine()
 
 	_creditsTextElement = DBG_NEW UITextElement;
 	_creditsTextElement->text = wstring(creditsText.begin(), creditsText.end());
-	_creditsTextElement->setColor(ColorF::White);
+	_creditsTextElement->color = ColorF::White;
 	_creditsTextElement->size = _bgImg->size;
 	_creditsTextElement->position.x = _bgImg->position.x;
 	_creditsTextElement->position.y = _bgImg->size.height / 2 + _startY;

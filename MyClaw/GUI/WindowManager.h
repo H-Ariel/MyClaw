@@ -28,7 +28,7 @@ public:
 	static void fillRect(Rectangle2D dst, ColorF color);
 	static void drawHole(D2D1_POINT_2F center, float radius, ColorF color); // draw around the circle with `color` and fill the circle with transparent
 	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity = 1);
-	static void drawText(const wstring& text, IDWriteTextFormat* textFormat, ID2D1SolidColorBrush* brush, const Rectangle2D& layoutRect);
+	static void drawText(const wstring& text, IDWriteTextFormat* textFormat, ColorF color, const Rectangle2D& layoutRect);
 	static void drawText(const wstring& text, const FontData& font, ColorF color, const Rectangle2D& layoutRect);
 
 	// create D2D1 objects.

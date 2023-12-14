@@ -136,7 +136,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{
-			// TODO: delete this `else if` statement
+			// TODO: delete this `else if` statement and call `physics->checkCollides` inside `obj->Logic`
 			physics->checkCollides((BaseDynamicPlaneObject*)obj);
 		}
 		else if (isinstance<StackedCrates>(obj))

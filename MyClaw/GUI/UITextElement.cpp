@@ -8,9 +8,8 @@ FontData::FontData()
 
 
 UITextElement::UITextElement()
-	: text(L""), size({})
+	: text(L""), color(ColorF::Black), size({})
 {
-	_brush = WindowManager::getBrush(ColorF::Black);
 	_textFormat = WindowManager::createTextFormat(_font);
 }
 UITextElement::~UITextElement()
@@ -20,7 +19,7 @@ UITextElement::~UITextElement()
 
 void UITextElement::Draw()
 {
-	WindowManager::drawText(text, _textFormat, _brush, GetRect());
+	WindowManager::drawText(text, _textFormat, color, GetRect());
 }
 Rectangle2D UITextElement::GetRect()
 {
@@ -40,14 +39,4 @@ void UITextElement::setFont(const FontData& font)
 FontData UITextElement::getFont() const
 {
 	return _font;
-}
-
-void UITextElement::setColor(ColorF color)
-{
-	_brush->SetColor(color);
-}
-ColorF UITextElement::getColor() const 
-{
-	D2D1_COLOR_F color = _brush->GetColor();
-	return ColorF(color.r, color.g, color.b, color.a);
 }

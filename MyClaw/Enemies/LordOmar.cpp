@@ -2,6 +2,7 @@
 #include "../ActionPlane.h"
 #include "../Assets-Managers/AssetsManager.h"
 #include "../Assets-Managers/PathManager.h"
+#include "../Objects/EnemyProjectile.h"
 
 
 /*
@@ -19,11 +20,10 @@ Lord Omar is passive all the time, he doesn't move or attack.
 */
 
 
-#define ANIMATION_IDLE	_animations["IDLE"]
-#define ANIMATION_BLOCK	_animations["BLOCK"]
+#define ANIMATION_IDLE			_animations["IDLE"]
+#define ANIMATION_BLOCK			_animations["BLOCK"]
+#define ANIMATION_THROW_ENERGY	_animations["STRIKE3"]
 
-
-shared_ptr<Animation> FIRE_SHIELD_ITEM, ICE_SHIELD_ITEM, BULLET_ITEM;
 
 // TODO: save angles in radians instead of degrees
 class LordOmarShield : public BaseDynamicPlaneObject
@@ -32,12 +32,13 @@ public:
 	static const int NUM_OF_ITEMS_IN_FULL_SHIELD = 11;
 	static const int NUM_OF_ITEMS_IN_SHIELD = 9;
 
-	LordOmarShield(D2D1_POINT_2F center, shared_ptr<Animation> shieldItem, bool rotateClockwise)
+	LordOmarShield(D2D1_POINT_2F center, const string& shieldItemImageSet, bool rotateClockwise)
 		: BaseDynamicPlaneObject({}),
 		_center(center),
 		_rotateClockwise(rotateClockwise)
 	{
 		myMemCpy(ZCoord, DefaultZCoord::Characters + 1);
+		_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(shieldItemImageSet));
 
 		// set the positions:
 		const float step = 360.f / NUM_OF_ITEMS_IN_FULL_SHIELD;
@@ -48,8 +49,7 @@ public:
 			angle += step;
 		}
 
-		// set the animation:
-		_ani = shieldItem;
+		ActionPlane::addPlaneObject(this);
 	}
 
 	void Logic(uint32_t elapsedTime) override
@@ -119,51 +119,53 @@ private:
 	const bool _rotateClockwise;
 };
 
+// TODO: when LO defeated should display the original animation (not "KILLFALL")
 
-LordOmarShield* fireShield = nullptr, * iceShield = nullptr;
-bool hasShield = false;
 
 LordOmar::LordOmar(const WwdObject& obj)
-	: BaseBoss(obj, 0, "", "", "", "KILLFALL", "", "STRIKE3", ""), _state(States::FireShield_1)
+	: BaseBoss(obj, 0, "", "HITHIGH", "HITLOW", "KILLFALL", "", "", ""), 
+	_shield(nullptr), _state(States::FireShield_1), stateInited(false)
 {
-	position.y += 10;
 	_ani = ANIMATION_IDLE;
-	_isMirrored = true;
-
-
-//	FIRE_SHIELD_ITEM = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_FIRESHIELD"), "LEVEL_FIRESHIELD");
-//	ICE_SHIELD_ITEM = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_ICESHIELD"), "LEVEL_ICESHIELD");
-
-//	fireShield = DBG_NEW LordOmarShield(position, FIRE_SHIELD_ITEM);
-//	iceShield = DBG_NEW LordOmarShield(position, ICE_SHIELD_ITEM);
-
-//	ActionPlane::addPlaneObject(fireShield);
-}
-
-LordOmar::~LordOmar()
-{
-	fireShield = nullptr;
-	iceShield = nullptr;
+	_health = States::End; // get amount of states
 }
 
 void LordOmar::Logic(uint32_t elapsedTime)
 {
-	if (!hasShield)
+	if (_ani->isFinishAnimation())
 	{
-		FIRE_SHIELD_ITEM = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_FIRESHIELD"));
-		fireShield = DBG_NEW LordOmarShield(position, FIRE_SHIELD_ITEM, false);
-		ActionPlane::addPlaneObject(fireShield);
-		hasShield = true;
+		if (_ani == ANIMATION_BLOCK)
+		{
+			if (_state == States::Bullet_1 || _state == States::Bullet_2)
+				_ani = ANIMATION_THROW_ENERGY;
+			else
+				_ani = ANIMATION_IDLE;
+			_ani->reset();
+		}
+		else if (_ani == ANIMATION_THROW_ENERGY)
+		{
+			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(
+				AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_OMARPROJECTILE")),
+				20, { (_state == States::Bullet_1) ? -0.3f : 0.3f , 0 }, position));
+			_ani->reset();
+		}
 	}
 
-
-	if (_ani == ANIMATION_BLOCK && _ani->isFinishAnimation())
+	// check for regualr attacks (sword, kick, etc.):
+	if (checkForHurts())
 	{
-		_ani = ANIMATION_IDLE;
-		_ani->reset();
+		if (_state == States::Bullet_1 || _state == States::Bullet_2)
+		{
+			advanceState();
+		}
+		else
+		{
+			_ani = ANIMATION_BLOCK;
+			_ani->reset();
+		}
 	}
 
-
+	// check for projectiles:
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
 		if (isClawProjectile(p))
@@ -173,13 +175,16 @@ void LordOmar::Logic(uint32_t elapsedTime)
 			if (p->GetRect().intersects(GetRect()))
 			{
 				p->removeObject = true;
-				if (cp->type == ClawProjectile::Types::FireSword || cp->type == ClawProjectile::Types::IceSword)
+
+				// LO can hurt from projectiles only in these states
+				if ((cp->type == ClawProjectile::Types::IceSword && (_state == States::FireShield_1 || _state == States::FireShield_2)) ||
+					(cp->type == ClawProjectile::Types::FireSword && (_state == States::IceShield_1 || _state == States::IceShield_2)))
 				{
-					// TODO: need to advance to next state
-					// for now just end the fight
-					this->removeObject = true;
+					advanceState();
+					_shield->removeObject = true;
+					_shield = nullptr; // the `ActionPlane` delete the object
 				}
-				else
+				else // for other cases, LO blocks the projectile
 				{
 					_ani = ANIMATION_BLOCK;
 					_ani->reset();
@@ -188,18 +193,59 @@ void LordOmar::Logic(uint32_t elapsedTime)
 		}
 	}
 
+	if (!stateInited)
+	{
+		shared_ptr<Animation> shieldItem;
+		switch (_state)
+		{
+		case FireShield_1:
+		case FireShield_2:
+			position = { 42272, 2478 };
+			_shield = DBG_NEW LordOmarShield(position, "LEVEL_FIRESHIELD", false);		
+			_isMirrored = true;
+			break;
+
+		case IceShield_1:
+		case IceShield_2:
+			position = { 41376, 2478 };
+			_shield = DBG_NEW LordOmarShield(position, "LEVEL_ICESHIELD", true);
+			_isMirrored = false;
+			break;
+
+		case Bullet_1:
+			position = { 42336, 1070 };
+			_isMirrored = true;
+			_ani = ANIMATION_THROW_ENERGY;
+			_ani->reset();
+			break;
+
+		case Bullet_2:
+			position = { 41312, 1070 };
+			_isMirrored = false;
+			_ani = ANIMATION_THROW_ENERGY;
+			_ani->reset();
+			break;
+
+		case End:
+			removeObject = true;
+			break;
+		}
+
+		stateInited = true;
+	}
 
 	PostLogic(elapsedTime);
 }
 
 Rectangle2D LordOmar::GetRect()
 {
-	return Rectangle2D(
+	_saveCurrRect = Rectangle2D(
 		position.x - 20,
 		position.y - 50,
 		position.x + 20,
 		position.y + 60
 	);
+	return _saveCurrRect;
 }
 
 pair<Rectangle2D, int> LordOmar::GetAttackRect()
@@ -209,5 +255,23 @@ pair<Rectangle2D, int> LordOmar::GetAttackRect()
 
 bool LordOmar::checkForHurts()
 {
+	if (_state == States::Bullet_1 || _state == States::Bullet_2)
+	{
+		// CC can attack only in Bullet_1 and Bullet_2 states
+		pair<Rectangle2D, int> clawAttackRect = player->GetAttackRect();
+		if (clawAttackRect.second > 0 && clawAttackRect.first.intersects(_saveCurrRect))
+		{
+			return true;
+		}
+	}
 	return false;
+}
+
+void LordOmar::advanceState()
+{
+	_state += 1;
+	_health -= 1;
+	stateInited = false;
+	GetRect(); // update `_saveCurrRect`
+	// TODO: cool efect of disappearing for Lord Omar and appear in the new position
 }

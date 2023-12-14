@@ -1,7 +1,7 @@
 #include "WindowManager.h"
 
 // TODO: save all D2D1 objects (ID2D1Bitmap, IDWriteTextFormat) in a list and release them in `WindowManager::Finalize`
-
+// TODO: hide all D2D1 objects (ID2D1Bitmap, IDWriteTextFormat) in `WindowManager` and create a function to get them with my format
 
 // throw exception if `func` failed
 #define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
@@ -214,15 +214,16 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 		instance->_renderTarget->SetTransform(Matrix3x2F::Identity());
 	}
 }
-void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat, ID2D1SolidColorBrush* brush, const Rectangle2D& layoutRect)
+void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat, ColorF color, const Rectangle2D& layoutRect)
 {
+	ID2D1SolidColorBrush* brush = getBrush(color);
 	if (!textFormat || !brush) return;
 	instance->_renderTarget->DrawText(text.c_str(), (UINT32)text.length(), textFormat, layoutRect, brush);
 }
 void WindowManager::drawText(const wstring& text, const FontData& font, ColorF color, const Rectangle2D& layoutRect)
 {
 	IDWriteTextFormat* textFormat = createTextFormat(font);
-	drawText(text, textFormat, getBrush(color), layoutRect);
+	drawText(text, textFormat, color, layoutRect);
 	SafeRelease(textFormat);
 }
 

@@ -5,6 +5,9 @@
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir)
 	: Projectile(obj, PathManager::getImageSetPath(projectileAniDir)) {}
 
+EnemyProjectile::EnemyProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+	: Projectile(ani, damage, speed, initialPosition) {} // TODO: apply for all enemies?
+
 RatBomb::RatBomb(const WwdObject& obj)
 	: Projectile(obj, PathManager::getAnimationPath("LEVEL_RATBOMB_FALLEASTWEST"))
 {
