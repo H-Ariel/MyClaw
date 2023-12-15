@@ -14,7 +14,7 @@ bool operator==(ColorF a, ColorF b) { return memcmp(&a, &b, sizeof(ColorF)) == 0
 
 
 float WindowManager::PixelSize = 1; // min value: 1 // TODO: rename to `WindowScale`
-const D2D1_SIZE_F WindowManager::DEFAULT_WINDOW_SIZE = { 800.f, 600.f };
+const D2D1_SIZE_F WindowManager::DEFAULT_WINDOW_SIZE = { 640,480 }; //{ 800.f, 600.f };
 WindowManager* WindowManager::instance = nullptr;
 
 

@@ -23,9 +23,9 @@ struct HierarchicalMenu
 		OpenLevel, // `OpenLevel | (<lvlNo> << 4)`
 		LoadCheckpoint, // `LoadCheckpoint | (<chkPntNo> << 4)`
 
-		LoadCheckpoint_Start = LoadCheckpoint | (0x10), // vvv
-		LoadCheckpoint_1     = LoadCheckpoint | (0x20), //  TODO: delete these ?
-		LoadCheckpoint_2     = LoadCheckpoint | (0x30), // ^^^
+		LoadCheckpoint_Start = LoadCheckpoint | (0x10),
+		LoadCheckpoint_1     = LoadCheckpoint | (0x20),
+		LoadCheckpoint_2     = LoadCheckpoint | (0x30),
 
 		// ingame menu commands:
 		BackToGame = OpenLevel + 1,

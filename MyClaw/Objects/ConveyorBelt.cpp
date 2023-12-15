@@ -12,6 +12,7 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), speed(obj.speed / 1000.f),
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
+//	myMemCpy(ZCoord, player->ZCoord + 1); // TODO: with this line CC move good but then draw bad
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), obj.speed > 0, ANIMATION_DURATION);
 	if (!_canMoveCC) myMemCpy(ZCoord, ZCoord + 1); // handle the belts that can move CC first
 	myMemCpy(_objRc, Rectangle2D((float)obj.moveRect.left, (float)obj.moveRect.top,

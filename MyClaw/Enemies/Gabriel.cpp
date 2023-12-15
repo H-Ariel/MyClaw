@@ -71,14 +71,17 @@ Gabriel::~Gabriel()
 {
 	GabrielIsAlive = false;
 	_fallDead = false;
-	ActionPlane::addPlaneObject(DBG_NEW DeadGabriel(position, 
-		allocNewSharedPtr<Animation>(
-			_animations["KILLFALL1"]->getImagesList() +
-			_animations["KILLFALL2"]->getImagesList() +
-			_animations["KILLFALL3"]->getImagesList() +
-			_animations["KILLFALL4"]->getImagesList()
-		),
-		_animations["KILLFALL1"]->getTotalDuration()));
+	if (removeObject)
+	{
+		ActionPlane::addPlaneObject(DBG_NEW DeadGabriel(position,
+			allocNewSharedPtr<Animation>(
+				_animations["KILLFALL1"]->getImagesList() +
+				_animations["KILLFALL2"]->getImagesList() +
+				_animations["KILLFALL3"]->getImagesList() +
+				_animations["KILLFALL4"]->getImagesList()
+			),
+			_animations["KILLFALL1"]->getTotalDuration()));
+	}
 }
 void Gabriel::Logic(uint32_t elapsedTime)
 {

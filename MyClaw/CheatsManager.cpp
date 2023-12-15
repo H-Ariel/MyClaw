@@ -1,6 +1,5 @@
 #include "CheatsManager.h"
 #include "ActionPlane.h"
-#include "GUI/ActionPlaneMessage.h"
 #include "Objects/Item.h"
 
 
@@ -87,22 +86,22 @@ int CheatsManager::getCheatType()
 inline void CheatsManager::fireSword()
 {
 	addPowerup(Item::Type::Powerup_FireSword);
-	ActionPlane::addPlaneObject(DBG_NEW ActionPlaneMessage(L"Fire sword rules..."));
+	ActionPlane::writeMessage("Fire sword rules...");
 }
 inline void CheatsManager::iceSword()
 {
 	addPowerup(Item::Type::Powerup_IceSword);
-	ActionPlane::addPlaneObject(DBG_NEW ActionPlaneMessage(L"Ice sword rules..."));
+	ActionPlane::writeMessage("Ice sword rules...");
 }
 inline void CheatsManager::lightningSword()
 {
 	addPowerup(Item::Type::Powerup_LightningSword);
-	ActionPlane::addPlaneObject(DBG_NEW ActionPlaneMessage(L"Lightning sword rules..."));
+	ActionPlane::writeMessage("Lightning sword rules...");
 }
 inline void CheatsManager::catnip()
 {
 	addPowerup(Item::Type::Powerup_Catnip_White);
-	ActionPlane::addPlaneObject(DBG_NEW ActionPlaneMessage(L"Catnip...Yummy!"));
+	ActionPlane::writeMessage("Catnip...Yummy!");
 }
 
 void CheatsManager::addPowerup(int8_t powerupType)

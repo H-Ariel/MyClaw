@@ -27,6 +27,7 @@ public:
 	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
 	static bool isInBoss() { return _instance->_boss != nullptr; }
 	static int getBossHealth() { return _instance->_boss->getHealth(); }
+	static void writeMessage(const string& message, int timeout = 2000);
 
 private:
 	void updatePosition();

@@ -2,6 +2,7 @@
 #include "LevelHUD.h"
 #include "PhysicsManager.h"
 #include "GUI/WindowManager.h"
+#include "GUI/ActionPlaneMessage.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "Objects/Checkpoint.h"
 #include "Objects/Elevator.h"
@@ -66,7 +67,7 @@
 
 #ifdef _DEBUG
 //#undef LOW_DETAILS
-//#define NO_ENEMIES
+#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -644,4 +645,9 @@ void ActionPlane::updatePosition()
 		if (_shakeTime / 75 % 2) { position.x -= shakeDelta; position.y -= shakeDelta; }
 		else { position.x += shakeDelta; position.y += shakeDelta; }
 	}
+}
+
+void ActionPlane::writeMessage(const string& message, int timeout)
+{
+	addPlaneObject(DBG_NEW ActionPlaneMessage(message, timeout));
 }

@@ -48,7 +48,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 
 #ifdef _DEBUG
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
-	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
+//	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 5775, 4347 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 9696, 772 };
@@ -288,6 +288,15 @@ void ClawLevelEngine::OnKeyUp(int key)
 	{
 		if (WindowManager::PixelSize >= 1)
 			WindowManager::PixelSize -= 0.5f;
+	}
+	else if (key == VK_DIVIDE)
+	{
+		// set default resolution (640x480).
+		auto realSize = WindowManager::getRealSize();
+		WindowManager::PixelSize = min(
+			realSize.width / WindowManager::DEFAULT_WINDOW_SIZE.width,
+			realSize.height / WindowManager::DEFAULT_WINDOW_SIZE.height
+		);
 	}
 	else
 	{
