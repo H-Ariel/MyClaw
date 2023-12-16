@@ -10,7 +10,7 @@ public:
 	LevelPlane(WapWorld* wwd);
 
 	void Draw() override;
-	virtual void readPlaneObjects(BufferReader& reader);
+	virtual void readPlaneObjects(BufferReader& reader, int numOfObjects);
 	virtual void updateObject(WwdObject& obj); // called from `readPlaneObjects`
 	virtual void addObject(const WwdObject& obj); // called from `readPlaneObjects`
 	bool isMainPlane() const { return _isMainPlane; }

@@ -29,8 +29,8 @@ DoNothing::DoNothing(const WwdObject& obj)
 
 	/*
 	// TODO: fix ZCoord
-	if (startsWith(obj.logic, "Front")) myMemCpy<int>(ZCoord, DefaultZCoord::FrontCrate);
-	else if (startsWith(obj.logic, "Behind")) myMemCpy<int>(ZCoord, DefaultZCoord::BackCrate);
-	else if (obj.logic == "GooCoverup") myMemCpy<int>(ZCoord, DefaultZCoord::Coverups);
+	if (startsWith(obj.logic, "Front")) myMemCpy<int>(drawZ, DefaultZCoord::FrontCrate);
+	else if (startsWith(obj.logic, "Behind")) myMemCpy<int>(drawZ, DefaultZCoord::BackCrate);
+	else if (obj.logic == "GooCoverup") myMemCpy<int>(drawZ, DefaultZCoord::Coverups);
 	*/
 }

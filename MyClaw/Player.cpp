@@ -432,7 +432,6 @@ void Player::Logic(uint32_t elapsedTime)
 				{
 					WwdObject obj;
 					obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
-					obj.z = ZCoord;
 					obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 
 					switch (_currWeapon)
@@ -887,7 +886,7 @@ bool Player::collectItem(Item* item)
 		vector<Animation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
 		myMemCpy(images[0]->duration, 1000U);
 		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, allocNewSharedPtr<Animation>(images));
-		myMemCpy(ani->ZCoord, item->ZCoord);
+		myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);
 
 		ActionPlane::addPlaneObject(ani);
 #endif
@@ -1042,7 +1041,6 @@ void Player::shootSwordProjectile()
 	Rectangle2D atkRc = GetAttackRect().first;
 	obj.x = (int32_t)position.x;
 	obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
-	obj.z = ZCoord;
 	obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 	obj.damage = 25;
 	ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
@@ -1142,7 +1140,7 @@ bool Player::checkForHurts()
 							position.x + (damageRc.left - damageRc.right) / 2,
 							position.y + (damageRc.top - damageRc.bottom) / 2
 						}, AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", false, 50));
-					myMemCpy(ani->ZCoord, ZCoord + 1);
+					myMemCpy(ani->drawZ, drawZ + 1);
 					ActionPlane::addPlaneObject(ani);
 #endif
 					return true;

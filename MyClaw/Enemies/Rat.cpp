@@ -21,7 +21,6 @@ void Rat::makeAttack(float deltaX, float deltaY)
 		WwdObject obj;
 		obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 		obj.y = (int32_t)position.y - 32;
-		obj.z = ZCoord;
 		obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 		obj.damage = 15;
 		ActionPlane::addPlaneObject(DBG_NEW RatBomb(obj));

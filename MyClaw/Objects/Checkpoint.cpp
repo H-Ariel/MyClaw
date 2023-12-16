@@ -11,7 +11,7 @@ Checkpoint::Checkpoint(const WwdObject& obj, int levelNumber)
 {
 	_ani = AssetsManager::createAnimationFromPidImage(_imageSetPath + "/001.PID");
 	setObjectRectangle();
-	myMemCpy<int>(ZCoord, DefaultZCoord::CheckpointFlag);
+	myMemCpy<int>(drawZ, DefaultZCoord::CheckpointFlag);
 
 	if (obj.logic == "FirstSuperCheckpoint")
 		_superCheckpoint = 1;

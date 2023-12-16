@@ -78,7 +78,7 @@ vector<BasePlaneObject*> Crate::getItems()
 		WwdObject newObj;
 		newObj.x = (int32_t)position.x;
 		newObj.y = (int32_t)position.y;
-		newObj.z = ZCoord;
+		newObj.z = logicZ;
 
 		for (int8_t t : _itemsTypes)
 		{

@@ -10,7 +10,7 @@ shared_ptr<PhysicsManager> BasePlaneObject::physics;
 
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)
 	: UIBaseElement({ (float)obj.x, (float)obj.y }),
-	ZCoord(obj.z), removeObject(false), _ani(nullptr),
+	logicZ(obj.z), drawZ(obj.z), removeObject(false), _ani(nullptr),
 	_isMirrored(obj.drawFlags & WwdObject::Mirror),
 	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)) {} // TODO: we know who is not visible, so we can remove this flag and ovveride Draw() function
 void BasePlaneObject::Draw()

@@ -59,7 +59,6 @@ void Mercat::makeAttack(float deltaX, float deltaY)
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
 			obj.y = (int32_t)position.y;
-			obj.z = ZCoord;
 			obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
 			ActionPlane::addPlaneObject(DBG_NEW MercatTrident(obj));

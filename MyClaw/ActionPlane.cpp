@@ -64,7 +64,6 @@
 #define ADD_DAMAGE_OBJECT(p) { BaseDamageObject* dObj = DBG_NEW p; _objects.push_back(dObj); _damageObjects.push_back(dObj); }
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
 
-
 #ifdef _DEBUG
 //#undef LOW_DETAILS
 #define NO_ENEMIES
@@ -72,18 +71,19 @@
 #endif
 
 
+bool cmpDrawZ(BasePlaneObject* a, BasePlaneObject* b) { return a->drawZ < b->drawZ; }
+bool cmpLogicZ(BasePlaneObject* a, BasePlaneObject* b) { return a->logicZ < b->logicZ; }
+
+
 ActionPlane* ActionPlane::_instance = nullptr;
 shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
 
 
 ActionPlane::ActionPlane(WapWorld* wwd)
-	: LevelPlane(wwd), _planeSize({}), _boss(nullptr), _shakeTime(0), _needSort(true)
+	: LevelPlane(wwd), _planeSize({}), _boss(nullptr), _shakeTime(0)
 {
 	if (_instance != nullptr)
-	{
 		DBG_PRINT("Warning: ActionPlane already exists (level %d)", _instance->_wwd->levelNumber);
-	}
-
 	_instance = this;
 }
 ActionPlane::~ActionPlane()
@@ -104,19 +104,12 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 {
 	if (player->isFinishLevel()) return;
 
-	/*if (!player->isInDeathAnimation())
-	{
-		physics->checkCollides(player);
-	}*/
-
 	if (_shakeTime > 0)
 		_shakeTime -= elapsedTime;
 	updatePosition();
 
-	if (_needSort)
-	{
-		sort(_objects.begin(), _objects.end(), [](BasePlaneObject* a, BasePlaneObject* b) { return a->ZCoord < b->ZCoord; });
-	}
+	// TODO: do not sort twice ?
+	sort(_objects.begin(), _objects.end(), cmpLogicZ); // for this method (`Logic`)
 
 	BasePlaneObject* obj;
 	bool exploseShake = false; // shake screen after explodes of Claw's dynamit and powder-kegs
@@ -185,6 +178,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		}
 	}
 
+	sort(_objects.begin(), _objects.end(), cmpDrawZ); // for `Draw` method
+
 	AssetsManager::callLogics(elapsedTime);
 
 #ifndef _DEBUG // when I'm debugging, I don't want to shake the screen (it's annoying)
@@ -205,7 +200,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 #endif
 }
 
-void ActionPlane::readPlaneObjects(BufferReader& reader)
+void ActionPlane::readPlaneObjects(BufferReader& reader, int numOfObjects)
 {
 	// initialize global fields and then read objects: (we init here because now we have all data)
 
@@ -229,7 +224,7 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 		player->position.y = player->startPosition.y = (float)_wwd->startY;
 	}
 
-	LevelPlane::readPlaneObjects(reader);
+	LevelPlane::readPlaneObjects(reader, numOfObjects);
 	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
 
 	if (_loadGameData)
@@ -238,6 +233,8 @@ void ActionPlane::readPlaneObjects(BufferReader& reader)
 		_loadGameData = nullptr;
 	}
 	_objects.push_back(player.get()); // must be after LevelPlane::readPlaneObjects() because we reset the objects vector there
+
+	sort(_objects.begin(), _objects.end(), cmpLogicZ);
 }
 void ActionPlane::addObject(const WwdObject& obj)
 {
@@ -535,7 +532,6 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "AquatisDynamite")
 	{
-		(int32_t&)obj.damage = 1; // respawn object
 		_bossObjects.push_back(Item::getItem(obj, true));
 	}
 	else if (obj.logic == "AquatisStalactite")
@@ -564,9 +560,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 {
-	//if (obj == nullptr) return; 
-	_instance->_objects.push_back(obj);
-	_instance->_needSort = true;
+	//if (obj == nullptr) return;
+	
+	// insert in the right place
+	_instance->_objects.insert(lower_bound(_instance->_objects.begin(), _instance->_objects.end(), obj, cmpLogicZ), obj);
+
 	if (isProjectile(obj)) _instance->_projectiles.push_back((Projectile*)obj);
 	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
 }
@@ -616,7 +614,6 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 			_instance->_damageObjects.push_back((BaseDamageObject*)i);
 	}
 	_instance->_bossObjects.clear();
-	_instance->_needSort = true;
 
 	LevelHUD::setBossInitialHealth(_instance->_boss->getHealth());
 

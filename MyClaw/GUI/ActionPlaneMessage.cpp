@@ -9,7 +9,7 @@ ActionPlaneMessage::ActionPlaneMessage(const string& message, int timeout)
 	text.color = ColorF::White;
 	FontData font; font.size = 20;
 	text.setFont(font);
-	myMemCpy(ZCoord, (int)DefaultZCoord::Interface);
+	myMemCpy<int>(drawZ, DefaultZCoord::Interface);
 }
 
 void ActionPlaneMessage::Logic(uint32_t elapsedTime)

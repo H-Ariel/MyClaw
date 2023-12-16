@@ -17,7 +17,7 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 	speed.x = obj.speedX / 1000.f;
 	speed.y = obj.speedY / 1000.f;
 	_isMirrored = speed.x < 0;
-	myMemCpy(ZCoord, DefaultZCoord::Characters + 1);
+	myMemCpy(drawZ, DefaultZCoord::Characters + 1);
 }
 Projectile::Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
 	: BaseDynamicPlaneObject({}), _damage(damage), _timeLeft(3000)
@@ -25,7 +25,7 @@ Projectile::Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F spee
 	_ani = ani;
 	this->speed = speed;
 	position = initialPosition;
-	myMemCpy(ZCoord, DefaultZCoord::Characters + 1);
+	myMemCpy(drawZ, DefaultZCoord::Characters + 1);
 }
 void Projectile::Logic(uint32_t elapsedTime)
 {

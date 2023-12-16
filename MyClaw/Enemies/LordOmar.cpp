@@ -31,7 +31,7 @@ public:
 		_center(center),
 		_rotateClockwise(rotateClockwise)
 	{
-		myMemCpy(ZCoord, DefaultZCoord::Characters + 1);
+		myMemCpy(drawZ, DefaultZCoord::Characters + 1);
 		_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(shieldItemImageSet));
 
 		// set the positions:

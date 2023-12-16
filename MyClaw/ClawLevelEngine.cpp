@@ -216,20 +216,25 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		return;
 	}
 
-	if (player->isFinishDeathAnimation() && player->hasLives() && _state == States::Play)
+	if (_state == States::Play)
 	{
-		if (player->isSpikeDeath())
+		if (player->isFinishDeathAnimation() && player->hasLives())
 		{
-			_state = States::Close;
-			_holeRadius = initialHoleRadius;
-		}
-		else //if (player->isFallDeath())
-		{
-			_state = States::Fall;
+			if (player->isSpikeDeath())
+			{
+				_state = States::Close;
+				_holeRadius = initialHoleRadius;
+			}
+			else //if (player->isFallDeath())
+			{
+				_state = States::Fall;
+			}
+
+			_deathAniWait = true;
+			return;
 		}
 
-		_deathAniWait = true;
-		return;
+		// TODO: check here for weap (so we need to close and open screen)
 	}
 
 	

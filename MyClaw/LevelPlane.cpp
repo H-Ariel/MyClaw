@@ -23,7 +23,7 @@ void LevelPlane::Draw()
 	const int endRow = min<int>(maxTileIdxY, int(wndSz.height / TILE_SIZE + 2 + startRow));
 	const int endCol = min<int>(maxTileIdxX, int(wndSz.width / TILE_SIZE + 2 + startCol));
 
-	for (i = 0; i < _objects.size() && _objects[i]->ZCoord < this->ZCoord; i++)
+	for (i = 0; i < _objects.size() && _objects[i]->drawZ < this->ZCoord; i++)
 		_objects[i]->Draw();
 
 	for (row = startRow; row < endRow; row++)
@@ -54,14 +54,12 @@ void LevelPlane::Draw()
 		_objects[i]->Draw();
 }
 
-void LevelPlane::readPlaneObjects(BufferReader& reader)
+void LevelPlane::readPlaneObjects(BufferReader& reader, int numOfObjects)
 {
 	WwdObject obj;
 	uint32_t nameLength, logicLength, imageSetLength, animationLength;
-	size_t objectsCount = _objects.size();
-	_objects.clear(); // in `addObject` we use `_objects.push_back`, and we don't want an endless vector
-
-	while (objectsCount--)
+	
+	while (numOfObjects--)
 	{
 		reader.read(obj.id);
 		reader.read(nameLength);
@@ -149,6 +147,10 @@ void LevelPlane::updateObject(WwdObject& obj)
 	{
 		if (obj.smarts == 1)
 			obj.imageSet += "WHITE";
+	}
+	else if (obj.logic == "AquatisDynamite")
+	{
+		obj.damage = 1; // respawn object
 	}
 }
 

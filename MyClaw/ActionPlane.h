@@ -14,7 +14,7 @@ public:
 	~ActionPlane();
 
 	void Logic(uint32_t elapsedTime) override;
-	void readPlaneObjects(BufferReader& reader) override;
+	void readPlaneObjects(BufferReader& reader, int numOfObjects) override;
 	void addObject(const WwdObject& obj) override;
 
 	static void addPlaneObject(BasePlaneObject* obj);
@@ -41,7 +41,6 @@ private:
 	D2D1_SIZE_F _planeSize;
 	BaseBoss* _boss;
 	int _shakeTime;
-	bool _needSort;
 
 	static ActionPlane* _instance;
 	static shared_ptr<SavedGameManager::GameData> _loadGameData;

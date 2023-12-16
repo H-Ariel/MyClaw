@@ -122,7 +122,7 @@ AquatisTentacle::AquatisTentacle(const WwdObject& obj)
 	_squeeze = AssetsManager::loadCopyAnimation(aniSet + "/STRIKE3.ANI", imageSet);
 
 	_ani = _idle;
-	myMemCpy(ZCoord, player->ZCoord + 1);
+	myMemCpy(drawZ, DefaultZCoord::Characters + 1);
 
 	AquatisTentaclesList.push_back(this);
 }

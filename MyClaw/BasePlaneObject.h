@@ -14,11 +14,10 @@ class PhysicsManager;
 class BasePlaneObject : public UIBaseElement
 {
 public:
-	enum DefaultZCoord : int32_t {
-		BackCrate = 1000, BackCandy = 1000,
-		CheckpointFlag = 1000,
-		Elevators = 2000,
-		Pegs = 2000,
+	enum DefaultZCoord
+	{
+		BackCrate = 1000, BackCandy = 1000, CheckpointFlag = 1000,
+		Elevators = 2000, Pegs = 2000,
 		Characters = 4000,
 		FrontCrate = 5000, FrontCandy = 5000,
 		Items = 6000,
@@ -37,7 +36,7 @@ public:
 	bool tryCatchPlayer(); // returns if successfully caught the player
 	bool isMirrored() const { return _isMirrored; }
 
-	const int ZCoord;
+	const int logicZ, drawZ;
 	bool removeObject;
 
 	static shared_ptr<Player> player;

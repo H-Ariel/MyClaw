@@ -141,7 +141,8 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 {
 	vector<string> imageSets;
 	int64_t currIdx;
-	uint32_t fillColor, tilesOffset, imageSetsOffset, objectsOffset, flags, tilePixelWidth, tilePixelHeight;
+	uint32_t fillColor, numOfObjects, tilesOffset, imageSetsOffset,
+		objectsOffset, flags, tilePixelWidth, tilePixelHeight;
 
 	while (numOfPlanes--)
 	{
@@ -192,8 +193,7 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		pln->fillColor = ColorF(colors[fillColor].r / 255.f, colors[fillColor].g / 255.f, colors[fillColor].b / 255.f);
 
 		imageSets.resize(reader.read<uint32_t>());
-		pln->_objects.resize(reader.read<uint32_t>()); // save objects' amount
-
+		reader.read(numOfObjects);
 		reader.read(tilesOffset);
 		reader.read(imageSetsOffset);
 		reader.read(objectsOffset);
@@ -220,9 +220,12 @@ void WapWorld::readPlanes(BufferReader& reader, const ColorRGBA colors[], const 
 		pln->tilesImages = AssetsManager::loadPlaneTilesImages(imageDirectoryPath + '/' + imageSets[0]);
 		imageSets.clear();
 
-		// read objects
-		reader.setIndex(objectsOffset);
-		pln->readPlaneObjects(reader);
+		if (numOfObjects > 0)
+		{
+			// read objects
+			reader.setIndex(objectsOffset);
+			pln->readPlaneObjects(reader, numOfObjects);
+		}
 
 		reader.setIndex(currIdx);
 

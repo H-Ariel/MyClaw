@@ -86,7 +86,6 @@ BaseEnemy::~BaseEnemy()
 			Item* i = Item::getItem(obj, t);
 			i->speed.y = -0.6f;
 			i->speed.x = getRandomFloat(-0.25f, 0.25f);
-			myMemCpy<int>(ZCoord, DefaultZCoord::Items);
 			ActionPlane::addPlaneObject(i);
 		}
 
@@ -192,7 +191,6 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 			obj.y = (int32_t)position.y + 10;
-			obj.z = ZCoord;
 			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
 			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
@@ -208,7 +206,6 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 			obj.y = (int32_t)position.y - 20;
-			obj.z = ZCoord;
 			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
 			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
@@ -308,7 +305,7 @@ bool BaseEnemy::checkClawHit()
 				position.y + (damageRc.top - damageRc.bottom) / 2
 			},
 			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", false, 50));
-		myMemCpy(ani->ZCoord, ZCoord + 1);
+		myMemCpy(ani->logicZ, logicZ + 1);
 		ActionPlane::addPlaneObject(ani);
 #endif
 		return true;
@@ -372,7 +369,6 @@ BaseBoss::~BaseBoss()
 		obj.y = (int32_t)position.y;
 		obj.minX = _gemPos.x;
 		obj.minY = _gemPos.y;
-		obj.z = ZCoord;
 		obj.imageSet = "LEVEL_GEM";
 		ActionPlane::addPlaneObject(DBG_NEW BossGem(obj));
 	}

@@ -31,7 +31,7 @@ public:
 	DeadGabriel(D2D1_POINT_2F pos, shared_ptr<Animation> ani, int firstPartDuration)
 		: OneTimeAnimation(pos, ani, false), _delay(firstPartDuration), _moved(false)
 	{
-		myMemCpy(ZCoord, DefaultZCoord::Characters + 1);
+		myMemCpy(drawZ, DefaultZCoord::Characters + 1);
 	}
 	void Logic(uint32_t elapsedTime) override
 	{
@@ -101,7 +101,6 @@ void Gabriel::Logic(uint32_t elapsedTime)
 			WwdObject obj;
 			obj.x = (int32_t)position.x;
 			obj.y = (int32_t)position.y;
-			obj.z = ZCoord;
 			obj.damage = 5;
 			obj.speedY = -800;
 
@@ -240,7 +239,6 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 		WwdObject obj;
 		obj.x = (int32_t)position.x;
 		obj.y = (int32_t)position.y;
-		obj.z = ZCoord;
 		obj.damage = 15;
 
 		if (_ani == _rise)
@@ -325,7 +323,8 @@ GabrielRedTailPirate::GabrielRedTailPirate()
 	: BaseDynamicPlaneObject({}), _isJumping(false)
 {
 	position = { 43479, 5020 };
-	myMemCpy<int>(ZCoord, DefaultZCoord::Characters); //myMemCpy(ZCoord, 2000); // TODO
+	myMemCpy<int>(logicZ, DefaultZCoord::Characters);
+	myMemCpy<int>(drawZ, DefaultZCoord::Characters);
 	speed.x = -0.3f;
 	_ani = AssetsManager::loadCopyAnimation("LEVEL8/ANIS/REDTAILPIRATE/ADVANCE.ANI", "LEVEL8/IMAGES/REDTAILPIRATE");
 }
@@ -351,7 +350,6 @@ void GabrielRedTailPirate::stopFalling(float collisionSize)
 		WwdObject obj;
 		obj.x = (int32_t)position.x;
 		obj.y = (int32_t)position.y;
-		obj.z = ZCoord;
 		obj.minX = 42560;
 		obj.maxX = 43200;
 		obj.imageSet = "LEVEL_REDTAILPIRATE";
