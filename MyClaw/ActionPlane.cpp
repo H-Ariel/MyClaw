@@ -65,7 +65,7 @@
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
 
 #ifdef _DEBUG
-//#undef LOW_DETAILS
+#undef LOW_DETAILS
 #define NO_ENEMIES
 #define NO_OBSTACLES
 #endif

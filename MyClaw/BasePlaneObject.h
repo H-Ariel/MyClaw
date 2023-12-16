@@ -18,9 +18,9 @@ public:
 	{
 		BackCrate = 1000, BackCandy = 1000, CheckpointFlag = 1000,
 		Elevators = 2000, Pegs = 2000,
+		Items = 3000,
 		Characters = 4000,
 		FrontCrate = 5000, FrontCandy = 5000,
-		Items = 6000,
 		Columns = 7000, Structures = 7000,
 		Coverups = 8000,
 		EnemyFallDeath = 8500,

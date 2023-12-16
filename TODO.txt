@@ -1,14 +1,12 @@
+* play all objects WAV file
+* add all objects
 * prefer use `int` and not `int32_t` etc.
 * find perfect speeds (for CC, enemies, projectiles, etc.)
 * use D2D1 scale in WindowManager (instead of "dst.left / PixelSize" etc.)
-* find perfect ZCoord for some of the objects (e.g. at level 11)
 * split all classes to h and cpp files (not 2 classes in 1 file)
 * use pegs/elevators/etc. as ground for enemies/treasures/etc. too
-* find perfect speeds for enemies
 * catch and throw enemies (like a powder-keg)
 * add "ADVANCE.ANI" for enemies (before they attack)
-* play all objects WAV file
-* add all objects
 * fix the bosses (it doesn't feel like the game)
 * read about direct-sound and maybe use it (dsound.h)
 * find a way to run faster (threads?)
