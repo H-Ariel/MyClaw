@@ -26,6 +26,7 @@
 #include "Objects/Laser.h"
 #include "Objects/Stalactite.h"
 #include "Objects/LavaMouth.h"
+#include "Objects/LavaHand.h"
 #include "Enemies/Officer.h"
 #include "Enemies/Soldier.h"
 #include "Enemies/Rat.h"
@@ -126,7 +127,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 				physics->checkCollides(player.get());
 			}
 		}
-		else if (isbaseinstance<BaseEnemy>(obj) || isProjectile(obj) || isinstance<PowderKeg>(obj)
+		else if (isbaseinstance<BaseEnemy>(obj) || isbaseinstance<Projectile>(obj) || isinstance<PowderKeg>(obj)
 			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{
@@ -157,7 +158,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		{
 			if (isbaseinstance<BaseEnemy>(obj))
 				eraseByValue(_enemies, obj);
-			else if (isProjectile(obj))
+			else if (isbaseinstance<Projectile>(obj))
 			{
 				if (isinstance<Stalactite>(obj))
 				{
@@ -478,6 +479,10 @@ void ActionPlane::addObject(const WwdObject& obj)
 			(float)obj.attackRect.right, (float)obj.attackRect.bottom));
 	}
 #endif
+	else if (obj.logic == "LavaHand")
+	{
+		_objects.push_back(DBG_NEW LavaHand(obj));
+	}
 	else if (obj.logic == "Raux")
 	{
 		ADD_BOSS_OBJECT(LeRauxe(obj));
@@ -561,11 +566,8 @@ void ActionPlane::addObject(const WwdObject& obj)
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 {
 	//if (obj == nullptr) return;
-	
-	// insert in the right place
-	_instance->_objects.insert(lower_bound(_instance->_objects.begin(), _instance->_objects.end(), obj, cmpLogicZ), obj);
-
-	if (isProjectile(obj)) _instance->_projectiles.push_back((Projectile*)obj);
+	_instance->_objects.push_back(obj); // don't insert in middle because some of the object add new objects in their destructor
+	if (isbaseinstance<Projectile>(obj)) _instance->_projectiles.push_back((Projectile*)obj);
 	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
 }
 void ActionPlane::loadGame(int level, int checkpoint)
@@ -608,7 +610,7 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 				_instance->_boss = (BaseBoss*)i;
 			_instance->_enemies.push_back((BaseEnemy*)i);
 		}
-		else if (isProjectile(i))
+		else if (isbaseinstance<Projectile>(i))
 			_instance->_projectiles.push_back((Projectile*)i);
 		else if (isbaseinstance<BaseDamageObject>(i))
 			_instance->_damageObjects.push_back((BaseDamageObject*)i);

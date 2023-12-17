@@ -143,6 +143,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 2858, 3371 };
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 8004, 2482 };
 	if (levelNumber == 14) BasePlaneObject::player->position = { 31137, 2348 }; // GOTO BOSS
+//	if (levelNumber == 14) BasePlaneObject::player->position = { 7270, 4140 };
 #endif
 }
 ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)

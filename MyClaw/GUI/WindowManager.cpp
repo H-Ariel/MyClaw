@@ -214,10 +214,12 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 		instance->_renderTarget->SetTransform(Matrix3x2F::Identity());
 	}
 }
-void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat, ColorF color, const Rectangle2D& layoutRect)
+void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat, ColorF color, const Rectangle2D& _layoutRect)
 {
 	ID2D1SolidColorBrush* brush = getBrush(color);
 	if (!textFormat || !brush) return;
+	Rectangle2D layoutRect(_layoutRect);
+	if (!_isInScreen(layoutRect)) return;
 	instance->_renderTarget->DrawText(text.c_str(), (UINT32)text.length(), textFormat, layoutRect, brush);
 }
 void WindowManager::drawText(const wstring& text, const FontData& font, ColorF color, const Rectangle2D& layoutRect)

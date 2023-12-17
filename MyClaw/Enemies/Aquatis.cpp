@@ -235,7 +235,7 @@ bool AquatisTentacle::checkForHurts()
 
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
-			if (isClawProjectile(p))
+			if (isbaseinstance<ClawProjectile>(p))
 			{
 				if (p->isClawDynamite() && p->getDamage() == 0)
 					continue;
@@ -305,7 +305,7 @@ void AquatisStalactite::Logic(uint32_t elapsedTime)
 		position.y += speed.y * elapsedTime;
 	}
 
-	_ani->position = position;
+//	_ani->position = position;
 	_ani->Logic(elapsedTime);
 	removeObject = _ani->isFinishAnimation();
 }

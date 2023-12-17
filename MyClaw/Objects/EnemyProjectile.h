@@ -6,25 +6,35 @@
 class EnemyProjectile : public Projectile
 {
 public:
-	EnemyProjectile(const WwdObject& obj, const string& projectileAniDir);
+	EnemyProjectile(const WwdObject& obj, const string& projectileAniDir, const string& imageSet = "");
 	EnemyProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 };
 
-class RatBomb : public Projectile
+
+// not all of these projectiles are enemy-projectiles, but all of them can hurt CC
+
+
+class RatBomb : public EnemyProjectile
 {
 public:
 	RatBomb(const WwdObject& obj);
 	~RatBomb();
 };
 
-class CrabBomb : public Projectile
+class CannonBall : public EnemyProjectile
+{
+public:
+	CannonBall(const WwdObject& obj);
+};
+
+class CrabBomb : public EnemyProjectile
 {
 public:
 	CrabBomb(const WwdObject& obj);
 	~CrabBomb();
 };
 
-class GabrielBomb : public Projectile
+class GabrielBomb : public EnemyProjectile
 {
 public:
 	GabrielBomb(const WwdObject& obj);
@@ -33,10 +43,10 @@ public:
 	void stopFalling(float collisionSize) override;
 };
 
-class CannonBall : public Projectile
+class TProjectile : public EnemyProjectile
 {
 public:
-	CannonBall(const WwdObject& obj);
+	TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 };
 
 class MercatTrident : public EnemyProjectile
@@ -49,18 +59,19 @@ public:
 class SirenProjectile : public EnemyProjectile
 {
 public:
-	SirenProjectile(const WwdObject& obj, int32_t delay);
+	SirenProjectile(const WwdObject& obj, int delay);
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 
 private:
-	int32_t _delay; // in milliseconds
+	int _delay; // in milliseconds
 };
 
-
-// create new class for TProjectilesShooter
-class TProjectile : public Projectile
+class LavahandProjectile : public EnemyProjectile
 {
 public:
-	TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
+	LavahandProjectile(D2D1_POINT_2F initialPosition, bool mirrored);
+	~LavahandProjectile();
+	void Logic(uint32_t elapsedTime) override;
+	void stopFalling(float collisionSize) override;
 };

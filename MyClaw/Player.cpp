@@ -1156,7 +1156,7 @@ bool Player::checkForHurts()
 			_freezeTime = 3000; // freeze CC for 3 seconds
 			return false;
 		}
-		if (isEnemyProjectile(p))
+		if (isbaseinstance<EnemyProjectile>(p))
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{

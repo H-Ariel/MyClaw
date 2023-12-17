@@ -319,7 +319,7 @@ bool BaseEnemy::checkForHurts()
 
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
-		if (isClawProjectile(p))
+		if (isbaseinstance<ClawProjectile>(p))
 		{
 			if (p->isClawDynamite() && p->getDamage() == 0) continue;
 			if (checkForHurt({ p->GetRect(), p->getDamage() }))

@@ -40,7 +40,7 @@ void Crate::Logic(uint32_t elapsedTime)
 	{
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
-			if (isProjectile(p))
+			if (isbaseinstance<Projectile>(p))
 			{
 				if (p->isClawDynamite() && p->getDamage() == 0) continue;
 				if (_objRc.intersects(p->GetRect()))

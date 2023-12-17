@@ -238,7 +238,7 @@ bool Wolvington::checkForHurts()
 {
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
-		if (isClawProjectile(p))
+		if (isbaseinstance<ClawProjectile>(p))
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{

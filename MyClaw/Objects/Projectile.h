@@ -23,11 +23,6 @@ protected:
 	Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 
 private:
-	int32_t _timeLeft; // time left before projectile disappears
+	int _timeLeft; // time left before projectile disappears
 	const int _damage;
 };
-
-
-bool isProjectile(BasePlaneObject* obj);
-bool isClawProjectile(BasePlaneObject* obj);
-bool isEnemyProjectile(BasePlaneObject* obj);

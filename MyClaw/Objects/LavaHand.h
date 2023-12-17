@@ -1,0 +1,18 @@
+#pragma once
+
+#include "../BasePlaneObject.h"
+#include "../GUI/UITextElement.h"
+
+
+class LavaHand : public BaseStaticPlaneObject
+{
+public:
+	LavaHand(const WwdObject& obj);
+
+	void Logic(uint32_t elapsedTime) override;
+
+private:
+	const int _delay; // delay between two throws
+	int _timeCounter;
+	bool _throwed;
+};

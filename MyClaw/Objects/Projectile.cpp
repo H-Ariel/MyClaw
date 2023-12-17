@@ -54,27 +54,3 @@ bool Projectile::isClawBullet() const
 }
 bool Projectile::isClawDynamite() const { return isinstance<ClawDynamite>(this); }
 int Projectile::getDamage() const { return _damage; }
-
-
-bool isProjectile(BasePlaneObject* obj)
-{
-	return isbaseinstance<Projectile>(obj);
-}
-bool isClawProjectile(BasePlaneObject* obj)
-{
-	return isbaseinstance<ClawProjectile>(obj);
-}
-bool isEnemyProjectile(BasePlaneObject* obj)
-{
-	static initializer_list<size_t> EnemiesProjectilesTypes = {
-		typeid(EnemyProjectile).hash_code(),
-		typeid(RatBomb).hash_code(),
-		typeid(CrabBomb).hash_code(),
-		typeid(GabrielBomb).hash_code(),
-		typeid(CannonBall).hash_code(),
-		typeid(MercatTrident).hash_code(),
-		typeid(SirenProjectile).hash_code(),
-		typeid(TProjectile).hash_code() // this is not from enemy, but they have same logic
-	};
-	return FindInArray(EnemiesProjectilesTypes, typeid(*obj).hash_code());
-}

@@ -68,7 +68,7 @@ public:
 		// block claw projectiles:
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
-			if (isClawProjectile(p)) // actually, there are only ClawProjectiles in this state.
+			if (isbaseinstance<ClawProjectile>(p)) // actually, there are only ClawProjectiles in this state.
 			{
 				// if the projectile collides with shield item, remove it
 				for (int i = 0; i < NUM_OF_ITEMS_IN_SHIELD; i++)
@@ -129,9 +129,12 @@ LordOmar::LordOmar(const WwdObject& obj)
 }
 LordOmar::~LordOmar()
 {
-	_fallDead = false;
-	_animations["KILLFALL3"]->mirrored = true;
-	ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, _animations["KILLFALL3"], false));
+	if (removeObject)
+	{
+		_fallDead = false;
+		_animations["KILLFALL3"]->mirrored = true;
+		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, _animations["KILLFALL3"], false));
+	}
 }
 void LordOmar::Logic(uint32_t elapsedTime)
 {
@@ -173,7 +176,7 @@ void LordOmar::Logic(uint32_t elapsedTime)
 	// check for projectiles:
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
-		if (isClawProjectile(p))
+		if (isbaseinstance<ClawProjectile>(p))
 		{
 			ClawProjectile* cp = (ClawProjectile*)p;
 

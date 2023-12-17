@@ -3,7 +3,7 @@
 #include "Projectile.h"
 
 
-class LavaMouth : public BaseDamageObject //Projectile
+class LavaMouth : public BaseDamageObject
 {
 public:
 	LavaMouth(const WwdObject& obj);
@@ -12,5 +12,5 @@ public:
 	bool isDamage() const override;
 
 private:
-	int32_t _startTimeDelay; // in milliseconds
+	int _startTimeDelay; // in milliseconds
 };

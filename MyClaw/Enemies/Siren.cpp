@@ -39,7 +39,7 @@ void Siren::makeAttack(float deltaX, float deltaY)
 		obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
 		obj.y = (int32_t)position.y;
 		obj.speedX = _isMirrored ? -100 : 100;
-		for (int32_t delay = 0; delay <= 1000; delay += 250)
+		for (int delay = 0; delay <= 1000; delay += 250)
 			ActionPlane::addPlaneObject(DBG_NEW SirenProjectile(obj, delay));
 
 		_attackRest = 250;
