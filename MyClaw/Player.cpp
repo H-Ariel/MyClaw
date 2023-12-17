@@ -917,7 +917,6 @@ bool Player::collectItem(Item* item)
 	case Item::Powerup_IceSword:		SET_POWERUP(Powerup_IceSword);
 	case Item::Powerup_ExtraLife:		_lives += 1; return true;
 
-
 	case Item::Warp:
 	case Item::BossWarp:
 		// impleted as `class Warp`
@@ -1116,7 +1115,8 @@ bool Player::checkForHurts()
 	return false; // no damage in debug mode
 #endif
 
-	if (_isAttack || isTakeDamage() || _damageRest > 0 || _currPowerup == Item::Powerup_Invincibility) return false;
+	if (_isAttack || isTakeDamage() || _damageRest > 0 || _currPowerup == Item::Powerup_Invincibility)
+		return false;
 
 	pair<Rectangle2D, int> atkRc;
 	Rectangle2D damageRc;

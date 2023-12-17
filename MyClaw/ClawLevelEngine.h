@@ -4,6 +4,8 @@
 #include "LevelHUD.h"
 
 
+class CheatsManager;
+
 struct ClawLevelEngineFields
 {
 	ClawLevelEngineFields(int levelNumber);
@@ -12,6 +14,7 @@ struct ClawLevelEngineFields
 	shared_ptr<WapWorld> _wwd;
 	D2D1_POINT_2F* _mainPlanePosition;
 	LevelHUD* _hud;
+	unique_ptr<CheatsManager> _cheatsManager;
 	ColorF _saveBgColor;
 	float _savePixelSize;
 	const int _levelNumber;

@@ -7,35 +7,31 @@
 // maybe use the original game's cheats codes
 
 
-#define player BasePlaneObject::player
-
-
-// converts a string to a vector of `int`s.
-// NOTE: make sure `str` is null-terminated and contains only uppercase letters
-vector<int> vectorFromString(const char* str)
-{
-	return vector<int>(str, str + strlen(str));
-}
-
 enum CheatType
 {
 	None,
 	FireSword,
 	IceSword,
 	LightningSword,
-	Catnip
+	Catnip,
+	Invisibility,
+	Invincibility
 };
 
 
-
-vector<int> CheatsManager::keys;
-map<int, vector<int>> CheatsManager::cheatKeys = {
-	{ CheatType::FireSword, vectorFromString("FIRE") },
-	{ CheatType::IceSword, vectorFromString("ICE") },
-	{ CheatType::LightningSword, vectorFromString("LIGHT") },
-	{ CheatType::Catnip, vectorFromString("CATNIP") }
-};
-
+CheatsManager::CheatsManager()
+	: cheatKeys({
+		{ CheatType::FireSword, "FIRE", "Fire sword rules..." },
+		{ CheatType::IceSword, "ICE", "Ice sword rules..." },
+		{ CheatType::LightningSword, "LIGHT", "Lightning sword rules..." },
+		{ CheatType::Catnip, "CATNIP", "Catnip...Yummy!" },
+		{ CheatType::Invisibility, "VISI", "Now you see me...now you dont!" },
+		{ CheatType::Invincibility, "VINCI", "Sticks and stones won't break my bones..." },
+	})
+{
+	// The list of cheats, format: { type, keys, message }
+	// NOTE: make sure cheat-code contains only uppercase letters
+}
 
 void CheatsManager::addKey(int key)
 {
@@ -45,14 +41,16 @@ void CheatsManager::addKey(int key)
 		return;
 	}
 
-	keys.push_back(key);
+	keys.push_back((char)key);
 
 	switch (getCheatType())
 	{
-	case CheatType::FireSword:	fireSword(); break;
-	case CheatType::IceSword:	iceSword(); break;
-	case CheatType::LightningSword: lightningSword(); break;
-	case CheatType::Catnip:		catnip(); break;
+	case CheatType::FireSword:		addPowerup(Item::Type::Powerup_FireSword); break;
+	case CheatType::IceSword:		addPowerup(Item::Type::Powerup_IceSword); break;
+	case CheatType::LightningSword:	addPowerup(Item::Type::Powerup_LightningSword); break;
+	case CheatType::Catnip:			addPowerup(Item::Type::Powerup_Catnip_White); break;
+	case CheatType::Invisibility:	addPowerup(Item::Type::Powerup_Invisibility); break;
+	case CheatType::Invincibility:	addPowerup(Item::Type::Powerup_Invincibility); break;
 
 	default: break;
 	}
@@ -62,9 +60,9 @@ int CheatsManager::getCheatType()
 {
 	size_t keysSize = keys.size();
 
-	for (auto& [type, cheatKeys] : cheatKeys)
+	for (const auto& [type, cheatKeys, msg] : cheatKeys)
 	{
-		size_t cheatKeysSize = cheatKeys.size();
+		size_t cheatKeysSize = strlen(cheatKeys);
 
 		if (keysSize >= cheatKeysSize)
 		{
@@ -75,6 +73,7 @@ int CheatsManager::getCheatType()
 			if (match)
 			{
 				keys.clear();
+				ActionPlane::writeMessage(msg);
 				return type;
 			}
 		}
@@ -83,33 +82,12 @@ int CheatsManager::getCheatType()
 	return CheatType::None;
 }
 
-inline void CheatsManager::fireSword()
-{
-	addPowerup(Item::Type::Powerup_FireSword);
-	ActionPlane::writeMessage("Fire sword rules...");
-}
-inline void CheatsManager::iceSword()
-{
-	addPowerup(Item::Type::Powerup_IceSword);
-	ActionPlane::writeMessage("Ice sword rules...");
-}
-inline void CheatsManager::lightningSword()
-{
-	addPowerup(Item::Type::Powerup_LightningSword);
-	ActionPlane::writeMessage("Lightning sword rules...");
-}
-inline void CheatsManager::catnip()
-{
-	addPowerup(Item::Type::Powerup_Catnip_White);
-	ActionPlane::writeMessage("Catnip...Yummy!");
-}
-
 void CheatsManager::addPowerup(int8_t powerupType)
 {
 	WwdObject obj;
 	obj.smarts = 30000;
 	Item* item = Item::getItem(obj, powerupType);
-	item->position = player->position;
-	player->collectItem(item);
+	item->position = BasePlaneObject::player->position;
+	BasePlaneObject::player->collectItem(item);
 	delete item;
 }

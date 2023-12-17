@@ -6,19 +6,14 @@
 class CheatsManager
 {
 public:
-	static void addKey(int key);
+	CheatsManager();
+
+	void addKey(int key);
 
 private:
-	static int getCheatType();
+	int getCheatType();
+	void addPowerup(int8_t powerupType);
 
-	static void fireSword();
-	static void iceSword();
-	static void lightningSword();
-	static void catnip();
-
-	static void addPowerup(int8_t powerupType);
-
-
-	static vector<int> keys;
-	static map<int, vector<int>> cheatKeys;
+	vector<char> keys; // keys pressed
+	const vector<tuple<int, const char*, const char*>> cheatKeys;
 };
