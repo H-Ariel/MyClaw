@@ -8,7 +8,7 @@
 #include "Menu/MenuEngine.h"
 
 
-#define RECT_SPEED 0.5f // speed of the rect that shows when CC is died
+#define HOLE_SPEED 0.5f // speed of the hole when CC is died
 #define CC_FALLDEATH_SPEED 0.7f // speed of CC when he falls out the window
 
 #define player BasePlaneObject::player
@@ -25,9 +25,16 @@ ClawLevelEngineFields::~ClawLevelEngineFields()
 }
 
 
+ClawLevelEngine* instance = nullptr;
+
+
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
-	: _holeRadius(0), _deathAniWait(false), _playDeathSound(false), _state(States::Play)
+	: _holeRadius(0), _deathAniWait(false), _playDeathSound(false),
+	_wrapAniWait(false), _state(States::Play),
+	_wrapDestination({}), _wrapCoverTop(0), _isBossWarp(false)
 {
+	instance = this;
+
 	if (checkpoint != -1) // according to LevelLoadingEngine
 		ActionPlane::loadGame(levelNumber, checkpoint);
 
@@ -50,7 +57,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 
 #ifdef _DEBUG
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
-//	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430};
+//	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 5775, 4347 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 9696, 772 };
@@ -60,6 +67,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 11039, 1851 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 2567, 4388 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3123, 4219 };
+	if (levelNumber == 1) BasePlaneObject::player->position = { 9841, 4612 };
 
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 9196, 3958 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 16734, 1542 };
@@ -147,8 +155,12 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 #endif
 }
 ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
-	: _fields(fields), _holeRadius(0), _deathAniWait(false), _playDeathSound(false), _state(States::Play)
+	: _fields(fields), _holeRadius(0), _deathAniWait(false),
+	_playDeathSound(false), _wrapAniWait(false), _state(States::Play),
+	_wrapDestination({}), _wrapCoverTop(0), _isBossWarp(false)
 {
+	instance = this;
+
 	for (shared_ptr<LevelPlane>& pln : _fields->_wwd->planes)
 		_elementsList.push_back(pln.get());
 	_elementsList.push_back(_fields->_hud);
@@ -159,8 +171,47 @@ ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
+	// TODO: the next code works, but it's ugly. need to find better solution
+
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
 	const float initialHoleRadius = max(wndSz.width, wndSz.height) * WindowManager::PixelSize / 2;
+
+	if (_wrapAniWait)
+	{
+		switch (_state)
+		{
+		case States::Close:
+			_wrapCoverTop -= HOLE_SPEED * elapsedTime;
+			if (_wrapCoverTop <= 0)
+			{
+				_state = States::Open;
+				player->position = _wrapDestination;
+				if (_isBossWarp)
+				{
+					ActionPlane::playerEnterToBoss(player->position.x);
+					player->startPosition = _wrapDestination;
+				}
+				player->Logic(0); // update position of animation
+
+				// update position of camera (because player position changed)
+				ActionPlane::updatePosition();
+				for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+					p->position = *_fields->_mainPlanePosition;
+			}
+			break;
+
+		case States::Open:
+			_wrapCoverTop -= HOLE_SPEED * elapsedTime;
+			if (_wrapCoverTop < -wndSz.height)
+			{
+				_state = States::Play;
+				_wrapAniWait = false;
+			}
+			break;
+		}
+
+		return;
+	}
 
 	if (_deathAniWait)
 	{
@@ -173,14 +224,15 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 				_playDeathSound = true;
 			}
 
-			_holeRadius -= RECT_SPEED * elapsedTime;
+			_holeRadius -= HOLE_SPEED * elapsedTime;
 			if (_holeRadius <= 0)
 			{
 				_state = States::Open;
+				_holeRadius = 0;
 				_playDeathSound = false;
 				player->backToLife();
 				
-				// update position of all objects
+				// update position of camera (because player position changed)
 				ActionPlane::resetObjects();
 				BaseEngine::Logic(elapsedTime);
 				for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
@@ -195,11 +247,11 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 				_playDeathSound = true;
 			}
 
-			_holeRadius += RECT_SPEED * elapsedTime;
+			_holeRadius += HOLE_SPEED * elapsedTime;
 			if (initialHoleRadius < _holeRadius)
 			{
-				_deathAniWait = false;
 				_state = States::Play;
+				_deathAniWait = false;
 				_playDeathSound = false;
 			}
 			break;
@@ -237,7 +289,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			return;
 		}
 
-		// TODO: check here for weap (so we need to close and open screen)
+		// TODO: check here for warp (so we need to close and open screen)
 	}
 
 	
@@ -266,7 +318,12 @@ void ClawLevelEngine::Draw()
 	BaseEngine::Draw();
 	
 	if (_state == States::Close || _state == States::Open)
-		WindowManager::drawHole(player->position, _holeRadius, ColorF::Black);
+	{
+		if (_deathAniWait)
+			WindowManager::drawHole(player->position, _holeRadius);
+		else if (_wrapAniWait)
+			WindowManager::drawWrapCover(_wrapCoverTop);
+	}
 }
 
 void ClawLevelEngine::OnKeyUp(int key)
@@ -314,4 +371,18 @@ void ClawLevelEngine::OnKeyUp(int key)
 void ClawLevelEngine::OnKeyDown(int key)
 {
 	player->keyDown(key);
+}
+
+void ClawLevelEngine::playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp)
+{
+	if (instance
+		&& player->position.x != destination.x  // without this check, CC will be warped to the same position
+		&& player->position.y != destination.y) // TODO: need to find better solution
+	{
+		instance->_wrapAniWait = true;
+		instance->_state = States::Close;
+		instance->_wrapCoverTop = WindowManager::getSize().height;
+		instance->_wrapDestination = destination;
+		instance->_isBossWarp = isBossWarp;
+	}
 }

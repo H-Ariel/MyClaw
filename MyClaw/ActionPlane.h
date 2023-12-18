@@ -26,11 +26,11 @@ public:
 	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }
 	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
 	static bool isInBoss() { return _instance->_boss != nullptr; }
-	static int getBossHealth() { return _instance->_boss->getHealth(); }
+	static int getBossHealth() { return _instance->_boss ? _instance->_boss->getHealth() : 0; }
 	static void writeMessage(const string& message, int timeout = 2000);
 
+	static void updatePosition();
 private:
-	void updatePosition();
 
 	vector<BasePlaneObject*> _bossObjects;
 	vector<PowderKeg*> _powderKegs;

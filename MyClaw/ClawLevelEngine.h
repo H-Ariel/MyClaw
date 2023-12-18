@@ -32,18 +32,26 @@ public:
 	void OnKeyUp(int key) override;
 	void OnKeyDown(int key) override;
 
+	static void playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp);
 
 private:
 	enum class States : int8_t {
 		Play,	// normal gameplay
 		Fall,	// CC falls out the window
-		Close,	// close the screen
-		Open	// open the screen
+		Close,	// close screen
+		Open	// open screen
 	};
 
 	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu
+	
 	float _holeRadius; // the radius of the hole that remains until closed
 	bool _deathAniWait; // waiting for disqualification animation to finish
 	bool _playDeathSound;
+	
+	D2D1_POINT_2F _wrapDestination;
+	float _wrapCoverTop ; // used in wrap transition animation
+	bool _wrapAniWait; // waiting for warp transition animation to finish
+	bool _isBossWarp;
+
 	States _state;
 };

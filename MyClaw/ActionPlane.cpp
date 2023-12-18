@@ -626,23 +626,23 @@ void ActionPlane::updatePosition()
 {
 	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
 	const D2D1_SIZE_F wndSize = WindowManager::getSize();
-	position.x = player->position.x - wndSize.width / 2.0f;
-	position.y = player->position.y - wndSize.height / 2.0f;
+	_instance->position.x = player->position.x - wndSize.width / 2.0f;
+	_instance->position.y = player->position.y - wndSize.height / 2.0f;
 
-	float maxOffsetX = _planeSize.width - wndSize.width;
-	float maxOffsetY = _planeSize.height - wndSize.height;
+	float maxOffsetX = _instance->_planeSize.width - wndSize.width;
+	float maxOffsetY = _instance->_planeSize.height - wndSize.height;
 
-	if (position.x < 0) position.x = 0;
-	if (position.y < 0) position.y = 0;
-	if (position.x > maxOffsetX) position.x = maxOffsetX;
-	if (position.y > maxOffsetY) position.y = maxOffsetY;
+	if (_instance->position.x < 0) _instance->position.x = 0;
+	if (_instance->position.y < 0) _instance->position.y = 0;
+	if (_instance->position.x > maxOffsetX) _instance->position.x = maxOffsetX;
+	if (_instance->position.y > maxOffsetY) _instance->position.y = maxOffsetY;
 
-	if (_shakeTime > 0)
+	if (_instance->_shakeTime > 0)
 	{
 		// to shake the screen we just move it a little bit
 		const float shakeDelta = 5;
-		if (_shakeTime / 75 % 2) { position.x -= shakeDelta; position.y -= shakeDelta; }
-		else { position.x += shakeDelta; position.y += shakeDelta; }
+		if (_instance->_shakeTime / 75 % 2) { _instance->position.x -= shakeDelta; _instance->position.y -= shakeDelta; }
+		else { _instance->position.x += shakeDelta; _instance->position.y += shakeDelta; }
 	}
 }
 

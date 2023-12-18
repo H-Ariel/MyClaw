@@ -118,6 +118,7 @@ void WindowManager::EndDraw()
 {
 	instance->_renderTarget->EndDraw();
 }
+
 void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)
 {
 	if (!_isInScreen(dst)) return;
@@ -154,36 +155,6 @@ void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
 void WindowManager::fillRect(Rectangle2D dst, ColorF color)
 {
 	fillRect(dst, (D2D1_COLOR_F)color);
-}
-
-void WindowManager::drawHole(D2D1_POINT_2F center, float radius, ColorF color)
-{
-	ID2D1EllipseGeometry* hole = nullptr;
-	ID2D1RectangleGeometry* background = nullptr;
-	ID2D1GeometryGroup* group = nullptr;
-	ID2D1Geometry* groupItems[2] = {};
-	ID2D1SolidColorBrush* brush = nullptr;
-
-	center.x = (center.x - instance->_windowOffset->x) * PixelSize;
-	center.y = (center.y - instance->_windowOffset->y) * PixelSize;
-	instance->_d2dFactory->CreateEllipseGeometry(Ellipse(center, radius, radius), &hole);
-	instance->_d2dFactory->CreateRectangleGeometry(RectF(instance->realSize.width, instance->realSize.height), &background);
-	if (!hole || !background) goto end;
-
-	groupItems[0] = background;
-	groupItems[1] = hole;
-	instance->_d2dFactory->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE, groupItems, ARRAYSIZE(groupItems), &group);
-	if (!group) goto end;
-
-	brush = getBrush(color);
-	if (!brush) goto end;
-
-	instance->_renderTarget->FillGeometry(group, brush);
-
-end:
-	SafeRelease(group);
-	SafeRelease(background);
-	SafeRelease(hole);
 }
 void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity)
 {
@@ -227,6 +198,45 @@ void WindowManager::drawText(const wstring& text, const FontData& font, ColorF c
 	IDWriteTextFormat* textFormat = createTextFormat(font);
 	drawText(text, textFormat, color, layoutRect);
 	SafeRelease(textFormat);
+}
+
+void WindowManager::drawHole(D2D1_POINT_2F center, float radius)
+{
+	ID2D1EllipseGeometry* hole = nullptr;
+	ID2D1RectangleGeometry* background = nullptr;
+	ID2D1GeometryGroup* group = nullptr;
+	ID2D1Geometry* groupItems[2] = {};
+	ID2D1SolidColorBrush* brush = nullptr;
+
+	center.x = (center.x - instance->_windowOffset->x) * PixelSize;
+	center.y = (center.y - instance->_windowOffset->y) * PixelSize;
+	instance->_d2dFactory->CreateEllipseGeometry(Ellipse(center, radius, radius), &hole);
+	instance->_d2dFactory->CreateRectangleGeometry(RectF(instance->realSize.width, instance->realSize.height), &background);
+	if (!hole || !background) goto end;
+
+	groupItems[0] = background;
+	groupItems[1] = hole;
+	instance->_d2dFactory->CreateGeometryGroup(D2D1_FILL_MODE_ALTERNATE, groupItems, ARRAYSIZE(groupItems), &group);
+	if (!group) goto end;
+
+	brush = getBrush(ColorF::Black);
+	if (!brush) goto end;
+
+	instance->_renderTarget->FillGeometry(group, brush);
+
+end:
+	SafeRelease(group);
+	SafeRelease(background);
+	SafeRelease(hole);
+}
+void WindowManager::drawWrapCover(float top)
+{
+	ID2D1SolidColorBrush* brush = getBrush(ColorF::Black);
+	if (brush)
+	{
+		const D2D1_SIZE_F wndSz = WindowManager::getSize();
+		instance->_renderTarget->FillRectangle(RectF(0, top, wndSz.width, top + wndSz.height), brush);
+	}
 }
 
 ID2D1SolidColorBrush* WindowManager::getBrush(D2D1_COLOR_F color)

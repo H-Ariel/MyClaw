@@ -26,10 +26,12 @@ public:
 
 	static void drawRect(Rectangle2D dst, ColorF color, float width = 1);
 	static void fillRect(Rectangle2D dst, ColorF color);
-	static void drawHole(D2D1_POINT_2F center, float radius, ColorF color); // draw around the circle with `color` and fill the circle with transparent
 	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity = 1);
 	static void drawText(const wstring& text, IDWriteTextFormat* textFormat, ColorF color, const Rectangle2D& layoutRect);
 	static void drawText(const wstring& text, const FontData& font, ColorF color, const Rectangle2D& layoutRect);
+
+	static void drawHole(D2D1_POINT_2F center, float radius); // draw around the circle with `color` and fill the circle with transparent
+	static void drawWrapCover(float top);
 
 	// create D2D1 objects.
 	static ID2D1SolidColorBrush* getBrush(ColorF color);

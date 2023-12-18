@@ -2,6 +2,7 @@
 #include "../Assets-Managers/AssetsManager.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
+#include "../ClawLevelEngine.h"
 
 
 const initializer_list<Item::Type> Item::UpdateFramesTypes = {
@@ -472,17 +473,8 @@ void Warp::Logic(uint32_t elapsedTime)
 {
 	if (GetRect().intersects(player->GetRect()))
 	{
-		player->position = _destination;
-		player->stopFalling(0);
 		removeObject = _oneTimeWarp;
-
-		if (_type == Type::BossWarp)
-		{
-			ActionPlane::playerEnterToBoss(position.x);
-			player->startPosition = _destination;
-		}
-
 		playItemSound(_type);
-		// TODO: cool animation
+		ClawLevelEngine::playerEnterWarp(_destination, _type == Type::BossWarp); // draw the warp transition animation
 	}
 }
