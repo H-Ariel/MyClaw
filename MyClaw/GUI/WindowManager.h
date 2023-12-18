@@ -61,8 +61,7 @@ private:
 	ID2D1Factory* _d2dFactory;
 	IDWriteFactory* _dWriteFactory;
 	ID2D1HwndRenderTarget* _renderTarget;
-	IWICImagingFactory* _wicImagingFactory;
 	const D2D1_POINT_2F* _windowOffset;
 	ColorF _backgroundColor;
-	D2D1_SIZE_F realSize;
+	D2D1_SIZE_F _realSize;
 };

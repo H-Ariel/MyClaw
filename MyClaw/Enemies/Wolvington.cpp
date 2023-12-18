@@ -4,7 +4,7 @@
 #include "../Objects/EnemyProjectile.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAniName)
+#define ANIMATION_WALK		_animations.at("FASTADVANCE")
 #define ANIMATION_STRIKE1	_animations.at("STRIKE1") // sword down
 #define ANIMATION_STRIKE2	_animations.at("STRIKE2") // hand up (boxings)
 #define ANIMATION_STRIKE3	_animations.at("STRIKE3") // magic up
@@ -14,8 +14,7 @@
 
 
 Wolvington::Wolvington(const WwdObject& obj)
-	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", ""),
-	_magicAttackCuonter(0)
+	: BaseBoss(obj, "KILLFALL"), _magicAttackCuonter(0)
 {
 }
 

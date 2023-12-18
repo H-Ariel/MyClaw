@@ -15,13 +15,13 @@ public:
 	void stopMovingRight(float collisionSize) override;
 
 	enum class Side : int8_t { Right = 0, Left = 1 };
-	Side getSide() const { return side; }
+	Side getSide() const { return _side; }
 
 private:
 	void makeAttack(float deltaX, float deltaY) override;
 	bool checkForHurts() override;
 
-	Side side;
+	Side _side;
 };
 
 

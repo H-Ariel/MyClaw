@@ -3,7 +3,7 @@
 #include "../Player.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAniName)
+#define ANIMATION_WALK		_animations.at("WALK")
 #define ANIMATION_STRIKE1	_animations.at("STRIKE1")
 #define ANIMATION_STRIKE2	_animations.at("STRIKE2")
 #define ANIMATION_BLOCKHIGH	_animations.at("BLOCKHIGH")
@@ -12,7 +12,7 @@
 
 
 Katherine::Katherine(const WwdObject& obj)
-	: BaseBoss(obj, 10, "WALK", "HITHIGH", "HITLOW", "FALL", "", "", "")
+	: BaseBoss(obj, "FALL")
 {
 }
 

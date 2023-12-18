@@ -1,5 +1,5 @@
+* add BossStager logic
 * play all objects WAV file
-* add all objects
 * prefer use `int` and not `int32_t` etc.
 * find perfect speeds (for CC, enemies, projectiles, etc.)
 * use D2D1 scale in WindowManager (instead of "dst.left / PixelSize" etc.)

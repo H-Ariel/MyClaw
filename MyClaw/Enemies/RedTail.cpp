@@ -10,10 +10,17 @@
 
 // TODO: write real logic for this boss (combine Red-Tail and wind)
 RedTail::RedTail(const WwdObject& obj)
-	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE8",
-		"STRIKE4", "LEVEL_REDTAILBULLET")
+	: BaseBoss(obj, "KILLFALL")
 {
 	_health = 100;
+	(string&)_walkAniName = "FASTADVANCE";
+	(string&)_strikeAniName = "STRIKE8";
+	(bool&)_canStrike = true;
+	(string&)_shootAniName = "STRIKE4";
+	(bool&)_canShoot = true;
+	(string&)_projectileAniDir = "LEVEL_REDTAILBULLET";
+
+	_ani = _animations[_walkAniName];
 }
 
 void RedTail::Logic(uint32_t elapsedTime)

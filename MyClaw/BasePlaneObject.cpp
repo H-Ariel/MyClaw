@@ -12,11 +12,9 @@ BasePlaneObject::BasePlaneObject(const WwdObject& obj)
 	: UIBaseElement({ (float)obj.x, (float)obj.y }),
 	logicZ(obj.z), drawZ(obj.z), removeObject(false), _ani(nullptr),
 	_isMirrored(obj.drawFlags & WwdObject::Mirror),
-	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)) {} // TODO: we know who is not visible, so we can remove this flag and ovveride Draw() function
+	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)) {}
 void BasePlaneObject::Draw()
 {
-	// TODO: some object need only `_ani->Draw();`, so we need create 2 functions...
-
 	if (_isVisible && _ani)
 	{
 		_ani->position = position;
@@ -27,8 +25,6 @@ void BasePlaneObject::Draw()
 }
 Rectangle2D BasePlaneObject::GetRect()
 {
-	// TODO: some object need only `_ani->GetRect();`, so we need create 2 functions...
-
 	_ani->position = position;
 	_ani->mirrored = _isMirrored;
 	_ani->updateImageData();
@@ -115,9 +111,10 @@ void BaseSoundObject::Draw() {} // these objects are invisible so no need to dra
 OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani, bool removeAtEnd)
 	: BasePlaneObject({}), _removeAtEnd(removeAtEnd)
 {
+	myMemCpy(drawZ, DefaultZCoord::Characters + 2); // always cover characters
 	_ani = ani;
 	_ani->loopAni = false;
-	_ani->position = pos; // TODO: remove this line and set the ani's position before create this object
+	_ani->position = pos;
 }
 OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, const string& aniPath, const string& imageSet, bool removeAtEnd)
 	: OneTimeAnimation(pos, AssetsManager::loadCopyAnimation(

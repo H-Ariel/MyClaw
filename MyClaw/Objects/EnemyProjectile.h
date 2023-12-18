@@ -6,7 +6,8 @@
 class EnemyProjectile : public Projectile
 {
 public:
-	EnemyProjectile(const WwdObject& obj, const string& projectileAniDir, const string& imageSet = "");
+	EnemyProjectile(const WwdObject& obj, const string& projectileAniDir);
+	EnemyProjectile(const WwdObject& obj, const string& projectileAni, const string& imageSet);
 	EnemyProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 };
 

@@ -186,9 +186,6 @@ void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 }
 shared_ptr<UIBaseImage> ImagesManager::loadPidImage(const string& pidPath)
 {
-	//vector<uint8_t> data = rezArchive->GetRezFileData(pidPath);
-	//BufferReader pidFileReader(data);
-
 	shared_ptr<BufferReader> pidFileReader = _rezArchive->getFileBufferReader(pidPath);
 	vector<ColorRGBA> pixels;
 	shared_ptr<PidPalette> imagePalette = _palette;
@@ -206,29 +203,6 @@ shared_ptr<UIBaseImage> ImagesManager::loadPidImage(const string& pidPath)
 	pidFileReader->skip(8);
 
 	fixPidOffset(pidPath, offsetX, offsetY);
-
-	/********************** PID PALETTE **********************/
-
-	const bool pidHasPalette = flags & PidFlag_EmbeddedPalette;
-
-	if (pidHasPalette)
-	{
-		// if image has embedded palette within it, extract it
-
-		// TODO: checkpoint. if it doesnt used delete it
-		// AH: I don't have a file to check this code ... so if we don't use it - delete it
-
-		throw Exception(__FUNCTION__ ": finally i'm here!");
-		/*
-		uint32_t paletteOffset = (uint32_t)data.size() - PidPalette::PALETTE_SIZE_BYTES;
-		const int64_t currPos = pidFileReader.getIndex();
-		imagePalette = DBG_NEW PidPalette(pidFileReader.ReadVector(paletteOffset));
-		pidFileReader.setIndex(currPos);
-		*/
-	}
-
-	/********************** PID PIXELS **********************/
-
 	pixels.resize((size_t)width * height);
 
 	// PID is compressed, RLE

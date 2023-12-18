@@ -57,7 +57,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 
 #ifdef _DEBUG
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
-//	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430 };
+	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 5775, 4347 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 9696, 772 };
@@ -67,7 +67,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 11039, 1851 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 2567, 4388 };
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3123, 4219 };
-	if (levelNumber == 1) BasePlaneObject::player->position = { 9841, 4612 };
+//	if (levelNumber == 1) BasePlaneObject::player->position = { 9841, 4612 };
 
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 9196, 3958 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 16734, 1542 };
@@ -140,8 +140,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	if (levelNumber == 12) BasePlaneObject::player->position = { 36324, 2072 }; // END OF LEVEL
 
 //	if (levelNumber == 13) BasePlaneObject::player->position = { 18159, 2543 };
-//	if (levelNumber == 13) BasePlaneObject::player->position = { 32938, 2267 };
-//	if (levelNumber == 13) BasePlaneObject::player->position = { 33002, 2267 };
+	if (levelNumber == 13) BasePlaneObject::player->position = { 32938, 2267 }; // END OF LEVEL
+//	if (levelNumber == 13) BasePlaneObject::player->position = { 33002, 2267 }; // GOTO BOSS
 
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 22852, 2421 };
 //	if (levelNumber == 14) BasePlaneObject::player->position = { 22477, 2244 };
@@ -186,9 +186,10 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			{
 				_state = States::Open;
 				player->position = _wrapDestination;
+				player->speed = {}; // stop player
 				if (_isBossWarp)
 				{
-					ActionPlane::playerEnterToBoss(player->position.x);
+					ActionPlane::playerEnterToBoss(_bossWarpX);
 					player->startPosition = _wrapDestination;
 				}
 				player->Logic(0); // update position of animation
@@ -288,8 +289,6 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			_deathAniWait = true;
 			return;
 		}
-
-		// TODO: check here for warp (so we need to close and open screen)
 	}
 
 	
@@ -357,11 +356,8 @@ void ClawLevelEngine::OnKeyUp(int key)
 	else if (key == VK_DIVIDE)
 	{
 		// set default resolution (640x480).
-		auto realSize = WindowManager::getRealSize();
-		WindowManager::PixelSize = min(
-			realSize.width / WindowManager::DEFAULT_WINDOW_SIZE.width,
-			realSize.height / WindowManager::DEFAULT_WINDOW_SIZE.height
-		);
+		D2D1_SIZE_F realSize = WindowManager::getRealSize();
+		WindowManager::PixelSize = min(realSize.width / 640, realSize.height / 480);
 	}
 	else
 	{
@@ -373,10 +369,10 @@ void ClawLevelEngine::OnKeyDown(int key)
 	player->keyDown(key);
 }
 
-void ClawLevelEngine::playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp)
+void ClawLevelEngine::playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp, float bossWarpX)
 {
 	if (instance
-		&& player->position.x != destination.x  // without this check, CC will be warped to the same position
+		&& player->position.x != destination.x  // without this check, CC will be warped twice to the same position
 		&& player->position.y != destination.y) // TODO: need to find better solution
 	{
 		instance->_wrapAniWait = true;
@@ -384,5 +380,6 @@ void ClawLevelEngine::playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp
 		instance->_wrapCoverTop = WindowManager::getSize().height;
 		instance->_wrapDestination = destination;
 		instance->_isBossWarp = isBossWarp;
+		instance->_bossWarpX = bossWarpX;
 	}
 }

@@ -66,8 +66,8 @@
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
 
 #ifdef _DEBUG
-//#undef LOW_DETAILS
-#define NO_ENEMIES
+#undef LOW_DETAILS
+//#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -109,7 +109,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		_shakeTime -= elapsedTime;
 	updatePosition();
 
-	// TODO: do not sort twice ?
 	sort(_objects.begin(), _objects.end(), cmpLogicZ); // for this method (`Logic`)
 
 	BasePlaneObject* obj;
@@ -131,7 +130,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{
-			// TODO: delete this `else if` statement and call `physics->checkCollides` inside `obj->Logic`
 			physics->checkCollides((BaseDynamicPlaneObject*)obj);
 		}
 		else if (isinstance<StackedCrates>(obj))
@@ -587,33 +585,33 @@ void ActionPlane::resetObjects()
 void ActionPlane::playerEnterToBoss(float bossWarpX)
 {
 	// clear all objects that we don't need in boss
-	for (auto& i : _instance->_powderKegs) i->removeObject = true;
-	for (auto& i : _instance->_enemies) i->removeObject = true;
-	for (auto& i : _instance->_projectiles) i->removeObject = true;
-	for (auto& i : _instance->_damageObjects) i->removeObject = true;
-	
+	for (auto i : _instance->_powderKegs) i->removeObject = true;
+	for (auto i : _instance->_enemies) i->removeObject = true;
+	for (auto i : _instance->_projectiles) i->removeObject = true;
+	for (auto i : _instance->_damageObjects) i->removeObject = true;
+
 	// find all objects that we don't need in boss and remove them (the boss-warp 
 	// and boss area are in the right side of the screen so it easy to find them)
-	for (auto& obj : _instance->_objects)
+	for (BasePlaneObject* obj : _instance->_objects)
 	{
 		if (obj->position.x < bossWarpX)
 			obj->removeObject = true;
 	}
 
 	// move all objects that we need in boss to the objects' list
-	for (auto& i : _instance->_bossObjects)
+	for (BasePlaneObject* obj : _instance->_bossObjects)
 	{
-		_instance->_objects.push_back(i);
-		if (isbaseinstance<BaseEnemy>(i))
+		_instance->_objects.push_back(obj);
+		if (isbaseinstance<BaseEnemy>(obj))
 		{
-			if (isbaseinstance<BaseBoss>(i)) // TODO: i think that this condition is not needed...
-				_instance->_boss = (BaseBoss*)i;
-			_instance->_enemies.push_back((BaseEnemy*)i);
+			if (isbaseinstance<BaseBoss>(obj)) // we need that becaues at level 10 we boss (Marrow) and regular enemy (parrot)
+				_instance->_boss = (BaseBoss*)obj;
+			_instance->_enemies.push_back((BaseEnemy*)obj);
 		}
-		else if (isbaseinstance<Projectile>(i))
-			_instance->_projectiles.push_back((Projectile*)i);
-		else if (isbaseinstance<BaseDamageObject>(i))
-			_instance->_damageObjects.push_back((BaseDamageObject*)i);
+		else if (isbaseinstance<Projectile>(obj))
+			_instance->_projectiles.push_back((Projectile*)obj);
+		else if (isbaseinstance<BaseDamageObject>(obj))
+			_instance->_damageObjects.push_back((BaseDamageObject*)obj);
 	}
 	_instance->_bossObjects.clear();
 

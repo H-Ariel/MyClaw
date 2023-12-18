@@ -23,7 +23,6 @@
 #include <d2d1.h>
 #include <dwrite.h>
 #include <d2d1helper.h>
-#include <wincodec.h>
 
 #include <iostream>
 #include <fstream>
@@ -46,7 +45,6 @@
 
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "dwrite")
-#pragma comment(lib, "windowscodecs.lib")
 #pragma comment(lib, "winmm.lib")
 
 

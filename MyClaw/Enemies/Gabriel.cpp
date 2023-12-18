@@ -57,7 +57,7 @@ private:
 
 
 Gabriel::Gabriel(const WwdObject& obj)
-	: BaseBoss(obj, 10, "", "HITHIGH", "HITLOW", "KILLFALL4", "", "", "")
+	: BaseBoss(obj)
 	, _throwBombsTime(THROW_BOMBS_TIME), _canThrowBombs(true)
 	, _sendPiratesTime(SEND_PIRATES_TIME), _canSendPirates(true)
 {
@@ -70,7 +70,6 @@ Gabriel::Gabriel(const WwdObject& obj)
 Gabriel::~Gabriel()
 {
 	GabrielIsAlive = false;
-	_fallDead = false;
 	if (removeObject)
 	{
 		ActionPlane::addPlaneObject(DBG_NEW DeadGabriel(position,

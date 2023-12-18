@@ -3,7 +3,7 @@
 #include "../ActionPlane.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAniName)
+#define ANIMATION_WALK		_animations.at("ADVANCE")
 #define ANIMATION_STRIKE	_animations.at("STRIKE")
 #define ANIMATION_STAB		_animations.at("STAB")
 #define ANIMATION_BLOCKHIGH	_animations.at("BLOCKHIGH")
@@ -12,7 +12,7 @@
 
 
 LeRauxe::LeRauxe(const WwdObject& obj)
-	: BaseBoss(obj, 10, "ADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "", "", "")
+	: BaseBoss(obj, "KILLFALL")
 {
 }
 

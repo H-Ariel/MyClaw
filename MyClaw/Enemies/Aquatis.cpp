@@ -18,7 +18,7 @@ static vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that 
 
 
 Aquatis::Aquatis(const WwdObject& obj)
-	: BaseBoss(obj, 0, "", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1", "", "")
+	: BaseBoss(obj)
 {
 	_ani = ANIMATION_IDLE;
 	_isMirrored = true;
@@ -32,7 +32,6 @@ Aquatis::~Aquatis()
 {
 	if (removeObject)
 	{
-		_fallDead = false;
 		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, ANIMATION_KILLFALL));
 
 		for (AquatisTentacle* i : AquatisTentaclesList)

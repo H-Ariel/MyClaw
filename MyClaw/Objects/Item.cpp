@@ -475,6 +475,6 @@ void Warp::Logic(uint32_t elapsedTime)
 	{
 		removeObject = _oneTimeWarp;
 		playItemSound(_type);
-		ClawLevelEngine::playerEnterWarp(_destination, _type == Type::BossWarp); // draw the warp transition animation
+		ClawLevelEngine::playerEnterWarp(_destination, _type == Type::BossWarp, position.x); // draw the warp transition animation
 	}
 }

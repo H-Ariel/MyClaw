@@ -32,7 +32,7 @@ public:
 	void OnKeyUp(int key) override;
 	void OnKeyDown(int key) override;
 
-	static void playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp);
+	static void playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp, float bossWarpX);
 
 private:
 	enum class States : int8_t {
@@ -51,6 +51,7 @@ private:
 	D2D1_POINT_2F _wrapDestination;
 	float _wrapCoverTop ; // used in wrap transition animation
 	bool _wrapAniWait; // waiting for warp transition animation to finish
+	float _bossWarpX;
 	bool _isBossWarp;
 
 	States _state;

@@ -57,8 +57,8 @@
 #define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup
 
 
-static int32_t MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
-static int32_t MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
+static int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
+static int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
 
 Player::PowerupSparkles::PowerupSparkles(Rectangle2D* playerRc)
@@ -180,7 +180,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 	if (_spacePressed && (speed.y == 0 || _isOnLadder))
 	{
-		jump();
+		jump(); // TODO: add case of small jump
 		_spacePressed = false;
 		_isOnLadder = false;
 	}
@@ -268,7 +268,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 	const bool inAir = isFalling() || isJumping();
 	const bool lookup = _upPressed && (isStanding() || _aniName == "LOOKUP");
-	const bool duck = _downPressed && (isStanding() || isDuck());
+	bool duck = _downPressed && (isStanding() || isDuck());
 
 	if (lookup)
 	{
@@ -279,7 +279,6 @@ void Player::Logic(uint32_t elapsedTime)
 	const bool canWalk = (!_useWeapon || (_useWeapon && inAir)) && (!_isAttack || (_isAttack && inAir)) && !duck && !lookup && !_altPressed && !_isOnLadder;
 	const bool goLeft = _leftPressed && !_leftCollision && canWalk;
 	const bool goRight = _rightPressed && !_rightCollision && canWalk;
-
 	bool climbUp = false, climbDown = false;
 
 
@@ -301,7 +300,6 @@ void Player::Logic(uint32_t elapsedTime)
 		_isCollideWithLadder = false;
 		climbUp = _upPressed && !_isOnLadderTop;
 		climbDown = _downPressed;
-		// TODO: if `_isCollideWithLadder` but has a "bottom collision" (solid/groud) should duck
 
 		if (climbUp)
 		{
@@ -311,13 +309,22 @@ void Player::Logic(uint32_t elapsedTime)
 		}
 		else if (climbDown)
 		{
-			speed.y = speedYClimb;
-			_isOnLadder = true;
-			elevator = nullptr;
+			if (isStanding()) // stand at ladder bottom
+			{
+				duck = true;
+				_isOnLadder = false;
+				climbDown = false;
+			}
+			else
+			{
+				speed.y = speedYClimb;
+				_isOnLadder = true;
+				elevator = nullptr;
+			}
 		}
 		else if (_isOnLadder)
-		{ // idle on ladder
-			speed.y = 0;
+		{
+			speed.y = 0; // idle on ladder
 		}
 		else
 		{
@@ -460,7 +467,7 @@ void Player::Logic(uint32_t elapsedTime)
 						}
 						else
 						{
-							int32_t f = obj.speedX * _holdAltTime / 1000;
+							int f = obj.speedX * _holdAltTime / 1000;
 							if (_isMirrored)
 								obj.speedX = max(f, -MAX_DYNAMITE_SPEED_X);
 							else
@@ -593,6 +600,7 @@ void Player::Logic(uint32_t elapsedTime)
 void Player::Draw()
 {
 	BaseCharacter::Draw();
+
 	if (_dialogLeftTime > 0)
 	{
 		EXCLAMATION_MARK->position = { position.x, position.y - 64 };
@@ -943,7 +951,7 @@ bool Player::isStanding() const
 {
 	return _aniName == "STAND" || _aniName == "IDLE"
 		|| _aniName == "LIFT" || _aniName == "LIFT2"
-		|| _aniName == "THROW";
+		|| _aniName == "THROW" || _aniName == "SIREN-FREEZE";
 }
 bool Player::isDuck() const
 {
@@ -986,7 +994,6 @@ void Player::backToLife()
 	_dialogLeftTime = 0;
 	_holdAltTime = 0;
 	_currPowerup = Item::None;
-	_lastPowderKegExplos = nullptr;
 	_raisedPowderKeg = nullptr;
 	_lastAttackRect = {};
 	_saveCurrAttackRect = {};
@@ -1162,7 +1169,7 @@ bool Player::checkForHurts()
 			{
 				_health -= p->getDamage();
 				p->removeObject = true;
-				return true;
+				return !true;
 			}
 		}
 		else if (isinstance<Stalactite>(p) || isinstance<LavaMouth>(p))
@@ -1179,14 +1186,13 @@ bool Player::checkForHurts()
 
 	for (PowderKeg* p : ActionPlane::getPowderKegs())
 	{
-		// TODO: use _lastattackrect instead of _lastPowderKegExplos
-		
-		if (p != _lastPowderKegExplos && (damage = p->getDamage()) > 0)
+		Rectangle2D pRect = p->GetRect();
+		if (pRect != _lastAttackRect && (damage = p->getDamage()) > 0)
 		{
-			if (_saveCurrRect.intersects(p->GetRect()))
+			if (_saveCurrRect.intersects(pRect))
 			{
 				_health -= damage;
-				_lastPowderKegExplos = p;
+				_lastAttackRect = pRect;
 				return true;
 			}
 		}

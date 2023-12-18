@@ -4,7 +4,6 @@
 #include "UITextElement.h"
 
 
-// TODO: create method of `ActionPlane` that creates `ActionPlaneMessage`s
 class ActionPlaneMessage : public BasePlaneObject
 {
 public:

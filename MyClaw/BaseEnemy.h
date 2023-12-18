@@ -11,7 +11,7 @@ class BaseEnemy : public BaseCharacter
 {
 public:
 	BaseEnemy(const WwdObject& obj, int health, int damage,
-		const string& walkAni, const string& hithigh, const string& hitlow, const string& fallDead,
+		const string& walkAni, const string& hithigh, const string& hitlow, const string& fallDeadAni,
 		const string& strikeAni, const string& strikeDuckAni, const string& shootAni,
 		const string& shootDuckAni, const string& projectileAniDir,
 		float walkingSpeed, bool noTreasures = false);
@@ -57,11 +57,7 @@ protected:
 class BaseBoss : public BaseEnemy
 {
 public:
-	// same ot BaseEnemy c'tor
-	BaseBoss(const WwdObject& obj, int damage, const string& walkAni,
-		const string& hithigh,  const string& hitlow, const string& fallDead, 
-		const string& strikeAni, const string& shootAni, 
-		const string& projectileAniDir);
+	BaseBoss(const WwdObject& obj, const string& fallDeadAni = "");
 	~BaseBoss();
 
 	virtual void Logic(uint32_t elapsedTime) override = 0;

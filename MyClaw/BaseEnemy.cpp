@@ -21,7 +21,7 @@
 // TODO: fix the shoot to CC height
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string& walkAni,
-	const string& hithigh, const string& hitlow, const string& fallDead, const string& strikeAni,
+	const string& hithigh, const string& hitlow, const string& fallDeadAni, const string& strikeAni,
 	const string& strikeDuckAni, const string& shootAni, const string& shootDuckAni,
 	const string& projectileAniDir, float walkingSpeed, bool noTreasures)
 	: BaseCharacter(obj), _damage(damage), _isStanding(false), _strikeAniName(strikeAni),
@@ -29,7 +29,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string&
 	_canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni),
 	_canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()),
 	_projectileAniDir(projectileAniDir), _hitHighAniName(hithigh), _hitLowAniName(hitlow),
-	_fallDeadAniName(fallDead), _minX((float)obj.minX), _maxX((float)obj.maxX),
+	_fallDeadAniName(fallDeadAni), _minX((float)obj.minX), _maxX((float)obj.maxX),
 	_isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0), _fallDead(true)
 {
 	_isMirrored = false;
@@ -305,7 +305,6 @@ bool BaseEnemy::checkClawHit()
 				position.y + (damageRc.top - damageRc.bottom) / 2
 			},
 			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", false, 50));
-		myMemCpy(ani->logicZ, logicZ + 1);
 		ActionPlane::addPlaneObject(ani);
 #endif
 		return true;
@@ -351,14 +350,16 @@ bool BaseEnemy::enemySeeClaw() const
 }
 
 
-// TODO: maybe this c'tor doesn't need get parameters...
-BaseBoss::BaseBoss(const WwdObject& obj, int damage, 
-	const string& walkAni, const string& hithigh, const string& hitlow, const string& fallDead,
-	const string& strikeAni, const string& shootAni, const string& projectileAniDir)
-	: BaseEnemy(obj, obj.health, damage, walkAni, hithigh, hitlow, fallDead,
-		strikeAni, "", shootAni, "", projectileAniDir, ENEMY_PATROL_SPEED, true),
+BaseBoss::BaseBoss(const WwdObject& obj, const string& fallDeadAni)
+	: BaseEnemy(obj, obj.health, 10, "", "HITHIGH", "HITLOW", fallDeadAni,
+		"", "", "", "", "", ENEMY_PATROL_SPEED, true),
 	_hitsCuonter(1), _blockClaw(false), _canJump(true), _gemPos({ obj.speedX, obj.speedY })
 {
+	if (fallDeadAni.empty())
+		_fallDead = false;
+
+	if (_animations.count(_idleAniName))
+		_ani = ANIMATION_IDLE;
 }
 BaseBoss::~BaseBoss()
 {

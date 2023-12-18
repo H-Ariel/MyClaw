@@ -118,7 +118,6 @@ private:
 	PowerupSparkles _powerupSparkles;
 	pair<Rectangle2D, int> _saveCurrAttackRect;
 	WeaponsAmount _weaponsAmount;
-	PowderKeg* _lastPowderKegExplos; // saves the last explos so he does not take damage over and over again.
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
 	uint32_t _score;
 	int32_t _dialogLeftTime, _powerupLeftTime; // in milliseconds

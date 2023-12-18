@@ -3,10 +3,12 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
-EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir, const string& imageSet)
+EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir)
 	: Projectile(obj, PathManager::getImageSetPath(projectileAniDir)) {}
+EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAni, const string& imageSet)
+	: Projectile(obj, projectileAni, imageSet) {}
 EnemyProjectile::EnemyProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
-	: Projectile(ani, damage, speed, initialPosition) {} // TODO: apply for all enemies?
+	: Projectile(ani, damage, speed, initialPosition) {}
 
 RatBomb::RatBomb(const WwdObject& obj)
 	: EnemyProjectile(obj, PathManager::getAnimationPath("LEVEL_RATBOMB_FALLEASTWEST"))
@@ -112,9 +114,7 @@ LavahandProjectile::~LavahandProjectile()
 {
 	if (removeObject)
 	{
-		OneTimeAnimation* explosion = DBG_NEW OneTimeAnimation(position, "GAME_DYNAMITEEXPLO");
-		myMemCpy(explosion->drawZ, DefaultZCoord::Characters + 1);
-		ActionPlane::addPlaneObject(explosion);
+		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_DYNAMITEEXPLO"));
 	}
 }
 void LavahandProjectile::Logic(uint32_t elapsedTime)

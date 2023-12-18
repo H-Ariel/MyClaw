@@ -42,6 +42,6 @@ void Siren::makeAttack(float deltaX, float deltaY)
 		for (int delay = 0; delay <= 1000; delay += 250)
 			ActionPlane::addPlaneObject(DBG_NEW SirenProjectile(obj, delay));
 
-		_attackRest = 250;
+		_attackRest = 4500;
 	}
 }

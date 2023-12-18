@@ -72,7 +72,7 @@ void Mercat::makeAttack(float deltaX, float deltaY)
 			_isAttack = true;
 			_isMirrored = player->position.x < position.x;
 
-			_attackRest = 250;
+			_attackRest = 2500;
 		}
 	}
 }

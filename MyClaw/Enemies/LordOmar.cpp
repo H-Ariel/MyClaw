@@ -121,8 +121,7 @@ private:
 
 
 LordOmar::LordOmar(const WwdObject& obj)
-	: BaseBoss(obj, 0, "", "HITHIGH", "HITLOW", "", "", "", ""),
-	_shield(nullptr), _state(States::Shield_1), stateInited(false)
+	: BaseBoss(obj), _shield(nullptr), _state(States::Shield_1), stateInited(false)
 {
 	_ani = ANIMATION_IDLE;
 	_health = States::End; // the total amount of states
@@ -131,7 +130,6 @@ LordOmar::~LordOmar()
 {
 	if (removeObject)
 	{
-		_fallDead = false;
 		_animations["KILLFALL3"]->mirrored = true;
 		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, _animations["KILLFALL3"], false));
 	}

@@ -29,10 +29,8 @@ static GlobalState globalState = GlobalState::ParrotAttackClaw;
 static bool firstFloorsRemove = true; // flag to say if this is the first time we remove floors (when CC enter to boss area)
 
 
-
 Marrow::Marrow(const WwdObject& obj)
-	: BaseBoss(obj, 10, "FASTADVANCE", "HITHIGH", "HITLOW", "KILLFALL", "STRIKE1", "STRIKE2", "GAME/IMAGES/BULLETS"),
-	side(Side::Right)
+	: BaseBoss(obj, "KILLFALL"), _side(Side::Right)
 {
 	speed.x = 0;
 	_health = 100;
@@ -76,7 +74,7 @@ void Marrow::Logic(uint32_t elapsedTime)
 	case GlobalState::ParrotTakeMarrow:
 		if (_ani == MARROW_ANIMATION_HAND_UP && _ani->isFinishAnimation())
 		{
-			_isMirrored = side == Marrow::Side::Right;
+			_isMirrored = _side == Marrow::Side::Right;
 			speed.x = _isMirrored ? -0.4f : 0.4f;
 			position.y -= 128;
 			_ani = MARROW_ANIMATION_WAIT_HAND_UP;
@@ -86,8 +84,8 @@ void Marrow::Logic(uint32_t elapsedTime)
 		else if (_ani == MARROW_ANIMATION_WAIT_HAND_UP && speed.x == 0) // Marrow stops move
 		{
 			position.y += 128;
-			_isMirrored = side == Marrow::Side::Right;
-			side = _isMirrored ? Marrow::Side::Left : Marrow::Side::Right;
+			_isMirrored = _side == Marrow::Side::Right;
+			_side = _isMirrored ? Marrow::Side::Left : Marrow::Side::Right;
 			globalState = GlobalState::ParrotAttackClaw;
 			_ani = MARROW_ANIMATION_HOME;
 			_ani->reset();
@@ -197,6 +195,8 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 	position.x += speed.x * elapsedTime;
 	position.y += speed.y * elapsedTime;
 
+	bool speedChanged = true;
+
 	switch (globalState)
 	{
 	case GlobalState::ParrotAttackClaw:
@@ -224,8 +224,9 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 		{
 			speed = { 0, -PARROT_SPEED };
 		}
+		else speedChanged = false;
 
-		if (_Marrow->getSide() == Marrow::Side::Left)
+		if (speedChanged && _Marrow->getSide() == Marrow::Side::Left)
 		{
 			speed.x = -speed.x;
 			speed.y = -speed.y;
@@ -257,8 +258,8 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 		break;
 	}
 
-	if (speed.x > 0 && _Marrow->getSide() == Marrow::Side::Left ||
-		speed.x < 0 && _Marrow->getSide() == Marrow::Side::Right)
+	if ((speed.x > 0 && _Marrow->getSide() == Marrow::Side::Left) ||
+		(speed.x < 0 && _Marrow->getSide() == Marrow::Side::Right))
 	{
 		_ani = PARROT_ANIMATION_STRIKE;
 		_isAttack = true;
