@@ -2,9 +2,6 @@
 #include "MidiPlayer.h"
 
 
-// TODO: do not load every time the same .WAV file, cache it (map by path)
-
-
 AudioManager::AudioManager(RezArchive* rezArchive)
 	: _rezArchive(rezArchive), _currBgMusicType(BackgroundMusicType::None)
 {
@@ -22,15 +19,17 @@ uint32_t AudioManager::getNewId()
 	}
 	return (uint32_t)_wavPlayers.size();
 }
-
-
 uint32_t AudioManager::playWavFile(string wavFilePath, bool infinite)
 {
 	if (wavFilePath.empty()) return -1;
 
 	uint32_t id = getNewId();
 
-	_wavPlayers[id] = allocNewSharedPtr<WavPlayer>(_rezArchive->getFileBufferReader(wavFilePath));
+	if (_wavBufferReaders.count(wavFilePath) == 0)
+		_wavBufferReaders[wavFilePath] = _rezArchive->getFileBufferReader(wavFilePath);
+	_wavBufferReaders[wavFilePath]->setIndex(0); // reset reader
+
+	_wavPlayers[id] = allocNewSharedPtr<WavPlayer>(_wavBufferReaders[wavFilePath]);
 	_wavPlayers[id]->play(infinite);
 
 	return id;
@@ -40,7 +39,6 @@ void AudioManager::stopWavFile(uint32_t wavFileId)
 	if (_wavPlayers.count(wavFileId) != 0)
 		_wavPlayers.erase(wavFileId);
 }
-
 uint32_t AudioManager::getWavFileDuration(uint32_t wavFileId)
 {
 	uint32_t d = 0;
@@ -50,7 +48,6 @@ uint32_t AudioManager::getWavFileDuration(uint32_t wavFileId)
 	
 	return d ? d : 1;
 }
-
 void AudioManager::setVolume(uint32_t wavFileId, int32_t volume)
 {
 	if (_wavPlayers.count(wavFileId) != 0)
@@ -62,45 +59,46 @@ void AudioManager::clearLevelSounds()
 	stopBackgroundMusic();
 	_wavPlayers.clear();
 	_midiPlayers.erase(BackgroundMusicType::Level);
+	_wavBufferReaders.clear();
 }
-
 void AudioManager::checkForRestart()
 {
-	for (auto& w : _wavPlayers)
+	for (auto& [id, wavPlayer] : _wavPlayers)
 	{
-		if (w.second->shouldPlay())
-			w.second->play(w.second->isInfinite());
+		if (wavPlayer->shouldPlay())
+			wavPlayer->play(wavPlayer->isInfinite());
 	}
 }
 
 void AudioManager::setBackgroundMusic(BackgroundMusicType type)
 {
-	_bgMutex.lock();
-	if (type != _currBgMusicType)
-	{
-		if (type == BackgroundMusicType::Level)
+	thread([&](BackgroundMusicType type) {
+		_bgMutex.lock();
+		if (type != _currBgMusicType)
 		{
-			try {
-				_midiPlayers[BackgroundMusicType::Level] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY")));
+			if (type == BackgroundMusicType::Level)
+			{
+				try {
+					_midiPlayers[BackgroundMusicType::Level] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY")));
+				}
+				catch (const Exception&) {
+					_bgMutex.unlock();
+					return;
+				}
 			}
-			catch (const Exception&) {
-				_bgMutex.unlock();
-				return;
-			}
+
+			_currBgMusicType = type;
+
+			if (_currBgMusic != nullptr)
+				_currBgMusic->stop();
+			_currBgMusic = _midiPlayers[type];
+
+			if (!_currBgMusic->isPlaying())
+				_currBgMusic->play(true);
 		}
-
-		_currBgMusicType = type;
-
-		if (_currBgMusic != nullptr)
-			_currBgMusic->stop();
-		_currBgMusic = _midiPlayers[type];
-
-		if (!_currBgMusic->isPlaying())
-			_currBgMusic->play(true);
-	}
-	_bgMutex.unlock();
+		_bgMutex.unlock();
+	}, type).detach();
 }
-
 void AudioManager::stopBackgroundMusic()
 {
 	_bgMutex.lock();

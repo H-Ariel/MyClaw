@@ -57,7 +57,7 @@ void WavPlayer::play(bool infinite)
 			_tryPlaying = false;
 			_infinite = infinite;
 		}
-		}, infinite).detach();
+	}, infinite).detach();
 }
 
 void WavPlayer::stop()

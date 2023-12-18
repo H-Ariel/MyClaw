@@ -17,7 +17,6 @@ public:
 	void setVolume(uint32_t wavFileId, int32_t volume); // set the volume. value range is [0,100]
 
 	void clearLevelSounds();
-
 	void checkForRestart();
 
 	enum class BackgroundMusicType
@@ -36,6 +35,7 @@ private:
 	uint32_t getNewId();
 
 	mutex _bgMutex; // background music mutex
+	map<string, shared_ptr<BufferReader>> _wavBufferReaders; // [path]=reader
 	map<uint32_t, shared_ptr<WavPlayer>> _wavPlayers; // [id]=player
 	map<BackgroundMusicType, shared_ptr<MidiPlayer>> _midiPlayers; // [type]=player
 	shared_ptr<MidiPlayer> _currBgMusic;

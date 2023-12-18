@@ -13,6 +13,8 @@ The order of the states:
 - Bullet_1, Bullet_3 - right up   (energy ball)
 - Bullet_2, Bullet_4 - left up    (energy ball)
 - End - end of the fight and get gem
+
+LO fade out before he moves to the next state.
 */
 
 
@@ -119,12 +121,15 @@ private:
 #define ANIMATION_BLOCK			_animations["BLOCK"]
 #define ANIMATION_THROW_ENERGY	_animations["STRIKE3"]
 
+#define FADEOUT_SPEED 0.0025f
+
 
 LordOmar::LordOmar(const WwdObject& obj)
-	: BaseBoss(obj), _shield(nullptr), _state(States::Shield_1), stateInited(false)
+	: BaseBoss(obj), _shield(nullptr), _state(States::Shield_1), _stateInited(false), _fadeOut(false)
 {
 	_ani = ANIMATION_IDLE;
 	_health = States::End; // the total amount of states
+	_state = Bullet_1; // TODO: continue check fade animation and delete this
 }
 LordOmar::~LordOmar()
 {
@@ -136,70 +141,94 @@ LordOmar::~LordOmar()
 }
 void LordOmar::Logic(uint32_t elapsedTime)
 {
-	if (_ani->isFinishAnimation())
+	if (_fadeOut)
 	{
-		if (_ani == ANIMATION_BLOCK)
+		if (_ani != _animations["HOME"])
 		{
-			if (States::Bullet_1 <= _state && _state <= States::Bullet_4)
-				_ani = ANIMATION_THROW_ENERGY;
-			else
-				_ani = ANIMATION_IDLE;
-			_ani->reset();
+			_ani = _animations["HOME"];
+			_ani->opacity = 1;
 		}
-		else if (_ani == ANIMATION_THROW_ENERGY)
+		else if (_ani->isFinishAnimation())
 		{
-			D2D1_POINT_2F projPos = position;
-			projPos.y -= 16;
-			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(
-				AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_OMARPROJECTILE")),
-				20, { (_state == States::Bullet_1 || _state == States::Bullet_3) ? -0.3f : 0.3f , 0 }, projPos));
-			_ani->reset();
-		}
-	}
-
-	// check for regualr attacks (sword, kick, etc.):
-	if (checkForHurts())
-	{
-		if (States::Bullet_1 <= _state && _state <= States::Bullet_4)
-		{
-			advanceState();
-		}
-		else
-		{
-			_ani = ANIMATION_BLOCK;
-			_ani->reset();
-		}
-	}
-
-	// check for projectiles:
-	for (Projectile* p : ActionPlane::getProjectiles())
-	{
-		if (isbaseinstance<ClawProjectile>(p))
-		{
-			ClawProjectile* cp = (ClawProjectile*)p;
-
-			if (p->GetRect().intersects(GetRect()))
+			_ani->opacity -= FADEOUT_SPEED * elapsedTime;
+			if (_ani->opacity <= 0)
 			{
-				p->removeObject = true;
+				advanceState();
+				_fadeOut = false;
+			}
+		}
 
-				// LO can hurt from projectiles only in these states (ice projectiles break fire shield and vice versa)
-				if ((cp->type == ClawProjectile::Types::IceSword && (_state == States::Shield_1 || _state == States::Shield_3)) ||
-					(cp->type == ClawProjectile::Types::FireSword && (_state == States::Shield_2 || _state == States::Shield_4)))
+		PostLogic(elapsedTime);
+		return;
+	}
+
+	if (_stateInited)
+	{
+		if (_ani->isFinishAnimation())
+		{
+			if (_ani == ANIMATION_BLOCK)
+			{
+				if (States::Bullet_1 <= _state && _state <= States::Bullet_4)
+					_ani = ANIMATION_THROW_ENERGY;
+				else
+					_ani = ANIMATION_IDLE;
+				_ani->reset();
+			}
+			else if (_ani == ANIMATION_THROW_ENERGY)
+			{
+				ActionPlane::addPlaneObject(DBG_NEW LordOmarProjectile({ position.x, position.y - 24 },
+					(_state == States::Bullet_1 || _state == States::Bullet_3) ? -0.3f : 0.3f));
+				_ani->reset();
+			}
+		}
+
+		// check for regualr attacks (sword, kick, etc.):
+		if (checkForHurts())
+		{
+			if (States::Bullet_1 <= _state && _state < States::Bullet_4)
+			{
+				_fadeOut = true;
+			}
+			else if (_state == States::Bullet_4)
+			{
+				advanceState();
+			}
+			else
+			{
+				_ani = ANIMATION_BLOCK;
+				_ani->reset();
+			}
+		}
+
+		// check for projectiles:
+		for (Projectile* p : ActionPlane::getProjectiles())
+		{
+			if (isbaseinstance<ClawProjectile>(p))
+			{
+				ClawProjectile* cp = (ClawProjectile*)p;
+
+				if (p->GetRect().intersects(GetRect()))
 				{
-					advanceState();
-					_shield->removeObject = true;
-					_shield = nullptr; // the `ActionPlane` delete the object
-				}
-				else // for other cases, LO blocks the projectile
-				{
-					_ani = ANIMATION_BLOCK;
-					_ani->reset();
+					p->removeObject = true;
+
+					// LO can hurt from projectiles only in these states (ice projectiles break fire shield and vice versa)
+					if ((cp->type == ClawProjectile::Types::IceSword && (_state == States::Shield_1 || _state == States::Shield_3)) ||
+						(cp->type == ClawProjectile::Types::FireSword && (_state == States::Shield_2 || _state == States::Shield_4)))
+					{
+						_fadeOut = true;
+						_shield->removeObject = true;
+						_shield = nullptr; // the `ActionPlane` delete the object
+					}
+					else // for other cases, LO blocks the projectile
+					{
+						_ani = ANIMATION_BLOCK;
+						_ani->reset();
+					}
 				}
 			}
 		}
 	}
-
-	if (!stateInited)
+	else
 	{
 		shared_ptr<Animation> shieldItem;
 		switch (_state)
@@ -207,7 +236,7 @@ void LordOmar::Logic(uint32_t elapsedTime)
 		case Shield_1:
 		case Shield_3:
 			position = { 42272, 2478 };
-			_shield = DBG_NEW LordOmarShield(position, "LEVEL_FIRESHIELD", false);		
+			_shield = DBG_NEW LordOmarShield(position, "LEVEL_FIRESHIELD", false);
 			_isMirrored = true;
 			break;
 
@@ -239,7 +268,9 @@ void LordOmar::Logic(uint32_t elapsedTime)
 			break;
 		}
 
-		stateInited = true;
+		_ani->opacity = 1;
+
+		_stateInited = true;
 	}
 
 	PostLogic(elapsedTime);
@@ -272,6 +303,5 @@ void LordOmar::advanceState()
 {
 	_state += 1;
 	_health -= 1;
-	stateInited = false;
-	// TODO: cool efect of disappearing for Lord Omar and appear in the new position
+	_stateInited = false;
 }

@@ -121,6 +121,12 @@ void LevelPlane::readPlaneObjects(BufferReader& reader, int numOfObjects)
 		
 		try
 		{
+			if (endsWith(obj.logic, "AmbientSound"))
+			{
+				DBG_PRINT("The AmbientSound objects are too loud so I decided to not play it\n");
+				continue;
+			}
+
 			updateObject(obj);
 			addObject(obj);
 		}

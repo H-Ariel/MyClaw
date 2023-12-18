@@ -923,7 +923,7 @@ bool Player::collectItem(Item* item)
 	case Item::Powerup_FireSword:		SET_POWERUP(Powerup_FireSword);
 	case Item::Powerup_LightningSword:	SET_POWERUP(Powerup_LightningSword);
 	case Item::Powerup_IceSword:		SET_POWERUP(Powerup_IceSword);
-	case Item::Powerup_ExtraLife:		_lives += 1; return true;
+	case Item::Powerup_ExtraLife:		ADD_VALUE(_lives, 1, 9);
 
 	case Item::Warp:
 	case Item::BossWarp:

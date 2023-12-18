@@ -3,6 +3,9 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
+// TODO: try do not get WwdObject in ctor
+
+
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir)
 	: Projectile(obj, PathManager::getImageSetPath(projectileAniDir)) {}
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAni, const string& imageSet)
@@ -128,4 +131,13 @@ void LavahandProjectile::stopFalling(float collisionSize)
 {
 	speed = {}; 
 	position.y -= collisionSize; 
+}
+
+LordOmarProjectile::LordOmarProjectile(D2D1_POINT_2F pos, float speedX)
+	: EnemyProjectile(AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_OMARPROJECTILE")), 20, { speedX , 0 }, pos)
+{
+}
+Rectangle2D LordOmarProjectile::GetRect()
+{
+	return Rectangle2D(position.x - 16, position.y - 16, position.x + 16, position.y + 16);
 }

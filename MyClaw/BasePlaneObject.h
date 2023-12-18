@@ -108,7 +108,7 @@ public:
 
 protected:
 	const string _wavPath; // the sound file
-	int32_t _volume;
+	int _volume;
 	uint32_t _wavPlayerId;
 };
 

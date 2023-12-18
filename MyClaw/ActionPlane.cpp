@@ -67,7 +67,7 @@
 
 #ifdef _DEBUG
 #undef LOW_DETAILS
-//#define NO_ENEMIES
+#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -248,7 +248,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "GlobalAmbientSound")
 	{
-		_objects.push_back(DBG_NEW GlobalAmbientSound(obj));
+		_objects.push_back(DBG_NEW GlobalAmbientSound(obj, _wwd->levelNumber));
 	}
 	else if (obj.logic == "AmbientSound" || obj.logic == "SpotAmbientSound")
 	{
@@ -273,7 +273,8 @@ void ActionPlane::addObject(const WwdObject& obj)
 	else if (obj.logic == "PowderKeg")
 	{
 		PowderKeg* p = DBG_NEW PowderKeg(obj);
-		_objects.push_back(p); _powderKegs.push_back(p);
+		_objects.push_back(p);
+		_powderKegs.push_back(p);
 	}
 	else
 #endif

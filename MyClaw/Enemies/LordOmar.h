@@ -34,5 +34,6 @@ private:
 
 	LordOmarShield* _shield;
 	int8_t _state;
-	bool stateInited;
+	bool _stateInited;
+	bool _fadeOut;
 };

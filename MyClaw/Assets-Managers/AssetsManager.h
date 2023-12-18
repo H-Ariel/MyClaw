@@ -27,7 +27,7 @@ public:
 
 	static shared_ptr<MidiPlayer> getMidiPlayer(const string& xmiFilePath);
 
-	static uint32_t playWavFile(const string& wavFilePath, int32_t volume = 100, bool infinite = false); // volume range is [0,100]. return wav player id
+	static uint32_t playWavFile(const string& wavFilePath, int volume = 100, bool infinite = false); // volume range is [0,100]. return wav player id
 	static void stopWavFile(uint32_t wavFileId);
 	static uint32_t getWavFileDuration(uint32_t wavFileId);
 	static void setBackgroundMusic(AudioManager::BackgroundMusicType type);

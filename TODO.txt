@@ -1,4 +1,5 @@
 * add BossStager logic
+* fix AmbientSound objects
 * play all objects WAV file
 * prefer use `int` and not `int32_t` etc.
 * find perfect speeds (for CC, enemies, projectiles, etc.)

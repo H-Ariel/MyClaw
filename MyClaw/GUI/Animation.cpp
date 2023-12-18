@@ -76,6 +76,7 @@ vector<Animation::FrameData*> getAnimationImages(RezArchive* rezArchive, const s
 		else if (aniPath == "LEVEL8/ANIS/CANNONSWITCH/SWITCH.ANI") duration *= 2;
 		else if (aniPath == "LEVEL9/ANIS/SAWBLADE/SPIN.ANI") duration *= 4;
 		else if (imageSetPath == "LEVEL10/IMAGES/MARROW" && imageFileId == 0) imageFileId = 1;
+		else if (aniPath == "LEVEL14/ANIS/OMAR/HOME.ANI") duration = 250;
 
 		sprintf(imgName, "/%03d.PID", imageFileId); // according to `fixFileName` at `RezArchive.cpp`
 

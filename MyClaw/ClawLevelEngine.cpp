@@ -75,7 +75,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 593, 4086 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 17044, 3062 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 4596, 3958 };
-	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
+//	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
 
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
 	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };

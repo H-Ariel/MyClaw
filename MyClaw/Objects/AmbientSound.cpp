@@ -28,7 +28,7 @@ void AmbientSound::Logic(uint32_t elapsedTime)
 	}
 }
 
-GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj)
+GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj, int levelNumber)
 	: BaseSoundObject(obj), _minTimeOn(obj.moveRect.left), _maxTimeOn(obj.moveRect.top),
 	_minTimeOff(obj.moveRect.right), _maxTimeOff(obj.moveRect.bottom),
 	_isLooping(obj.moveRect.left == 0), _currentTime(0), _soundDurationMs(0)
@@ -37,6 +37,9 @@ GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj)
 
 	if (_isLooping)
 	{
+		if (levelNumber == 2 || levelNumber == 3 || levelNumber == 4)
+			_volume /= 5; // because the sound is too loud
+
 		_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume, true);
 		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPlayerId);
 	}

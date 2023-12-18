@@ -17,7 +17,7 @@ private:
 class GlobalAmbientSound : public BaseSoundObject
 {
 public:
-	GlobalAmbientSound(const WwdObject& obj);
+	GlobalAmbientSound(const WwdObject& obj, int levelNumber);
 	void Logic(uint32_t elapsedTime) override;
 
 private:
