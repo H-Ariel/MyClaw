@@ -1169,7 +1169,7 @@ bool Player::checkForHurts()
 			{
 				_health -= p->getDamage();
 				p->removeObject = true;
-				return !true;
+				return true;
 			}
 		}
 		else if (isinstance<Stalactite>(p) || isinstance<LavaMouth>(p))
