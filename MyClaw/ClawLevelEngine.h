@@ -39,7 +39,8 @@ private:
 		Play,	// normal gameplay
 		Fall,	// CC falls out the window
 		Close,	// close screen
-		Open	// open screen
+		Open,	// open screen
+		GameOver // game over screen
 	};
 
 	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu
@@ -53,6 +54,8 @@ private:
 	bool _wrapAniWait; // waiting for warp transition animation to finish
 	float _bossWarpX;
 	bool _isBossWarp;
+
+	int _gameOverTimeCounter; // used to delay game over screen
 
 	States _state;
 };

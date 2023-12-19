@@ -66,7 +66,7 @@
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
 
 #ifdef _DEBUG
-#undef LOW_DETAILS
+//#undef LOW_DETAILS
 #define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
@@ -84,7 +84,7 @@ ActionPlane::ActionPlane(WapWorld* wwd)
 	: LevelPlane(wwd), _planeSize({}), _boss(nullptr), _shakeTime(0)
 {
 	if (_instance)
-		DBG_PRINT("Warning: ActionPlane already exists (level %d)", _instance->_wwd->levelNumber);
+		DBG_PRINT("Warning: ActionPlane already exists (instance of level %d)", _instance->_wwd->levelNumber);
 	_instance = this;
 }
 ActionPlane::~ActionPlane()
@@ -211,7 +211,7 @@ void ActionPlane::readPlaneObjects(BufferReader& reader, int numOfObjects)
 	physics = allocNewSharedPtr<PhysicsManager>(_wwd, this); // must be after WWD map loaded and before objects added
 
 	// player's initializtion must be before LevelPlane::readPlaneObjects() because some of objects need player
-	if (player)
+	if (player && player->hasLives()) // if we have player from previous level, we don't need to create new one
 	{
 		player->startPosition.x = (float)_wwd->startX;
 		player->startPosition.y = (float)_wwd->startY;

@@ -51,6 +51,15 @@ protected:
 	bool _fallDead; // `true` if enemy is falling dead
 	const bool _canStrike, _canStrikeDuck, _canShoot, _canShootDuck;
 	const bool _isStaticEnemy; // it always idle
+
+	enum class DeathType : int8_t
+	{
+		Regular,
+		FireSword,
+		IceSword,
+		LightningSword
+	};
+	DeathType _deathType;
 };
 
 

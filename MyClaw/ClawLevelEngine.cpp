@@ -31,7 +31,8 @@ ClawLevelEngine* instance = nullptr;
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	: _holeRadius(0), _deathAniWait(false), _playDeathSound(false),
 	_wrapAniWait(false), _state(States::Play),
-	_wrapDestination({}), _wrapCoverTop(0), _isBossWarp(false)
+	_wrapDestination({}), _wrapCoverTop(0), _isBossWarp(false), _bossWarpX(0),
+	_gameOverTimeCounter(0)
 {
 	instance = this;
 
@@ -78,7 +79,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
 
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
-	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
+//	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 2396, 1168 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 2201, 10756 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 9693, 8528 };
@@ -157,7 +158,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
 	: _fields(fields), _holeRadius(0), _deathAniWait(false),
 	_playDeathSound(false), _wrapAniWait(false), _state(States::Play),
-	_wrapDestination({}), _wrapCoverTop(0), _isBossWarp(false)
+	_wrapDestination({}), _wrapCoverTop(0), _isBossWarp(false), _bossWarpX(0),
+	_gameOverTimeCounter(0)
 {
 	instance = this;
 
@@ -172,6 +174,21 @@ ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
 	// TODO: the next code works, but it's ugly. need to find better solution
+
+	if (_state == States::GameOver)
+	{
+		_gameOverTimeCounter -= elapsedTime;
+		if (_gameOverTimeCounter <= 0)
+		{
+			_gameOverTimeCounter = 0;
+			ScreenEngine::clearClawLevelEngineFields();
+			MenuEngine::setMainMenu();
+			changeEngine<MenuEngine>();
+		}
+
+		return;
+	}
+
 
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
 	const float initialHoleRadius = max(wndSz.width, wndSz.height) * WindowManager::PixelSize / 2;
@@ -291,37 +308,43 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	
+
 	BaseEngine::Logic(elapsedTime);
 
 	for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
 		p->position = *_fields->_mainPlanePosition;
 
-	if (!player->hasLives())
+	if (player->isFinishLevel())
+	{
+		changeEngine<LevelEndEngine>(_fields->_levelNumber, player->getCollectedTreasures());
+	}
+	else if (!player->hasLives())
 	{
 		if (player->isFinishDeathAnimation())
 		{
-			MessageBoxA(nullptr, "GAME OVER", "", 0);
-			// TODO: show GAME OVER screen and then go to menu / use ActionPlaneMessage ?
-			MenuEngine::setMainMenu();
-			changeEngine<MenuEngine>();
+			_state = States::GameOver;
+			_gameOverTimeCounter = 1500;
 		}
-	}
-	else if (player->isFinishLevel())
-	{
-		changeEngine<LevelEndEngine>(_fields->_levelNumber, player->getCollectedTreasures());
 	}
 }
 void ClawLevelEngine::Draw()
 {
 	BaseEngine::Draw();
-	
+
 	if (_state == States::Close || _state == States::Open)
 	{
 		if (_deathAniWait)
 			WindowManager::drawHole(player->position, _holeRadius);
 		else if (_wrapAniWait)
 			WindowManager::drawWrapCover(_wrapCoverTop);
+	}
+	else if (_state == States::GameOver)
+	{
+		const D2D1_SIZE_F wndSz = WindowManager::getSize();
+		shared_ptr<UIBaseImage> img = AssetsManager::loadImage("GAME/IMAGES/MESSAGES/004.PID");
+		img->position.x = _fields->_mainPlanePosition->x + wndSz.width / 2;
+		img->position.y = _fields->_mainPlanePosition->y + wndSz.height / 2;
+		img->Draw();
 	}
 }
 

@@ -18,8 +18,6 @@
 #define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
 
 
-// TODO: fix the shoot to CC height
-
 BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string& walkAni,
 	const string& hithigh, const string& hitlow, const string& fallDeadAni, const string& strikeAni,
 	const string& strikeDuckAni, const string& shootAni, const string& shootDuckAni,
@@ -30,10 +28,17 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string&
 	_canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()),
 	_projectileAniDir(projectileAniDir), _hitHighAniName(hithigh), _hitLowAniName(hitlow),
 	_fallDeadAniName(fallDeadAni), _minX((float)obj.minX), _maxX((float)obj.maxX),
-	_isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0), _fallDead(true)
+	_isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0), _fallDead(true),
+	_deathType(DeathType::Regular)
 {
 	_isMirrored = false;
+	
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
+	// add burnt and frozen animations:
+	string imagesDirectoryPath = PathManager::getImageSetPath(obj.imageSet);
+	_animations["burnt"] = AssetsManager::createCopyAnimationFromPidImage(imagesDirectoryPath + "/550.PID");
+	_animations["frozen"] = AssetsManager::createCopyAnimationFromPidImage(imagesDirectoryPath + "/560.PID");
+
 	_health = health;
 
 	if (obj.powerup > 0) _itemsTypes.push_back(obj.powerup);
@@ -92,8 +97,30 @@ BaseEnemy::~BaseEnemy()
 		// add dead enemy
 		obj.speedX = position.x < player->position.x ? -250 : 250;
 		obj.speedY = -500;
-		ActionPlane::addPlaneObject(DBG_NEW ::EnemyFallDeath(obj, _animations[_fallDeadAniName]));
-		// TODO: fit enemy death animation to the enemy (regular, ice, etc.)
+		// fit enemy death animation
+		switch (_deathType)
+		{
+		case BaseEnemy::DeathType::FireSword:
+			ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_FIRESWORDEXPLOSION", "GAME_EXPLOS_FIRE"));
+			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
+			break;
+
+		case BaseEnemy::DeathType::IceSword:
+			ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_ICESWORDEXPLOSION", "GAME_EXPLOS_ICE"));
+			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["frozen"]));
+			break;
+
+		case BaseEnemy::DeathType::LightningSword:
+			ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position,"GAME_LIGHTNINGEXPLOSION", "GAME_EXPLOS_LIGHTNING"));
+			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
+			break;
+
+		default:
+			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations[_fallDeadAniName]));
+			break;
+		}
+
+		// TODO: find enemy death sound
 	}
 }
 
@@ -325,6 +352,16 @@ bool BaseEnemy::checkForHurts()
 			{
 				if (p->isClawBullet())
 					p->removeObject = true;
+
+				// fit death animation to the projectile type:
+				switch (((ClawProjectile*)p)->type)
+				{
+				case ClawProjectile::Types::FireSword: _deathType = DeathType::FireSword; break;
+				case ClawProjectile::Types::IceSword: _deathType = DeathType::IceSword; break;
+				case ClawProjectile::Types::LightningSword: _deathType = DeathType::LightningSword; break;
+				default: break;
+				}
+
 				return true;
 			}
 		}
