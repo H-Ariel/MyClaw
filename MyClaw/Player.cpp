@@ -1130,6 +1130,7 @@ bool Player::checkForHurts()
 
 	pair<Rectangle2D, int> atkRc;
 	Rectangle2D damageRc;
+	int damage;
 
 	for (BaseEnemy* enemy : ActionPlane::getEnemies())
 	{
@@ -1166,7 +1167,7 @@ bool Player::checkForHurts()
 			_freezeTime = 3000; // freeze CC for 3 seconds
 			return false;
 		}
-		if (isbaseinstance<EnemyProjectile>(p))
+		else if (isbaseinstance<EnemyProjectile>(p))
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{
@@ -1183,19 +1184,32 @@ bool Player::checkForHurts()
 				return true;
 			}
 		}
+		else if (isinstance<ClawDynamite>(p)) // CC can hurt himself with dynamite
+		{
+			if ((damage = p->getDamage()) > 0)
+			{
+				if ((damageRc = p->GetRect()) != _lastAttackRect)
+				{
+					if (_saveCurrRect.intersects(damageRc))
+					{
+						_health -= damage;
+						_lastAttackRect = damageRc;
+						return true;
+					}
+				}
+			}
+		}
 	}
-
-	int damage;
 
 	for (PowderKeg* p : ActionPlane::getPowderKegs())
 	{
-		Rectangle2D pRect = p->GetRect();
-		if (pRect != _lastAttackRect && (damage = p->getDamage()) > 0)
+		damageRc = p->GetRect();
+		if (damageRc != _lastAttackRect && (damage = p->getDamage()) > 0)
 		{
-			if (_saveCurrRect.intersects(pRect))
+			if (_saveCurrRect.intersects(damageRc))
 			{
 				_health -= damage;
-				_lastAttackRect = pRect;
+				_lastAttackRect = damageRc;
 				return true;
 			}
 		}
@@ -1244,7 +1258,7 @@ void Player::cheat(int cheatType)
 	switch (cheatType)
 	{
 	case CheatsManager::FillLife:		_lives = MAX_LIVES_AMOUNT; break;
-	case CheatsManager::FillHealth:		_health = 999; break; // MAX_HEALTH_AMOUNT
+	case CheatsManager::FillHealth:		_health = MAX_HEALTH_AMOUNT; break;
 	case CheatsManager::FillPistol:		_weaponsAmount.pistol = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FillMagic:		_weaponsAmount.magic = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FillDynamite:	_weaponsAmount.dynamite = MAX_WEAPON_AMOUNT; break;
