@@ -66,9 +66,9 @@
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
 
 #ifdef _DEBUG
-//#undef LOW_DETAILS
-#define NO_ENEMIES
-#define NO_OBSTACLES
+#undef LOW_DETAILS
+//#define NO_ENEMIES
+//#define NO_OBSTACLES
 #endif
 
 
@@ -83,7 +83,7 @@ shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
 ActionPlane::ActionPlane(WapWorld* wwd)
 	: LevelPlane(wwd), _planeSize({}), _boss(nullptr), _shakeTime(0)
 {
-	if (_instance != nullptr)
+	if (_instance)
 		DBG_PRINT("Warning: ActionPlane already exists (level %d)", _instance->_wwd->levelNumber);
 	_instance = this;
 }
@@ -126,7 +126,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 				physics->checkCollides(player.get());
 			}
 		}
-		else if (isbaseinstance<BaseEnemy>(obj) || isbaseinstance<Projectile>(obj) || isinstance<PowderKeg>(obj)
+		else if (isbaseinstance<BaseEnemy>(obj) || isbaseinstance<Projectile>(obj)
+			|| (isinstance<PowderKeg>(obj) && !((PowderKeg*)obj)->isExplode())
 			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
 		{

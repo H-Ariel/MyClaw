@@ -31,7 +31,7 @@ public:
 	DeadGabriel(D2D1_POINT_2F pos, shared_ptr<Animation> ani, int firstPartDuration)
 		: OneTimeAnimation(pos, ani, false), _delay(firstPartDuration), _moved(false)
 	{
-		myMemCpy(drawZ, DefaultZCoord::Characters + 1);
+		drawZ = DefaultZCoord::Characters + 1;
 	}
 	void Logic(uint32_t elapsedTime) override
 	{
@@ -322,8 +322,8 @@ GabrielRedTailPirate::GabrielRedTailPirate()
 	: BaseDynamicPlaneObject({}), _isJumping(false)
 {
 	position = { 43479, 5020 };
-	myMemCpy<int>(logicZ, DefaultZCoord::Characters);
-	myMemCpy<int>(drawZ, DefaultZCoord::Characters);
+	logicZ = DefaultZCoord::Characters;
+	drawZ = DefaultZCoord::Characters;
 	speed.x = -0.3f;
 	_ani = AssetsManager::loadCopyAnimation("LEVEL8/ANIS/REDTAILPIRATE/ADVANCE.ANI", "LEVEL8/IMAGES/REDTAILPIRATE");
 }

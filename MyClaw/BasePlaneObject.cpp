@@ -111,7 +111,7 @@ void BaseSoundObject::Draw() {} // these objects are invisible so no need to dra
 OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani, bool removeAtEnd)
 	: BasePlaneObject({}), _removeAtEnd(removeAtEnd)
 {
-	myMemCpy(drawZ, DefaultZCoord::Characters + 2); // always cover characters
+	drawZ = DefaultZCoord::Characters + 2; // always cover characters
 	_ani = ani;
 	_ani->loopAni = false;
 	_ani->position = pos;

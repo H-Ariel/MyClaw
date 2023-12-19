@@ -21,6 +21,7 @@ public:
 	void thrown(bool forward); // makes the powder keg state to `Thrown`
 	void fall(); // makes the powder keg state to `Thrown` but set no speed
 	bool isStartExplode() const;
+	bool isExplode() const;
 
 private:
 	bool shouldMakeExplos();

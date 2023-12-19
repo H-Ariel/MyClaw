@@ -59,10 +59,9 @@ shared_ptr<UIBaseImage> ImagesManager::loadImage(const string& path)
 }
 void ImagesManager::clearLevelImages(const string& prefix)
 {
-	string prefix2 = '/' + prefix;
 	for (auto it = _loadedBitmaps.begin(); it != _loadedBitmaps.end();)
 	{
-		if (startsWith(it->first, prefix) || startsWith(it->first, prefix2))
+		if (startsWith(it->first, prefix))
 			it = _loadedBitmaps.erase(it);
 		else
 			++it;
@@ -71,11 +70,8 @@ void ImagesManager::clearLevelImages(const string& prefix)
 
 void fixPidOffset(string pidPath, int32_t& offsetX, int32_t& offsetY)
 {
-	// hack- todo: edit the files?
+	// TODO: hack - edit the files?
 	// NOTE: number-filenames are according to `fixFileName` at `RezArchive.cpp`
-
-	if (pidPath[0] == '/')
-		pidPath = pidPath.substr(1);
 
 
 	// HUD pistol

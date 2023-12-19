@@ -101,6 +101,10 @@ bool PowderKeg::isStartExplode() const
 {
 	return _state == State::Explos && _ani->getFrameNumber() == 1;
 }
+bool PowderKeg::isExplode() const
+{
+	return _state == State::Explos;
+}
 
 bool PowderKeg::shouldMakeExplos()
 {

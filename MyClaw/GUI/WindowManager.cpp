@@ -228,7 +228,8 @@ void WindowManager::drawWrapCover(float top)
 	ID2D1SolidColorBrush* brush = getBrush(ColorF::Black);
 	if (brush)
 	{
-		const D2D1_SIZE_F wndSz = WindowManager::getSize();
+		D2D1_SIZE_F wndSz = instance->_realSize;
+		top *= PixelSize;
 		instance->_renderTarget->FillRectangle(RectF(0, top, wndSz.width, top + wndSz.height), brush);
 	}
 }

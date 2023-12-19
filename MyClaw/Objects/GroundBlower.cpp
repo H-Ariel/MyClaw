@@ -18,7 +18,7 @@ GroundBlower::GroundBlower(const WwdObject& obj)
 	rc.bottom = position.y + BLOWHOLE_OFFSET_Y - 40;
 	rc.top = rc.bottom - 1;
 	myMemCpy(_objRc, rc);
-	myMemCpy(logicZ, DefaultZCoord::Characters - 1); // avoid the affect of PhysicsManager on the player
+	logicZ = DefaultZCoord::Characters - 1; // avoid the affect of PhysicsManager on the player
 }
 
 void GroundBlower::Logic(uint32_t elapsedTime)

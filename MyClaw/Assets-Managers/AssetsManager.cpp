@@ -39,7 +39,7 @@ void AssetsManager::Initialize()
 }
 void AssetsManager::Finalize()
 {
-	if (instance != nullptr)
+	if (instance)
 	{
 		delete instance;
 		instance = nullptr;
@@ -124,7 +124,7 @@ shared_ptr<MidiPlayer> AssetsManager::getMidiPlayer(const string& xmiFilePath)
 	return allocNewSharedPtr<MidiPlayer>(instance->_rezArchive->getFileData(xmiFilePath));
 }
 
-#ifndef _DEBUG00 // if debug - no sounds
+#ifndef _DEBUG // if debug - no sounds
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
 {
 	uint32_t id = -1;
@@ -148,7 +148,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 void AssetsManager::stopWavFile(uint32_t wavFileId) {}
 #endif
 
-#ifndef _DEBUG00 // if debug - no background music
+#ifndef _DEBUG // if debug - no background music
 void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type)
 {
 	//thread(&AudioManager::setBackgroundMusic, instance->_audioManager, type).detach();

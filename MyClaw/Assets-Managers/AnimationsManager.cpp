@@ -166,10 +166,9 @@ void AnimationsManager::callAnimationsLogic(uint32_t elapsedTime)
 
 void AnimationsManager::clearLevelAnimations(const string& prefix)
 {
-	string prefix2 = '/' + prefix;
 	for (auto it = _loadedAnimations.begin(); it != _loadedAnimations.end();)
 	{
-		if (startsWith(it->first, prefix) || startsWith(it->first, prefix2))
+		if (startsWith(it->first, prefix) )
 			it = _loadedAnimations.erase(it);
 		else
 			++it;
@@ -177,7 +176,7 @@ void AnimationsManager::clearLevelAnimations(const string& prefix)
 
 	for (auto it = _savedAniDirs.begin(); it != _savedAniDirs.end();)
 	{
-		if (startsWith(it->first, prefix) || startsWith(it->first, prefix2))
+		if (startsWith(it->first, prefix) )
 			it = _savedAniDirs.erase(it);
 		else
 			++it;

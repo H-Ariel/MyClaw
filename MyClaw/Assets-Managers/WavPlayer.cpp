@@ -11,28 +11,13 @@ inline DWORD make_dword(WORD hi, WORD lo)
 }
 
 
-WavPlayer::WavPlayer(shared_ptr<BufferReader> wavReader)
-	: _wav(nullptr), _fmt({}), _hdr({}), _infinite(false),
+WavPlayer::WavPlayer(WAVEFORMATEX fmt, vector<uint8_t> wavSoundData, uint32_t soundDataLength)
+	: _wav(nullptr), _fmt(fmt), _hdr({}), _infinite(false),
 	_isPlaying(false), _tryPlaying(false),
-	_volume(make_dword(WAV_VOLUME_MAX, WAV_VOLUME_MAX))
+	_volume(make_dword(WAV_VOLUME_MAX, WAV_VOLUME_MAX)),
+	_wavSoundData(wavSoundData)
 {
-	WAVEFORMATEX fmt = {};
-
-	uint32_t soundDataLength;
-	fmt.cbSize = sizeof(WAVEFORMATEX);
-	wavReader->skip(20);
-	wavReader->read(fmt.wFormatTag);
-	wavReader->read(fmt.nChannels);
-	wavReader->read(fmt.nSamplesPerSec);
-	wavReader->read(fmt.nAvgBytesPerSec);
-	wavReader->read(fmt.nBlockAlign);
-	wavReader->read(fmt.wBitsPerSample);
-	wavReader->skip(4);
-	wavReader->read(soundDataLength);
-	_wavSoundData = wavReader->ReadVector(soundDataLength, true);
-
-	myMemCpy(_fmt, fmt);
-	_duration = soundDataLength / fmt.nAvgBytesPerSec * 1000; // duartion in milliseconds
+	_duration = (uint32_t)((float)soundDataLength / fmt.nAvgBytesPerSec * 1000); // duartion in milliseconds
 }
 WavPlayer::~WavPlayer()
 {
@@ -78,7 +63,7 @@ void WavPlayer::stop()
 	_isPlaying = false;
 }
 
-void WavPlayer::setVolume(int32_t volume)
+void WavPlayer::setVolume(int volume)
 {
 	WORD tmp = (WORD)(volume / 150.f * WAV_VOLUME_MAX);
 	_volume = make_dword(tmp, tmp); // the right and left channel get the same volume

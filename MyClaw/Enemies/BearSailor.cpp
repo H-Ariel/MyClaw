@@ -27,7 +27,7 @@ BearSailor::BearSailor(const WwdObject& obj)
 			images.push_back(frame);
 	ANIMATION_HUG = allocNewSharedPtr<Animation>(images);
 
-	myMemCpy(drawZ, DefaultZCoord::Characters + 1); // when this enemy hug CC it should be above him
+	drawZ = DefaultZCoord::Characters + 1; // when this enemy hug CC it should be above him
 }
 
 void BearSailor::Logic(uint32_t elapsedTime)

@@ -38,18 +38,18 @@ string PathManager::getImageSetPath(const string& _imageSet)
 {
 	if (data[IMAGE_SET].count(_imageSet) == 0)
 	{
-		string imageSet(_imageSet);
+		string newImageSet(_imageSet);
 
-		for (auto& i : imageSetMap)
-			if (!contains(imageSet, "IMAGES"))
-				if (startsWith(imageSet, i.first + '_'))
+		for (const auto& [prefix, imageSet] : imageSetMap)
+			if (!contains(newImageSet, "IMAGES"))
+				if (startsWith(newImageSet, prefix + '_'))
 				{
-					imageSet = replaceFirst(imageSet, i.first, i.second);
+					newImageSet = replaceFirst(newImageSet, prefix, imageSet);
 					break;
 				}
 		
-		imageSet = replaceString(imageSet, '_', '/');
-		data[IMAGE_SET][_imageSet] = imageSet;
+		newImageSet = replaceString(newImageSet, '_', '/');
+		data[IMAGE_SET][_imageSet] = newImageSet;
 	}
 
 	return data[IMAGE_SET][_imageSet];
@@ -60,11 +60,11 @@ string PathManager::getAnimationSetPath(const string& _aniSet)
 	{
 		string aniSet(_aniSet);
 
-		for (auto& i : imageSetMap)
+		for (const auto& [prefix, imageSet] : imageSetMap)
 		{
-			if (startsWith(aniSet, i.first + '_'))
+			if (startsWith(aniSet, prefix + '_'))
 			{
-				aniSet = replaceFirst(aniSet, i.first, replaceFirst(i.second, "IMAGES", "ANIS"));
+				aniSet = replaceFirst(aniSet, prefix, replaceFirst(imageSet, "IMAGES", "ANIS"));
 				break;
 			}
 		}
@@ -120,10 +120,10 @@ string PathManager::getSoundFilePath(const string& _path)
 
 		path = replaceFirst(path, "CLAW", "CLAW/SOUNDS");
 		
-		for (auto& i : imageSetMap)
-			if (startsWith(path, i.first + '_'))
+		for (const auto& [prefix, imageSet] : imageSetMap)
+			if (startsWith(path, prefix + '_'))
 			{
-				path = replaceFirst(path, i.first, replaceFirst(i.second, "IMAGES", "SOUNDS"));
+				path = replaceFirst(path, prefix, replaceFirst(imageSet, "IMAGES", "SOUNDS"));
 				break;
 			}
 
@@ -139,10 +139,10 @@ string PathManager::getBackgroundMusicFilePath(const string& _path)
 	{
 		string path(_path);
 
-		for (auto& i : imageSetMap)
-			if (startsWith(path, i.first + '_'))
+		for (const auto& [prefix, imageSet] : imageSetMap)
+			if (startsWith(path, prefix + '_'))
 			{
-				path = replaceFirst(path, i.first, replaceFirst(i.second, "IMAGES", "MUSIC"));
+				path = replaceFirst(path, prefix, replaceFirst(imageSet, "IMAGES", "MUSIC"));
 				break;
 			}
 

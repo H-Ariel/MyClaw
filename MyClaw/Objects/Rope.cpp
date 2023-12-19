@@ -38,7 +38,7 @@ static D2D1_POINT_2F RopeFrameIndexToRopeHandleOffset[120] = {
 Rope::Rope(const WwdObject& obj)
 	: BasePlaneObject(obj), _edgePos({})
 {
-	myMemCpy(logicZ, DefaultZCoord::Characters + 1);
+	logicZ = DefaultZCoord::Characters + 1;
 	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, obj.speedX ? (obj.speedX / 60) : 25);
 }
 

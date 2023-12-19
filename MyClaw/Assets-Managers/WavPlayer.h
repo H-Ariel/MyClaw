@@ -6,7 +6,7 @@
 class WavPlayer
 {
 public:
-	WavPlayer(shared_ptr<BufferReader> wavReader);
+	WavPlayer(WAVEFORMATEX fmt, vector<uint8_t> wavSoundData, uint32_t soundDataLength);
 	~WavPlayer();
 
 	// start sound the WAV file
@@ -15,7 +15,7 @@ public:
 	void stop();
 
 	// set the volume. value range is [0,100]
-	void setVolume(int32_t volume);
+	void setVolume(int volume);
 
 	uint32_t getDuration() const { return _duration; }
 	bool shouldPlay() const { return !_isPlaying && _infinite && !_tryPlaying; }

@@ -42,8 +42,8 @@ shared_ptr<BufferReader> RezFile::getBufferReader() const
 string RezFile::getFullPath() const
 {
 	string dirPath;
-	for (RezDirectory* dir = _parent; dir != nullptr; dirPath = dir->_name + '/' + dirPath, dir = dir->_parent);
-	return dirPath + name; // ignore the first character ('/')
+	for (RezDirectory* dir = _parent; dir; dirPath = dir->_name + '/' + dirPath, dir = dir->_parent);
+	return dirPath.substr(1) + name; // ignore the first character ('/')
 }
 
 
