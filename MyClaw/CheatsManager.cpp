@@ -7,30 +7,25 @@
 // maybe use the original game's cheats codes
 
 
-enum CheatType
-{
-	None,
-	FireSword,
-	IceSword,
-	LightningSword,
-	Catnip,
-	Invisibility,
-	Invincibility
-};
-
-
 CheatsManager::CheatsManager()
 	: cheatKeys({
-		{ CheatType::FireSword, "FIRE", "Fire sword rules..." },
-		{ CheatType::IceSword, "ICE", "Ice sword rules..." },
-		{ CheatType::LightningSword, "LIGHT", "Lightning sword rules..." },
-		{ CheatType::Catnip, "CATNIP", "Catnip...Yummy!" },
-		{ CheatType::Invisibility, "VISI", "Now you see me...now you dont!" },
-		{ CheatType::Invincibility, "VINCI", "Sticks and stones won't break my bones..." },
+		{ FireSword		, "MPHOTSTUFF"	, "Fire sword rules..." },
+		{ IceSword		, "MPPENGUIN"	, "Ice sword rules..." },
+		{ LightningSword, "MPFRANKLIN"	, "Lightning sword rules..." },
+		{ Catnip		, "MPFREAK"		, "Catnip...Yummy!" },
+		{ Invisibility	, "MPCASPER"	, "Now you see me...now you dont!" },
+		{ Invincibility	, "MPVADER"		, "Sticks and stones won't break my bones..." },
+		{ FillHealth	, "MPAPPLE"		, "Full Health" },
+		{ FillPistol	, "MPLOADED"	, "Full Ammo" },
+		{ FillMagic		, "MPGANDOLF"	, "Full Magic" },
+		{ FillDynamite	, "MPBLASTER"	, "Full Dynamite" },
+		{ FillLife		, "AHCAKE"		, "Full Life" },
+		{ FinishLevel	, "MPSCULLY"	, "Finish Level" }
 	})
 {
 	// The list of cheats, format: { type, keys, message }
 	// NOTE: make sure cheat-code contains only uppercase letters
+	// MP - Monolith Production (the original game) ; AH - Ariel Halili (me)
 }
 
 void CheatsManager::addKey(int key)
@@ -43,14 +38,21 @@ void CheatsManager::addKey(int key)
 
 	keys.push_back((char)key);
 
-	switch (getCheatType())
+	int type = getCheatType();
+	switch (type)
 	{
-	case CheatType::FireSword:		addPowerup(Item::Type::Powerup_FireSword); break;
-	case CheatType::IceSword:		addPowerup(Item::Type::Powerup_IceSword); break;
-	case CheatType::LightningSword:	addPowerup(Item::Type::Powerup_LightningSword); break;
-	case CheatType::Catnip:			addPowerup(Item::Type::Powerup_Catnip_White); break;
-	case CheatType::Invisibility:	addPowerup(Item::Type::Powerup_Invisibility); break;
-	case CheatType::Invincibility:	addPowerup(Item::Type::Powerup_Invincibility); break;
+	case FireSword:			addPowerup(Item::Type::Powerup_FireSword); break;
+	case IceSword:			addPowerup(Item::Type::Powerup_IceSword); break;
+	case LightningSword:	addPowerup(Item::Type::Powerup_LightningSword); break;
+	case Catnip:			addPowerup(Item::Type::Powerup_Catnip_White); break;
+	case Invisibility:		addPowerup(Item::Type::Powerup_Invisibility); break;
+	case Invincibility:		addPowerup(Item::Type::Powerup_Invincibility); break;
+	case FillHealth:
+	case FillPistol:
+	case FillMagic:
+	case FillDynamite:
+	case FillLife:
+	case FinishLevel:		BasePlaneObject::player->cheat(type); break;
 
 	default: break;
 	}
@@ -79,7 +81,7 @@ int CheatsManager::getCheatType()
 		}
 	}
 
-	return CheatType::None;
+	return Types::None;
 }
 
 void CheatsManager::addPowerup(int8_t powerupType)
@@ -89,5 +91,6 @@ void CheatsManager::addPowerup(int8_t powerupType)
 	Item* item = Item::getItem(obj, powerupType);
 	item->position = BasePlaneObject::player->position;
 	BasePlaneObject::player->collectItem(item);
+	item->playItemSound();
 	delete item;
 }

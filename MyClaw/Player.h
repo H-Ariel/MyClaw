@@ -53,7 +53,6 @@ public:
 	void endLife(); // at ingame-menu
 
 	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
-	int getHealthAmount() const { return _health; }
 	int getLivesAmount() const { return _lives; }
 	int getWeaponAmount() const { return _weaponsAmount[_currWeapon]; }
 	int getDynamiteAmount() const { return _weaponsAmount.dynamite; }
@@ -73,6 +72,7 @@ public:
 	void squeeze(D2D1_POINT_2F pos = {});
 	void unsqueeze();
 
+	void cheat(int cheatType);
 
 	D2D1_POINT_2F startPosition;
 	Elevator* elevator; // stores the elevator he is standing on (if any)

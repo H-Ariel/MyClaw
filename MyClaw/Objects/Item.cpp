@@ -119,156 +119,6 @@ string Item::getItemPath(Type type, const string& imageSet)
 }
 
 
-void playItemSound(Item::Type type)
-{
-	const char* path = nullptr;
-
-	switch (type)
-	{
-	case Item::Default:
-	case Item::Treasure_Coins:
-		path = "GAME/SOUNDS/COIN.WAV";
-		break;
-
-	case Item::Treasure_Goldbars:
-		path = "GAME/SOUNDS/TREASURE.WAV";
-		break;
-
-	case Item::Treasure_Rings_Red:
-	case Item::Treasure_Rings_Green:
-	case Item::Treasure_Rings_Blue:
-	case Item::Treasure_Rings_Purple:
-		path = "GAME/SOUNDS/RINGS.WAV";
-		break;
-
-	case Item::Treasure_Necklace:
-	case Item::Treasure_Chalices_Red:
-	case Item::Treasure_Chalices_Green:
-	case Item::Treasure_Chalices_Blue:
-	case Item::Treasure_Chalices_Purple:
-		path = "GAME/SOUNDS/PICKUP1.WAV";
-		break;
-
-	case Item::Treasure_Crosses_Red:
-	case Item::Treasure_Crosses_Green:
-	case Item::Treasure_Crosses_Blue:
-	case Item::Treasure_Crosses_Purple:
-		path = "GAME/SOUNDS/CROSS.WAV";
-		break;
-
-	case Item::Treasure_Scepters_Red:
-	case Item::Treasure_Scepters_Green:
-	case Item::Treasure_Scepters_Blue:
-	case Item::Treasure_Scepters_Purple:
-		path = "GAME/SOUNDS/SCEPTER.WAV";
-		break;
-
-	case Item::Treasure_Geckos_Red:
-	case Item::Treasure_Geckos_Green:
-	case Item::Treasure_Geckos_Blue:
-	case Item::Treasure_Geckos_Purple:
-		path = "GAME/SOUNDS/PICKUP2.WAV";
-		break;
-
-	case Item::Treasure_Crowns_Red:
-	case Item::Treasure_Crowns_Green:
-	case Item::Treasure_Crowns_Blue:
-	case Item::Treasure_Crowns_Purple:
-		path = "GAME/SOUNDS/PICKUP1.WAV";
-		break;
-
-	case Item::Treasure_Skull_Red:
-	case Item::Treasure_Skull_Green:
-	case Item::Treasure_Skull_Blue:
-	case Item::Treasure_Skull_Purple:
-		path = "GAME/SOUNDS/PICKUP1.WAV";
-		break;
-
-	case Item::Ammo_Deathbag:
-	case Item::Ammo_Shot:
-	case Item::Ammo_Shotbag:
-		path = "GAME/SOUNDS/AMMUNITION.WAV";
-		break;
-
-	case Item::Ammo_Magic_5:
-	case Item::Ammo_Magic_10:
-	case Item::Ammo_Magic_25:
-		path = "GAME/SOUNDS/MAGICPOWERUP.WAV";
-		break;
-
-	case Item::Health_Level:
-		path = "GAME/SOUNDS/FOODITEM.WAV";
-		break;
-
-	case Item::Health_25:
-	case Item::Health_10:
-	case Item::Health_15:
-		path = "GAME/SOUNDS/MILK.WAV";
-		break;
-
-	case Item::MapPiece:
-	case Item::NineLivesGem:
-		path = "GAME/SOUNDS/MAPPIECE.WAV";
-		break;
-
-	case Item::Warp:
-	case Item::BossWarp:
-		path = "GAME/SOUNDS/WARP.WAV";
-		break;
-
-	case Item::Powerup_FireSword:
-		path = "CLAW/SOUNDS/1110001.WAV";
-		break;
-	case Item::Powerup_LightningSword:
-		path = "CLAW/SOUNDS/1110022.WAV";
-		break;
-	case Item::Powerup_IceSword:
-		path = "CLAW/SOUNDS/1110012.WAV";
-		break;
-	case Item::Powerup_ExtraLife:
-		path = "GAME/SOUNDS/EXTRALIFE.WAV";
-		break;
-
-		/*
-	case Item::Ammo_Dynamite:
-		break;
-
-	case Item::Powerup_Catnip_White:
-		break;
-	case Item::Powerup_Catnip_Red:
-		break;
-	case Item::Powerup_Invisibility:
-		break;
-	case Item::Powerup_Invincibility:
-		break;
-
-	case Item::Curse_Ammo:
-		break;
-	case Item::Curse_Magic:
-		break;
-	case Item::Curse_Health:
-		break;
-	case Item::Curse_Life:
-		break;
-	case Item::Curse_Treasure:
-		break;
-	case Item::Curse_Freeze:
-		break;
-		*/
-
-	default:
-		break;
-	}
-
-	if (path)
-	{
-		AssetsManager::playWavFile(path);
-		if (!strcmp(path, "GAME/SOUNDS/MAPPIECE.WAV"))
-			Sleep(1520); // wait until the sound ends
-	}
-}
-
-
 Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 	: BaseDynamicPlaneObject(obj), _type((Type)type), _delayBeforeRespawn(0), _useGlitter(false)
 {
@@ -314,7 +164,8 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 	_ani = AssetsManager::createAnimationFromDirectory(getItemPath(_type, obj.imageSet));
 	_ani->updateFrames = FindInArray(UpdateFramesTypes, _type);
 
-	drawZ = DefaultZCoord::Items;
+	if (drawZ == 0) // is that correct?
+		drawZ = DefaultZCoord::Items;
 }
 void Item::Logic(uint32_t elapsedTime)
 {
@@ -329,7 +180,7 @@ void Item::Logic(uint32_t elapsedTime)
 			{
 				if (player->collectItem(this))
 				{
-					playItemSound(_type);
+					playItemSound();
 					removeObject = !_respawning;
 					_delayBeforeRespawn = 10000; // respawn after 10 seconds
 				}
@@ -372,62 +223,210 @@ void Item::stopFalling(float collisionSize)
 	_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
 #endif
 }
-int Item::getTreasureScore()
+int Item::getTreasureScore() const
 {
 	switch (_type)
 	{
-	case Item::Default:
-	case Item::Treasure_Coins:
+	case Default:
+	case Treasure_Coins:
 		return 100;
 
-	case Item::Treasure_Goldbars:
+	case Treasure_Goldbars:
 		return 500;
 
-	case Item::Treasure_Rings_Red:
-	case Item::Treasure_Rings_Green:
-	case Item::Treasure_Rings_Blue:
-	case Item::Treasure_Rings_Purple:
+	case Treasure_Rings_Red:
+	case Treasure_Rings_Green:
+	case Treasure_Rings_Blue:
+	case Treasure_Rings_Purple:
 		return 1500;
 
-	case Item::Treasure_Necklace:
-	case Item::Treasure_Chalices_Red:
-	case Item::Treasure_Chalices_Green:
-	case Item::Treasure_Chalices_Blue:
-	case Item::Treasure_Chalices_Purple:
+	case Treasure_Necklace:
+	case Treasure_Chalices_Red:
+	case Treasure_Chalices_Green:
+	case Treasure_Chalices_Blue:
+	case Treasure_Chalices_Purple:
 		return 2500;
 
-	case Item::Treasure_Crosses_Red:
-	case Item::Treasure_Crosses_Green:
-	case Item::Treasure_Crosses_Blue:
-	case Item::Treasure_Crosses_Purple:
+	case Treasure_Crosses_Red:
+	case Treasure_Crosses_Green:
+	case Treasure_Crosses_Blue:
+	case Treasure_Crosses_Purple:
 		return 5000;
 
-	case Item::Treasure_Scepters_Red:
-	case Item::Treasure_Scepters_Green:
-	case Item::Treasure_Scepters_Blue:
-	case Item::Treasure_Scepters_Purple:
+	case Treasure_Scepters_Red:
+	case Treasure_Scepters_Green:
+	case Treasure_Scepters_Blue:
+	case Treasure_Scepters_Purple:
 		return 7500;
 
-	case Item::Treasure_Geckos_Red:
-	case Item::Treasure_Geckos_Green:
-	case Item::Treasure_Geckos_Blue:
-	case Item::Treasure_Geckos_Purple:
+	case Treasure_Geckos_Red:
+	case Treasure_Geckos_Green:
+	case Treasure_Geckos_Blue:
+	case Treasure_Geckos_Purple:
 		return 10000;
 
-	case Item::Treasure_Crowns_Red:
-	case Item::Treasure_Crowns_Green:
-	case Item::Treasure_Crowns_Blue:
-	case Item::Treasure_Crowns_Purple:
+	case Treasure_Crowns_Red:
+	case Treasure_Crowns_Green:
+	case Treasure_Crowns_Blue:
+	case Treasure_Crowns_Purple:
 		return 15000;
 
-	case Item::Treasure_Skull_Red:
-	case Item::Treasure_Skull_Green:
-	case Item::Treasure_Skull_Blue:
-	case Item::Treasure_Skull_Purple:
+	case Treasure_Skull_Red:
+	case Treasure_Skull_Green:
+	case Treasure_Skull_Blue:
+	case Treasure_Skull_Purple:
 		return 25000;
 	}
 
 	throw Exception("invalid treasure type");
+}
+void Item::playItemSound() const
+{
+	const char* path = nullptr;
+
+	switch (_type)
+	{
+	case Default:
+	case Treasure_Coins:
+		path = "GAME/SOUNDS/COIN.WAV";
+		break;
+
+	case Treasure_Goldbars:
+		path = "GAME/SOUNDS/TREASURE.WAV";
+		break;
+
+	case Treasure_Rings_Red:
+	case Treasure_Rings_Green:
+	case Treasure_Rings_Blue:
+	case Treasure_Rings_Purple:
+		path = "GAME/SOUNDS/RINGS.WAV";
+		break;
+
+	case Treasure_Necklace:
+	case Treasure_Chalices_Red:
+	case Treasure_Chalices_Green:
+	case Treasure_Chalices_Blue:
+	case Treasure_Chalices_Purple:
+		path = "GAME/SOUNDS/PICKUP1.WAV";
+		break;
+
+	case Treasure_Crosses_Red:
+	case Treasure_Crosses_Green:
+	case Treasure_Crosses_Blue:
+	case Treasure_Crosses_Purple:
+		path = "GAME/SOUNDS/CROSS.WAV";
+		break;
+
+	case Treasure_Scepters_Red:
+	case Treasure_Scepters_Green:
+	case Treasure_Scepters_Blue:
+	case Treasure_Scepters_Purple:
+		path = "GAME/SOUNDS/SCEPTER.WAV";
+		break;
+
+	case Treasure_Geckos_Red:
+	case Treasure_Geckos_Green:
+	case Treasure_Geckos_Blue:
+	case Treasure_Geckos_Purple:
+		path = "GAME/SOUNDS/PICKUP2.WAV";
+		break;
+
+	case Treasure_Crowns_Red:
+	case Treasure_Crowns_Green:
+	case Treasure_Crowns_Blue:
+	case Treasure_Crowns_Purple:
+		path = "GAME/SOUNDS/PICKUP1.WAV";
+		break;
+
+	case Treasure_Skull_Red:
+	case Treasure_Skull_Green:
+	case Treasure_Skull_Blue:
+	case Treasure_Skull_Purple:
+		path = "GAME/SOUNDS/PICKUP1.WAV";
+		break;
+
+	case Ammo_Deathbag:
+	case Ammo_Shot:
+	case Ammo_Shotbag:
+		path = "GAME/SOUNDS/AMMUNITION.WAV";
+		break;
+
+	case Ammo_Magic_5:
+	case Ammo_Magic_10:
+	case Ammo_Magic_25:
+		path = "GAME/SOUNDS/MAGICPOWERUP.WAV";
+		break;
+
+	case Health_Level:
+		path = "GAME/SOUNDS/FOODITEM.WAV";
+		break;
+
+	case Health_25:
+	case Health_10:
+	case Health_15:
+		path = "GAME/SOUNDS/MILK.WAV";
+		break;
+
+	case MapPiece:
+	case NineLivesGem:
+		path = "GAME/SOUNDS/MAPPIECE.WAV";
+		break;
+
+	case Warp:
+	case BossWarp:
+		path = "GAME/SOUNDS/WARP.WAV";
+		break;
+
+	case Powerup_FireSword:
+		path = "CLAW/SOUNDS/1110001.WAV";
+		break;
+	case Powerup_LightningSword:
+		path = "CLAW/SOUNDS/1110022.WAV";
+		break;
+	case Powerup_IceSword:
+		path = "CLAW/SOUNDS/1110012.WAV";
+		break;
+	case Powerup_ExtraLife:
+		path = "GAME/SOUNDS/EXTRALIFE.WAV";
+		break;
+
+		/*
+	case Ammo_Dynamite:
+		break;
+
+	case Powerup_Catnip_White:
+		break;
+	case Powerup_Catnip_Red:
+		break;
+	case Powerup_Invisibility:
+		break;
+	case Powerup_Invincibility:
+		break;
+
+	case Curse_Ammo:
+		break;
+	case Curse_Magic:
+		break;
+	case Curse_Health:
+		break;
+	case Curse_Life:
+		break;
+	case Curse_Treasure:
+		break;
+	case Curse_Freeze:
+		break;
+		*/
+
+	default:
+		break;
+	}
+
+	if (path)
+	{
+		AssetsManager::playWavFile(path);
+		if (!strcmp(path, "GAME/SOUNDS/MAPPIECE.WAV"))
+			Sleep(1520); // wait until the sound ends
+	}
 }
 
 Item* Item::getItem(const WwdObject& obj, bool isFromMap, int8_t type)
@@ -461,7 +460,8 @@ Item* Item::getItem(const WwdObject& obj)
 }
 void Item::resetItemsPaths()
 {
-	ItemsPaths.clear();
+	ItemsPaths.erase("LEVEL_HEALTH");
+	ItemsPaths.erase("GAME_HEALTH_BREADWATER");
 }
 
 
@@ -474,7 +474,7 @@ void Warp::Logic(uint32_t elapsedTime)
 	if (GetRect().intersects(player->GetRect()))
 	{
 		removeObject = _oneTimeWarp;
-		playItemSound(_type);
+		playItemSound();
 		ClawLevelEngine::playerEnterWarp(_destination, _type == Type::BossWarp, position.x); // draw the warp transition animation
 	}
 }

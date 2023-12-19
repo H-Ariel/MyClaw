@@ -65,7 +65,7 @@ void LevelHUD::Draw()
 	}
 
 	pos.x = winWidth - 35 + _offset.x;
-	pos.y = 17; drawNumbers(BasePlaneObject::player->getHealthAmount(), 3, _healthNumbers, pos);
+	pos.y = 17; drawNumbers(BasePlaneObject::player->getHealth(), 3, _healthNumbers, pos);
 	pos.y = 52; drawNumbers(BasePlaneObject::player->getWeaponAmount(), 2, _smallNumbers, pos);
 	pos.y = 81; drawNumbers(BasePlaneObject::player->getLivesAmount(), 1, _smallNumbers, pos);
 	drawNumbers(BasePlaneObject::player->getScore(), 8, _scoreNumbers, { 50 + _offset.x, 20 }, true);

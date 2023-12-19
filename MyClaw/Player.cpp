@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "ActionPlane.h"
 #include "BaseEnemy.h"
+#include "CheatsManager.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "Objects/EnemyProjectile.h"
 #include "Objects/LavaMouth.h"
@@ -31,7 +32,8 @@
 #define EXCLAMATION_MARK	_animations["exclamation-mark"] // it used when claw is speaking
 
 #define MAX_WEAPON_AMOUNT	99
-#define MAX_HEALTH			100
+#define MAX_HEALTH_AMOUNT	100
+#define MAX_LIVES_AMOUNT	9
 
 // code blocks for `collectItem`
 
@@ -44,7 +46,8 @@
 	} break; }
 
 #define ADD_WEAPON(t, n)	ADD_VALUE(_weaponsAmount. t, n, MAX_WEAPON_AMOUNT)
-#define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH)
+#define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH_AMOUNT)
+#define ADD_LIFE(n)			ADD_VALUE(_lives, n, MAX_LIVES_AMOUNT)
 #define SET_POWERUP(t) { \
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Powerup); \
 	if (_currPowerup != Item:: t) _powerupLeftTime = 0; \
@@ -57,8 +60,8 @@
 #define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup
 
 
-static int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
-static int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
+static const int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
+static const int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
 
 Player::PowerupSparkles::PowerupSparkles(Rectangle2D* playerRc)
@@ -923,7 +926,7 @@ bool Player::collectItem(Item* item)
 	case Item::Powerup_FireSword:		SET_POWERUP(Powerup_FireSword);
 	case Item::Powerup_LightningSword:	SET_POWERUP(Powerup_LightningSword);
 	case Item::Powerup_IceSword:		SET_POWERUP(Powerup_IceSword);
-	case Item::Powerup_ExtraLife:		ADD_VALUE(_lives, 1, 9);
+	case Item::Powerup_ExtraLife:		ADD_LIFE(1);
 
 	case Item::Warp:
 	case Item::BossWarp:
@@ -1235,3 +1238,16 @@ void Player::unsqueeze()
 	_ani = _animations[_aniName = "STAND"];
 }
 #endif
+
+void Player::cheat(int cheatType)
+{
+	switch (cheatType)
+	{
+	case CheatsManager::FillLife:		_lives = MAX_LIVES_AMOUNT; break;
+	case CheatsManager::FillHealth:		_health = 999; break; // MAX_HEALTH_AMOUNT
+	case CheatsManager::FillPistol:		_weaponsAmount.pistol = MAX_WEAPON_AMOUNT; break;
+	case CheatsManager::FillMagic:		_weaponsAmount.magic = MAX_WEAPON_AMOUNT; break;
+	case CheatsManager::FillDynamite:	_weaponsAmount.dynamite = MAX_WEAPON_AMOUNT; break;
+	case CheatsManager::FinishLevel:	_finishLevel = true;
+	}
+}

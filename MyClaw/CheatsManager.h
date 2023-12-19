@@ -6,6 +6,23 @@
 class CheatsManager
 {
 public:
+	enum Types
+	{
+		None,
+		FireSword,
+		IceSword,
+		LightningSword,
+		Catnip,
+		Invisibility,
+		Invincibility,
+		FillHealth,
+		FillPistol,
+		FillMagic,
+		FillDynamite,
+		FillLife,
+		FinishLevel
+	};
+
 	CheatsManager();
 
 	void addKey(int key);

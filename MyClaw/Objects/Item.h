@@ -79,9 +79,10 @@ public:
 
 	void stopFalling(float collisionSize) override;
 
-	Type getType() { return _type; }
+	Type getType() const { return _type; }
 	int getDuration() const { return _duration; }
-	int getTreasureScore();
+	int getTreasureScore() const;
+	void playItemSound() const;
 
 	static Item* getItem(const WwdObject& obj, bool isFromMap, int8_t type);
 	static Item* getItem(const WwdObject& obj, bool isFromMap);
