@@ -37,22 +37,21 @@ private:
 	void init(); // call this in each constructor
 
 	enum class States : int8_t {
-		Play,	// normal gameplay
-		Fall,	// CC falls out the window
-		Close,	// close screen
-		Open,	// open screen
-		GameOver // game over screen
+		Play,
+		DeathFall,
+		DeathClose,
+		DeathOpen,
+		WrapClose,
+		WrapOpen,
+		GameOver
 	};
 
 	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu
 	
 	float _holeRadius; // the radius of the hole that remains until closed
-	bool _deathAniWait; // waiting for disqualification animation to finish
-	bool _playDeathSound;
 	
 	D2D1_POINT_2F _wrapDestination;
 	float _wrapCoverTop ; // used in wrap transition animation
-	bool _wrapAniWait; // waiting for warp transition animation to finish
 	float _bossWarpX;
 	bool _isBossWarp;
 

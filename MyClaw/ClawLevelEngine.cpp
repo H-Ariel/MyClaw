@@ -8,7 +8,7 @@
 #include "Menu/MenuEngine.h"
 
 
-#define HOLE_SPEED 0.5f // speed of the hole when CC is died
+#define SCREEN_SPEED 0.5f // speed of the screen when CC is died or teleported
 #define CC_FALLDEATH_SPEED 0.7f // speed of CC when he falls out the window
 
 #define player BasePlaneObject::player
@@ -157,9 +157,6 @@ void ClawLevelEngine::init()
 	instance = this;
 
 	_holeRadius = 0;
-	_deathAniWait = false;
-	_playDeathSound = false;
-	_wrapAniWait = false;
 	_state = States::Play;
 	_wrapDestination = {};
 	_wrapCoverTop = 0;
@@ -176,10 +173,115 @@ void ClawLevelEngine::init()
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
-	// TODO: the next code works, but it's ugly. need to find better solution
+	const D2D1_SIZE_F wndSz = WindowManager::getSize();
+	const float initialHoleRadius = max(wndSz.width, wndSz.height) * WindowManager::PixelSize / 2;
 
-	if (_state == States::GameOver)
+	switch (_state)
 	{
+	case ClawLevelEngine::States::Play:
+		BaseEngine::Logic(elapsedTime);
+		for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+			p->position = *_fields->_mainPlanePosition;
+
+		if (player->isFinishDeathAnimation() && player->hasLives())
+		{
+			if (player->isSpikeDeath())
+			{
+				_holeRadius = initialHoleRadius;
+				AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
+				_state = States::DeathClose;
+			}
+			else //if (player->isFallDeath())
+			{
+				_state = States::DeathFall;
+			}
+		}
+		else
+		{
+			if (player->isFinishLevel())
+			{
+				changeEngine<LevelEndEngine>(_fields->_wwd->levelNumber, player->getCollectedTreasures());
+			}
+			else if (!player->hasLives())
+			{
+				if (player->isFinishDeathAnimation())
+				{
+					_gameOverTimeCounter = 1500;
+					_state = States::GameOver;
+				}
+			}
+		}
+		break;
+
+
+	case ClawLevelEngine::States::DeathFall:
+		player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
+		player->Logic(0); // update position of animation
+		if (player->position.y - _fields->_mainPlanePosition->y > wndSz.height)
+		{
+			player->loseLife();
+			_holeRadius = initialHoleRadius;
+			AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
+			_state = States::DeathClose;
+		}
+		break;
+
+	case ClawLevelEngine::States::DeathClose:
+		_holeRadius -= SCREEN_SPEED * elapsedTime;
+		if (_holeRadius <= 0)
+		{
+			_holeRadius = 0;
+			player->backToLife();
+
+			// update position of camera (because player position changed)
+			ActionPlane::resetObjects();
+			BaseEngine::Logic(elapsedTime);
+			for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+				p->position = *_fields->_mainPlanePosition;
+
+			AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
+
+			_state = States::DeathOpen;
+		}
+		break;
+
+	case ClawLevelEngine::States::DeathOpen:
+		_holeRadius += SCREEN_SPEED * elapsedTime;
+		if (initialHoleRadius < _holeRadius)
+			_state = States::Play;
+		break;
+
+
+	case ClawLevelEngine::States::WrapClose:
+		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
+		if (_wrapCoverTop <= 0)
+		{
+			player->position = _wrapDestination;
+			player->speed = {}; // stop player
+			if (_isBossWarp)
+			{
+				ActionPlane::playerEnterToBoss(_bossWarpX);
+				player->startPosition = _wrapDestination;
+			}
+			player->Logic(0); // update position of animation
+
+			// update position of camera (because player position changed)
+			ActionPlane::updatePosition();
+			for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+				p->position = *_fields->_mainPlanePosition;
+
+			_state = States::WrapOpen;
+		}
+		break;
+
+	case ClawLevelEngine::States::WrapOpen:
+		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
+		if (_wrapCoverTop < -wndSz.height)
+			_state = States::Play;
+		break;
+
+
+	case ClawLevelEngine::States::GameOver:
 		_gameOverTimeCounter -= elapsedTime;
 		if (_gameOverTimeCounter <= 0)
 		{
@@ -188,166 +290,34 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			MenuEngine::setMainMenu();
 			changeEngine<MenuEngine>();
 		}
+		break;
 
-		return;
-	}
-
-
-	const D2D1_SIZE_F wndSz = WindowManager::getSize();
-	const float initialHoleRadius = max(wndSz.width, wndSz.height) * WindowManager::PixelSize / 2;
-
-	if (_wrapAniWait)
-	{
-		switch (_state)
-		{
-		case States::Close:
-			_wrapCoverTop -= HOLE_SPEED * elapsedTime;
-			if (_wrapCoverTop <= 0)
-			{
-				_state = States::Open;
-				player->position = _wrapDestination;
-				player->speed = {}; // stop player
-				if (_isBossWarp)
-				{
-					ActionPlane::playerEnterToBoss(_bossWarpX);
-					player->startPosition = _wrapDestination;
-				}
-				player->Logic(0); // update position of animation
-
-				// update position of camera (because player position changed)
-				ActionPlane::updatePosition();
-				for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
-					p->position = *_fields->_mainPlanePosition;
-			}
-			break;
-
-		case States::Open:
-			_wrapCoverTop -= HOLE_SPEED * elapsedTime;
-			if (_wrapCoverTop < -wndSz.height)
-			{
-				_state = States::Play;
-				_wrapAniWait = false;
-			}
-			break;
-		}
-
-		return;
-	}
-
-	if (_deathAniWait)
-	{
-		switch (_state)
-		{
-		case States::Close:
-			if (!_playDeathSound)
-			{
-				AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
-				_playDeathSound = true;
-			}
-
-			_holeRadius -= HOLE_SPEED * elapsedTime;
-			if (_holeRadius <= 0)
-			{
-				_state = States::Open;
-				_holeRadius = 0;
-				_playDeathSound = false;
-				player->backToLife();
-				
-				// update position of camera (because player position changed)
-				ActionPlane::resetObjects();
-				BaseEngine::Logic(elapsedTime);
-				for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
-					p->position = *_fields->_mainPlanePosition;
-			}
-			break;
-
-		case States::Open:
-			if (!_playDeathSound)
-			{
-				AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
-				_playDeathSound = true;
-			}
-
-			_holeRadius += HOLE_SPEED * elapsedTime;
-			if (initialHoleRadius < _holeRadius)
-			{
-				_state = States::Play;
-				_deathAniWait = false;
-				_playDeathSound = false;
-			}
-			break;
-
-		case States::Fall:
-			player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
-			player->Logic(0); // update position of animation
-			if (player->position.y - _fields->_mainPlanePosition->y > wndSz.height)
-			{
-				player->loseLife();
-				_state = States::Close;
-				_deathAniWait = true;
-				_holeRadius = initialHoleRadius;
-			}
-			break;
-		}
-		return;
-	}
-
-	if (_state == States::Play)
-	{
-		if (player->isFinishDeathAnimation() && player->hasLives())
-		{
-			if (player->isSpikeDeath())
-			{
-				_state = States::Close;
-				_holeRadius = initialHoleRadius;
-			}
-			else //if (player->isFallDeath())
-			{
-				_state = States::Fall;
-			}
-
-			_deathAniWait = true;
-			return;
-		}
-	}
-
-
-	BaseEngine::Logic(elapsedTime);
-
-	for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
-		p->position = *_fields->_mainPlanePosition;
-
-	if (player->isFinishLevel())
-	{
-		changeEngine<LevelEndEngine>(_fields->_wwd->levelNumber, player->getCollectedTreasures());
-	}
-	else if (!player->hasLives())
-	{
-		if (player->isFinishDeathAnimation())
-		{
-			_state = States::GameOver;
-			_gameOverTimeCounter = 1500;
-		}
+	default: break;
 	}
 }
 void ClawLevelEngine::Draw()
 {
 	BaseEngine::Draw();
 
-	if (_state == States::Close || _state == States::Open)
+	switch (_state)
 	{
-		if (_deathAniWait)
-			WindowManager::drawHole(player->position, _holeRadius);
-		else if (_wrapAniWait)
-			WindowManager::drawWrapCover(_wrapCoverTop);
-	}
-	else if (_state == States::GameOver)
-	{
+	case States::DeathClose:
+	case States::DeathOpen:
+		WindowManager::drawHole(player->position, _holeRadius);
+		break;
+
+	case States::WrapClose:
+	case States::WrapOpen:
+		WindowManager::drawWrapCover(_wrapCoverTop);
+		break;
+
+	case States::GameOver:
 		const D2D1_SIZE_F wndSz = WindowManager::getSize();
 		shared_ptr<UIBaseImage> img = AssetsManager::loadImage("GAME/IMAGES/MESSAGES/004.PID");
 		img->position.x = _fields->_mainPlanePosition->x + wndSz.width / 2;
 		img->position.y = _fields->_mainPlanePosition->y + wndSz.height / 2;
 		img->Draw();
+		break;
 	}
 }
 
@@ -357,37 +327,38 @@ void ClawLevelEngine::OnKeyUp(int key)
 
 	_fields->_cheatsManager->addKey(key);
 
-	if (key == VK_F1) // open help
+	switch (key)
 	{
+	case VK_F1: // open help
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_savePixelSize = WindowManager::PixelSize;
 		changeEngine<HelpScreenEngine>(_fields);
-	}
-	else if (key == VK_ESCAPE) // open pause menu
-	{
+		break;
+
+	case VK_ESCAPE:// open pause menu
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_savePixelSize = WindowManager::PixelSize;
 		changeEngine<MenuEngine>(_fields);
-	}
-	else if (key == VK_ADD)
-	{
+		break;
+
+	case VK_ADD:
 		if (WindowManager::PixelSize <= 3.5f)
 			WindowManager::PixelSize += 0.5f;
-	}
-	else if (key == VK_SUBTRACT)
-	{
+		break;
+
+	case VK_SUBTRACT:
 		if (WindowManager::PixelSize >= 1)
 			WindowManager::PixelSize -= 0.5f;
-	}
-	else if (key == VK_DIVIDE)
-	{
-		// set default resolution (640x480).
+		break;
+
+	case VK_DIVIDE: { // set default resolution (640x480).
 		D2D1_SIZE_F realSize = WindowManager::getRealSize();
 		WindowManager::PixelSize = min(realSize.width / 640, realSize.height / 480);
-	}
-	else
-	{
+	}	break;
+
+	default:
 		player->keyUp(key);
+		break;
 	}
 }
 void ClawLevelEngine::OnKeyDown(int key)
@@ -401,8 +372,7 @@ void ClawLevelEngine::playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp
 		&& player->position.x != destination.x  // without this check, CC will be warped twice to the same position
 		&& player->position.y != destination.y) // TODO: need to find better solution
 	{
-		instance->_wrapAniWait = true;
-		instance->_state = States::Close;
+		instance->_state = States::WrapClose;
 		instance->_wrapCoverTop = WindowManager::getSize().height;
 		instance->_wrapDestination = destination;
 		instance->_isBossWarp = isBossWarp;
