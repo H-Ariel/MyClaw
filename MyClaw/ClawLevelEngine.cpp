@@ -15,13 +15,21 @@
 
 
 ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
-	: _mainPlanePosition(nullptr), _hud(nullptr), _saveBgColor(0), _levelNumber(levelNumber), _savePixelSize(0)
+	: _mainPlanePosition(nullptr), _hud(nullptr), _saveBgColor(0), _savePixelSize(0)
 {
+	_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
+	for (shared_ptr<LevelPlane>& pln : _wwd->planes)
+		if (pln->isMainPlane())
+			_mainPlanePosition = &pln->position;
+	if (!_mainPlanePosition) throw Exception("no main plane found");
+	_hud = DBG_NEW LevelHUD(*_mainPlanePosition);
+	_cheatsManager = DBG_NEW CheatsManager();
 }
 ClawLevelEngineFields::~ClawLevelEngineFields()
 {
 	delete _hud;
-	AssetsManager::clearLevelAssets(_levelNumber);
+	delete _cheatsManager;
+	AssetsManager::clearLevelAssets(_wwd->levelNumber);
 }
 
 
@@ -29,32 +37,12 @@ ClawLevelEngine* instance = nullptr;
 
 
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
-	: _holeRadius(0), _deathAniWait(false), _playDeathSound(false),
-	_wrapAniWait(false), _state(States::Play),
-	_wrapDestination({}), _wrapCoverTop(0), _isBossWarp(false), _bossWarpX(0),
-	_gameOverTimeCounter(0)
 {
-	instance = this;
-
 	if (checkpoint != -1) // according to LevelLoadingEngine
 		ActionPlane::loadGame(levelNumber, checkpoint);
-
 	_fields = allocNewSharedPtr<ClawLevelEngineFields>(levelNumber);
 
-	_fields->_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
-	for (shared_ptr<LevelPlane>& pln : _fields->_wwd->planes)
-	{
-		if (pln->isMainPlane())
-			_fields->_mainPlanePosition = &pln->position;
-		_elementsList.push_back(pln.get());
-	}
-
-	if (_fields->_mainPlanePosition == nullptr) throw Exception("no main plane found");
-
-	_elementsList.push_back(_fields->_hud = DBG_NEW LevelHUD(*_fields->_mainPlanePosition));
-	WindowManager::setWindowOffset(_fields->_mainPlanePosition);
-
-	_fields->_cheatsManager.reset(DBG_NEW CheatsManager());
+	init();
 
 #ifdef _DEBUG
 //	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
@@ -156,19 +144,34 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 #endif
 }
 ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
-	: _fields(fields), _holeRadius(0), _deathAniWait(false),
-	_playDeathSound(false), _wrapAniWait(false), _state(States::Play),
-	_wrapDestination({}), _wrapCoverTop(0), _isBossWarp(false), _bossWarpX(0),
-	_gameOverTimeCounter(0)
+	: _fields(fields)
+{
+	WindowManager::setBackgroundColor(_fields->_saveBgColor);
+	WindowManager::PixelSize = _fields->_savePixelSize;
+
+	init();
+}
+
+void ClawLevelEngine::init()
 {
 	instance = this;
+
+	_holeRadius = 0;
+	_deathAniWait = false;
+	_playDeathSound = false;
+	_wrapAniWait = false;
+	_state = States::Play;
+	_wrapDestination = {};
+	_wrapCoverTop = 0;
+	_isBossWarp = false;
+	_bossWarpX = 0;
+	_gameOverTimeCounter = 0;
 
 	for (shared_ptr<LevelPlane>& pln : _fields->_wwd->planes)
 		_elementsList.push_back(pln.get());
 	_elementsList.push_back(_fields->_hud);
+
 	WindowManager::setWindowOffset(_fields->_mainPlanePosition);
-	WindowManager::setBackgroundColor(_fields->_saveBgColor);
-	WindowManager::PixelSize = _fields->_savePixelSize;
 }
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
@@ -316,7 +319,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 
 	if (player->isFinishLevel())
 	{
-		changeEngine<LevelEndEngine>(_fields->_levelNumber, player->getCollectedTreasures());
+		changeEngine<LevelEndEngine>(_fields->_wwd->levelNumber, player->getCollectedTreasures());
 	}
 	else if (!player->hasLives())
 	{

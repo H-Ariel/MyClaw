@@ -14,10 +14,9 @@ struct ClawLevelEngineFields
 	shared_ptr<WapWorld> _wwd;
 	D2D1_POINT_2F* _mainPlanePosition;
 	LevelHUD* _hud;
-	unique_ptr<CheatsManager> _cheatsManager;
+	CheatsManager* _cheatsManager;
 	ColorF _saveBgColor;
 	float _savePixelSize;
-	const int _levelNumber;
 };
 
 class ClawLevelEngine : public BaseEngine
@@ -35,6 +34,8 @@ public:
 	static void playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp, float bossWarpX);
 
 private:
+	void init(); // call this in each constructor
+
 	enum class States : int8_t {
 		Play,	// normal gameplay
 		Fall,	// CC falls out the window
