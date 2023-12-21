@@ -6,8 +6,8 @@ AudioManager::AudioManager(RezArchive* rezArchive)
 	: _rezArchive(rezArchive), _currBgMusicType(BackgroundMusicType::None)
 {
 	_midiPlayers[BackgroundMusicType::Powerup] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("GAME/MUSIC/POWERUP.XMI"));
+	_midiPlayers[BackgroundMusicType::Boss] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("LEVEL2/MUSIC/BOSS.XMI")); // every level with boss contains the same file, so we can use LEVEL2/BOSS.XMI for all levels
 	_midiPlayers[BackgroundMusicType::Credits] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("STATES/CREDITS/MUSIC/PLAY.XMI"));
-	_midiPlayers[BackgroundMusicType::Boss] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData("LEVEL2/MUSIC/BOSS.XMI"));
 }
 
 uint32_t AudioManager::playWavFile(const string& wavFilePath, bool infinite)
@@ -39,12 +39,18 @@ void AudioManager::setVolume(uint32_t wavFileId, int volume)
 		_wavPlayers[wavFileId]->setVolume(volume);
 }
 
-void AudioManager::clearLevelSounds()
+void AudioManager::clearLevelSounds(const string& prefix)
 {
 	stopBackgroundMusic();
 	_wavPlayers.clear();
 	_midiPlayers.erase(BackgroundMusicType::Level);
-	_wavDataCache.clear(); // TODO: clear only level sounds
+	for (auto i = _wavDataCache.begin(); i != _wavDataCache.end();)
+	{
+		if (contains(i->first, prefix))
+			i = _wavDataCache.erase(i);
+		else
+			++i;
+	}
 }
 void AudioManager::checkForRestart()
 {
@@ -61,7 +67,7 @@ void AudioManager::setBackgroundMusic(BackgroundMusicType type)
 		_bgMutex.lock();
 		if (type != _currBgMusicType)
 		{
-			if (type == BackgroundMusicType::Level)
+			if (type == BackgroundMusicType::Level && _midiPlayers.count(BackgroundMusicType::Level) == 0)
 			{
 				try {
 					_midiPlayers[BackgroundMusicType::Level] = allocNewSharedPtr<MidiPlayer>(_rezArchive->getFileData(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY")));
@@ -91,7 +97,6 @@ void AudioManager::stopBackgroundMusic()
 	if (_currBgMusic)
 		_currBgMusic->stop();
 	_currBgMusic = nullptr;
-	_midiPlayers.erase(BackgroundMusicType::Level);
 	_currBgMusicType = BackgroundMusicType::None;
 
 	_bgMutex.unlock();

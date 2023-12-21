@@ -1,9 +1,22 @@
 #include "WavPlayer.h"
 
 
-#define WAV_CALL(func) { MMRESULT mmResult; if ((mmResult = func) != MMSYSERR_NOERROR) WavError(mmResult); }
 #define WAV_VOLUME_MAX 0xFFFF
 
+#ifdef _DEBUG
+// writes the error message in the debuggers output window
+static void WAV_CALL(MMRESULT mmResult)
+{
+	if (mmResult != MMSYSERR_NOERROR)
+	{
+		char text[256];
+		waveOutGetErrorTextA(mmResult, text, sizeof(text));
+		DBG_PRINT("WaveError: %s\n", text);
+	}
+}
+#else
+#define WAV_CALL(func) func
+#endif
 
 inline DWORD make_dword(WORD hi, WORD lo)
 {
@@ -72,15 +85,6 @@ void WavPlayer::setVolume(int volume)
 	{
 		WAV_CALL(waveOutSetVolume(_wav, _volume));
 	}*/
-}
-
-void WavPlayer::WavError(MMRESULT mmResult)
-{
-#ifdef _DEBUG
-	char text[512];
-	waveOutGetErrorTextA(mmResult, text, sizeof(text));
-	DBG_PRINT("WaveError: %s\n", text);
-#endif
 }
 
 void WavPlayer::waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)

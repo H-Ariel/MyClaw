@@ -16,7 +16,7 @@ public:
 	uint32_t getWavFileDuration(uint32_t wavFileId);
 	void setVolume(uint32_t wavFileId, int volume); // set the volume. value range is [0,100]
 
-	void clearLevelSounds();
+	void clearLevelSounds(const string& prefix);
 	void checkForRestart();
 
 	enum class BackgroundMusicType

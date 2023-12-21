@@ -99,6 +99,15 @@ inline float getRandomFloat(float a, float b) { return (float)rand() / RAND_MAX 
 inline int getRandomInt(int a, int b) { return rand() % (b - a + 1) + a; }
 
 
+// reverses the bytes order of `t`
+template <class T>
+inline T reverseBytes(T t)
+{
+	uint8_t* ptr = (uint8_t*)(&t);
+	std::reverse(ptr, ptr + sizeof(T));
+	return t;
+}
+
 // check if `arr` contains `val`
 template <class ArrT, class ValT>
 inline bool FindInArray(ArrT arr, ValT val)

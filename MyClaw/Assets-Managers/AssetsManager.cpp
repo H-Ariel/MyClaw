@@ -148,7 +148,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 void AssetsManager::stopWavFile(uint32_t wavFileId) {}
 #endif
 
-#ifndef _DEBUG // if debug - no background music
+#ifndef _DEBUG0 // if debug - no background music
 void AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType type)
 {
 	//thread(&AudioManager::setBackgroundMusic, instance->_audioManager, type).detach();
@@ -181,7 +181,7 @@ void AssetsManager::clearLevelAssets(int lvl)
 		const string prefix = "LEVEL" + to_string(lvl);
 		instance->_imagesManager->clearLevelImages(prefix);
 		instance->_animationsManager->clearLevelAnimations(prefix);
-		instance->_audioManager->clearLevelSounds();
+		instance->_audioManager->clearLevelSounds(prefix);
 		Item::resetItemsPaths();
 		PathManager::resetPaths();
 	}

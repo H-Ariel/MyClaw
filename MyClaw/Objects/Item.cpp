@@ -441,7 +441,7 @@ string Item::getItemPath(Type type, const string& imageSet)
 		return PathManager::getImageSetPath(imageSet);
 	}
 
-	for (auto& i : ItemsMap)
+	for (const auto& i : ItemsMap)
 	{
 		if (i.second == type)
 		{

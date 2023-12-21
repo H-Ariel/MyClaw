@@ -23,8 +23,6 @@ public:
 
 
 private:
-	// writes the error message in the debuggers output window
-	static void WavError(MMRESULT mmResult);
 	static void CALLBACK waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
 
 

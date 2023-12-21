@@ -2,8 +2,6 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
-// TODO: This functions are same to TogglePeg. maybe we can combine them
-
 // FloorSpike ctor. The purpose of `doFloorSpikeCtor` flag is to save time in children classes
 FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
 	: BaseDamageObject(obj, 10), _startTimeDelay(0)

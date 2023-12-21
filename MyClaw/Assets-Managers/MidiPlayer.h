@@ -48,8 +48,6 @@ private:
 		uint32_t absolute_time;
 		uint8_t* data;
 		uint8_t event;
-
-		void print() const; // print the event data to the console
 	};
 
 	struct MidiTrack
