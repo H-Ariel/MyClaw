@@ -17,5 +17,5 @@ public:
 
 private:
 	UITextElement* _creditsTextElement;
-	const float _startY, _endY;
+	float _startY, _endY;
 };

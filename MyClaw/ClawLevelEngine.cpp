@@ -339,22 +339,24 @@ void ClawLevelEngine::OnKeyUp(int key)
 	switch (key)
 	{
 	case VK_F1: // open help
+		AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_savePixelSize = WindowManager::getPixelSize();
 		changeEngine<HelpScreenEngine>(_fields);
 		break;
 
 	case VK_ESCAPE:// open pause menu
+		AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_savePixelSize = WindowManager::getPixelSize();
 		changeEngine<MenuEngine>(_fields);
 		break;
 
-	case VK_ADD:
+	case VK_ADD: // zoom in
 		WindowManager::setPixelSize(WindowManager::getPixelSize() + 0.5f);
 		break;
 
-	case VK_SUBTRACT:
+	case VK_SUBTRACT: // zoom out
 		WindowManager::setPixelSize(WindowManager::getPixelSize() - 0.5f);
 		break;
 

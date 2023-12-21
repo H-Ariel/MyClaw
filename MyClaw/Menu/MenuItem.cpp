@@ -3,6 +3,9 @@
 #include "../GUI/WindowManager.h"
 
 
+#define PLAY_SELECT_SOUND AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV")
+
+
 MenuItem::MenuItem(const string& pcxPath, float xRatio, float yRatio,
 	function<void(MouseButtons)> onClick, MenuBackgroundImage* bgImg, ScreenEngine* parent)
 	: UIBaseButton(onClick, parent), UIBaseImage(*AssetsManager::loadImage(pcxPath)),
@@ -11,6 +14,12 @@ MenuItem::MenuItem(const string& pcxPath, float xRatio, float yRatio,
 	_sizeRatio = {
 		WindowManager::DEFAULT_WINDOW_SIZE.width / UIBaseImage::size.width,
 		WindowManager::DEFAULT_WINDOW_SIZE.height / UIBaseImage::size.height
+	};
+
+	_onClick2 = onClick; // save the original onClick function
+	this->onClick = [&](MouseButtons btn) { // override onClick function so it will play the select sound
+		PLAY_SELECT_SOUND;
+		_onClick2(btn);
 	};
 }
 

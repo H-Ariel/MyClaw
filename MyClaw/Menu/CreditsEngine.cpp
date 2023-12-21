@@ -3,11 +3,11 @@
 
 
 CreditsEngine::CreditsEngine()
-	: ScreenEngine("STATES/CREDITS/SCREENS/CREDITS.PCX"),
-	_startY(9800 / 480.f * _bgImg->size.height), // `480` is the original image height
-	_endY(-9600 / 480.f * _bgImg->size.height)
+	: ScreenEngine("STATES/CREDITS/SCREENS/CREDITS.PCX")
 {
-	_bgImg->Logic(0); // update _bgImg position
+	_bgImg->Logic(0); // update _bgImg position and size
+	_startY = 16.3f * _bgImg->size.height;
+	_endY = -15.3f * _bgImg->size.height;
 
 	string creditsText = "Claw - Rewritten by Ariel Halili\n\n" + AssetsManager::getCreditsText();
 	FontData font;
@@ -24,10 +24,7 @@ CreditsEngine::CreditsEngine()
 
 	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Credits);
 }
-CreditsEngine::~CreditsEngine()
-{
-	AssetsManager::stopBackgroundMusic();
-}
+CreditsEngine::~CreditsEngine() { AssetsManager::stopBackgroundMusic(); }
 
 void CreditsEngine::Logic(uint32_t elapsedTime)
 {
@@ -38,15 +35,6 @@ void CreditsEngine::Logic(uint32_t elapsedTime)
 	if (_creditsTextElement->position.y < _endY)
 		backToMenu();
 }
-void CreditsEngine::OnKeyUp(int key) 
-{
-	backToMenu(); 
-}
-void CreditsEngine::OnMouseButtonUp(MouseButtons btn) 
-{
-	backToMenu();
-}
-void CreditsEngine::OnResize() 
-{
-	backToMenu(); 
-}
+void CreditsEngine::OnKeyUp(int key) { backToMenu(); }
+void CreditsEngine::OnMouseButtonUp(MouseButtons btn) { backToMenu(); }
+void CreditsEngine::OnResize() { backToMenu(); }

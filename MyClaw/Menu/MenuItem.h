@@ -17,6 +17,7 @@ public:
 	void mulImageSizeRatio(float n); // multiply the size ratio by n
 
 private:
+	function<void(MouseButtons)> _onClick2;
 	D2D1_POINT_2F _posRatio;
 	D2D1_SIZE_F _sizeRatio;
 	MenuBackgroundImage* _bgImg;
