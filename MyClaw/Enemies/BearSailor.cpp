@@ -49,7 +49,8 @@ void BearSailor::makeAttack(float deltaX, float deltaY)
 			_isStanding = false;
 			_isAttack = true;
 			_isMirrored = player->position.x < position.x;
-			player->squeeze(position); // TODO: find perfec position and direction for CC
+			player->squeeze({ position.x + (_isMirrored ? -48 : 48), position.y - 8 }, !_isMirrored);
+			_attackRest = 1000;
 		}
 		else if (deltaX < 96) // CC is little far from enemy
 		{

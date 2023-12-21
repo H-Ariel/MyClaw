@@ -165,6 +165,7 @@ void Player::Logic(uint32_t elapsedTime)
 	if (isSqueezed())
 	{
 		_ani->position = position;
+		_ani->mirrored = _isMirrored;
 		_ani->Logic(elapsedTime);
 		return;
 	}
@@ -1231,17 +1232,16 @@ bool Player::checkForHurts()
 }
 
 #ifdef _DEBUG // in debug mode, player can move freely
-void Player::squeeze(D2D1_POINT_2F pos) {}
+void Player::squeeze(D2D1_POINT_2F pos, bool mirror) {}
 void Player::unsqueeze() {}
 #else
-void Player::squeeze(D2D1_POINT_2F pos)
+void Player::squeeze(D2D1_POINT_2F pos, bool mirror)
 {
 	if (_currPowerup == Item::Powerup_Invincibility)
 		return;
 
-	if (pos.x != 0 && pos.y != 0)
-		position = pos;
-
+	_isMirrored = mirror;
+	position = pos;
 	_ani = _animations[_aniName = "SQUEEZED"];
 	speed = {};
 

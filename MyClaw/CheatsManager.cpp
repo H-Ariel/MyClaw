@@ -1,5 +1,6 @@
 #include "CheatsManager.h"
 #include "ActionPlane.h"
+#include "Assets-Managers/MidiPlayer.h"
 #include "Objects/Item.h"
 
 
@@ -20,7 +21,10 @@ CheatsManager::CheatsManager()
 		{ FillMagic		, "MPGANDOLF"	, "Full Magic" },
 		{ FillDynamite	, "MPBLASTER"	, "Full Dynamite" },
 		{ FillLife		, "AHCAKE"		, "Full Life" },
-		{ FinishLevel	, "MPSCULLY"	, "Finish Level" }
+		{ FinishLevel	, "MPSCULLY"	, "Finish Level" },
+		{ BgMscSpeedUp	, "MPMAESTRO"	, "Time to speed things up!" },
+		{ BgMscSlowDown	, "MPLANGSAM"	, "Ready to slow things down?" },
+		{ BgMscNormal	, "MPNORMALMUSIC", "Back to normal..." }
 	})
 {
 	// The list of cheats, format: { type, keys, message }
@@ -53,6 +57,9 @@ void CheatsManager::addKey(int key)
 	case FillDynamite:
 	case FillLife:
 	case FinishLevel:		BasePlaneObject::player->cheat(type); break;
+	case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
+	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
+	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
 
 	default: break;
 	}

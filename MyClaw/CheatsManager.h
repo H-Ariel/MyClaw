@@ -20,7 +20,10 @@ public:
 		FillMagic,
 		FillDynamite,
 		FillLife,
-		FinishLevel
+		FinishLevel,
+		BgMscSpeedUp,
+		BgMscSlowDown,
+		BgMscNormal,
 	};
 
 	CheatsManager();

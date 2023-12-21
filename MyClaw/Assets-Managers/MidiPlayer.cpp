@@ -18,6 +18,7 @@ static void MIDI_CALL(MMRESULT mmResult)
 
 static const LARGE_INTEGER EMPTY_LARGE_INTEGER = {};
 
+float MidiPlayer::MusicSpeed = 1;
 HMIDIOUT MidiPlayer::_midiOut = nullptr;
 int MidiPlayer::_objCount = 0;
 LARGE_INTEGER MidiPlayer::PerformanceFrequency = {};
@@ -220,6 +221,7 @@ void MidiPlayer::usleep(int waitTime)
 {
 	if (waitTime != 0)
 	{
+		waitTime = int(waitTime / MusicSpeed);
 		LARGE_INTEGER time1, time2;
 		QueryPerformanceCounter(&time1);
 		do QueryPerformanceCounter(&time2); 

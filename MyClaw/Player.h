@@ -69,7 +69,7 @@ public:
 
 	void activateDialog(int32_t duration) { _dialogLeftTime = duration; }
 
-	void squeeze(D2D1_POINT_2F pos = {});
+	void squeeze(D2D1_POINT_2F pos, bool mirror = false);
 	void unsqueeze();
 
 	void cheat(int cheatType);

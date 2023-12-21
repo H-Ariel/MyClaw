@@ -23,6 +23,9 @@ public:
 	// reset the track of current midi-player
 	void reset();
 
+
+	static float MusicSpeed;
+
 private:
 #pragma pack(push, 1)
 
