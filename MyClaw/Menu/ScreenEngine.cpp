@@ -15,7 +15,7 @@ ScreenEngine::ScreenEngine(const string& bgPcxPath)
 
 	WindowManager::setWindowOffset(nullptr);
 	WindowManager::setBackgroundColor(ColorF::Black);
-	WindowManager::PixelSize = 1;
+	WindowManager::setPixelSize(1);
 }
 ScreenEngine::ScreenEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath)
 	: ScreenEngine(bgPcxPath)

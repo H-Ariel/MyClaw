@@ -6,6 +6,7 @@
 #include "Menu/HelpScreenEngine.h"
 #include "Menu/LevelEndEngine.h"
 #include "Menu/MenuEngine.h"
+#include "Objects/Item.h"
 
 
 #define SCREEN_SPEED 0.5f // speed of the screen when CC is died or teleported
@@ -33,14 +34,12 @@ ClawLevelEngineFields::~ClawLevelEngineFields()
 }
 
 
-ClawLevelEngine* instance = nullptr;
-
-
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 {
 	if (checkpoint != -1) // according to LevelLoadingEngine
 		ActionPlane::loadGame(levelNumber, checkpoint);
 	_fields = allocNewSharedPtr<ClawLevelEngineFields>(levelNumber);
+	WindowManager::setDefaultPixelSize();
 
 	init();
 
@@ -64,7 +63,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 593, 4086 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 17044, 3062 };
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 4596, 3958 };
-//	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
+	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
 
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
@@ -147,15 +146,13 @@ ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
 	: _fields(fields)
 {
 	WindowManager::setBackgroundColor(_fields->_saveBgColor);
-	WindowManager::PixelSize = _fields->_savePixelSize;
+	WindowManager::setPixelSize(_fields->_savePixelSize);
 
 	init();
 }
 
 void ClawLevelEngine::init()
 {
-	instance = this;
-
 	_holeRadius = 0;
 	_state = States::Play;
 	_wrapDestination = {};
@@ -173,8 +170,8 @@ void ClawLevelEngine::init()
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
-	const D2D1_SIZE_F wndSz = WindowManager::getSize();
-	const float initialHoleRadius = max(wndSz.width, wndSz.height) * WindowManager::PixelSize / 2;
+	const D2D1_SIZE_F wndRealSz = WindowManager::getRealSize();
+	const float initialHoleRadius = max(wndRealSz.width, wndRealSz.height) / 2;
 
 	switch (_state)
 	{
@@ -210,6 +207,18 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 					_state = States::GameOver;
 				}
 			}
+			else if (Warp::DestinationWarp)
+			{
+				_state = States::WrapClose;
+				_wrapCoverTop = WindowManager::getSize().height;
+				_wrapDestination = Warp::DestinationWarp->getDestination();
+				_isBossWarp = Warp::DestinationWarp->isBossWarp();
+				_bossWarpX = Warp::DestinationWarp->position.x;
+				
+				if (Warp::DestinationWarp->removeObject)
+					delete Warp::DestinationWarp; // ActionPlane didn't delete it for this case, so we need delete it here :)
+				Warp::DestinationWarp = nullptr; // reset
+			}
 		}
 		break;
 
@@ -217,7 +226,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	case ClawLevelEngine::States::DeathFall:
 		player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
 		player->Logic(0); // update position of animation
-		if (player->position.y - _fields->_mainPlanePosition->y > wndSz.height)
+		if (player->position.y - _fields->_mainPlanePosition->y > WindowManager::getSize().height)
 		{
 			player->loseLife();
 			_holeRadius = initialHoleRadius;
@@ -276,7 +285,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 
 	case ClawLevelEngine::States::WrapOpen:
 		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
-		if (_wrapCoverTop < -wndSz.height)
+		if (_wrapCoverTop < -WindowManager::getSize().height)
 			_state = States::Play;
 		break;
 
@@ -331,30 +340,27 @@ void ClawLevelEngine::OnKeyUp(int key)
 	{
 	case VK_F1: // open help
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
-		_fields->_savePixelSize = WindowManager::PixelSize;
+		_fields->_savePixelSize = WindowManager::getPixelSize();
 		changeEngine<HelpScreenEngine>(_fields);
 		break;
 
 	case VK_ESCAPE:// open pause menu
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
-		_fields->_savePixelSize = WindowManager::PixelSize;
+		_fields->_savePixelSize = WindowManager::getPixelSize();
 		changeEngine<MenuEngine>(_fields);
 		break;
 
 	case VK_ADD:
-		if (WindowManager::PixelSize <= 3.5f)
-			WindowManager::PixelSize += 0.5f;
+		WindowManager::setPixelSize(WindowManager::getPixelSize() + 0.5f);
 		break;
 
 	case VK_SUBTRACT:
-		if (WindowManager::PixelSize >= 1)
-			WindowManager::PixelSize -= 0.5f;
+		WindowManager::setPixelSize(WindowManager::getPixelSize() - 0.5f);
 		break;
 
-	case VK_DIVIDE: { // set default resolution (640x480).
-		D2D1_SIZE_F realSize = WindowManager::getRealSize();
-		WindowManager::PixelSize = min(realSize.width / 640, realSize.height / 480);
-	}	break;
+	case VK_DIVIDE:
+		WindowManager::setDefaultPixelSize();
+		break;
 
 	default:
 		player->keyUp(key);
@@ -366,16 +372,7 @@ void ClawLevelEngine::OnKeyDown(int key)
 	player->keyDown(key);
 }
 
-void ClawLevelEngine::playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp, float bossWarpX)
+void ClawLevelEngine::OnResize()
 {
-	if (instance
-		&& player->position.x != destination.x  // without this check, CC will be warped twice to the same position
-		&& player->position.y != destination.y) // TODO: need to find better solution
-	{
-		instance->_state = States::WrapClose;
-		instance->_wrapCoverTop = WindowManager::getSize().height;
-		instance->_wrapDestination = destination;
-		instance->_isBossWarp = isBossWarp;
-		instance->_bossWarpX = bossWarpX;
-	}
+	WindowManager::setDefaultPixelSize();
 }

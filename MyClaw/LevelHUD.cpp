@@ -39,7 +39,7 @@ void LevelHUD::Draw()
 {
 	D2D1_POINT_2F pos = {};
 	D2D1_SIZE_F wndSz = WindowManager::getSize();
-	const float winWidth = wndSz.width - 15 / WindowManager::PixelSize;
+	const float winWidth = wndSz.width - 15 / WindowManager::getPixelSize();
 	pos.y = 20 + _offset.y;
 
 	_chest->position = { 20 + _offset.x, pos.y };

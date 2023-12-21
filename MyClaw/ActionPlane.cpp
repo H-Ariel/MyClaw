@@ -171,6 +171,12 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 				eraseByValue(_powderKegs, obj);
 			else if (isbaseinstance<BaseDamageObject>(obj))
 				eraseByValue(_damageObjects, obj);
+			else if (isinstance<Warp>(obj) && obj == Warp::DestinationWarp)
+			{
+				_objects.erase(_objects.begin() + i);
+				i--; // cancel `i++`
+				continue; // we don't delete so ClawLevelEngine can use it
+			}
 
 			delete obj;
 			_objects.erase(_objects.begin() + i);

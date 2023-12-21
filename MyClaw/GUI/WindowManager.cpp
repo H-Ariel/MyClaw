@@ -13,19 +13,29 @@ bool operator<(ColorF a, ColorF b) { return memcmp(&a, &b, sizeof(ColorF)) < 0; 
 bool operator==(ColorF a, ColorF b) { return memcmp(&a, &b, sizeof(ColorF)) == 0; }
 
 
-float WindowManager::PixelSize = 1; // min value: 1 // TODO: rename to `WindowScale`
-const D2D1_SIZE_F WindowManager::DEFAULT_WINDOW_SIZE = { 800.f, 600.f };
+const D2D1_SIZE_F WindowManager::DEFAULT_WINDOW_SIZE = { 640, 480 };
 WindowManager* WindowManager::instance = nullptr;
 
 
-WindowManager::WindowManager(const TCHAR WindowClassName[], void* lpParam)
-	: _backgroundColor(0)
+static void mulPixelSize(Rectangle2D& rc)
 {
+	float p = WindowManager::getPixelSize();
+	rc.top *= p;
+	rc.bottom *= p;
+	rc.left *= p;
+	rc.right *= p;
+}
+
+
+WindowManager::WindowManager(const TCHAR WindowClassName[], void* lpParam)
+	: _windowOffset(&defaultWindowOffset), _backgroundColor(0),
+	_camSize(DEFAULT_WINDOW_SIZE), _realSize(DEFAULT_WINDOW_SIZE), _PixelSize(1)
+{
+	//_PixelSize = 1; // min value: 1 // TODO: rename to `WindowScale`
+
 	_d2dFactory = nullptr;
 	_dWriteFactory = nullptr;
 	_renderTarget = nullptr;
-	_windowOffset = &defaultWindowOffset;
-	_realSize = DEFAULT_WINDOW_SIZE;
 
 	_hWnd = CreateWindow(WindowClassName, L"", WS_OVERLAPPEDWINDOW, 100, 100, (int)_realSize.width, (int)_realSize.height, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
 	if (!_hWnd) throw Exception("Failed to create window");
@@ -58,7 +68,7 @@ void WindowManager::Finalize()
 	}
 }
 
-void WindowManager::setTitle(const string& title) 
+void WindowManager::setTitle(const string& title)
 {
 	SetWindowText(instance->_hWnd, wstring(title.begin(), title.end()).c_str());
 }
@@ -69,25 +79,27 @@ void WindowManager::setWindowOffset(const D2D1_POINT_2F* offset)
 	else
 		instance->_windowOffset = &defaultWindowOffset;
 }
-void WindowManager::setBackgroundColor(ColorF bgColor) 
+void WindowManager::setBackgroundColor(ColorF bgColor) { instance->_backgroundColor = bgColor; }
+ColorF WindowManager::getBackgroundColor() { return instance->_backgroundColor; }
+D2D1_SIZE_F WindowManager::getSize() { return instance->_camSize; }
+D2D1_SIZE_F WindowManager::getRealSize() { return instance->_realSize; }
+HWND WindowManager::getHwnd() { return instance->_hWnd; }
+
+void WindowManager::setPixelSize(float pixelSize)
 {
-	instance->_backgroundColor = bgColor; 
+	if (pixelSize > 3.5f) pixelSize = 3.5f;
+	else if (pixelSize < 1) pixelSize = 1;
+
+	instance->_PixelSize = pixelSize;
+	instance->_camSize = { instance->_realSize.width / pixelSize, instance->_realSize.height / pixelSize };
 }
-ColorF WindowManager::getBackgroundColor()
+float WindowManager::getPixelSize() { return instance->_PixelSize; }
+void WindowManager::setDefaultPixelSize()
 {
-	return instance->_backgroundColor; 
-}
-D2D1_SIZE_F WindowManager::getSize() 
-{
-	return { instance->_realSize.width / PixelSize, instance->_realSize.height / PixelSize };
-}
-D2D1_SIZE_F WindowManager::getRealSize() 
-{ 
-	return instance->_realSize;
-}
-HWND WindowManager::getHwnd() 
-{ 
-	return instance->_hWnd;
+	setPixelSize(min(
+		instance->_realSize.width / DEFAULT_WINDOW_SIZE.width,
+		instance->_realSize.height / DEFAULT_WINDOW_SIZE.height
+	));
 }
 
 bool WindowManager::isInScreen(Rectangle2D rc)
@@ -100,6 +112,7 @@ void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
 	if (instance && instance->_renderTarget)
 	{
 		instance->_realSize = { (float)newSize.width, (float)newSize.height };
+		instance->_camSize = { newSize.width / instance->_PixelSize, newSize.height / instance->_PixelSize };
 		instance->_renderTarget->Resize(newSize);
 	}
 }
@@ -117,14 +130,10 @@ void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)
 {
 	if (!_isInScreen(dst)) return;
 
-	ID2D1SolidColorBrush* brush = nullptr;
-	brush = getBrush(color);
+	ID2D1SolidColorBrush* brush = getBrush(color);
 	if (brush)
 	{
-		dst.top *= PixelSize;
-		dst.bottom *= PixelSize;
-		dst.left *= PixelSize;
-		dst.right *= PixelSize;
+		mulPixelSize(dst);
 		instance->_renderTarget->DrawRectangle(dst, brush, width);
 	}
 }
@@ -139,10 +148,7 @@ void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
 	ID2D1SolidColorBrush* brush = getBrush(color);
 	if (brush)
 	{
-		dst.top *= PixelSize;
-		dst.bottom *= PixelSize;
-		dst.left *= PixelSize;
-		dst.right *= PixelSize;
+		mulPixelSize(dst);
 		instance->_renderTarget->FillRectangle(dst, brush);
 	}
 }
@@ -154,10 +160,7 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 {
 	if (!_isInScreen(dst) || bitmap == nullptr) return;
 
-	dst.top *= PixelSize;
-	dst.bottom *= PixelSize;
-	dst.left *= PixelSize;
-	dst.right *= PixelSize;
+	mulPixelSize(dst);
 
 	if (mirrored)
 	{
@@ -201,8 +204,8 @@ void WindowManager::drawHole(D2D1_POINT_2F center, float radius)
 	ID2D1Geometry* groupItems[2] = {};
 	ID2D1SolidColorBrush* brush = nullptr;
 
-	center.x = (center.x - instance->_windowOffset->x) * PixelSize;
-	center.y = (center.y - instance->_windowOffset->y) * PixelSize;
+	center.x = (center.x - instance->_windowOffset->x) * instance->_PixelSize;
+	center.y = (center.y - instance->_windowOffset->y) * instance->_PixelSize;
 	instance->_d2dFactory->CreateEllipseGeometry(Ellipse(center, radius, radius), &hole);
 	instance->_d2dFactory->CreateRectangleGeometry(RectF(instance->_realSize.width, instance->_realSize.height), &background);
 	if (!hole || !background) goto end;
@@ -228,9 +231,8 @@ void WindowManager::drawWrapCover(float top)
 	ID2D1SolidColorBrush* brush = getBrush(ColorF::Black);
 	if (brush)
 	{
-		D2D1_SIZE_F wndSz = instance->_realSize;
-		top *= PixelSize;
-		instance->_renderTarget->FillRectangle(RectF(0, top, wndSz.width, top + wndSz.height), brush);
+		top *= instance->_PixelSize;
+		instance->_renderTarget->FillRectangle(RectF(0, top, instance->_realSize.width, top + instance->_realSize.height), brush);
 	}
 }
 
@@ -288,6 +290,7 @@ IDWriteTextFormat* WindowManager::createTextFormat(const FontData& font)
 	return textFormat;
 }
 
+// remove the window-offset from `rc` and return if it's in the window area
 bool WindowManager::_isInScreen(Rectangle2D& rc)
 {
 	rc.top -= instance->_windowOffset->y;
@@ -295,6 +298,5 @@ bool WindowManager::_isInScreen(Rectangle2D& rc)
 	rc.left -= instance->_windowOffset->x;
 	rc.right -= instance->_windowOffset->x;
 
-	const D2D1_SIZE_F wndSz = getSize();
-	return (0 <= rc.right && rc.left < wndSz.width && 0 <= rc.bottom && rc.top < wndSz.height);
+	return (0 <= rc.right && rc.left < instance->_camSize.width && 0 <= rc.bottom && rc.top < instance->_camSize.height);
 }

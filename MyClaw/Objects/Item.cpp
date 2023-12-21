@@ -2,7 +2,6 @@
 #include "../Assets-Managers/AssetsManager.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
-#include "../ClawLevelEngine.h"
 
 
 const initializer_list<Item::Type> Item::UpdateFramesTypes = {
@@ -87,36 +86,7 @@ const map<string, Item::Type> Item::ItemsMap = {
 	{ "LEVEL_GEM", NineLivesGem }
 };
 map<string, string> Item::ItemsPaths;
-
-string Item::getItemPath(Type type, const string& imageSet)
-{
-	if (type == Type::Warp)
-	{
-		// because we have WARP and VERTWARP
-		return PathManager::getImageSetPath(imageSet);
-	}
-
-	for (auto& i : ItemsMap)
-	{
-		if (i.second == type)
-		{
-			if (ItemsPaths.count(i.first) == 0)
-			{
-				if (i.first == "LEVEL_HEALTH" || i.first == "GAME_HEALTH_BREADWATER")
-				{
-					ItemsPaths[i.first] = PathManager::getImageSetPath("LEVEL_HEALTH");
-				}
-				else
-				{
-					ItemsPaths[i.first] = PathManager::getImageSetPath(i.first);
-				}
-			}
-			return ItemsPaths[i.first];
-		}
-	}
-
-	return "";
-}
+const Warp* Warp::DestinationWarp = nullptr;
 
 
 Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
@@ -463,6 +433,35 @@ void Item::resetItemsPaths()
 	ItemsPaths.erase("LEVEL_HEALTH");
 	ItemsPaths.erase("GAME_HEALTH_BREADWATER");
 }
+string Item::getItemPath(Type type, const string& imageSet)
+{
+	if (type == Type::Warp)
+	{
+		// because we have WARP and VERTWARP
+		return PathManager::getImageSetPath(imageSet);
+	}
+
+	for (auto& i : ItemsMap)
+	{
+		if (i.second == type)
+		{
+			if (ItemsPaths.count(i.first) == 0)
+			{
+				if (i.first == "LEVEL_HEALTH" || i.first == "GAME_HEALTH_BREADWATER")
+				{
+					ItemsPaths[i.first] = PathManager::getImageSetPath("LEVEL_HEALTH");
+				}
+				else
+				{
+					ItemsPaths[i.first] = PathManager::getImageSetPath(i.first);
+				}
+			}
+			return ItemsPaths[i.first];
+		}
+	}
+
+	return "";
+}
 
 
 Warp::Warp(const WwdObject& obj, int8_t type)
@@ -475,6 +474,6 @@ void Warp::Logic(uint32_t elapsedTime)
 	{
 		removeObject = _oneTimeWarp;
 		playItemSound();
-		ClawLevelEngine::playerEnterWarp(_destination, _type == Type::BossWarp, position.x); // draw the warp transition animation
+		DestinationWarp = this; // set the destination warp so ClawLevelEngine can teleport the player to it
 	}
 }

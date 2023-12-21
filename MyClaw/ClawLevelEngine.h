@@ -31,7 +31,7 @@ public:
 	void OnKeyUp(int key) override;
 	void OnKeyDown(int key) override;
 
-	static void playerEnterWarp(D2D1_POINT_2F destination, bool isBossWarp, float bossWarpX);
+	void OnResize() override;
 
 private:
 	void init(); // call this in each constructor

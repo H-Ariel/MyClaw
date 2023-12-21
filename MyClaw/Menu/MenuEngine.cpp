@@ -196,7 +196,9 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const s
 			break;
 		}
 
-		_elementsList.push_back((UIBaseImage*)(DBG_NEW MenuItem(m.pcxPath, m.xRatio, m.yRatio, onClick, _bgImg, this)));
+		MenuItem* itm = (DBG_NEW MenuItem(m.pcxPath, m.xRatio, m.yRatio, onClick, _bgImg, this));
+		itm->mulImageSizeRatio(1.25f); // magic number to fit image to screen size
+		_elementsList.push_back((UIBaseImage*)itm);
 	}
 
 	if (_cursor)

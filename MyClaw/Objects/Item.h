@@ -116,6 +116,12 @@ public:
 	Warp(const WwdObject& obj, int8_t type);
 	void Logic(uint32_t elapsedTime) override;
 
+	bool isBossWarp() const { return _type == Type::BossWarp; }
+	D2D1_POINT_2F getDestination() const { return _destination; }
+
+	// the warp player will be teleported to
+	static const Warp* DestinationWarp;
+
 private:
 	const D2D1_POINT_2F _destination;
 	const bool _oneTimeWarp; // flag to determine whether to delete an object after using it

@@ -18,6 +18,10 @@ public:
 	static D2D1_SIZE_F getRealSize();
 	static HWND getHwnd();
 
+	static void setPixelSize(float pixelSize);
+	static float getPixelSize();
+	static void setDefaultPixelSize(); // fit pixel size to default resolution (640x480)
+
 	static bool isInScreen(Rectangle2D rc); // return if `rc` is in the window area
 
 	static void resizeRenderTarget(D2D1_SIZE_U newSize);
@@ -40,14 +44,12 @@ public:
 	static IDWriteTextFormat* createTextFormat(const FontData& font);
 	
 
-	static float PixelSize;
 	static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE;
 
 private:
 	static void drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width);
 	static void fillRect(Rectangle2D dst, D2D1_COLOR_F color);
 	static ID2D1SolidColorBrush* getBrush(D2D1_COLOR_F color);
-
 	static bool _isInScreen(Rectangle2D& rc); // return if `rc` is in the window area and subtracts the window-offset from it
 
 	static WindowManager* instance;
@@ -64,4 +66,6 @@ private:
 	const D2D1_POINT_2F* _windowOffset;
 	ColorF _backgroundColor;
 	D2D1_SIZE_F _realSize;
+	D2D1_SIZE_F _camSize; // camera size (according to the screen size and PixelSize)
+	float _PixelSize;
 };
