@@ -14,6 +14,7 @@
 LeRauxe::LeRauxe(const WwdObject& obj)
 	: BaseBoss(obj, "KILLFALL")
 {
+	_ani = ANIMATION_WALK;
 }
 
 void LeRauxe::Logic(uint32_t elapsedTime)

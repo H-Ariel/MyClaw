@@ -3,9 +3,6 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
-// TODO: try do not get WwdObject in ctor
-
-
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir)
 	: Projectile(obj, PathManager::getImageSetPath(projectileAniDir)) {}
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAni, const string& imageSet)

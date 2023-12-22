@@ -66,7 +66,7 @@
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
 
 #ifdef _DEBUG
-//#undef LOW_DETAILS
+#undef LOW_DETAILS
 #define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
@@ -156,7 +156,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		if (obj->removeObject)
 		{
 			if (isbaseinstance<BaseEnemy>(obj))
+			{
 				eraseByValue(_enemies, obj);
+				if (isbaseinstance<BaseBoss>(obj))
+					_boss = nullptr;
+			}
 			else if (isbaseinstance<Projectile>(obj))
 			{
 				if (isinstance<Stalactite>(obj))
