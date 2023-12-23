@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UIBaseImage.h"
-#include "../Assets-Managers/RezArchive.h"
+#include "../GUI/UIBaseImage.h"
+#include "RezArchive.h"
 
 
 class Animation : public UIBaseElement

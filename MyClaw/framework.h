@@ -12,7 +12,7 @@
 	#include <crtdbg.h>
 	#define DBG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 
-	#define LOW_DETAILS		// cancel the `...Candy` objects, treasures glitter, front plane, sounds, etc.
+	#define LOW_DETAILS		// avoid usage of treasures glitter, front plane, sounds, some objects, etc.
 #else
 	#define DBG_NEW new // do not check for memory leaks
 #endif

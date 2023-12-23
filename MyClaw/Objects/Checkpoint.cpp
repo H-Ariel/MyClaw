@@ -2,7 +2,6 @@
 #include "../ActionPlane.h"
 #include "../Player.h"
 #include "../SavedGameManager.h"
-#include "../Assets-Managers/AssetsManager.h"
 
 
 Checkpoint::Checkpoint(const WwdObject& obj, int levelNumber)

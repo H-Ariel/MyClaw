@@ -1,6 +1,4 @@
 #include "Stalactite.h"
-#include "../Assets-Managers/AssetsManager.h"
-#include "../Assets-Managers/PathManager.h"
 #include "../Player.h"
 
 

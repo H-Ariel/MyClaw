@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GUI/Animation.h"
-#include "Assets-Managers/WwdFile.h"
+#include "Assets-Managers/AssetsManager.h"
+
 
 #define GRAVITY 2048e-6f //(2.048f/1000)
 

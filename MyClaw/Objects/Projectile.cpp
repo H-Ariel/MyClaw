@@ -1,5 +1,4 @@
 #include "Projectile.h"
-#include "../Assets-Managers/AssetsManager.h"
 #include "ClawProjectile.h"
 #include "EnemyProjectile.h"
 

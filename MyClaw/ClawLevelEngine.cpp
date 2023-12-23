@@ -1,7 +1,6 @@
 #include "ClawLevelEngine.h"
 #include "ActionPlane.h"
 #include "CheatsManager.h"
-#include "Assets-Managers/AssetsManager.h"
 #include "GUI/WindowManager.h"
 #include "Menu/HelpScreenEngine.h"
 #include "Menu/LevelEndEngine.h"

@@ -1,6 +1,5 @@
 #include "ConveyorBelt.h"
 #include "../Player.h"
-#include "../Assets-Managers/AssetsManager.h"
 
 
 #define ANIMATION_DURATION 100 // TODO: find perfect value (calc from speed)

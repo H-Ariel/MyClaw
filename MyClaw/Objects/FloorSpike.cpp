@@ -1,5 +1,4 @@
 #include "FloorSpike.h"
-#include "../Assets-Managers/AssetsManager.h"
 
 
 // FloorSpike ctor. The purpose of `doFloorSpikeCtor` flag is to save time in children classes

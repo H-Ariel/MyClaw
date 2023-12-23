@@ -1,6 +1,5 @@
 #include "EnemyProjectile.h"
 #include "../ActionPlane.h"
-#include "../Assets-Managers/AssetsManager.h"
 
 
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir)

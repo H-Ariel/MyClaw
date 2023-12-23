@@ -2,7 +2,6 @@
 #include "ActionPlane.h"
 #include "BaseEnemy.h"
 #include "CheatsManager.h"
-#include "Assets-Managers/AssetsManager.h"
 #include "Objects/EnemyProjectile.h"
 #include "Objects/LavaMouth.h"
 #include "Objects/Rope.h"

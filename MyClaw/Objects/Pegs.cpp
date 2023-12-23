@@ -1,5 +1,4 @@
 #include "Pegs.h"
-#include "../Assets-Managers/AssetsManager.h"
 
 
 void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<Animation> ani)

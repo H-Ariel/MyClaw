@@ -1,4 +1,4 @@
-#include "../Assets-Managers/AssetsManager.h"
+#include "AssetsManager.h"
 
 
 Animation::FrameData::FrameData(const string& pidPath, uint32_t duration, const string& soundFilePath)

@@ -1,5 +1,4 @@
 #include "ClawProjectile.h"
-#include "../Assets-Managers/AssetsManager.h"
 
 
 ClawProjectile* ClawProjectile::createNew(Types type, const WwdObject& data)

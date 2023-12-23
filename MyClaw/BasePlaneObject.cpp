@@ -1,7 +1,6 @@
 #include "BasePlaneObject.h"
 #include "PhysicsManager.h"
 #include "Player.h"
-#include "Assets-Managers/AssetsManager.h"
 
 
 shared_ptr<Player> BasePlaneObject::player;

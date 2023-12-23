@@ -1,5 +1,4 @@
 #include "LavaMouth.h"
-#include "../Assets-Managers/AssetsManager.h"
 
 
 LavaMouth::LavaMouth(const WwdObject& obj)

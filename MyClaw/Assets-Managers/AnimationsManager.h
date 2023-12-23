@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../GUI/Animation.h"
+#include "Animation.h"
 
 
 class AnimationsManager

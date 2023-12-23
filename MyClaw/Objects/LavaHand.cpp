@@ -1,7 +1,5 @@
 #include "LavaHand.h"
 #include "../ActionPlane.h"
-#include "../Assets-Managers/AssetsManager.h"
-#include "../Assets-Managers/PathManager.h"
 #include "../Objects/EnemyProjectile.h"
 
 

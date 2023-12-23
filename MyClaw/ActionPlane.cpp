@@ -3,7 +3,6 @@
 #include "PhysicsManager.h"
 #include "GUI/WindowManager.h"
 #include "GUI/ActionPlaneMessage.h"
-#include "Assets-Managers/AssetsManager.h"
 #include "Objects/Checkpoint.h"
 #include "Objects/Elevator.h"
 #include "Objects/Crate.h"

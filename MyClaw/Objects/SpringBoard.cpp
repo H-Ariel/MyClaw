@@ -1,6 +1,5 @@
 #include "SpringBoard.h"
 #include "../Player.h"
-#include "../Assets-Managers/AssetsManager.h"
 
 
 SpringBoard::SpringBoard(const WwdObject& obj, int levelNumber)

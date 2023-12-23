@@ -253,9 +253,6 @@
     <ClCompile Include="Enemies\TigerGuard.cpp">
       <Filter>Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Animation.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="GUI\Rectangle2D.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -321,6 +318,9 @@
     </ClCompile>
     <ClCompile Include="Objects\LavaHand.cpp">
       <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\Animation.cpp">
+      <Filter>Assets-Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -549,9 +549,6 @@
     <ClInclude Include="Enemies\TigerGuard.h">
       <Filter>Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Animation.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="GUI\Rectangle2D.h">
       <Filter>GUI</Filter>
     </ClInclude>
@@ -617,6 +614,9 @@
     </ClInclude>
     <ClInclude Include="Objects\LavaHand.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\Animation.h">
+      <Filter>Assets-Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../GUI/Animation.h"
+#include "../Assets-Managers/Animation.h"
 #include "HierarchicalMenu.h"
 #include "ScreenEngine.h"
 

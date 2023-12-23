@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActionPlane.cpp" />
+    <ClCompile Include="Assets-Managers\Animation.cpp" />
     <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
     <ClCompile Include="Assets-Managers\AssetsManager.cpp" />
     <ClCompile Include="Assets-Managers\AudioManager.cpp" />
@@ -197,7 +198,6 @@
     <ClCompile Include="EnemyHelp.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
     <ClCompile Include="GUI\ActionPlaneMessage.cpp" />
-    <ClCompile Include="GUI\Animation.cpp" />
     <ClCompile Include="GUI\Rectangle2D.cpp" />
     <ClCompile Include="GUI\UIBaseButton.cpp" />
     <ClCompile Include="GUI\UIBaseElement.cpp" />
@@ -249,6 +249,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h" />
+    <ClInclude Include="Assets-Managers\Animation.h" />
     <ClInclude Include="Assets-Managers\AnimationsManager.h" />
     <ClInclude Include="Assets-Managers\AssetsManager.h" />
     <ClInclude Include="Assets-Managers\AudioManager.h" />
@@ -298,7 +299,6 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameMainApp.h" />
     <ClInclude Include="GUI\ActionPlaneMessage.h" />
-    <ClInclude Include="GUI\Animation.h" />
     <ClInclude Include="GUI\Rectangle2D.h" />
     <ClInclude Include="GUI\UIBaseButton.h" />
     <ClInclude Include="GUI\UIBaseElement.h" />

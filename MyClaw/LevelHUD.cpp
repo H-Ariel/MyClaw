@@ -1,5 +1,4 @@
 #include "LevelHUD.h"
-#include "Assets-Managers/AssetsManager.h"
 #include "GUI/WindowManager.h"
 #include "ActionPlane.h"
 

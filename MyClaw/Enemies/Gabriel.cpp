@@ -1,6 +1,5 @@
 #include "Gabriel.h"
 #include "../Player.h"
-#include "../Assets-Managers/AssetsManager.h"
 #include "../ActionPlane.h"
 #include "RedTailPirate.h"
 #include "../Objects/EnemyProjectile.h"

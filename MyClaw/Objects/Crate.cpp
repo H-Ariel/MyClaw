@@ -1,7 +1,6 @@
 #include "Crate.h"
 #include "EnemyProjectile.h"
 #include "../Player.h"
-#include "../Assets-Managers/AssetsManager.h"
 #include "../ActionPlane.h"
 
 #define CRATE_HEIGHT 43
