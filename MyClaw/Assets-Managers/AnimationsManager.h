@@ -18,6 +18,8 @@ public:
 	void clearLevelAnimations(const string& prefix);
 
 private:
+	vector<Animation::FrameData*> getAnimationImages(const string& aniPath, const string& _imageSetPath);
+
 	map<string, shared_ptr<Animation>> _loadedAnimations;
 	map<string, map<string, shared_ptr<Animation>>> _savedAniDirs;
 	RezArchive* _rezArchive;

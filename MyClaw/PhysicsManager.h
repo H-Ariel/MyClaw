@@ -17,10 +17,4 @@ public:
 
 private:
 	vector<pair<Rectangle2D, uint32_t>> _rects; // { rc, WwdTileDescription::WwdTileAttributeFlags }
-
-	// TODO: save `const LevelPlane* plane`, not these fields
-
-	vector<vector<int32_t>> tiles; // tiles[y][x] = id
-	vector<WwdTileDescription> tilesDescription; // [id]=description
-	const int tilesOnAxisX, tilesOnAxisY;
 };

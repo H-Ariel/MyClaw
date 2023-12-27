@@ -28,11 +28,9 @@ shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, co
 	{
 		try
 		{
-			shared_ptr<Animation> ani(DBG_NEW Animation(_rezArchive, aniPath, imageSetPath));
+			shared_ptr<Animation> ani(DBG_NEW Animation(getAnimationImages(aniPath, imageSetPath)));
 			if (!save)
-			{
 				return ani;
-			}
 			_loadedAnimations[k] = ani;
 		}
 		catch (const Exception& ex)
@@ -163,7 +161,6 @@ void AnimationsManager::callAnimationsLogic(uint32_t elapsedTime)
 	for (auto& [name, ani] : _loadedAnimations)
 		ani->Logic(elapsedTime);
 }
-
 void AnimationsManager::clearLevelAnimations(const string& prefix)
 {
 	for (auto it = _loadedAnimations.begin(); it != _loadedAnimations.end();)
@@ -181,4 +178,75 @@ void AnimationsManager::clearLevelAnimations(const string& prefix)
 		else
 			++it;
 	}
+}
+
+vector<Animation::FrameData*> AnimationsManager::getAnimationImages(const string& aniPath, const string& _imageSetPath)
+{
+	vector<Animation::FrameData*> images;
+	shared_ptr<BufferReader> aniFileReader = _rezArchive->getFileBufferReader(aniPath);
+	string imageSetPath;
+	string soundFilePath;
+	char imgName[32];
+	uint32_t imageSetPathLength, framesCount;
+	uint16_t triggeredEventFlag, imageFileId, duration;
+	bool useSoundFile;
+
+	aniFileReader->skip(12);
+	aniFileReader->read(framesCount);
+	aniFileReader->read(imageSetPathLength);
+	aniFileReader->skip(12);
+
+	imageSetPath = aniFileReader->ReadString(imageSetPathLength);
+	if (!_imageSetPath.empty())
+		imageSetPath = _imageSetPath;
+	imageSetPath = PathManager::getImageSetPath(imageSetPath);
+
+	if (imageSetPath.empty())
+	{
+		throw Exception("empty imageSetPath at " + aniPath);
+	}
+
+	for (uint32_t i = 0; i < framesCount; i++, soundFilePath = "")
+	{
+		aniFileReader->read(triggeredEventFlag);
+		useSoundFile = aniFileReader->read<uint8_t>();
+		aniFileReader->skip(5);
+		aniFileReader->read(imageFileId);
+		aniFileReader->read(duration);
+		aniFileReader->skip(8);
+
+		if (triggeredEventFlag == 2)
+		{
+			soundFilePath = aniFileReader->ReadNullTerminatedString();
+
+			if (!soundFilePath.empty() && useSoundFile)
+			{
+				if (endsWith(soundFilePath, "MLF") || endsWith(soundFilePath, "MRF"))
+				{ // the rat use this sounds, and I hate it
+					soundFilePath = "";
+				}
+				else
+				{
+					soundFilePath = PathManager::getSoundFilePath(soundFilePath);
+				}
+			}
+		}
+
+		// TODO: hack - something else
+		if (startsWith(aniPath, "LEVEL2/ANIS/RAUX/BLOCK")) duration /= 2;
+		else if (startsWith(aniPath, "LEVEL6/ANIS/WOLVINGTON/BLOCK")) duration /= 2;
+		else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/HORZFIRE.ANI") duration *= 8;
+		else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/VERTIFIRE.ANI") duration *= 8;
+		else if (imageSetPath == "LEVEL8/IMAGES/GABRIELCANNON" && imageFileId == 0) imageFileId = 1;
+		else if (aniPath == "LEVEL8/ANIS/CANNONSWITCH/SWITCH.ANI") duration *= 2;
+		else if (aniPath == "LEVEL9/ANIS/SAWBLADE/SPIN.ANI") duration *= 4;
+		else if (imageSetPath == "LEVEL10/IMAGES/MARROW" && imageFileId == 0) imageFileId = 1;
+		else if (aniPath == "LEVEL14/ANIS/OMAR/HOME.ANI") duration = 250;
+
+		sprintf(imgName, "/%03d.PID", imageFileId); // according to `fixFileName` at `RezArchive.cpp`
+
+		images.push_back(DBG_NEW Animation::FrameData(imageSetPath + imgName, duration, soundFilePath));
+	}
+
+	return images;
 }

@@ -21,7 +21,6 @@ public:
 	};
 
 
-	Animation(RezArchive* rezArchive, const string& aniPath, const string& imageSetPath);
 	Animation(const vector<FrameData*>& images);
 	~Animation() override;
 
