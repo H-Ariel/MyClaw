@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "GameEngine/framework.h"
+#include "Framework/framework.h"
 
 // TODO: move to "GameEngine"
 

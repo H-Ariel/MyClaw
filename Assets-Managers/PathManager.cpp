@@ -1,4 +1,6 @@
-#include "GameEngine/framework.h"
+#include "PathManager.h"
+#include "Framework/framework.h"
+
 
 enum Types
 {

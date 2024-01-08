@@ -1,4 +1,5 @@
 #include "AnimationsManager.h"
+#include "PathManager.h"
 
 
 // return if we should update the enemy's idle animation
@@ -35,7 +36,7 @@ shared_ptr<Animation> AnimationsManager::loadAnimation(const string& aniPath, co
 		}
 		catch (const Exception& ex)
 		{
-			throw Exception("Error while loading animation \"" + aniPath + "\". message: " + ex.what());
+			throw Exception("Error while loading animation \"" + aniPath + "\". message: " + ex.message);
 		}
 	}
 	return _loadedAnimations[k];

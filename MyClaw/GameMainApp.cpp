@@ -34,7 +34,7 @@ void GameMainApp::run()
 				cout << endl;
 			}
 			catch (const Exception& e) {
-				cout << " - failed: " << e.what() << endl;
+				cout << " - failed: " << e.message << endl;
 			}
 			AssetsManager::clearLevelAssets(i);
 			Item::resetItemsPaths();

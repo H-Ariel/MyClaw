@@ -19,9 +19,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int)
 	catch (const Exception& ex)
 	{
 #ifdef _DEBUG
-		DBG_PRINT("Error: %s\n", ex.what().c_str());
+		DBG_PRINT("Error: %s\n", ex.message.c_str());
 #else
-		MessageBoxA(nullptr, ex.what().c_str(), "Error", MB_OK | MB_ICONERROR);
+		MessageBoxA(nullptr, ex.message.c_str(), "Error", MB_OK | MB_ICONERROR);
 #endif
 	}
 

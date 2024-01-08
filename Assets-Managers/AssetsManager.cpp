@@ -134,7 +134,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 	}
 	catch (const Exception& ex)
 	{
-		DBG_PRINT(__FUNCTION__ " - Error for wavFilePath=\"%s\": %s\n", wavFilePath.c_str(), ex.what().c_str());
+		DBG_PRINT(__FUNCTION__ " - Error for wavFilePath=\"%s\": %s\n", wavFilePath.c_str(), ex.message.c_str());
 	}
 	return id;
 }

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{c826d542-4899-48b1-90bf-8597fb61d64f}</ProjectGuid>
-    <RootNamespace>AssetsManagers</RootNamespace>
+    <ProjectGuid>{b85cb73d-e5ee-4d19-bc57-a0bc3207f762}</ProjectGuid>
+    <RootNamespace>Framework</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -92,7 +92,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -108,7 +107,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -124,7 +122,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -140,7 +137,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -151,46 +147,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="AnimationsManager.cpp" />
-    <ClCompile Include="AssetsManager.cpp" />
-    <ClCompile Include="AudioManager.cpp" />
-    <ClCompile Include="BaseBuffer.cpp" />
-    <ClCompile Include="BufferReader.cpp" />
-    <ClCompile Include="BufferWriter.cpp" />
-    <ClCompile Include="ImagesManager.cpp" />
-    <ClCompile Include="MidiPlayer.cpp" />
-    <ClCompile Include="Miniz.cpp" />
-    <ClCompile Include="PathManager.cpp" />
-    <ClCompile Include="PidPalette.cpp" />
-    <ClCompile Include="RezArchive.cpp" />
-    <ClCompile Include="WavPlayer.cpp" />
-    <ClCompile Include="WwdFile.cpp" />
-    <ClCompile Include="XmiFile.cpp" />
+    <ClInclude Include="Exception.hpp" />
+    <ClInclude Include="framework.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animation.h" />
-    <ClInclude Include="AnimationsManager.h" />
-    <ClInclude Include="AssetsManager.h" />
-    <ClInclude Include="AudioManager.h" />
-    <ClInclude Include="BaseBuffer.h" />
-    <ClInclude Include="BufferReader.h" />
-    <ClInclude Include="BufferWriter.h" />
-    <ClInclude Include="ImagesManager.h" />
-    <ClInclude Include="MidiPlayer.h" />
-    <ClInclude Include="PathManager.h" />
-    <ClInclude Include="PidPalette.h" />
-    <ClInclude Include="RezArchive.h" />
-    <ClInclude Include="WavPlayer.h" />
-    <ClInclude Include="WwdFile.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Framework\Framework.vcxproj">
-      <Project>{b85cb73d-e5ee-4d19-bc57-a0bc3207f762}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
-      <Project>{5c99c1c7-d7fb-4454-a705-526b0d26f7f4}</Project>
-    </ProjectReference>
+    <ClCompile Include="framework.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

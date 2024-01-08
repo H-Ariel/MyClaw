@@ -321,12 +321,6 @@
     <ClInclude Include="ClawLevelEngine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Exception.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="framework.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameMainApp.h">
       <Filter>Source Files</Filter>
     </ClInclude>

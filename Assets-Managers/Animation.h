@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameEngine/UIBaseImage.h"
-#include "RezArchive.h"
 
 
 class Animation : public UIBaseElement

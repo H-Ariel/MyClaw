@@ -108,4 +108,3 @@ size_t Animation::getTotalDuration() const
 		totalDuration += i->duration;
 	return totalDuration;
 }
-

@@ -4,6 +4,7 @@
 #include "ImagesManager.h"
 #include "AudioManager.h"
 #include "WwdFile.h"
+#include "PathManager.h"
 
 
 class AssetsManager

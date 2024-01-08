@@ -39,8 +39,6 @@
 #include <set>
 
 #include "Exception.hpp"
-#include "Rectangle2D.h"
-#include "Assets-Managers/PathManager.h" // TODO: remove this dependency. find another way to get the game path.
 
 
 #pragma comment(lib, "d2d1")
@@ -61,42 +59,25 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #endif
 
 
-enum class MouseButtons
-{
-	Left,
-	Middle,
-	Right
-};
-
-
 using namespace std;
 using namespace D2D1;
 
 
 // replace `src` with `dst` in `str`
-inline string replaceString(string str, char src, char dst)
-{
-	replace(str.begin(), str.end(), src, dst);
-	return str;
-}
+string replaceString(string str, char src, char dst);
 
 // check if `str` is starts with `prefix`
-inline bool startsWith(const string& str, const string& prefix)
-{
-	return str.length() >= prefix.length() && !strncmp(str.c_str(), prefix.c_str(), prefix.length());
-}
+bool startsWith(const string& str, const string& prefix);
+
 // check if `str` is ends with `suffix`
-inline bool endsWith(const string& str, const string& suffix)
-{
-	const size_t delta_len = str.length() - suffix.length();
-	return delta_len >= 0 && !strcmp(str.c_str() + delta_len, suffix.c_str());
-}
+bool endsWith(const string& str, const string& suffix);
+
 // check is `str1` contains `str2`
-inline bool contains(const string& str1, const string& str2) { return str1.find(str2) != string::npos; }
+bool contains(const string& str1, const string& str2);
 
 // reterns a random number in range [a,b]
-inline float getRandomFloat(float a, float b) { return (float)rand() / RAND_MAX * (b - a) + a; }
-inline int getRandomInt(int a, int b) { return rand() % (b - a + 1) + a; }
+float getRandomFloat(float a, float b);
+int getRandomInt(int a, int b);
 
 
 // reverses the bytes order of `t`

@@ -163,14 +163,17 @@
   <ItemGroup>
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="BaseEngine.h" />
-    <ClInclude Include="Exception.hpp" />
-    <ClInclude Include="framework.h" />
     <ClInclude Include="Rectangle2D.h" />
     <ClInclude Include="UIBaseButton.h" />
     <ClInclude Include="UIBaseElement.h" />
     <ClInclude Include="UIBaseImage.h" />
     <ClInclude Include="UITextElement.h" />
     <ClInclude Include="WindowManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Framework\Framework.vcxproj">
+      <Project>{b85cb73d-e5ee-4d19-bc57-a0bc3207f762}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

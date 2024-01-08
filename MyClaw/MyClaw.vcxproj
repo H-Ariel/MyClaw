@@ -261,8 +261,6 @@
     <ClInclude Include="Enemies\TownGuard.h" />
     <ClInclude Include="Enemies\Wolvington.h" />
     <ClInclude Include="EnemyHelp.h" />
-    <ClInclude Include="Exception.hpp" />
-    <ClInclude Include="framework.h" />
     <ClInclude Include="GameMainApp.h" />
     <ClInclude Include="LevelHUD.h" />
     <ClInclude Include="LevelPlane.h" />
@@ -310,6 +308,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Assets-Managers\Assets-Managers.vcxproj">
       <Project>{c826d542-4899-48b1-90bf-8597fb61d64f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Framework\Framework.vcxproj">
+      <Project>{b85cb73d-e5ee-4d19-bc57-a0bc3207f762}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
       <Project>{5c99c1c7-d7fb-4454-a705-526b0d26f7f4}</Project>
