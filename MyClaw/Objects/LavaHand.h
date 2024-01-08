@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../BasePlaneObject.h"
-#include "../GUI/UITextElement.h"
+#include "GameEngine/UITextElement.h"
 
 
 class LavaHand : public BaseStaticPlaneObject

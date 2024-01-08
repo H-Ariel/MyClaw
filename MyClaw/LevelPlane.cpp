@@ -1,5 +1,5 @@
 #include "LevelPlane.h"
-#include "GUI/WindowManager.h"
+#include "GameEngine/WindowManager.h"
 
 
 LevelPlane::LevelPlane(WapWorld* wwd)

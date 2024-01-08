@@ -1,6 +1,6 @@
 #include "MenuEngine.h"
-#include "../Assets-Managers/AssetsManager.h"
-#include "../GUI/WindowManager.h"
+#include "Assets-Managers/AssetsManager.h"
+#include "GameEngine/WindowManager.h"
 #include "../ClawLevelEngine.h"
 #include "HierarchicalMenu.h"
 #include "HelpScreenEngine.h"

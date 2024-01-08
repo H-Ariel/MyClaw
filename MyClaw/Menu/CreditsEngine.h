@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ScreenEngine.h"
-#include "../GUI/UITextElement.h"
+#include "GameEngine/UITextElement.h"
 
 
 class CreditsEngine : public ScreenEngine

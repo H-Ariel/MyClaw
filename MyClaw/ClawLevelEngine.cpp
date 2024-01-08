@@ -1,7 +1,7 @@
 #include "ClawLevelEngine.h"
 #include "ActionPlane.h"
 #include "CheatsManager.h"
-#include "GUI/WindowManager.h"
+#include "GameEngine/WindowManager.h"
 #include "Menu/HelpScreenEngine.h"
 #include "Menu/LevelEndEngine.h"
 #include "Menu/MenuEngine.h"
@@ -30,6 +30,7 @@ ClawLevelEngineFields::~ClawLevelEngineFields()
 	delete _hud;
 	delete _cheatsManager;
 	AssetsManager::clearLevelAssets(_wwd->levelNumber);
+	Item::resetItemsPaths();
 }
 
 

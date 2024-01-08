@@ -1,5 +1,5 @@
 #include "ImagesManager.h"
-#include "../GUI/WindowManager.h"
+#include "GameEngine/WindowManager.h"
 
 
 enum PidFlags

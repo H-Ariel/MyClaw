@@ -8,12 +8,6 @@
     <Filter Include="Objects">
       <UniqueIdentifier>{dc271a34-c867-4fdb-8e90-a808784358f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets-Managers">
-      <UniqueIdentifier>{5eeb444f-47da-4190-ae43-4efa33079872}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GUI">
-      <UniqueIdentifier>{c3d6819f-164a-4389-832f-0bbd7fd5e0bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Enemies">
       <UniqueIdentifier>{0535962b-54b5-4051-ba03-05f8905cde92}</UniqueIdentifier>
     </Filter>
@@ -29,9 +23,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BaseCharacter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BasePlaneObject.cpp">
@@ -166,51 +157,6 @@
     <ClCompile Include="Enemies\TownGuard.cpp">
       <Filter>Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Assets-Managers\AnimationsManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\AssetsManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\AudioManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\BaseBuffer.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\BufferReader.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\BufferWriter.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\ImagesManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\MidiPlayer.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\Miniz.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\PathManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\PidPalette.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\RezArchive.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\WavPlayer.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\WwdFile.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets-Managers\XmiFile.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
     <ClCompile Include="objects\Stalactite.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -253,24 +199,6 @@
     <ClCompile Include="Enemies\TigerGuard.cpp">
       <Filter>Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Rectangle2D.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\UIBaseButton.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\UIBaseElement.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\UIBaseImage.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\UITextElement.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\WindowManager.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="LevelPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -307,9 +235,6 @@
     <ClCompile Include="SavedGameManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\ActionPlaneMessage.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="CheatsManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -319,8 +244,8 @@
     <ClCompile Include="Objects\LavaHand.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Assets-Managers\Animation.cpp">
-      <Filter>Assets-Managers</Filter>
+    <ClCompile Include="Objects\ActionPlaneMessage.cpp">
+      <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -388,9 +313,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseCharacter.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseEngine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="BasePlaneObject.h">
@@ -468,45 +390,6 @@
     <ClInclude Include="Enemies\TownGuard.h">
       <Filter>Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Assets-Managers\AnimationsManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\AssetsManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\AudioManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\BaseBuffer.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\BufferReader.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\BufferWriter.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\ImagesManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\MidiPlayer.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\PathManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\PidPalette.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\RezArchive.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\WavPlayer.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\WwdFile.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
     <ClInclude Include="objects\Stalactite.h">
       <Filter>Objects</Filter>
     </ClInclude>
@@ -549,24 +432,6 @@
     <ClInclude Include="Enemies\TigerGuard.h">
       <Filter>Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Rectangle2D.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\UIBaseButton.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\UIBaseElement.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\UIBaseImage.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\UITextElement.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\WindowManager.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="LevelPlane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -603,9 +468,6 @@
     <ClInclude Include="SavedGameManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\ActionPlaneMessage.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="CheatsManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -615,8 +477,8 @@
     <ClInclude Include="Objects\LavaHand.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Assets-Managers\Animation.h">
-      <Filter>Assets-Managers</Filter>
+    <ClInclude Include="Objects\ActionPlaneMessage.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

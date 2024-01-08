@@ -1,6 +1,6 @@
 #include "MenuItem.h"
-#include "../Assets-Managers/AssetsManager.h"
-#include "../GUI/WindowManager.h"
+#include "Assets-Managers/AssetsManager.h"
+#include "GameEngine/WindowManager.h"
 
 
 #define PLAY_SELECT_SOUND AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV")

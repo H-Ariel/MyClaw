@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../framework.h"
+#include "GameEngine/framework.h"
 
 
 class BaseBuffer

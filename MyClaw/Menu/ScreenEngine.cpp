@@ -1,5 +1,5 @@
 #include "MenuEngine.h"
-#include "../GUI/WindowManager.h"
+#include "GameEngine/WindowManager.h"
 
 
 #define DEFAULT_BG_IMAGE "STATES/MENU/SCREENS/MENU.PCX"

@@ -71,20 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -93,6 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -108,6 +109,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,6 +125,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +141,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,25 +152,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ActionPlane.cpp" />
-    <ClCompile Include="Assets-Managers\Animation.cpp" />
-    <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
-    <ClCompile Include="Assets-Managers\AssetsManager.cpp" />
-    <ClCompile Include="Assets-Managers\AudioManager.cpp" />
-    <ClCompile Include="Assets-Managers\BaseBuffer.cpp" />
-    <ClCompile Include="Assets-Managers\BufferReader.cpp" />
-    <ClCompile Include="Assets-Managers\BufferWriter.cpp" />
-    <ClCompile Include="Assets-Managers\ImagesManager.cpp" />
-    <ClCompile Include="Assets-Managers\MidiPlayer.cpp" />
-    <ClCompile Include="Assets-Managers\Miniz.cpp" />
-    <ClCompile Include="Assets-Managers\PathManager.cpp" />
-    <ClCompile Include="Assets-Managers\PidPalette.cpp" />
-    <ClCompile Include="Assets-Managers\RezArchive.cpp" />
-    <ClCompile Include="Assets-Managers\WavPlayer.cpp" />
-    <ClCompile Include="Assets-Managers\WwdFile.cpp" />
-    <ClCompile Include="Assets-Managers\XmiFile.cpp" />
     <ClCompile Include="BaseCharacter.cpp" />
     <ClCompile Include="BaseEnemy.cpp" />
-    <ClCompile Include="BaseEngine.cpp" />
     <ClCompile Include="BasePlaneObject.cpp" />
     <ClCompile Include="CheatsManager.cpp" />
     <ClCompile Include="ClawLevelEngine.cpp" />
@@ -197,13 +184,6 @@
     <ClCompile Include="Enemies\Wolvington.cpp" />
     <ClCompile Include="EnemyHelp.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
-    <ClCompile Include="GUI\ActionPlaneMessage.cpp" />
-    <ClCompile Include="GUI\Rectangle2D.cpp" />
-    <ClCompile Include="GUI\UIBaseButton.cpp" />
-    <ClCompile Include="GUI\UIBaseElement.cpp" />
-    <ClCompile Include="GUI\UIBaseImage.cpp" />
-    <ClCompile Include="GUI\UITextElement.cpp" />
-    <ClCompile Include="GUI\WindowManager.cpp" />
     <ClCompile Include="LevelHUD.cpp" />
     <ClCompile Include="LevelPlane.cpp" />
     <ClCompile Include="main.cpp" />
@@ -217,6 +197,7 @@
     <ClCompile Include="Menu\MenuItem.cpp" />
     <ClCompile Include="Menu\OpeningScreenEngine.cpp" />
     <ClCompile Include="Menu\ScreenEngine.cpp" />
+    <ClCompile Include="Objects\ActionPlaneMessage.cpp" />
     <ClCompile Include="Objects\AmbientSound.cpp" />
     <ClCompile Include="Objects\Cannon.cpp" />
     <ClCompile Include="Objects\Checkpoint.cpp" />
@@ -249,23 +230,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h" />
-    <ClInclude Include="Assets-Managers\Animation.h" />
-    <ClInclude Include="Assets-Managers\AnimationsManager.h" />
-    <ClInclude Include="Assets-Managers\AssetsManager.h" />
-    <ClInclude Include="Assets-Managers\AudioManager.h" />
-    <ClInclude Include="Assets-Managers\BaseBuffer.h" />
-    <ClInclude Include="Assets-Managers\BufferReader.h" />
-    <ClInclude Include="Assets-Managers\BufferWriter.h" />
-    <ClInclude Include="Assets-Managers\ImagesManager.h" />
-    <ClInclude Include="Assets-Managers\MidiPlayer.h" />
-    <ClInclude Include="Assets-Managers\PathManager.h" />
-    <ClInclude Include="Assets-Managers\PidPalette.h" />
-    <ClInclude Include="Assets-Managers\RezArchive.h" />
-    <ClInclude Include="Assets-Managers\WavPlayer.h" />
-    <ClInclude Include="Assets-Managers\WwdFile.h" />
     <ClInclude Include="BaseCharacter.h" />
     <ClInclude Include="BaseEnemy.h" />
-    <ClInclude Include="BaseEngine.h" />
     <ClInclude Include="BasePlaneObject.h" />
     <ClInclude Include="CheatsManager.h" />
     <ClInclude Include="ClawLevelEngine.h" />
@@ -298,13 +264,6 @@
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameMainApp.h" />
-    <ClInclude Include="GUI\ActionPlaneMessage.h" />
-    <ClInclude Include="GUI\Rectangle2D.h" />
-    <ClInclude Include="GUI\UIBaseButton.h" />
-    <ClInclude Include="GUI\UIBaseElement.h" />
-    <ClInclude Include="GUI\UIBaseImage.h" />
-    <ClInclude Include="GUI\UITextElement.h" />
-    <ClInclude Include="GUI\WindowManager.h" />
     <ClInclude Include="LevelHUD.h" />
     <ClInclude Include="LevelPlane.h" />
     <ClInclude Include="Menu\CreditsEngine.h" />
@@ -317,6 +276,7 @@
     <ClInclude Include="Menu\MenuItem.h" />
     <ClInclude Include="Menu\OpeningScreenEngine.h" />
     <ClInclude Include="Menu\ScreenEngine.h" />
+    <ClInclude Include="Objects\ActionPlaneMessage.h" />
     <ClInclude Include="Objects\AmbientSound.h" />
     <ClInclude Include="Objects\Cannon.h" />
     <ClInclude Include="Objects\Checkpoint.h" />
@@ -346,6 +306,14 @@
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SavedGameManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Assets-Managers\Assets-Managers.vcxproj">
+      <Project>{c826d542-4899-48b1-90bf-8597fb61d64f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
+      <Project>{5c99c1c7-d7fb-4454-a705-526b0d26f7f4}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

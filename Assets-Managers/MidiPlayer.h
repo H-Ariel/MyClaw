@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "../framework.h"
+#include "GameEngine/framework.h"
 
+// TODO: move to "GameEngine"
 
 // MIDI player class
 class MidiPlayer

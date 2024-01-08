@@ -1,6 +1,6 @@
 #include "PhysicsManager.h"
 #include "Player.h"
-#include "GUI/WindowManager.h"
+#include "GameEngine/WindowManager.h"
 #include "LevelPlane.h"
 
 

@@ -1,3 +1,5 @@
+* the Assets-Managers project should generate `struct`s and move them to MyClaw
+
 * add BossStager logic
 * fix AmbientSound objects
 * play all objects WAV file

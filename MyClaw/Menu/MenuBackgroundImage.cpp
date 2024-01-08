@@ -1,6 +1,6 @@
 #include "MenuBackgroundImage.h"
-#include "../Assets-Managers/AssetsManager.h"
-#include "../GUI/WindowManager.h"
+#include "Assets-Managers/AssetsManager.h"
+#include "GameEngine/WindowManager.h"
 
 
 MenuBackgroundImage::MenuBackgroundImage(string pcxPath)

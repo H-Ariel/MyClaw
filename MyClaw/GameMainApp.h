@@ -1,24 +1,13 @@
 #pragma once
 
-#include "BaseEngine.h"
+#include "GameEngine/BaseApp.h"
 
 
-class GameMainApp
+class GameMainApp : public BaseApp
 {
 public:
 	GameMainApp();
 	~GameMainApp();
 
-	void run();
-
-
-private:
-	void runEngine();
-
-	static void registerMyWindowClass();
-	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-
-	shared_ptr<BaseEngine> _pEngine;
-	bool runApp;
+	void run() override;
 };

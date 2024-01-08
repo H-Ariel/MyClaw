@@ -39,8 +39,8 @@
 #include <set>
 
 #include "Exception.hpp"
-#include "GUI/Rectangle2D.h"
-#include "Assets-Managers/PathManager.h"
+#include "Rectangle2D.h"
+#include "Assets-Managers/PathManager.h" // TODO: remove this dependency. find another way to get the game path.
 
 
 #pragma comment(lib, "d2d1")

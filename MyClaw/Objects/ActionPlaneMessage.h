@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../BasePlaneObject.h"
-#include "UITextElement.h"
+#include "GameEngine/UITextElement.h"
 
 
 class ActionPlaneMessage : public BasePlaneObject

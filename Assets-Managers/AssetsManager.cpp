@@ -1,6 +1,5 @@
 #include "AssetsManager.h"
 #include "MidiPlayer.h"
-#include "../Objects/Item.h"
 
 
 // check if `str` is number as string
@@ -182,7 +181,6 @@ void AssetsManager::clearLevelAssets(int lvl)
 		instance->_imagesManager->clearLevelImages(prefix);
 		instance->_animationsManager->clearLevelAnimations(prefix);
 		instance->_audioManager->clearLevelSounds(prefix);
-		Item::resetItemsPaths();
 		PathManager::resetPaths();
 	}
 }

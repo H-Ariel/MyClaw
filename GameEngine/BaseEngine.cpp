@@ -1,5 +1,4 @@
 #include "BaseEngine.h"
-#include "GUI/WindowManager.h"
 
 
 BaseEngine::BaseEngine() : mousePosition({}), StopEngine(false) {}

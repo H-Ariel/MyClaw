@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../GUI/UIBaseImage.h"
+#include "GameEngine/UIBaseImage.h"
 #include "RezArchive.h"
 
 

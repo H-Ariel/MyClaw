@@ -1,7 +1,7 @@
 #include "WwdFile.h"
 #include "AssetsManager.h"
-#include "../GUI/WindowManager.h"
-#include "../ActionPlane.h"
+#include "GameEngine/WindowManager.h"
+#include "../MyClaw/ActionPlane.h" // TODO: remove this include
 
 
 enum WwdFlags

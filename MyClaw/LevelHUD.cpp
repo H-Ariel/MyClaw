@@ -1,5 +1,5 @@
 #include "LevelHUD.h"
-#include "GUI/WindowManager.h"
+#include "GameEngine/WindowManager.h"
 #include "ActionPlane.h"
 
 
