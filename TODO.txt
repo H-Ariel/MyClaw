@@ -1,5 +1,4 @@
 + handle setting (low details, front plane, etc. add menu)
-+ in AM init rez: RezArchive("CLAW") [do not use default ctor]
 
 - make sure all options works well
 - use make_shared instead of allocNewSharedPtr

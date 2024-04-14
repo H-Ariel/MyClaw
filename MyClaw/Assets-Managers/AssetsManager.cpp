@@ -29,6 +29,20 @@ static void loadWavDir(RezArchive* rez, const string& path)
 	}
 }
 
+// global initialization for menu and levels
+static void GlobalInit(RezArchive* rez)
+{
+	MidiFile boss(rez->getFile("LEVEL2/MUSIC/BOSS.XMI")->getFileData());
+	// every level with boss contains the same file, so we can use LEVEL2/BOSS.XMI for all levels
+	AudioManager::addMidiPlayer("boss", boss.data);
+
+	MidiFile powerup(rez->getFile("GAME/MUSIC/POWERUP.XMI")->getFileData());
+	AudioManager::addMidiPlayer("powerup", powerup.data);
+
+	MidiFile credits(rez->getFile("STATES/CREDITS/MUSIC/PLAY.XMI")->getFileData());
+	AudioManager::addMidiPlayer("credits", credits.data);
+}
+
 // initialize more assets. TODO: move to other place
 static void LevelInit(shared_ptr<WapWwd> wwd, RezArchive* rez)
 {
@@ -62,16 +76,6 @@ static void LevelInit(shared_ptr<WapWwd> wwd, RezArchive* rez)
 	// add midi background music
 	MidiFile level(rez->getFile(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY"))->getFileData());
 	AudioManager::addMidiPlayer("level", level.data);
-
-	MidiFile boss(rez->getFile("LEVEL2/MUSIC/BOSS.XMI")->getFileData());
-	// every level with boss contains the same file, so we can use LEVEL2/BOSS.XMI for all levels
-	AudioManager::addMidiPlayer("boss", boss.data);
-
-	MidiFile powerup(rez->getFile("GAME/MUSIC/POWERUP.XMI")->getFileData());
-	AudioManager::addMidiPlayer("powerup", powerup.data);
-
-	MidiFile credits(rez->getFile("STATES/CREDITS/MUSIC/PLAY.XMI")->getFileData());
-	AudioManager::addMidiPlayer("credits", powerup.data);
 }
 
 
@@ -91,6 +95,8 @@ AssetsManager::AssetsManager()
 	_animationsManager = DBG_NEW AnimationsManager(_rezArchive);
 	_lastType = AssetsManager::BackgroundMusicType::None;
 	srand((unsigned int)time(nullptr));
+
+	GlobalInit(_rezArchive);
 }
 AssetsManager::~AssetsManager()
 {
@@ -219,7 +225,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 void AssetsManager::stopWavFile(uint32_t wavId) {}
 #endif
 
-#ifndef _DEBUG // if debug - no background music
+#ifndef _DEBUG0 // if debug - no background music
 void AssetsManager::setBackgroundMusic(BackgroundMusicType type)
 {
 	if (instance->_lastType == type)
@@ -228,12 +234,12 @@ void AssetsManager::setBackgroundMusic(BackgroundMusicType type)
 	stopBackgroundMusic();
 	instance->_lastType = type;
 
-	auto it = instance->bgMusics.find(type);
+	/*auto it = instance->bgMusics.find(type);
 	if (it != instance->bgMusics.end())
 	{
 		AudioManager::continuePlay(it->second);
 	}
-	else
+	else*/
 	{
 		uint32_t id = UINT32_MAX;
 		switch (type)
@@ -255,6 +261,8 @@ void AssetsManager::stopBackgroundMusic()
 	uint32_t id = instance->bgMusics[instance->_lastType];
 	if (id != AudioManager::INVALID_ID)
 		AudioManager::stop(id);
+
+	instance->_lastType = BackgroundMusicType::None; // no background music
 }
 #else
 void AssetsManager::setBackgroundMusic(BackgroundMusicType type) {}
