@@ -82,7 +82,11 @@ const uint32_t AssetsManager::INVALID_AUDIOPLAYER_ID = AudioManager::INVALID_ID;
 
 AssetsManager::AssetsManager()
 {
+#ifdef _DEBUG
 	_rezArchive = DBG_NEW RezArchive();
+#else
+	_rezArchive = DBG_NEW RezArchive("CLAW.REZ");
+#endif
 	_imagesManager = DBG_NEW ImagesManager(_rezArchive);
 	_animationsManager = DBG_NEW AnimationsManager(_rezArchive);
 	_lastType = AssetsManager::BackgroundMusicType::None;
