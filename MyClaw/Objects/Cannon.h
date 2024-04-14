@@ -16,7 +16,7 @@ protected:
 	ShootDirection _shootDirection;
 
 private:
-	shared_ptr<Animation> _home, _firing;
+	shared_ptr<UIAnimation> _home, _firing;
 	uint32_t _timeCounter;
 
 

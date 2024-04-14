@@ -66,7 +66,7 @@
 
 #ifdef _DEBUG
 //#undef LOW_DETAILS
-#define NO_ENEMIES
+//#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -79,8 +79,8 @@ ActionPlane* ActionPlane::_instance = nullptr;
 shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
 
 
-ActionPlane::ActionPlane(WapWorld* wwd)
-	: LevelPlane(wwd), _planeSize({}), _boss(nullptr), _shakeTime(0)
+ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane)
+	: LevelPlane(wwd, wwdPlane), _planeSize({}), _boss(nullptr), _shakeTime(0)
 {
 	if (_instance)
 		DBG_PRINT("Warning: ActionPlane already exists (instance of level %d)", _instance->_wwd->levelNumber);
@@ -209,14 +209,14 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 #endif
 }
 
-void ActionPlane::readPlaneObjects(BufferReader& reader, int numOfObjects)
+void ActionPlane::init()
 {
-	// initialize global fields and then read objects: (we init here because now we have all data)
+	// initialize global fields
 
-	_planeSize.width = (float)TILE_SIZE * tilesOnAxisX;
-	_planeSize.height = (float)TILE_SIZE * tilesOnAxisY;
+	_planeSize.width = (float)TILE_SIZE * _wwdPlane->tilesOnAxisX;
+	_planeSize.height = (float)TILE_SIZE * _wwdPlane->tilesOnAxisY;
 
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
+	AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	physics = allocNewSharedPtr<PhysicsManager>(_wwd, this); // must be after WWD map loaded and before objects added
 
 	// player's initializtion must be before LevelPlane::readPlaneObjects() because some of objects need player
@@ -233,7 +233,7 @@ void ActionPlane::readPlaneObjects(BufferReader& reader, int numOfObjects)
 		player->position.y = player->startPosition.y = (float)_wwd->startY;
 	}
 
-	LevelPlane::readPlaneObjects(reader, numOfObjects);
+	LevelPlane::init();
 	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
 
 	if (_loadGameData)
@@ -326,7 +326,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 		else if (_wwd->levelNumber == 11) idx = 39;
 		//else throw Exception("invalid level");
 		
-		WwdTileDescription& tileDesc = _wwd->tilesDescription[idx];
+		WwdTileDescription& tileDesc = _wwd->tileDescriptions[idx];
 
 		float topOffset = (float)tileDesc.rect.top;
 
@@ -628,7 +628,7 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 
 	LevelHUD::setBossInitialHealth(_instance->_boss->getHealth());
 
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Boss);
+	AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Boss);
 }
 
 void ActionPlane::updatePosition()

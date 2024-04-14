@@ -1,16 +1,15 @@
 #include "GameMainApp.h"
 #include "Assets-Managers/AssetsManager.h"
 #include "Menu/OpeningScreenEngine.h"
-#include <chrono>
 
 #ifdef _DEBUG
 #include "Menu/LevelLoadingEngine.h"
 #include "Menu/MenuEngine.h"
-#include "Objects/Item.h"
 #endif 
 
 
 GameMainApp::GameMainApp()
+	: BaseApp(WndProc, L"Claw")
 {
 	AssetsManager::Initialize();
 }
@@ -19,38 +18,23 @@ GameMainApp::~GameMainApp()
 	AssetsManager::Finalize();
 }
 
-void GameMainApp::run()
+void GameMainApp::init()
 {
 #ifdef _DEBUG
-	if (0) // TODO: delete this `if` block
-	{
-		// try load all levels
-		for (int i = 1; i <= 14; i++)
-		{
-			try
-			{
-				cout << "load level " << i << endl;
-				auto wwd = AssetsManager::loadLevelWwdFile(i);
-				cout << endl;
-			}
-			catch (const Exception& e) {
-				cout << " - failed: " << e.message << endl;
-			}
-			AssetsManager::clearLevelAssets(i);
-			Item::resetItemsPaths();
-		}
-	}
-	else
-	{
-		runApp = true;
-		//_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
-		//_pEngine = allocNewSharedPtr<MenuEngine>();
-		_pEngine = allocNewSharedPtr<LevelLoadingEngine>(1);
-		runEngine();
-	}
+	//_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
+	//_pEngine = allocNewSharedPtr<MenuEngine>();
+	_pEngine = allocNewSharedPtr<LevelLoadingEngine>(1);
 #else
-	runApp = true;
 	_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
-	runEngine();
 #endif
+}
+
+LRESULT CALLBACK GameMainApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_SETCURSOR: SetCursor(NULL); return TRUE;
+	default: break;
+	}
+	return BaseApp::WndProc(hwnd, message, wParam, lParam);
 }

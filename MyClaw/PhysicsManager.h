@@ -1,13 +1,15 @@
 #pragma once
 
 #include "BasePlaneObject.h"
-#include "Assets-Managers/WwdFile.h"
+#include "RezParser/WwdFile.h"
+
+class LevelPlane;
 
 
 class PhysicsManager
 {
 public:
-	PhysicsManager(WapWorld* wwd, const LevelPlane* plane);
+	PhysicsManager(WapWwd* wwd, const LevelPlane* plane);
 
 	void moveX(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const;
 	void moveY(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const;

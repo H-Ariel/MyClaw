@@ -1,4 +1,5 @@
 #include "WindowManager.h"
+#include "AudioManager.h"
 
 // TODO: save all D2D1 objects (ID2D1Bitmap, IDWriteTextFormat) in a list and release them in `WindowManager::Finalize`
 // TODO: hide all D2D1 objects (ID2D1Bitmap, IDWriteTextFormat) in `WindowManager` and create a function to get them with my format
@@ -27,17 +28,17 @@ static void mulPixelSize(Rectangle2D& rc)
 }
 
 
-WindowManager::WindowManager(const TCHAR WindowClassName[], void* lpParam)
+WindowManager::WindowManager(const TCHAR WindowClassName[], const TCHAR title[], void* lpParam)
 	: _windowOffset(&defaultWindowOffset), _backgroundColor(0),
-	_camSize(DEFAULT_WINDOW_SIZE), _realSize(DEFAULT_WINDOW_SIZE), _PixelSize(1)
+	_camSize(DEFAULT_WINDOW_SIZE), _realSize(DEFAULT_WINDOW_SIZE), _windowScale(1)
 {
-	//_PixelSize = 1; // min value: 1 // TODO: rename to `WindowScale`
+	//_windowScale = 1; // min value: 1
 
 	_d2dFactory = nullptr;
 	_dWriteFactory = nullptr;
 	_renderTarget = nullptr;
 
-	_hWnd = CreateWindow(WindowClassName, L"", WS_OVERLAPPEDWINDOW, 100, 100, (int)_realSize.width, (int)_realSize.height, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
+	_hWnd = CreateWindow(WindowClassName, title, WS_OVERLAPPEDWINDOW, 100, 100, (int)_realSize.width, (int)_realSize.height, nullptr, nullptr, HINST_THISCOMPONENT, lpParam);
 	if (!_hWnd) throw Exception("Failed to create window");
 	ShowWindow(_hWnd, SW_SHOWDEFAULT);
 	UpdateWindow(_hWnd);
@@ -54,10 +55,10 @@ WindowManager::~WindowManager()
 	SafeRelease(_dWriteFactory);
 }
 
-void WindowManager::Initialize(const TCHAR WindowClassName[], void* lpParam)
+void WindowManager::Initialize(const TCHAR WindowClassName[], const TCHAR title[], void* lpParam)
 {
 	if (instance == nullptr)
-		instance = DBG_NEW WindowManager(WindowClassName, lpParam);
+		instance = DBG_NEW WindowManager(WindowClassName, title, lpParam);
 }
 void WindowManager::Finalize()
 {
@@ -90,10 +91,10 @@ void WindowManager::setPixelSize(float pixelSize)
 	if (pixelSize > 3.5f) pixelSize = 3.5f;
 	else if (pixelSize < 1) pixelSize = 1;
 
-	instance->_PixelSize = pixelSize;
+	instance->_windowScale = pixelSize;
 	instance->_camSize = { instance->_realSize.width / pixelSize, instance->_realSize.height / pixelSize };
 }
-float WindowManager::getPixelSize() { return instance->_PixelSize; }
+float WindowManager::getPixelSize() { return instance->_windowScale; }
 void WindowManager::setDefaultPixelSize()
 {
 	setPixelSize(min(
@@ -112,7 +113,7 @@ void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
 	if (instance && instance->_renderTarget)
 	{
 		instance->_realSize = { (float)newSize.width, (float)newSize.height };
-		instance->_camSize = { newSize.width / instance->_PixelSize, newSize.height / instance->_PixelSize };
+		instance->_camSize = { newSize.width / instance->_windowScale, newSize.height / instance->_windowScale };
 		instance->_renderTarget->Resize(newSize);
 	}
 }
@@ -204,8 +205,8 @@ void WindowManager::drawHole(D2D1_POINT_2F center, float radius)
 	ID2D1Geometry* groupItems[2] = {};
 	ID2D1SolidColorBrush* brush = nullptr;
 
-	center.x = (center.x - instance->_windowOffset->x) * instance->_PixelSize;
-	center.y = (center.y - instance->_windowOffset->y) * instance->_PixelSize;
+	center.x = (center.x - instance->_windowOffset->x) * instance->_windowScale;
+	center.y = (center.y - instance->_windowOffset->y) * instance->_windowScale;
 	instance->_d2dFactory->CreateEllipseGeometry(Ellipse(center, radius, radius), &hole);
 	instance->_d2dFactory->CreateRectangleGeometry(RectF(instance->_realSize.width, instance->_realSize.height), &background);
 	if (!hole || !background) goto end;
@@ -231,7 +232,7 @@ void WindowManager::drawWrapCover(float top)
 	ID2D1SolidColorBrush* brush = getBrush(ColorF::Black);
 	if (brush)
 	{
-		top *= instance->_PixelSize;
+		top *= instance->_windowScale;
 		instance->_renderTarget->FillRectangle(RectF(0, top, instance->_realSize.width, top + instance->_realSize.height), brush);
 	}
 }

@@ -27,7 +27,7 @@ static bool GabrielIsAlive = false;
 class DeadGabriel : public OneTimeAnimation
 {
 public:
-	DeadGabriel(D2D1_POINT_2F pos, shared_ptr<Animation> ani, int firstPartDuration)
+	DeadGabriel(D2D1_POINT_2F pos, shared_ptr<UIAnimation> ani, int firstPartDuration)
 		: OneTimeAnimation(pos, ani, false), _delay(firstPartDuration), _moved(false)
 	{
 		drawZ = DefaultZCoord::Characters + 1;
@@ -72,13 +72,13 @@ Gabriel::~Gabriel()
 	if (removeObject)
 	{
 		ActionPlane::addPlaneObject(DBG_NEW DeadGabriel(position,
-			allocNewSharedPtr<Animation>(
+			allocNewSharedPtr<UIAnimation>(
 				_animations["KILLFALL1"]->getImagesList() +
 				_animations["KILLFALL2"]->getImagesList() +
 				_animations["KILLFALL3"]->getImagesList() +
 				_animations["KILLFALL4"]->getImagesList()
 			),
-			_animations["KILLFALL1"]->getTotalDuration()));
+			(int)_animations["KILLFALL1"]->getTotalDuration()));
 	}
 }
 void Gabriel::Logic(uint32_t elapsedTime)
@@ -208,7 +208,7 @@ GabrielCannon::GabrielCannon(const WwdObject& obj)
 }
 void GabrielCannon::Logic(uint32_t elapsedTime)
 {
-	const shared_ptr<const Animation> prevAni = _ani;
+	const shared_ptr<const UIAnimation> prevAni = _ani;
 
 	if (_ani->isFinishAnimation())
 	{

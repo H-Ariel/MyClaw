@@ -70,7 +70,7 @@ BaseDamageObject::BaseDamageObject(const WwdObject& obj, int damage)
 
 
 BaseSoundObject::BaseSoundObject(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _wavPlayerId(-1),
+	: BaseStaticPlaneObject(obj),
 	_wavPath(PathManager::getSoundFilePath(obj.animation))
 {
 	_volume = obj.damage ? obj.damage : 100;
@@ -107,7 +107,7 @@ BaseSoundObject::BaseSoundObject(const WwdObject& obj)
 void BaseSoundObject::Draw() {} // these objects are invisible so no need to draw them
 
 
-OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani, bool removeAtEnd)
+OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<UIAnimation> ani, bool removeAtEnd)
 	: BasePlaneObject({}), _removeAtEnd(removeAtEnd)
 {
 	drawZ = DefaultZCoord::Characters + 2; // always cover characters

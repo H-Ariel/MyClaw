@@ -48,7 +48,7 @@
 #define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH_AMOUNT)
 #define ADD_LIFE(n)			ADD_VALUE(_lives, n, MAX_LIVES_AMOUNT)
 #define SET_POWERUP(t) { \
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Powerup); \
+	AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
 	if (_currPowerup != Item:: t) _powerupLeftTime = 0; \
 	_powerupLeftTime += item->getDuration(); \
 	_currPowerup = Item:: t; \
@@ -72,7 +72,7 @@ Player::PowerupSparkles::PowerupSparkles(Rectangle2D* playerRc)
 		init(s);
 	}
 }
-void Player::PowerupSparkles::init(shared_ptr<Animation> sparkle)
+void Player::PowerupSparkles::init(shared_ptr<UIAnimation> sparkle)
 {
 	const float a = (_playerRc->right - _playerRc->left) / 2; // vertical radius
 	const float b = (_playerRc->bottom - _playerRc->top) / 2; // horizontal radius
@@ -152,10 +152,10 @@ Player::Player()
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
 
-	_animations["SQUEEZED"] = allocNewSharedPtr<Animation>(vector<Animation::FrameData*>({
-		DBG_NEW Animation::FrameData("CLAW/IMAGES/450.PID"),
-		DBG_NEW Animation::FrameData("CLAW/IMAGES/451.PID"),
-		DBG_NEW Animation::FrameData("CLAW/IMAGES/452.PID")
+	_animations["SQUEEZED"] = allocNewSharedPtr<UIAnimation>(vector<UIAnimation::FrameData*>({
+		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage( "CLAW/IMAGES/450.PID")),
+		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/451.PID")),
+		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/452.PID"))
 	}));
 }
 
@@ -213,7 +213,7 @@ void Player::Logic(uint32_t elapsedTime)
 	{
 		_powerupLeftTime = 0;
 		_currPowerup = Item::None;
-		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
+		AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	}
 
 	float speedX = SpeedX_Normal, speedYClimb = SpeedY_Climb;
@@ -894,9 +894,9 @@ bool Player::collectItem(Item* item)
 		case 25000: i = 9; break;
 		}
 
-		vector<Animation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
+		vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
 		myMemCpy(images[0]->duration, 1000U);
-		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, allocNewSharedPtr<Animation>(images));
+		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, allocNewSharedPtr<UIAnimation>(images));
 		myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);
 
 		ActionPlane::addPlaneObject(ani);
@@ -1020,7 +1020,7 @@ void Player::loseLife()
 		_ani->loopAni = false;
 		_powerupLeftTime = 0;
 		_currPowerup = Item::None;
-		AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Level);
+		AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	}
 }
 void Player::nextLevel()

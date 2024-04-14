@@ -22,13 +22,13 @@ FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
 	if (!doFloorSpikeCtor) return;
 
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
-	vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath)->getImagesList();
-	vector<Animation::FrameData*> disappearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
+	vector<UIAnimation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath)->getImagesList();
+	vector<UIAnimation::FrameData*> disappearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
 
 	myMemCpy(appearImages.back()->duration, uint32_t((obj.speedX > 0) ? obj.speedX : 1500));
 	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));
 
-	_ani = allocNewSharedPtr<Animation>(appearImages + disappearImages);
+	_ani = allocNewSharedPtr<UIAnimation>(appearImages + disappearImages);
 
 	setObjectRectangle();
 }
@@ -52,11 +52,11 @@ bool FloorSpike::isDamage() const
 SawBlade::SawBlade(const WwdObject& obj)
 	: FloorSpike(obj, false)
 {
-	shared_ptr<Animation> spinAni = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_SPIN"));
-	vector<Animation::FrameData*> appearImages = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_UP"))->getImagesList();
-	vector<Animation::FrameData*> disappearImages = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_DOWN"))->getImagesList();
+	shared_ptr<UIAnimation> spinAni = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_SPIN"));
+	vector<UIAnimation::FrameData*> appearImages = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_UP"))->getImagesList();
+	vector<UIAnimation::FrameData*> disappearImages = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_DOWN"))->getImagesList();
 
-	vector<Animation::FrameData*> waitImages;
+	vector<UIAnimation::FrameData*> waitImages;
 	for (int32_t timeUp = (obj.speedX > 0) ? obj.speedX : 1500; timeUp > 0;)
 	{
 		waitImages += spinAni->getImagesList();
@@ -65,7 +65,7 @@ SawBlade::SawBlade(const WwdObject& obj)
 	
 	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));
 	
-	_ani = allocNewSharedPtr<Animation>(appearImages + waitImages + disappearImages);
+	_ani = allocNewSharedPtr<UIAnimation>(appearImages + waitImages + disappearImages);
 
 	setObjectRectangle();
 }
@@ -79,8 +79,8 @@ bool SawBlade::isDamage() const
 LavaGeyser::LavaGeyser(const WwdObject& obj)
 	: FloorSpike(obj, false)
 {
-	vector<Animation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAGEYSER"), false,50)->getImagesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAGEYSER"), false,50)->getImagesList();
 	myMemCpy(images.back()->duration, uint32_t((obj.speed > 0) ? obj.speed : 500));
-	_ani = allocNewSharedPtr<Animation>(images);
+	_ani = allocNewSharedPtr<UIAnimation>(images);
 	setObjectRectangle();
 }

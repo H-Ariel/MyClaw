@@ -6,29 +6,41 @@
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="Objects">
-      <UniqueIdentifier>{dc271a34-c867-4fdb-8e90-a808784358f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Enemies">
-      <UniqueIdentifier>{0535962b-54b5-4051-ba03-05f8905cde92}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Enemies\Bosses">
-      <UniqueIdentifier>{1c7d5223-a64e-44b5-b5df-53149334a50d}</UniqueIdentifier>
+      <UniqueIdentifier>{87b796eb-1bb2-4361-a4d5-c043cabab4c5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Menu">
-      <UniqueIdentifier>{f8272b00-1ad2-4884-a7da-6dd7fe0c4aa6}</UniqueIdentifier>
+      <UniqueIdentifier>{fb7b0a3b-11c6-4fbe-85bb-639b5153db97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemies">
+      <UniqueIdentifier>{19966922-49b6-4d07-bb18-651a464b5668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets-Managers">
+      <UniqueIdentifier>{14ded9de-6d4c-4249-9095-c5d08cc021cd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ActionPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BaseCharacter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BaseEnemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="BasePlaneObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CheatsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ClawLevelEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyHelp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameMainApp.cpp">
@@ -37,16 +49,37 @@
     <ClCompile Include="LevelHUD.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="LevelPlane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SavedGameManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\ActionPlaneMessage.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\AmbientSound.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
     <ClCompile Include="Objects\Cannon.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Checkpoint.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\ClawProjectile.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\ConveyorBelt.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\CrabNest.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Crate.cpp">
@@ -58,6 +91,30 @@
     <ClCompile Include="Objects\Elevator.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\EnemyProjectile.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\FloorSpike.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\GooVent.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\GroundBlower.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Item.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Laser.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\LavaHand.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\LavaMouth.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
     <ClCompile Include="Objects\Pegs.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
@@ -67,140 +124,29 @@
     <ClCompile Include="Objects\Projectile.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\SoundTrigger.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Item.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Objects\Rope.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\FloorSpike.cpp">
+    <ClCompile Include="Objects\SoundTrigger.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="Objects\SpringBoard.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Stalactite.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
     <ClCompile Include="Objects\Statue.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\GroundBlower.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\GooVent.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\ConveyorBelt.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\CrabNest.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="Objects\TProjectilesShooter.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Laser.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="Menu\CreditsEngine.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseEnemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\BearSailor.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Chameleon.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\CrazyHook.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\CutThroat.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Fish.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\HermitCrab.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Mercat.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Officer.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\PegLeg.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Rat.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\RedTailPirate.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\RobberThief.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Seagull.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Siren.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Soldier.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\TownGuard.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\Stalactite.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\AmbientSound.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ClawProjectile.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\EnemyProjectile.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Aquatis.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Katherine.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\LeRauxe.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Marrow.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Wolvington.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Gabriel.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\LavaMouth.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\RedTail.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyHelp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\TigerGuard.cpp">
-      <Filter>Enemies</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelPlane.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Menu\HelpScreenEngine.cpp">
+      <Filter>Menu</Filter>
     </ClCompile>
     <ClCompile Include="Menu\HierarchicalMenu.cpp">
       <Filter>Menu</Filter>
@@ -223,54 +169,102 @@
     <ClCompile Include="Menu\OpeningScreenEngine.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menu\CreditsEngine.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu\HelpScreenEngine.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
     <ClCompile Include="Menu\ScreenEngine.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="SavedGameManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Enemies\Aquatis.cpp">
+      <Filter>Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="CheatsManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Enemies\BearSailor.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Chameleon.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\CrazyHook.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\CutThroat.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Fish.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Gabriel.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\HermitCrab.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Katherine.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\LeRauxe.cpp">
+      <Filter>Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Enemies\LordOmar.cpp">
-      <Filter>Enemies\Bosses</Filter>
+      <Filter>Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\LavaHand.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="Enemies\Marrow.cpp">
+      <Filter>Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\ActionPlaneMessage.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="Enemies\Mercat.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Officer.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\PegLeg.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Rat.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RedTail.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RedTailPirate.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\RobberThief.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Seagull.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Siren.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Soldier.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\TigerGuard.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\TownGuard.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Wolvington.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\AnimationsManager.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\AssetsManager.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\ImagesManager.cpp">
+      <Filter>Assets-Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets-Managers\PathManager.cpp">
+      <Filter>Assets-Managers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Objects\PowderKeg.h">
+    <ClInclude Include="Objects\ActionPlaneMessage.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Projectile.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\SoundTrigger.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Pegs.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Item.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\DoNothing.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Crate.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Elevator.h">
+    <ClInclude Include="Objects\AmbientSound.h">
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Cannon.h">
@@ -279,19 +273,7 @@
     <ClInclude Include="Objects\Checkpoint.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Rope.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\FloorSpike.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\SpringBoard.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Statue.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\GroundBlower.h">
+    <ClInclude Include="Objects\ClawProjectile.h">
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\ConveyorBelt.h">
@@ -300,134 +282,68 @@
     <ClInclude Include="Objects\CrabNest.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\TProjectilesShooter.h">
+    <ClInclude Include="Objects\Crate.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Laser.h">
+    <ClInclude Include="Objects\DoNothing.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Elevator.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\EnemyProjectile.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\FloorSpike.h">
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\GooVent.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="ActionPlane.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseCharacter.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BasePlaneObject.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ClawLevelEngine.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMainApp.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelHUD.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsManager.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseEnemy.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\BearSailor.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Chameleon.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\CrazyHook.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\CutThroat.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Fish.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\HermitCrab.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Mercat.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Officer.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\PegLeg.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Rat.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\RedTailPirate.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\RobberThief.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Seagull.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Siren.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Soldier.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\TownGuard.h">
-      <Filter>Enemies</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\Stalactite.h">
+    <ClInclude Include="Objects\GroundBlower.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\AmbientSound.h">
+    <ClInclude Include="Objects\Item.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="objects\ClawProjectile.h">
+    <ClInclude Include="Objects\Laser.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="objects\EnemyProjectile.h">
+    <ClInclude Include="Objects\LavaHand.h">
       <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Aquatis.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Katherine.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\LeRauxe.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Marrow.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Wolvington.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Gabriel.h">
-      <Filter>Enemies\Bosses</Filter>
     </ClInclude>
     <ClInclude Include="Objects\LavaMouth.h">
       <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\RedTail.h">
-      <Filter>Enemies\Bosses</Filter>
+    <ClInclude Include="Objects\Pegs.h">
+      <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="EnemyHelp.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Objects\PowderKeg.h">
+      <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\TigerGuard.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="Objects\Projectile.h">
+      <Filter>Objects</Filter>
     </ClInclude>
-    <ClInclude Include="LevelPlane.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Objects\Rope.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\SoundTrigger.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\SpringBoard.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Stalactite.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Statue.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\TProjectilesShooter.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu\CreditsEngine.h">
+      <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="Menu\HelpScreenEngine.h">
       <Filter>Menu</Filter>
@@ -453,26 +369,134 @@
     <ClInclude Include="Menu\OpeningScreenEngine.h">
       <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Menu\CreditsEngine.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
     <ClInclude Include="Menu\ScreenEngine.h">
       <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="SavedGameManager.h">
+    <ClInclude Include="Enemies\Aquatis.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\BearSailor.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Chameleon.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\CrazyHook.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\CutThroat.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Fish.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Gabriel.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\HermitCrab.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Katherine.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\LeRauxe.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\LordOmar.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Marrow.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Mercat.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Officer.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\PegLeg.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Rat.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\RedTail.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\RedTailPirate.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\RobberThief.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Seagull.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Siren.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Soldier.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\TigerGuard.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\TownGuard.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Wolvington.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\AnimationsManager.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\AssetsManager.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\ImagesManager.h">
+      <Filter>Assets-Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionPlane.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCharacter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseEnemy.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasePlaneObject.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CheatsManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\LordOmar.h">
-      <Filter>Enemies\Bosses</Filter>
+    <ClInclude Include="ClawLevelEngine.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\LavaHand.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="EnemyHelp.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\ActionPlaneMessage.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="GameMainApp.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelHUD.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelPlane.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SavedGameManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets-Managers\PathManager.h">
+      <Filter>Assets-Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

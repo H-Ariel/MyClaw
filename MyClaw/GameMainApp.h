@@ -9,5 +9,8 @@ public:
 	GameMainApp();
 	~GameMainApp();
 
-	void run() override;
+	void init() override;
+
+private:
+	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 };

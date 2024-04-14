@@ -6,7 +6,7 @@ EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileA
 	: Projectile(obj, PathManager::getImageSetPath(projectileAniDir)) {}
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAni, const string& imageSet)
 	: Projectile(obj, projectileAni, imageSet) {}
-EnemyProjectile::EnemyProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+EnemyProjectile::EnemyProjectile(shared_ptr<UIAnimation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
 	: Projectile(ani, damage, speed, initialPosition) {}
 
 RatBomb::RatBomb(const WwdObject& obj)
@@ -99,7 +99,7 @@ void SirenProjectile::Draw()
 		_ani->Draw();
 }
 
-TProjectile::TProjectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+TProjectile::TProjectile(shared_ptr<UIAnimation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
 	: EnemyProjectile(ani, damage, speed, initialPosition) {}
 
 LavahandProjectile::LavahandProjectile(D2D1_POINT_2F initialPosition, bool mirrored)

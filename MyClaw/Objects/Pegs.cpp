@@ -1,7 +1,7 @@
 #include "Pegs.h"
 
 
-void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<Animation> ani)
+void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<UIAnimation> ani)
 {
 	// catch player between the second and third quarters
 	size_t idx = ani->getFrameNumber() * 4, framesAmount = ani->getImagesCount();
@@ -48,24 +48,24 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 		}
 	}
 
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
 
 	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1500));
 
 	if (obj.smarts & 0x1)
 	{
 		isAlwaysOn = true;
-		for_each(images.begin(), images.end() - 1, [](Animation::FrameData* f) { delete f; });
+		for_each(images.begin(), images.end() - 1, [](UIAnimation::FrameData* f) { delete f; });
 		images.erase(images.begin(), images.end() - 1);
 	}
 	else
 	{
-		vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath)->getImagesList();
+		vector<UIAnimation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath)->getImagesList();
 		myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 1500));
 		images = appearImages + images;
 	}
 
-	_ani = allocNewSharedPtr<Animation>(images);
+	_ani = allocNewSharedPtr<UIAnimation>(images);
 	_ani->updateFrames = !isAlwaysOn;
 
 	setObjectRectangle();
@@ -95,13 +95,13 @@ StartSteppingStone::StartSteppingStone(const WwdObject& obj)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
 
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
 	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1000));
-	vector<Animation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, false)->getImagesList();
+	vector<UIAnimation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, false)->getImagesList();
 	myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 2000));
 	images = appearImages + images;
 
-	_ani = allocNewSharedPtr<Animation>(images);
+	_ani = allocNewSharedPtr<UIAnimation>(images);
 
 	setObjectRectangle();
 }
@@ -128,9 +128,9 @@ void StartSteppingStone::Logic(uint32_t elapsedTime)
 CrumblingPeg::CrumblingPeg(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
-	vector<Animation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList();
 	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
-	_ani = allocNewSharedPtr<Animation>(images);
+	_ani = allocNewSharedPtr<UIAnimation>(images);
 	_ani->position = position;
 	Reset();
 	setObjectRectangle();

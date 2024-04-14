@@ -23,7 +23,7 @@ void Wolvington::Logic(uint32_t elapsedTime)
 	if (!PreLogic(elapsedTime)) return;
 
 	
-	const shared_ptr<Animation> prevAni = _ani;
+	const shared_ptr<UIAnimation> prevAni = _ani;
 
 	if (_hitsCuonter == 0 && _canJump)
 	{

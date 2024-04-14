@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Assets-Managers/Animation.h"
+#include "GameEngine/UIAnimation.h"
 #include "HierarchicalMenu.h"
 #include "ScreenEngine.h"
 
@@ -9,7 +9,7 @@ class MenuEngine : public ScreenEngine
 {
 public:
 	MenuEngine(const string& bgPcxPath = "");
-	MenuEngine(D2D1_POINT_2U mousePosition, shared_ptr<Animation> cursor, const string& bgPcxPath = "");
+	MenuEngine(D2D1_POINT_2U mousePosition, shared_ptr<UIAnimation> cursor, const string& bgPcxPath = "");
 	MenuEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath = "");
 	~MenuEngine();
 
@@ -24,7 +24,7 @@ protected:
 	void menuOut();
 	void backToGame();
 
-	shared_ptr<Animation> _cursor;
+	shared_ptr<UIAnimation> _cursor;
 
 	friend class ScreenEngine;
 };

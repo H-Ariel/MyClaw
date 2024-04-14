@@ -19,11 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{bfd15ddc-31a8-46d9-90fd-e64415bf198f}</ProjectGuid>
-    <RootNamespace>MyClaw</RootNamespace>
+    <ProjectGuid>{4bb7caf0-a080-42db-8e14-091cc6ae935d}</ProjectGuid>
+    <RootNamespace>NewClaw</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>MyClaw</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -71,20 +72,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)\bin\output\$(Configuration)\$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)\bin\intermediate\$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)\bin\$(Configuration)-$(Platform)\</OutDir>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -151,7 +152,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
+      <Project>{350b3fe6-56ca-4632-b60b-678edeb82c72}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\RezParser\RezParser.vcxproj">
+      <Project>{edca5b0a-5920-44df-a406-56b83b281554}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="ActionPlane.cpp" />
+    <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
+    <ClCompile Include="Assets-Managers\AssetsManager.cpp" />
+    <ClCompile Include="Assets-Managers\ImagesManager.cpp" />
+    <ClCompile Include="Assets-Managers\PathManager.cpp" />
     <ClCompile Include="BaseCharacter.cpp" />
     <ClCompile Include="BaseEnemy.cpp" />
     <ClCompile Include="BasePlaneObject.cpp" />
@@ -167,10 +180,10 @@
     <ClCompile Include="Enemies\HermitCrab.cpp" />
     <ClCompile Include="Enemies\Katherine.cpp" />
     <ClCompile Include="Enemies\LeRauxe.cpp" />
+    <ClCompile Include="Enemies\LordOmar.cpp" />
     <ClCompile Include="Enemies\Marrow.cpp" />
     <ClCompile Include="Enemies\Mercat.cpp" />
     <ClCompile Include="Enemies\Officer.cpp" />
-    <ClCompile Include="Enemies\LordOmar.cpp" />
     <ClCompile Include="Enemies\PegLeg.cpp" />
     <ClCompile Include="Enemies\Rat.cpp" />
     <ClCompile Include="Enemies\RedTail.cpp" />
@@ -201,13 +214,13 @@
     <ClCompile Include="Objects\AmbientSound.cpp" />
     <ClCompile Include="Objects\Cannon.cpp" />
     <ClCompile Include="Objects\Checkpoint.cpp" />
-    <ClCompile Include="objects\ClawProjectile.cpp" />
+    <ClCompile Include="Objects\ClawProjectile.cpp" />
     <ClCompile Include="Objects\ConveyorBelt.cpp" />
     <ClCompile Include="Objects\CrabNest.cpp" />
     <ClCompile Include="Objects\Crate.cpp" />
     <ClCompile Include="Objects\DoNothing.cpp" />
     <ClCompile Include="Objects\Elevator.cpp" />
-    <ClCompile Include="objects\EnemyProjectile.cpp" />
+    <ClCompile Include="Objects\EnemyProjectile.cpp" />
     <ClCompile Include="Objects\FloorSpike.cpp" />
     <ClCompile Include="Objects\GooVent.cpp" />
     <ClCompile Include="Objects\GroundBlower.cpp" />
@@ -221,7 +234,7 @@
     <ClCompile Include="Objects\Rope.cpp" />
     <ClCompile Include="Objects\SoundTrigger.cpp" />
     <ClCompile Include="Objects\SpringBoard.cpp" />
-    <ClCompile Include="objects\Stalactite.cpp" />
+    <ClCompile Include="Objects\Stalactite.cpp" />
     <ClCompile Include="Objects\Statue.cpp" />
     <ClCompile Include="Objects\TProjectilesShooter.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
@@ -230,6 +243,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h" />
+    <ClInclude Include="Assets-Managers\AnimationsManager.h" />
+    <ClInclude Include="Assets-Managers\AssetsManager.h" />
+    <ClInclude Include="Assets-Managers\ImagesManager.h" />
+    <ClInclude Include="Assets-Managers\PathManager.h" />
     <ClInclude Include="BaseCharacter.h" />
     <ClInclude Include="BaseEnemy.h" />
     <ClInclude Include="BasePlaneObject.h" />
@@ -245,10 +262,10 @@
     <ClInclude Include="Enemies\HermitCrab.h" />
     <ClInclude Include="Enemies\Katherine.h" />
     <ClInclude Include="Enemies\LeRauxe.h" />
+    <ClInclude Include="Enemies\LordOmar.h" />
     <ClInclude Include="Enemies\Marrow.h" />
     <ClInclude Include="Enemies\Mercat.h" />
     <ClInclude Include="Enemies\Officer.h" />
-    <ClInclude Include="Enemies\LordOmar.h" />
     <ClInclude Include="Enemies\PegLeg.h" />
     <ClInclude Include="Enemies\Rat.h" />
     <ClInclude Include="Enemies\RedTail.h" />
@@ -278,13 +295,13 @@
     <ClInclude Include="Objects\AmbientSound.h" />
     <ClInclude Include="Objects\Cannon.h" />
     <ClInclude Include="Objects\Checkpoint.h" />
-    <ClInclude Include="objects\ClawProjectile.h" />
+    <ClInclude Include="Objects\ClawProjectile.h" />
     <ClInclude Include="Objects\ConveyorBelt.h" />
     <ClInclude Include="Objects\CrabNest.h" />
     <ClInclude Include="Objects\Crate.h" />
     <ClInclude Include="Objects\DoNothing.h" />
     <ClInclude Include="Objects\Elevator.h" />
-    <ClInclude Include="objects\EnemyProjectile.h" />
+    <ClInclude Include="Objects\EnemyProjectile.h" />
     <ClInclude Include="Objects\FloorSpike.h" />
     <ClInclude Include="Objects\GooVent.h" />
     <ClInclude Include="Objects\GroundBlower.h" />
@@ -298,23 +315,12 @@
     <ClInclude Include="Objects\Rope.h" />
     <ClInclude Include="Objects\SoundTrigger.h" />
     <ClInclude Include="Objects\SpringBoard.h" />
-    <ClInclude Include="objects\Stalactite.h" />
+    <ClInclude Include="Objects\Stalactite.h" />
     <ClInclude Include="Objects\Statue.h" />
     <ClInclude Include="Objects\TProjectilesShooter.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SavedGameManager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Assets-Managers\Assets-Managers.vcxproj">
-      <Project>{c826d542-4899-48b1-90bf-8597fb61d64f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Framework\Framework.vcxproj">
-      <Project>{b85cb73d-e5ee-4d19-bc57-a0bc3207f762}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
-      <Project>{5c99c1c7-d7fb-4454-a705-526b0d26f7f4}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

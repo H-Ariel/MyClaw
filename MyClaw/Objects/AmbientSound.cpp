@@ -3,7 +3,7 @@
 
 
 AmbientSound::AmbientSound(const WwdObject& obj)
-	: BaseSoundObject(obj), _isPlaying(false)
+	: BaseSoundObject(obj), _isPlaying(false), _wavPlayerId(AssetsManager::INVALID_AUDIOPLAYER_ID)
 {
 }
 void AmbientSound::Logic(uint32_t elapsedTime)
@@ -21,7 +21,6 @@ void AmbientSound::Logic(uint32_t elapsedTime)
 		if (_isPlaying)
 		{
 			AssetsManager::stopWavFile(_wavPlayerId);
-			_wavPlayerId = -1;
 			_isPlaying = false;
 		}
 	}
@@ -39,8 +38,8 @@ GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj, int levelNumber)
 		if (levelNumber == 2 || levelNumber == 3 || levelNumber == 4)
 			_volume /= 5; // because the sound is too loud
 
-		_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume, true);
-		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPlayerId);
+		AssetsManager::playWavFile(_wavPath, _volume, true);
+		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPath);
 	}
 }
 void GlobalAmbientSound::Logic(uint32_t elapsedTime)
@@ -53,8 +52,8 @@ void GlobalAmbientSound::Logic(uint32_t elapsedTime)
 	_currentTime += elapsedTime;
 	if (_currentTime >= _timeOff)
 	{
-		_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume);
-		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPlayerId);
+		AssetsManager::playWavFile(_wavPath, _volume);
+		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPath);
 
 		int timeOn = getRandomInt(_minTimeOn, _maxTimeOn);
 		int soundLoops = timeOn / _soundDurationMs;

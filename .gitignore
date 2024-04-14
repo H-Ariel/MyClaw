@@ -397,6 +397,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Claw resource file
+# Claw resources file
 *.rez
 *.dat

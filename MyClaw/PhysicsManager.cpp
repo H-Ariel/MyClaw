@@ -10,7 +10,7 @@
 #define EMPTY_TILE -1
 
 
-PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
+PhysicsManager::PhysicsManager(WapWwd* wwd, const LevelPlane* plane)
 {
 	// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
@@ -48,12 +48,12 @@ PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 		}
 	};
 
-	for (i = 0; i < plane->tilesOnAxisY; i++)
+	for (i = 0; i < plane->_wwdPlane->tilesOnAxisY; i++)
 	{
-		for (j = 0; j < plane->tilesOnAxisX; j++)
+		for (j = 0; j < plane->_wwdPlane->tilesOnAxisX; j++)
 		{
-			if (plane->tiles[i][j] == EMPTY_TILE) tileDesc = {};
-			else tileDesc = wwd->tilesDescription[plane->tiles[i][j]];
+			if (plane->_wwdPlane->tiles[i][j] == EMPTY_TILE) tileDesc = {};
+			else tileDesc = wwd->tileDescriptions[plane->_wwdPlane->tiles[i][j]];
 
 			tileRc.left = (float)(j * TILE_SIZE);
 			tileRc.top = (float)(i * TILE_SIZE);
@@ -63,7 +63,7 @@ PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 			switch (tileDesc.type)
 			{
 			case WwdTileDescription::TileType_Single:
-				addRect(tileRc, tileDesc.inAttr);
+				addRect(tileRc, tileDesc.insideAttrib);
 				break;
 
 			case WwdTileDescription::TileType_Double:
@@ -81,15 +81,15 @@ PhysicsManager::PhysicsManager(WapWorld* wwd, const LevelPlane* plane)
 				x2 = tileRc.left + tileDesc.rect.right;
 				y1 = tileRc.top + tileDesc.rect.top;
 				y2 = tileRc.top + tileDesc.rect.bottom;
-				addRect({ tileRc.left, tileRc.top, x1, y1 }, tileDesc.outAttr);
-				addRect({ x1, tileRc.top, x2, y1 }, tileDesc.outAttr);
-				addRect({ x2, tileRc.top, tileRc.right, y1 }, tileDesc.outAttr);
-				addRect({ tileRc.left, y1, x1, y2 }, tileDesc.outAttr);
-				addRect({ x1, y1, x2, y2 }, tileDesc.inAttr);
-				addRect({ x2, y1, tileRc.right, y2 }, tileDesc.outAttr);
-				addRect({ tileRc.left, y2, x1, tileRc.bottom }, tileDesc.outAttr);
-				addRect({ x1, y2, x2, tileRc.bottom }, tileDesc.outAttr);
-				addRect({ x2, y2, tileRc.right, tileRc.bottom }, tileDesc.outAttr);
+				addRect({ tileRc.left, tileRc.top, x1, y1 }, tileDesc.outsideAttrib);
+				addRect({ x1, tileRc.top, x2, y1 }, tileDesc.outsideAttrib);
+				addRect({ x2, tileRc.top, tileRc.right, y1 }, tileDesc.outsideAttrib);
+				addRect({ tileRc.left, y1, x1, y2 }, tileDesc.outsideAttrib);
+				addRect({ x1, y1, x2, y2 }, tileDesc.insideAttrib);
+				addRect({ x2, y1, tileRc.right, y2 }, tileDesc.outsideAttrib);
+				addRect({ tileRc.left, y2, x1, tileRc.bottom }, tileDesc.outsideAttrib);
+				addRect({ x1, y2, x2, tileRc.bottom }, tileDesc.outsideAttrib);
+				addRect({ x2, y2, tileRc.right, tileRc.bottom }, tileDesc.outsideAttrib);
 				break;
 			}
 		}

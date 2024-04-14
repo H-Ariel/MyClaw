@@ -5,13 +5,15 @@
 
 
 class CheatsManager;
+class LevelPlane;
 
 struct ClawLevelEngineFields
 {
 	ClawLevelEngineFields(int levelNumber);
 	~ClawLevelEngineFields();
 
-	shared_ptr<WapWorld> _wwd;
+	shared_ptr<WapWwd> _wwd;
+	vector<shared_ptr<LevelPlane>> _planes;
 	D2D1_POINT_2F* _mainPlanePosition;
 	LevelHUD* _hud;
 	CheatsManager* _cheatsManager;

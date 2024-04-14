@@ -18,7 +18,7 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 	_isMirrored = speed.x < 0;
 	drawZ = DefaultZCoord::Characters + 1;
 }
-Projectile::Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
+Projectile::Projectile(shared_ptr<UIAnimation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
 	: BaseDynamicPlaneObject({}), _damage(damage), _timeLeft(3000)
 {
 	_ani = ani;

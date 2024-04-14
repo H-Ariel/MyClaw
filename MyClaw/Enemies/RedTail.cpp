@@ -122,7 +122,7 @@ bool RedTailSpikes::isDamage() const { return true; }
 
 
 RedTailWind::RedTailWind(const WwdObject& obj)
-	: BasePlaneObject(obj), _windTimeCounter(0), _windSoundId(-1)
+	: BasePlaneObject(obj), _windTimeCounter(0), _windSoundId(AssetsManager::INVALID_AUDIOPLAYER_ID)
 {
 	_wind = this;
 	logicZ = DefaultZCoord::Characters - 1; // before the player so he can stop moving left when he arrives to the spikes
@@ -135,13 +135,14 @@ void RedTailWind::Logic(uint32_t elapsedTime)
 		_windTimeCounter -= elapsedTime;
 		if (player->position.x > 37122) // make sure player do not pass the spikes
 			player->position.x -= 0.1f * elapsedTime;
-		if (_windSoundId == -1)
+		if (_windSoundId == AssetsManager::INVALID_AUDIOPLAYER_ID)
+		{
 			_windSoundId = AssetsManager::playWavFile("LEVEL13/SOUNDS/REDTAIL/WINDWHISTLING.WAV", 50);
+		}
 	}
-	else if (_windSoundId != -1)
+	else if (_windSoundId != AssetsManager::INVALID_AUDIOPLAYER_ID)
 	{
 		AssetsManager::stopWavFile(_windSoundId);
-		_windSoundId = -1;
 	}
 }
 void RedTailWind::activate() { _windTimeCounter = 3000; }

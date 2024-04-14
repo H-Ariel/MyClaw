@@ -1,4 +1,8 @@
-* the Assets-Managers project should generate `struct`s and move them to MyClaw
++ handle setting (low details, front plane, etc. add menu)
++ in AM init rez: RezArchive("CLAW") [do not use default ctor]
+
+- make sure all options works well
+- use make_shared instead of allocNewSharedPtr
 
 * add BossStager logic
 * fix AmbientSound objects
@@ -10,7 +14,7 @@
 * use pegs/elevators/etc. as ground for enemies/treasures/etc. too
 * catch and throw enemies (like a powder-keg)
 * add "ADVANCE.ANI" for enemies (before they attack)
-* fix the bosses (it doesn't feel like the game)
+* fix the bosses and enemies (it doesn't feel like the game)
 * read about direct-sound and maybe use it (dsound.h)
 * find a way to run faster (threads?)
 * after throw exception make sure we free allocated memory

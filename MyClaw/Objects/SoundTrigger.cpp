@@ -33,7 +33,7 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 			_isInCollision = true;
 			if (_timesCounter == -1 || _timesCounter > 0)
 			{
-				_wavPlayerId = AssetsManager::playWavFile(_wavPath, _volume);
+				AssetsManager::playWavFile(_wavPath, _volume);
 
 				if (_timesCounter != -1)
 				{
@@ -42,7 +42,7 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 
 				if (_isClawDialog)
 				{
-					player->activateDialog(AssetsManager::getWavFileDuration(_wavPlayerId));
+					player->activateDialog(AssetsManager::getWavFileDuration(_wavPath));
 				}
 			}
 		}

@@ -2,10 +2,10 @@
 #include "GameEngine/WindowManager.h"
 
 
-LevelPlane::LevelPlane(WapWorld* wwd)
-	: _wwd(wwd), fillColor(0), tilesOnAxisX(0), tilesOnAxisY(0),
-	maxTileIdxX(0), maxTileIdxY(0), ZCoord(0), movementPercentX(0),
-	movementPercentY(0), _isMainPlane(false)
+LevelPlane::LevelPlane(WapWwd* wwd, WwdPlane* wwdPlane)
+	: _wwd(wwd), _wwdPlane(wwdPlane), _isMainPlane(false),
+	maxTileIdxX(((wwdPlane->flags& WwdPlane::WwdPlaneFlags_XWrapping) ? INT32_MAX : wwdPlane->tilesOnAxisX)),
+	maxTileIdxY(((wwdPlane->flags& WwdPlane::WwdPlaneFlags_YWrapping) ? INT32_MAX : wwdPlane->tilesOnAxisY))
 {
 }
 
@@ -16,22 +16,22 @@ void LevelPlane::Draw()
 	int row, col, tileId, rowTileIndex;
 
 	const D2D1_SIZE_F wndSz = WindowManager::getSize();
-	const float parallaxCameraPosX = position.x * movementPercentX;
-	const float parallaxCameraPosY = position.y * movementPercentY;
+	const float parallaxCameraPosX = position.x * _wwdPlane->movementPercentX;
+	const float parallaxCameraPosY = position.y * _wwdPlane->movementPercentY;
 	const int startRow = int(parallaxCameraPosY / TILE_SIZE);
 	const int startCol = int(parallaxCameraPosX / TILE_SIZE);
 	const int endRow = min<int>(maxTileIdxY, int(wndSz.height / TILE_SIZE + 2 + startRow));
 	const int endCol = min<int>(maxTileIdxX, int(wndSz.width / TILE_SIZE + 2 + startCol));
 
-	for (i = 0; i < _objects.size() && _objects[i]->drawZ < this->ZCoord; i++)
+	for (i = 0; i < _objects.size() && _objects[i]->drawZ < _wwdPlane->coordZ; i++)
 		_objects[i]->Draw();
 
 	for (row = startRow; row < endRow; row++)
 	{
-		rowTileIndex = row % tilesOnAxisY;
+		rowTileIndex = row % _wwdPlane->tilesOnAxisY;
 		for (col = startCol; col < endCol; col++)
 		{
-			tileId = tiles[rowTileIndex][col % tilesOnAxisX];
+			tileId = _wwdPlane->tiles[rowTileIndex][col % _wwdPlane->tilesOnAxisX];
 			if (tilesImages.count(tileId))
 			{
 				img = tilesImages.at(tileId);
@@ -54,76 +54,18 @@ void LevelPlane::Draw()
 		_objects[i]->Draw();
 }
 
-void LevelPlane::readPlaneObjects(BufferReader& reader, int numOfObjects)
+void LevelPlane::init()
 {
-	WwdObject obj;
-	uint32_t nameLength, logicLength, imageSetLength, animationLength;
-	
-	while (numOfObjects--)
+	tilesImages = AssetsManager::loadPlaneTilesImages(_wwd->imageDirectoryPath + '/' + _wwdPlane->imageSets[0]);
+
+	DBG_PRINT("WARNING: The AmbientSound objects are too loud so I decided to not play it\n");
+
+	for (WwdObject& obj : _wwdPlane->objects)
 	{
-		reader.read(obj.id);
-		reader.read(nameLength);
-		reader.read(logicLength);
-		reader.read(imageSetLength);
-		reader.read(animationLength);
-		reader.read(obj.x);
-		reader.read(obj.y);
-		reader.read(obj.z);
-		reader.read(obj.i);
-		reader.read(obj.addFlags);
-		reader.read(obj.dynamicFlags);
-		reader.read(obj.drawFlags);
-		reader.read(obj.userFlags);
-		reader.read(obj.score);
-		reader.read(obj.points);
-		reader.read(obj.powerup);
-		reader.read(obj.damage);
-		reader.read(obj.smarts);
-		reader.read(obj.health);
-		reader.read(obj.moveRect);
-		reader.read(obj.hitRect);
-		reader.read(obj.attackRect);
-		reader.read(obj.clipRect);
-		reader.read(obj.userRect1);
-		reader.read(obj.userRect2);
-		reader.read(obj.userValue1);
-		reader.read(obj.userValue2);
-		reader.read(obj.userValue3);
-		reader.read(obj.userValue4);
-		reader.read(obj.userValue5);
-		reader.read(obj.userValue6);
-		reader.read(obj.userValue7);
-		reader.read(obj.userValue8);
-		reader.read(obj.minX);
-		reader.read(obj.minY);
-		reader.read(obj.maxX);
-		reader.read(obj.maxY);
-		reader.read(obj.speedX);
-		reader.read(obj.speedY);
-		reader.read(obj.tweakX);
-		reader.read(obj.tweakY);
-		reader.read(obj.counter);
-		reader.read(obj.speed);
-		reader.read(obj.width);
-		reader.read(obj.height);
-		reader.read(obj.direction);
-		reader.read(obj.faceDir);
-		reader.read(obj.timeDelay);
-		reader.read(obj.frameDelay);
-		reader.read(obj.objectType);
-		reader.read(obj.hitTypeFlags);
-		reader.read(obj.moveResX);
-		reader.read(obj.moveResY);
-		obj.name = reader.ReadString(nameLength);
-		obj.logic = reader.ReadString(logicLength);
-		obj.imageSet = reader.ReadString(imageSetLength);
-		obj.animation = reader.ReadString(animationLength);
-		
 		try
 		{
 			if (endsWith(obj.logic, "AmbientSound"))
 			{
-				DBG_PRINT("The AmbientSound objects are too loud so I decided to not play it\n");
 				continue;
 			}
 
@@ -135,6 +77,8 @@ void LevelPlane::readPlaneObjects(BufferReader& reader, int numOfObjects)
 			DBG_PRINT("Error while reading object: %s\n", ex.message.c_str());
 		}
 	}
+
+	_wwdPlane->objects.clear();
 }
 
 // update objects data after reading them from the file so it be easier to use them
@@ -143,7 +87,7 @@ void LevelPlane::updateObject(WwdObject& obj)
 	if (obj.logic == "ConveyorBelt")
 	{
 		int32_t x = obj.x - obj.x % TILE_SIZE, y = obj.y - obj.y % TILE_SIZE;
-		obj.moveRect = _wwd->tilesDescription[tiles[obj.y / TILE_SIZE][obj.x / TILE_SIZE]].rect;
+		obj.moveRect = _wwd->tileDescriptions[_wwdPlane->tiles[obj.y / TILE_SIZE][obj.x / TILE_SIZE]].rect;
 		obj.moveRect.left += x;
 		obj.moveRect.right += x;
 		obj.moveRect.top += y;
@@ -160,4 +104,5 @@ void LevelPlane::updateObject(WwdObject& obj)
 	}
 }
 
+// add object to the plane
 void LevelPlane::addObject(const WwdObject& obj) {}

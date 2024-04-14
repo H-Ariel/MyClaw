@@ -26,7 +26,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
-	shared_ptr<Animation> _home, _rest, _rise, _horzfire, _vertfire;
+	shared_ptr<UIAnimation> _home, _rest, _rise, _horzfire, _vertfire;
 };
 
 
@@ -48,7 +48,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
-	shared_ptr<Animation> _idle, _pressed;
+	shared_ptr<UIAnimation> _idle, _pressed;
 };
 
 

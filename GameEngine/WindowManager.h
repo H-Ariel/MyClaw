@@ -6,7 +6,7 @@
 class WindowManager
 {
 public:
-	static void Initialize(const TCHAR WindowClassName[], void* lpParam);
+	static void Initialize(const TCHAR WindowClassName[], const TCHAR title[], void* lpParam);
 	static void Finalize();
 
 	static void setTitle(const string& title);
@@ -53,7 +53,7 @@ private:
 
 	static WindowManager* instance;
 
-	WindowManager(const TCHAR WindowClassName[], void* lpParam);
+	WindowManager(const TCHAR WindowClassName[], const TCHAR title[], void* lpParam);
 	~WindowManager();
 
 
@@ -66,5 +66,5 @@ private:
 	ColorF _backgroundColor;
 	D2D1_SIZE_F _realSize;
 	D2D1_SIZE_F _camSize; // camera size (according to the screen size and PixelSize)
-	float _PixelSize;
+	float _windowScale;
 };

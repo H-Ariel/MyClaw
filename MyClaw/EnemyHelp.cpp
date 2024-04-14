@@ -6,7 +6,7 @@
 #define GEM_SPEED 0.2f
 
 
-EnemyFallDeath::EnemyFallDeath(const WwdObject& obj, shared_ptr<Animation> deadAni)
+EnemyFallDeath::EnemyFallDeath(const WwdObject& obj, shared_ptr<UIAnimation> deadAni)
 	: BaseDynamicPlaneObject(obj)
 {
 	_ani = deadAni;

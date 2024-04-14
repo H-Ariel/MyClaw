@@ -28,7 +28,7 @@ public:
 private:
 	bool checkForHurts();
 
-	shared_ptr<Animation> _idle, _hit, _killfall, _respawn,
+	shared_ptr<UIAnimation> _idle, _hit, _killfall, _respawn,
 		_slap, // tentacle slap/whip (when player is too far)
 		_squeeze; // tentacle squeeze (when player is too close)
 	Rectangle2D _lastAttackRect;

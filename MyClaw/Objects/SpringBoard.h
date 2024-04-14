@@ -11,6 +11,6 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
-	shared_ptr<Animation> _idle, _spring;
+	shared_ptr<UIAnimation> _idle, _spring;
 	const float _force; // the force calculated according to formula: V^2 = V0^2 + 2a * Y
 };

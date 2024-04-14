@@ -21,18 +21,18 @@ BearSailor::BearSailor(const WwdObject& obj)
 		"HITLOW", "KILLFALL", "STRIKE1", "", "", "", "", ENEMY_PATROL_SPEED)
 {
 	// hug animation is too short, so we need to repeat it 3 times
-	vector<Animation::FrameData*> images;
+	vector<UIAnimation::FrameData*> images;
 	for (int i = 0; i < 3; i++)
-		for (Animation::FrameData* frame : ANIMATION_HUG->getImagesList())
+		for (UIAnimation::FrameData* frame : ANIMATION_HUG->getImagesList())
 			images.push_back(frame);
-	ANIMATION_HUG = allocNewSharedPtr<Animation>(images);
+	ANIMATION_HUG = allocNewSharedPtr<UIAnimation>(images);
 
 	drawZ = DefaultZCoord::Characters + 1; // when this enemy hug CC it should be above him
 }
 
 void BearSailor::Logic(uint32_t elapsedTime)
 {
-	shared_ptr<Animation> prevAni(_ani);
+	shared_ptr<UIAnimation> prevAni(_ani);
 	BaseEnemy::Logic(elapsedTime);
 	if (prevAni == ANIMATION_HUG && prevAni != _ani) // hug animation is finished
 		player->unsqueeze(); // CC is free now

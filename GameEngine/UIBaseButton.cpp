@@ -57,7 +57,11 @@ void UIBaseButton::RegisterMyButtonClass()
 
 LRESULT CALLBACK UIBaseButton::UIButtonBase_WndProc(HWND hwnd, UINT msg, WPARAM wPrm, LPARAM lPrm)
 {
-	UIBaseButton* btn = _allButtons.count(hwnd) ? _allButtons[hwnd] : nullptr;
+	//UIBaseButton* btn = _allButtons.count(hwnd) ? _allButtons[hwnd] : nullptr;
+	UIBaseButton* btn = nullptr;
+	auto it = _allButtons.find(hwnd);
+	if (it != _allButtons.end())
+		btn = it->second;
 
 	switch (msg)
 	{

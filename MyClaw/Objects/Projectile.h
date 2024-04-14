@@ -20,7 +20,7 @@ public:
 	virtual int getDamage() const;
 
 protected:
-	Projectile(shared_ptr<Animation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
+	Projectile(shared_ptr<UIAnimation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 
 private:
 	int _timeLeft; // time left before projectile disappears

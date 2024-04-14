@@ -228,7 +228,7 @@ void LordOmar::Logic(uint32_t elapsedTime)
 	}
 	else
 	{
-		shared_ptr<Animation> shieldItem;
+		shared_ptr<UIAnimation> shieldItem;
 		switch (_state)
 		{
 		case Shield_1:

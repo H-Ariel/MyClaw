@@ -54,7 +54,7 @@ void LevelHUD::Draw()
 		drawNumbers((uint32_t)powerupLeftTime, 3, _scoreNumbers, { 50 + _offset.x, 50 }, true);
 	}
 
-	for (shared_ptr<Animation> ani : { _health, _weaponAni[BasePlaneObject::player->getCurrentWeapon()], _lives })
+	for (shared_ptr<UIAnimation> ani : { _health, _weaponAni[BasePlaneObject::player->getCurrentWeapon()], _lives })
 	{
 		Rectangle2D rc = ani->GetRect();
 		ani->position = { winWidth - (rc.right - rc.left) / 2 + _offset.x, pos.y };

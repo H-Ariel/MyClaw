@@ -2,19 +2,17 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 #define _USE_MATH_DEFINES
-#define NOMINMAX
+#define NOMINMAX // use std::min/max instead of min/max macros
 
 
 #ifdef _DEBUG
-	// check for memory leaks
-	#define _CRTDBG_MAP_ALLOC
-	#include <stdlib.h>
-	#include <crtdbg.h>
-	#define DBG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
-
-	#define LOW_DETAILS		// avoid usage of treasures glitter, front plane, sounds, some objects, etc.
+// check for memory leaks
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DBG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #else
-	#define DBG_NEW new // do not check for memory leaks
+#define DBG_NEW new // do not check for memory leaks
 #endif
 
 
@@ -27,14 +25,15 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cmath>
+#include <algorithm>
+#include <functional>
+#include <chrono>
+#include <thread>
+#include <mutex>
 #include <vector>
 #include <list>
 #include <map>
-#include <cmath>
-#include <functional>
-#include <algorithm>
-#include <thread>
-#include <mutex>
 #include <stack>
 #include <set>
 
@@ -53,9 +52,9 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 
 #ifdef _DEBUG
-	#define DBG_PRINT(...) printf(__VA_ARGS__)
+#define DBG_PRINT(...) printf(__VA_ARGS__)
 #else
-	#define DBG_PRINT(...)
+#define DBG_PRINT(...)
 #endif
 
 
@@ -65,6 +64,9 @@ using namespace D2D1;
 
 // replace `src` with `dst` in `str`
 string replaceString(string str, char src, char dst);
+
+// replace '\' with '/' and remove the first '/' if exists
+string fixPath(string path);
 
 // check if `str` is starts with `prefix`
 bool startsWith(const string& str, const string& prefix);
@@ -78,6 +80,9 @@ bool contains(const string& str1, const string& str2);
 // reterns a random number in range [a,b]
 float getRandomFloat(float a, float b);
 int getRandomInt(int a, int b);
+
+// make a DWORD from two WORDs
+DWORD make_dword(WORD hi, WORD lo);
 
 
 // reverses the bytes order of `t`

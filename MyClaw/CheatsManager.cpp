@@ -1,6 +1,5 @@
 #include "CheatsManager.h"
 #include "ActionPlane.h"
-#include "Assets-Managers/MidiPlayer.h"
 #include "Objects/Item.h"
 
 
@@ -57,9 +56,9 @@ void CheatsManager::addKey(int key)
 	case FillDynamite:
 	case FillLife:
 	case FinishLevel:		BasePlaneObject::player->cheat(type); break;
-	case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
-	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
-	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
+//	case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
+//	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
+//	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
 
 	default: break;
 	}

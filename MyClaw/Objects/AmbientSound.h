@@ -10,6 +10,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
+	uint32_t _wavPlayerId;
 	bool _isPlaying;
 };
 

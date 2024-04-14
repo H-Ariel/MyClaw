@@ -1,5 +1,5 @@
 #include "MenuEngine.h"
-#include "Assets-Managers/AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 #include "GameEngine/WindowManager.h"
 #include "../ClawLevelEngine.h"
 #include "HierarchicalMenu.h"
@@ -17,7 +17,7 @@ const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
 
 MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine({}, nullptr, bgPcxPath) {}
-MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<Animation> cursor, const string& bgPcxPath)
+MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const string& bgPcxPath)
 	: ScreenEngine(bgPcxPath)
 {
 	mousePosition = mPos;

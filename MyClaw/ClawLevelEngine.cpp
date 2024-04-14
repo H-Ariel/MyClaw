@@ -6,6 +6,7 @@
 #include "Menu/LevelEndEngine.h"
 #include "Menu/MenuEngine.h"
 #include "Objects/Item.h"
+#include "LevelPlane.h"
 
 
 #define SCREEN_SPEED 0.5f // speed of the screen when CC is died or teleported
@@ -18,9 +19,24 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
 	: _mainPlanePosition(nullptr), _hud(nullptr), _saveBgColor(0), _savePixelSize(0)
 {
 	_wwd = AssetsManager::loadLevelWwdFile(levelNumber);
-	for (shared_ptr<LevelPlane>& pln : _wwd->planes)
-		if (pln->isMainPlane())
+
+	for (WwdPlane& wwdPlane : _wwd->planes)
+	{
+		shared_ptr<LevelPlane> pln;
+		if (wwdPlane.flags & WwdPlane::WwdPlaneFlags_MainPlane)
+		{
+			pln = allocNewSharedPtr<ActionPlane>(_wwd.get(), &wwdPlane);
 			_mainPlanePosition = &pln->position;
+		}
+		else
+		{
+			pln = allocNewSharedPtr<LevelPlane>(_wwd.get(), &wwdPlane);
+		}
+
+		pln->init();
+		_planes.push_back(pln);
+	}
+
 	if (!_mainPlanePosition) throw Exception("no main plane found");
 	_hud = DBG_NEW LevelHUD(*_mainPlanePosition);
 	_cheatsManager = DBG_NEW CheatsManager();
@@ -65,7 +81,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 //	if (levelNumber == 2) BasePlaneObject::player->position = { 4596, 3958 };
 	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
 
-//	if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
+	if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 2396, 1168 };
 //	if (levelNumber == 3) BasePlaneObject::player->position = { 2201, 10756 };
@@ -161,7 +177,7 @@ void ClawLevelEngine::init()
 	_bossWarpX = 0;
 	_gameOverTimeCounter = 0;
 
-	for (shared_ptr<LevelPlane>& pln : _fields->_wwd->planes)
+	for (shared_ptr<LevelPlane>& pln : _fields->_planes)
 		_elementsList.push_back(pln.get());
 	_elementsList.push_back(_fields->_hud);
 
@@ -177,7 +193,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	{
 	case ClawLevelEngine::States::Play:
 		BaseEngine::Logic(elapsedTime);
-		for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+		for (shared_ptr<LevelPlane>& p : _fields->_planes)
 			p->position = *_fields->_mainPlanePosition;
 
 		if (player->isFinishDeathAnimation() && player->hasLives())
@@ -245,7 +261,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			// update position of camera (because player position changed)
 			ActionPlane::resetObjects();
 			BaseEngine::Logic(elapsedTime);
-			for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+			for (shared_ptr<LevelPlane>& p : _fields->_planes)
 				p->position = *_fields->_mainPlanePosition;
 
 			AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
@@ -276,7 +292,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 
 			// update position of camera (because player position changed)
 			ActionPlane::updatePosition();
-			for (shared_ptr<LevelPlane>& p : _fields->_wwd->planes)
+			for (shared_ptr<LevelPlane>& p : _fields->_planes)
 				p->position = *_fields->_mainPlanePosition;
 
 			_state = States::WrapOpen;

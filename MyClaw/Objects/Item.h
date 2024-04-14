@@ -96,7 +96,7 @@ protected:
 	const Type _type;
 
 private:
-	shared_ptr<Animation> _glitterAnimation;
+	shared_ptr<UIAnimation> _glitterAnimation;
 	int _duration; // (in milliseconds). used in Catnip, Fire-Sword, etc.
 	int _delayBeforeRespawn; // (in milliseconds)
 	bool _respawning;

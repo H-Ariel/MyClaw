@@ -43,7 +43,7 @@ public:
 	static shared_ptr<PhysicsManager> physics;
 
 protected:
-	shared_ptr<Animation> _ani;
+	shared_ptr<UIAnimation> _ani;
 	bool _isMirrored, _isVisible;
 };
 
@@ -109,7 +109,6 @@ public:
 protected:
 	const string _wavPath; // the sound file
 	int _volume;
-	uint32_t _wavPlayerId;
 };
 
 
@@ -117,7 +116,7 @@ protected:
 class OneTimeAnimation : public BasePlaneObject
 {
 public:
-	OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<Animation> ani, bool removeAtEnd = true);
+	OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<UIAnimation> ani, bool removeAtEnd = true);
 	OneTimeAnimation(D2D1_POINT_2F pos, const string& aniPath, const string& imageSet = "", bool removeAtEnd = true);
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;

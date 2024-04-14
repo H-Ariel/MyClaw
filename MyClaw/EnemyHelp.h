@@ -11,7 +11,7 @@
 class EnemyFallDeath : public BaseDynamicPlaneObject
 {
 public:
-	EnemyFallDeath(const WwdObject& obj, shared_ptr<Animation> deadAni);
+	EnemyFallDeath(const WwdObject& obj, shared_ptr<UIAnimation> deadAni);
 	void Logic(uint32_t elapsedTime) override;
 };
 

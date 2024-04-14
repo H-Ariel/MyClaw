@@ -1,5 +1,5 @@
 #include "CreditsEngine.h"
-#include "Assets-Managers/AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
 
 CreditsEngine::CreditsEngine()
@@ -22,7 +22,7 @@ CreditsEngine::CreditsEngine()
 	_creditsTextElement->setFont(font);
 	_elementsList.push_back(_creditsTextElement);
 
-	AssetsManager::setBackgroundMusic(AudioManager::BackgroundMusicType::Credits);
+	AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Credits);
 }
 CreditsEngine::~CreditsEngine() { AssetsManager::stopBackgroundMusic(); }
 

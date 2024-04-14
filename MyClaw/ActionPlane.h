@@ -10,11 +10,11 @@
 class ActionPlane : public LevelPlane
 {
 public:
-	ActionPlane(WapWorld* wwd);
+	ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane);
 	~ActionPlane();
 
 	void Logic(uint32_t elapsedTime) override;
-	void readPlaneObjects(BufferReader& reader, int numOfObjects) override;
+	void init() override;
 	void addObject(const WwdObject& obj) override;
 
 	static void addPlaneObject(BasePlaneObject* obj);

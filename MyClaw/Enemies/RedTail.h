@@ -39,6 +39,6 @@ public:
 	void activate();
 
 private:
-	int _windTimeCounter; // time left to wind
 	uint32_t _windSoundId;
+	int _windTimeCounter; // time left to wind
 };

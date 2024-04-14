@@ -1,33 +1,35 @@
 #include "BaseApp.h"
 #include "WindowManager.h"
-#include <chrono>
+#include "AudioManager.h"
 
 
 #define WINDOW_CLASS_NAME L"MyGameWindow"
 
 // The maximum iteration time.
-// `elapsedTime` used in `EngineBase::Logic` and its overrides.
-// safety so the game doesn't go wild.
+// `elapsedTime` used in `EngineBase::Logic` and its
+// overrides. safety so the game doesn't go wild.
 #define MAX_ITER_TIME 20U
 
 
-BaseApp::BaseApp()
-	: _pEngine(nullptr)
+BaseApp::BaseApp(WNDPROC wndproc, const TCHAR title[])
+	: _pEngine(nullptr), _runApp(false)
 {
-	registerMyWindowClass();
+	registerMyWindowClass(wndproc);
 
-	WindowManager::Initialize(WINDOW_CLASS_NAME, this);
+	WindowManager::Initialize(WINDOW_CLASS_NAME, title, this);
+	AudioManager::Initialize();
 }
 BaseApp::~BaseApp()
 {
+	AudioManager::Finalize();
 	WindowManager::Finalize();
 }
 
-void BaseApp::run()
+void BaseApp::init()
 {
+	_pEngine = allocNewSharedPtr<BaseEngine>();
 }
-
-void BaseApp::runEngine()
+void BaseApp::run()
 {
 	MSG msg;
 	chrono::steady_clock::time_point begin, end;
@@ -39,7 +41,9 @@ void BaseApp::runEngine()
 	uint32_t framesTime = 0, frames = 0;
 #endif
 
-	while (runApp && _pEngine && !_pEngine->StopEngine)
+	_runApp = true;
+
+	while (_runApp && _pEngine && !_pEngine->StopEngine)
 	{
 		end = chrono::steady_clock::now();
 		elapsedTime = (uint32_t)chrono::duration_cast<chrono::milliseconds>(end - begin).count();
@@ -50,7 +54,7 @@ void BaseApp::runEngine()
 		frames++;
 		if (framesTime > 1000)
 		{
-			sprintf(fpsText, "Game: %d FPS", frames);
+			sprintf(fpsText, "%d FPS", frames);
 			WindowManager::setTitle(fpsText);
 			frames = 0;
 			framesTime = 0;
@@ -63,7 +67,7 @@ void BaseApp::runEngine()
 			DispatchMessage(&msg);
 			if (msg.message == WM_QUIT)
 			{
-				runApp = false;
+				_runApp = false;
 				return;
 			}
 		}
@@ -78,36 +82,20 @@ void BaseApp::runEngine()
 			_pEngine = _pEngine->getNextEngine();
 			if (_pEngine == nullptr)
 			{
-				runApp = false;
+				_runApp = false;
 				return;
 			}
 		}
 	}
 }
-
-void BaseApp::registerMyWindowClass()
-{
-	static bool doesClassRegistered = false;
-	if (doesClassRegistered) return;
-	WNDCLASSEXW wcex = {};
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = BaseApp::WndProc;
-	wcex.hInstance = HINST_THISCOMPONENT;
-	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszClassName = WINDOW_CLASS_NAME;
-	RegisterClassEx(&wcex);
-	doesClassRegistered = true;
-}
 LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	shared_ptr<BaseEngine> engine;
+	BaseEngine* engine = nullptr;
 	if (BaseApp* app = (BaseApp*)(GetWindowLongPtr(hwnd, GWLP_USERDATA)))
 	{
 		if (app->_pEngine)
 		{
-			engine = app->_pEngine;
+			engine = app->_pEngine.get();
 		}
 	}
 
@@ -120,7 +108,6 @@ LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 	}; break;
 	case WM_DISPLAYCHANGE:	InvalidateRect(hwnd, nullptr, false); break;
 	case WM_CLOSE:			PostQuitMessage(0); break;
-	case WM_SETCURSOR:		SetCursor(NULL); return TRUE;
 	case WM_MOUSEMOVE:		if (engine) engine->mousePosition = { LOWORD(lParam), HIWORD(lParam) }; break;
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:		if (engine) engine->OnKeyDown((int)wParam); break;
@@ -138,4 +125,20 @@ LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 	}
 
 	return 0;
+}
+
+void BaseApp::registerMyWindowClass(WNDPROC wndproc)
+{
+	static bool doesClassRegistered = false;
+	if (doesClassRegistered) return;
+	WNDCLASSEXW wcex = {};
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = wndproc ? wndproc : BaseApp::WndProc;
+	wcex.hInstance = HINST_THISCOMPONENT;
+	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszClassName = WINDOW_CLASS_NAME;
+	RegisterClassEx(&wcex);
+	doesClassRegistered = true;
 }

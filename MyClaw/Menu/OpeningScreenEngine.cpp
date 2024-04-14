@@ -1,13 +1,15 @@
 #include "OpeningScreenEngine.h"
 #include "MenuEngine.h"
-#include "Assets-Managers/AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
+
+#define OPENING_SOUND_WAV_PATH "STATES/ATTRACT/SOUNDS/TITLE.WAV"
 
 OpeningScreenEngine::OpeningScreenEngine()
-	: ScreenEngine("STATES/ATTRACT/SCREENS/TITLE.PCX")
+	: ScreenEngine("STATES/ATTRACT/SCREENS/TITLE.PCX"), _wavId(AssetsManager::INVALID_AUDIOPLAYER_ID), _totalTime(0)
 {
-	_wavId = AssetsManager::playWavFile("STATES/ATTRACT/SOUNDS/TITLE.WAV");
-	_totalTime = (int)AssetsManager::getWavFileDuration(_wavId);
+	_wavId = AssetsManager::playWavFile(OPENING_SOUND_WAV_PATH);
+	_totalTime = (int)AssetsManager::getWavFileDuration(OPENING_SOUND_WAV_PATH);
 }
 void OpeningScreenEngine::Logic(uint32_t elapsedTime)
 {

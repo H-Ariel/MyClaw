@@ -88,10 +88,10 @@ private:
 		void Draw();
 
 	private:
-		void init(shared_ptr<Animation> sparkle); // init one sparkle (from the list)
+		void init(shared_ptr<UIAnimation> sparkle); // init one sparkle (from the list)
 		
 		Rectangle2D* _playerRc;
-		shared_ptr<Animation> _sparkles[30]; // all sparkles' list
+		shared_ptr<UIAnimation> _sparkles[30]; // all sparkles' list
 	};
 
 	struct WeaponsAmount
