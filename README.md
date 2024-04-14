@@ -19,4 +19,4 @@ Credits:
  - https://github.com/BuildSucceeded/2D-Platformer - the initial idea for the realization of the project
 
 Screenshot:
-<img src="screenshot.png" alt="screenshot of the opening screen" height="400"/>
+<img src="./screenshot.png" alt="screenshot of level 1" height="400"/>
