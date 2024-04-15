@@ -199,10 +199,10 @@ int main()
 	RezArchive rez;
 
 	WapPal pal(rez.getFile("LEVEL1/PALETTES/MAIN.PAL")->getFileData());
-	//	cout << "load CLAW" << endl; loadDirectory(rez.getDirectory("CLAW"), &pal);
-	//	cout << "load GAME" << endl; loadDirectory(rez.getDirectory("GAME"), &pal);
-	//	cout << "load STATES" << endl; loadDirectory(rez.getDirectory("STATES"), &pal);
-	for (int i = 1; i <= 14; loadLevel(&rez, i++));
+	cout << "load CLAW" << endl; loadDirectory(rez.getDirectory("CLAW"), &pal);
+	cout << "load GAME" << endl; loadDirectory(rez.getDirectory("GAME"), &pal);
+	cout << "load STATES" << endl; loadDirectory(rez.getDirectory("STATES"), &pal);
+	//for (int i = 1; i <= 14; loadLevel(&rez, i++));
 
 	cout << "not impleted types:" << endl;
 	for (auto& i : notImpletedTypes)

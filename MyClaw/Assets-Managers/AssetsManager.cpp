@@ -225,7 +225,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 void AssetsManager::stopWavFile(uint32_t wavId) {}
 #endif
 
-#ifndef _DEBUG0 // if debug - no background music
+#ifndef _DEBUG // if debug - no background music
 void AssetsManager::setBackgroundMusic(BackgroundMusicType type)
 {
 	if (instance->_lastType == type)

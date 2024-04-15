@@ -71,9 +71,6 @@
 #endif
 
 
-bool cmpDrawZ(BasePlaneObject* a, BasePlaneObject* b) { return a->drawZ < b->drawZ; }
-bool cmpLogicZ(BasePlaneObject* a, BasePlaneObject* b) { return a->logicZ < b->logicZ; }
-
 
 ActionPlane* ActionPlane::_instance = nullptr;
 shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
@@ -108,7 +105,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		_shakeTime -= elapsedTime;
 	updatePosition();
 
-	sort(_objects.begin(), _objects.end(), cmpLogicZ); // for this method (`Logic`)
+	sort(_objects.begin(), _objects.end(), 
+		[](BasePlaneObject * a, BasePlaneObject * b) { return a->logicZ < b->logicZ; }); // for this method (`Logic`)
 
 	BasePlaneObject* obj;
 	bool exploseShake = false; // shake screen after explodes of Claw's dynamit and powder-kegs
@@ -187,7 +185,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	sort(_objects.begin(), _objects.end(), cmpDrawZ); // for `Draw` method
+	sort(_objects.begin(), _objects.end(), 
+		[](BasePlaneObject* a, BasePlaneObject* b) { return a->drawZ < b->drawZ; }); // for `Draw` method
 
 	AssetsManager::callLogics(elapsedTime);
 
@@ -234,16 +233,14 @@ void ActionPlane::init()
 	}
 
 	LevelPlane::init();
-	ConveyorBelt::GlobalInit(); // must be after LevelPlane::readPlaneObjects()
+	ConveyorBelt::GlobalInit(); // must be after LevelPlane::init()
 
 	if (_loadGameData)
 	{
 		player->setGameData(*_loadGameData.get());
 		_loadGameData = nullptr;
 	}
-	_objects.push_back(player.get()); // must be after LevelPlane::readPlaneObjects() because we reset the objects vector there
-
-	sort(_objects.begin(), _objects.end(), cmpLogicZ);
+	_objects.push_back(player.get()); // must be after LevelPlane::init() because we reset the objects vector there
 }
 void ActionPlane::addObject(const WwdObject& obj)
 {
