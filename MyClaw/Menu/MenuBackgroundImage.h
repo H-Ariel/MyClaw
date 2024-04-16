@@ -7,7 +7,7 @@
 class MenuBackgroundImage : public UIBaseImage
 {
 public:
-	MenuBackgroundImage(string pcxPath);
+	MenuBackgroundImage(const string& pcxPath);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

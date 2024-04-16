@@ -1,6 +1,10 @@
 #include "PalFile.h"
 
 
+WapPal::WapPal()
+{
+	memset(colors, 0, sizeof(colors));
+}
 WapPal::WapPal(const vector<uint8_t>& data)
 {
 	if (data.size() != WAP_PALETTE_SIZE_BYTES)

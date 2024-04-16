@@ -2,12 +2,10 @@
 
 
 PcxFile::PcxFile(shared_ptr<BufferReader> pcxReader)
-	: palette(nullptr)
 {
 	// based on https://github.com/freudi74/mfimage (I copied only what I need)
 
-	
-	ColorRGBA pcxPalette[256] = {};
+
 	uint32_t maxXPadding, plane = 0, x = 0, y = 0;
 	uint16_t startX, startY, endX, endY, bytesPerLine;
 	uint8_t pcxVer, pcxId, pcxReserved1, numBitPlanes, runCount = 0, runValue, i, byteValue, u8;
@@ -29,10 +27,10 @@ PcxFile::PcxFile(shared_ptr<BufferReader> pcxReader)
 	// 16 color palette
 	for (i = 0; i < 16; i++)
 	{
-		pcxReader->read(pcxPalette[i].r);
-		pcxReader->read(pcxPalette[i].g);
-		pcxReader->read(pcxPalette[i].b);
-		pcxPalette[i].a = 255;
+		pcxReader->read(palette.colors[i].r);
+		pcxReader->read(palette.colors[i].g);
+		pcxReader->read(palette.colors[i].b);
+		palette.colors[i].a = 255;
 	}
 
 	pcxReader->read(pcxReserved1);
@@ -63,20 +61,16 @@ PcxFile::PcxFile(shared_ptr<BufferReader> pcxReader)
 			// 256 color palette
 			for (uint16_t i = 0; i < 256; i++)
 			{
-				pcxReader->read(pcxPalette[i].r);
-				pcxReader->read(pcxPalette[i].g);
-				pcxReader->read(pcxPalette[i].b);
-				pcxPalette[i].a = 255;
+				pcxReader->read(palette.colors[i].r);
+				pcxReader->read(palette.colors[i].g);
+				pcxReader->read(palette.colors[i].b);
+				palette.colors[i].a = 255;
 			}
 		}
 		pcxReader->setIndex(endOfHeader);
 	}
 
-	pcxPalette[0].a = 0; // first pixel in palette is transparent
-
-
-	// save pallete
-	palette = DBG_NEW WapPal(pcxPalette);
+	palette.colors[0].a = 0; // first pixel in palette is transparent
 
 
 	while (y < height)
@@ -143,21 +137,8 @@ PcxFile::PcxFile(shared_ptr<BufferReader> pcxReader)
 					break; // we are done!
 				}
 
-				colors[(size_t)width * y + x++] = pcxPalette[byteValue];
+				colors[(size_t)width * y + x++] = palette.colors[byteValue];
 			} while (bit != 0);
 		}
 	}
-}
-
-PcxFile::PcxFile(const PcxFile& other)
-	: width(other.width), height(other.height), colors(other.colors), palette(nullptr)
-{
-	if (other.palette)
-		palette = DBG_NEW WapPal(*other.palette);
-}
-
-
-PcxFile::~PcxFile()
-{
-	delete palette;
 }

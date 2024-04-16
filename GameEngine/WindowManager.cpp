@@ -48,6 +48,11 @@ WindowManager::WindowManager(const TCHAR WindowClassName[], const TCHAR title[],
 }
 WindowManager::~WindowManager()
 {
+	for (auto& i : images)
+	{
+		ID2D1Bitmap* bitmap = i.second->_bitmap;
+		SafeRelease(bitmap);
+	}
 	for (auto& i : brushes)
 		SafeRelease(i.second);
 	SafeRelease(_renderTarget);
@@ -254,18 +259,6 @@ ID2D1SolidColorBrush* WindowManager::getBrush(ColorF color)
 
 	return instance->brushes[color];
 }
-ID2D1Bitmap* WindowManager::createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height)
-{
-	ID2D1Bitmap* bitmap = nullptr;
-
-	TRY_HRESULT(instance->_renderTarget->CreateBitmap(
-		{ width, height }, buffer, width * 4,
-		BitmapProperties(PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
-		&bitmap),
-		"Failed to create D2D bitmap");
-
-	return bitmap;
-}
 IDWriteTextFormat* WindowManager::createTextFormat(const FontData& font)
 {
 	IDWriteTextFormat* textFormat = nullptr;
@@ -289,6 +282,41 @@ IDWriteTextFormat* WindowManager::createTextFormat(const FontData& font)
 	}
 
 	return textFormat;
+}
+shared_ptr<UIBaseImage> WindowManager::createImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY)
+{
+	if (instance->images.count(key) == 0)
+	{
+		ID2D1Bitmap* bitmap = nullptr;
+
+		TRY_HRESULT(instance->_renderTarget->CreateBitmap(
+			{ width, height }, buffer, width * 4,
+			BitmapProperties(PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
+			&bitmap),
+			"Failed to create D2D bitmap");
+
+		instance->images[key] = allocNewSharedPtr<UIBaseImage>(bitmap, Point2F(offsetX, offsetY));
+	}
+
+	return instance->images[key];
+}
+bool WindowManager::hasImage(const string& key)
+{
+	return instance->images.count(key) != 0;
+}
+shared_ptr<UIBaseImage> WindowManager::getImage(const string& key)
+{
+	return instance->images[key];
+}
+void WindowManager::clearImages(function<bool(const string&)> predicate)
+{
+	for (auto it = instance->images.begin(); it != instance->images.end();)
+	{
+		if (predicate(it->first))
+			it = instance->images.erase(it);
+		else
+			++it;
+	}
 }
 
 // remove the window-offset from `rc` and return if it's in the window area

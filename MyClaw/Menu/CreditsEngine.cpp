@@ -22,7 +22,7 @@ CreditsEngine::CreditsEngine()
 	_creditsTextElement->setFont(font);
 	_elementsList.push_back(_creditsTextElement);
 
-	AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Credits);
+	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Credits);
 }
 CreditsEngine::~CreditsEngine() { AssetsManager::stopBackgroundMusic(); }
 

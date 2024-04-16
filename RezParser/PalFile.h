@@ -17,6 +17,7 @@ public:
 	static const uint16_t WAP_COLORS_IN_PALETTE = 256;
 	static const uint16_t WAP_PALETTE_SIZE_BYTES = WAP_COLORS_IN_PALETTE * 3; // only RGB are stored, not alpha
 
+	WapPal();
 	WapPal(const vector<uint8_t>& data);
 	WapPal(const ColorRGBA palette[WAP_COLORS_IN_PALETTE]);
 

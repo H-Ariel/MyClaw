@@ -3,7 +3,7 @@
 #include "GameEngine/WindowManager.h"
 
 
-MenuBackgroundImage::MenuBackgroundImage(string pcxPath)
+MenuBackgroundImage::MenuBackgroundImage(const string& pcxPath)
 	: UIBaseImage(*AssetsManager::loadImage(pcxPath)), _imgRatio(size.width / size.height) {}
 void MenuBackgroundImage::Logic(uint32_t)
 {

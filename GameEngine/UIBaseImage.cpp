@@ -26,6 +26,7 @@ Rectangle2D UIBaseImage::GetRect()
 	return rc;
 }
 
+// maybe we can delete this function because it is a shallow copy
 shared_ptr<UIBaseImage> UIBaseImage::getCopy()
 {
 	return allocNewSharedPtr<UIBaseImage>(*this);

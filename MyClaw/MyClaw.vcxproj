@@ -163,7 +163,6 @@
     <ClCompile Include="ActionPlane.cpp" />
     <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
     <ClCompile Include="Assets-Managers\AssetsManager.cpp" />
-    <ClCompile Include="Assets-Managers\ImagesManager.cpp" />
     <ClCompile Include="Assets-Managers\PathManager.cpp" />
     <ClCompile Include="BaseCharacter.cpp" />
     <ClCompile Include="BaseEnemy.cpp" />
@@ -245,7 +244,6 @@
     <ClInclude Include="ActionPlane.h" />
     <ClInclude Include="Assets-Managers\AnimationsManager.h" />
     <ClInclude Include="Assets-Managers\AssetsManager.h" />
-    <ClInclude Include="Assets-Managers\ImagesManager.h" />
     <ClInclude Include="Assets-Managers\PathManager.h" />
     <ClInclude Include="BaseCharacter.h" />
     <ClInclude Include="BaseEnemy.h" />

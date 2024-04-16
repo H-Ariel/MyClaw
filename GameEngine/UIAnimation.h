@@ -9,9 +9,9 @@ public:
 	class FrameData
 	{
 	public:
-		FrameData(shared_ptr<UIBaseImage> image, uint32_t duration = 100, const string& soundFilePath = "");
+		FrameData(shared_ptr<UIBaseImage> image, uint32_t duration = 100, const string& soundKey = "");
 
-		const string soundFilePath;
+		const string soundKey; // key for AudioManager
 		const shared_ptr<UIBaseImage> image;
 		const uint32_t duration; // in milliseconds
 		uint32_t elapsedTime; // in milliseconds
@@ -30,7 +30,7 @@ public:
 	void reset(); // reset to the first frame
 
 	shared_ptr<UIAnimation> getCopy() const { return allocNewSharedPtr<UIAnimation>(getImagesList()); }
-	vector<FrameData*> getImagesList() const;
+	vector<FrameData*> getImagesList() const; // return a copy of the images list. WARNING: you should release that memory
 	size_t getTotalDuration() const;
 	size_t getImagesCount() const { return _images.size(); }
 	size_t getFrameNumber() const { return _currImgIdx; }

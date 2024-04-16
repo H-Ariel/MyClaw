@@ -253,9 +253,6 @@
     <ClCompile Include="Assets-Managers\AssetsManager.cpp">
       <Filter>Assets-Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Assets-Managers\ImagesManager.cpp">
-      <Filter>Assets-Managers</Filter>
-    </ClCompile>
     <ClCompile Include="Assets-Managers\PathManager.cpp">
       <Filter>Assets-Managers</Filter>
     </ClCompile>
@@ -451,9 +448,6 @@
       <Filter>Assets-Managers</Filter>
     </ClInclude>
     <ClInclude Include="Assets-Managers\AssetsManager.h">
-      <Filter>Assets-Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets-Managers\ImagesManager.h">
       <Filter>Assets-Managers</Filter>
     </ClInclude>
     <ClInclude Include="ActionPlane.h">

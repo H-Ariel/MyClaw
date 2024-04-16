@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UITextElement.h"
+#include "UIBaseImage.h"
 
 
 class WindowManager
@@ -38,10 +39,12 @@ public:
 
 	// create D2D1 objects.
 	static ID2D1SolidColorBrush* getBrush(ColorF color);
-	// NOTE: you need to release them manually
-	static ID2D1Bitmap* createBitmapFromBuffer(const void* const buffer, uint32_t width, uint32_t height);
 	static IDWriteTextFormat* createTextFormat(const FontData& font);
 	
+	static shared_ptr<UIBaseImage> createImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY);
+	static bool hasImage(const string& key);
+	static shared_ptr<UIBaseImage> getImage(const string& key);
+	static void clearImages(function <bool(const string&)> predicate);
 
 	static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE;
 
@@ -58,6 +61,7 @@ private:
 
 
 	map<ColorF, ID2D1SolidColorBrush*> brushes; // cache brushes
+	map<string, shared_ptr<UIBaseImage>> images; // cache bitmaps [key]=<img>
 	HWND _hWnd;
 	ID2D1Factory* _d2dFactory;
 	IDWriteFactory* _dWriteFactory;

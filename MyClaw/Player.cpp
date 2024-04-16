@@ -48,7 +48,7 @@
 #define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH_AMOUNT)
 #define ADD_LIFE(n)			ADD_VALUE(_lives, n, MAX_LIVES_AMOUNT)
 #define SET_POWERUP(t) { \
-	AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
+	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
 	if (_currPowerup != Item:: t) _powerupLeftTime = 0; \
 	_powerupLeftTime += item->getDuration(); \
 	_currPowerup = Item:: t; \
@@ -213,7 +213,7 @@ void Player::Logic(uint32_t elapsedTime)
 	{
 		_powerupLeftTime = 0;
 		_currPowerup = Item::None;
-		AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
+		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	}
 
 	float speedX = SpeedX_Normal, speedYClimb = SpeedY_Climb;
@@ -1020,7 +1020,7 @@ void Player::loseLife()
 		_ani->loopAni = false;
 		_powerupLeftTime = 0;
 		_currPowerup = Item::None;
-		AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
+		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	}
 }
 void Player::nextLevel()

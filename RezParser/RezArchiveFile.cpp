@@ -70,7 +70,7 @@ string RezFile::getFullPath() const
 	string dirPath;
 	for (RezDirectory* parentDir = parent; parentDir != nullptr; parentDir = parentDir->parent)
 		dirPath = parentDir->name + DIRECTORY_SEPARATOR + dirPath;
-	return dirPath + name + '.' + extension;
+	return fixPath(dirPath + name + '.' + extension);
 }
 
 

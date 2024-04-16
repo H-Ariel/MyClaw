@@ -2,8 +2,8 @@
 #include "AudioManager.h"
 
 
-UIAnimation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, const string& soundFilePath)
-	: image(image), duration(duration), soundFilePath(soundFilePath), elapsedTime(0), soundPlayed(false)
+UIAnimation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, const string& soundKey)
+	: image(image), duration(duration), soundKey(soundKey), elapsedTime(0), soundPlayed(false)
 {
 }
 
@@ -28,11 +28,11 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 		_images[_currImgIdx]->elapsedTime += elapsedTime;
 
 #ifndef _DEBUG // in debug mode we don't play sound
-		if (!_images[_currImgIdx]->soundFilePath.empty())
+		if (!_images[_currImgIdx]->soundKey.empty())
 		{
 			if (!_images[_currImgIdx]->soundPlayed && !_isFinishAnimation)
 			{
-				AudioManager::playWav(_images[_currImgIdx]->soundFilePath, false);
+				AudioManager::playWav(_images[_currImgIdx]->soundKey, false);
 				_images[_currImgIdx]->soundPlayed = true;
 			}
 		}
@@ -94,11 +94,8 @@ vector<UIAnimation::FrameData*> UIAnimation::getImagesList() const
 {
 	vector<FrameData*> newImages;
 	for (FrameData* i : _images)
-	{
-		newImages.push_back(DBG_NEW FrameData(i->image->getCopy(), i->duration, i->soundFilePath));
-	}
+		newImages.push_back(DBG_NEW FrameData(i->image->getCopy(), i->duration, i->soundKey));
 	return newImages;
-	// WARNING: you should release that memory
 }
 size_t UIAnimation::getTotalDuration() const
 {

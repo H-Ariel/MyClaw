@@ -2,6 +2,8 @@
 
 - make sure all options works well
 - use make_shared instead of allocNewSharedPtr
+- use trie<T> instead of map<string,T> (end of string contains value T)
+- move Framework, GameEngine, RezParser to DLLs (not .lib)
 
 * add BossStager logic
 * fix AmbientSound objects

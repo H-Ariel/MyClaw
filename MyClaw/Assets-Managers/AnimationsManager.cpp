@@ -77,8 +77,7 @@ map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirect
 					}
 					i = anis.erase(i);
 				}
-				else
-					i++;
+				else ++i;
 			}
 
 			anis["IDLE"] = allocNewSharedPtr<UIAnimation>(imagesList);
@@ -99,8 +98,7 @@ map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirect
 					}
 					i = anis.erase(i);
 				}
-				else
-					i++;
+				else ++i;
 			}
 
 			anis["DIVE"] = allocNewSharedPtr<UIAnimation>(imagesList);
@@ -163,22 +161,22 @@ void AnimationsManager::callAnimationsLogic(uint32_t elapsedTime)
 	for (auto& [name, ani] : _loadedAnimations)
 		ani->Logic(elapsedTime);
 }
-void AnimationsManager::clearLevelAnimations(const string& prefix)
+void AnimationsManager::clearAnimations(function <bool(const string&)> predicate)
 {
-	for (auto it = _loadedAnimations.begin(); it != _loadedAnimations.end();)
+	for (auto i = _loadedAnimations.begin(); i != _loadedAnimations.end();)
 	{
-		if (startsWith(it->first, prefix))
-			it = _loadedAnimations.erase(it);
+		if (predicate(i->first))
+			i = _loadedAnimations.erase(i);
 		else
-			++it;
+			++i;
 	}
 
-	for (auto it = _savedAniDirs.begin(); it != _savedAniDirs.end();)
+	for (auto i = _savedAniDirs.begin(); i != _savedAniDirs.end();)
 	{
-		if (startsWith(it->first, prefix))
-			it = _savedAniDirs.erase(it);
+		if (predicate(i->first))
+			i = _savedAniDirs.erase(i);
 		else
-			++it;
+			++i;
 	}
 }
 

@@ -215,7 +215,7 @@ void ActionPlane::init()
 	_planeSize.width = (float)TILE_SIZE * _wwdPlane->tilesOnAxisX;
 	_planeSize.height = (float)TILE_SIZE * _wwdPlane->tilesOnAxisY;
 
-	AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
+	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	physics = allocNewSharedPtr<PhysicsManager>(_wwd, this); // must be after WWD map loaded and before objects added
 
 	// player's initializtion must be before LevelPlane::readPlaneObjects() because some of objects need player
@@ -625,7 +625,7 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 
 	LevelHUD::setBossInitialHealth(_instance->_boss->getHealth());
 
-	AssetsManager::setBackgroundMusic(AssetsManager::BackgroundMusicType::Boss);
+	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Boss);
 }
 
 void ActionPlane::updatePosition()

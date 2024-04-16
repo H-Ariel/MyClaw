@@ -7,7 +7,7 @@ class UIBaseImage : public UIBaseElement
 {
 public:
 	UIBaseImage(ID2D1Bitmap* bitmap, D2D1_POINT_2F offset = {});
-	
+
 	void Draw() override;
 	Rectangle2D GetRect() override;
 
@@ -22,5 +22,5 @@ private:
 	const D2D1_POINT_2F offset;
 	ID2D1Bitmap* const _bitmap;
 
-	friend class ImagesManager;
+	friend class WindowManager;
 };

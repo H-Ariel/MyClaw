@@ -26,8 +26,8 @@ AudioManager::AudioManager() {}
 
 uint32_t AudioManager::getNewId()
 {
-	uint32_t size = (uint32_t)_audioPlayers.size();
-	for (uint32_t i = 0; i < size; i++)
+	uint32_t size = (uint32_t)_audioPlayers.size() + 1; // 0 is reserved for invalid id
+	for (uint32_t i = 1; i < size; i++)
 	{
 		if (_audioPlayers.count(i) == 0)
 			return i;
@@ -80,7 +80,10 @@ uint32_t AudioManager::playWav(const string& key, bool infinite)
 
 	auto it = instance->_audioDataCache.find(key);
 	if (it == instance->_audioDataCache.end())
+	{
+		DBG_PRINT("WARNING: AudioManager::playMidi: key not found. key: %s", key.c_str());
 		return INVALID_ID;
+	}
 
 	uint32_t id = instance->getNewId();
 
@@ -96,7 +99,10 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 
 	auto it = instance->_audioDataCache.find(key);
 	if (it == instance->_audioDataCache.end())
+	{
+		DBG_PRINT("WARNING: AudioManager::playMidi: key not found. key: %s", key.c_str());
 		return INVALID_ID;
+	}
 
 	uint32_t id = instance->getNewId();
 
@@ -124,6 +130,24 @@ void AudioManager::remove(uint32_t midiId)
 	auto it = instance->_audioPlayers.find(midiId);
 	if (it != instance->_audioPlayers.end())
 		instance->_audioPlayers.erase(it);
+}
+void AudioManager::remove(function<bool(const string& key)> predicate)
+{
+	for (auto it = instance->_audioPlayers.begin(); it != instance->_audioPlayers.end();)
+	{
+		if (predicate(it->second->getKey()))
+			it = instance->_audioPlayers.erase(it);
+		else
+			++it;
+	}
+
+	for (auto it = instance->_audioDataCache.begin(); it != instance->_audioDataCache.end();)
+	{
+		if (predicate(it->first))
+			it = instance->_audioDataCache.erase(it);
+		else
+			++it;
+	}
 }
 
 // returns the duration of the sound in milliseconds for WAV files
@@ -153,23 +177,6 @@ void AudioManager::checkForRestart()
 				audioPlayer->stop();
 		}
 	}
-}
 
-void AudioManager::remove(function<bool(const string& key)> predicate)
-{
-	for (auto it = instance->_audioPlayers.begin(); it != instance->_audioPlayers.end();)
-	{
-		if (predicate(it->second->getKey()))
-			it = instance->_audioPlayers.erase(it);
-		else
-			++it;
-	}
-
-	for (auto it = instance->_audioDataCache.begin(); it != instance->_audioDataCache.end();)
-	{
-		if (predicate(it->first))
-			it = instance->_audioDataCache.erase(it);
-		else
-			++it;
-	}
+	// TODO: delete the audio players that are not playing and not infinite
 }

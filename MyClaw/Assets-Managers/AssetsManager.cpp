@@ -4,7 +4,7 @@
 
 
 // check if `str` is number as string
-static bool isNumber(string str)
+static bool isNumber(const string& str)
 {
 	for (const char& c : str)
 		if (!isdigit(c))
@@ -12,70 +12,117 @@ static bool isNumber(string str)
 	return true;
 }
 
-// load all wav files from directory
-static void loadWavDir(RezArchive* rez, const string& path)
+static void fixPidOffset(const string& pidPath, int32_t& offsetX, int32_t& offsetY)
 {
-	const RezDirectory* dir = rez->getDirectory(path);
-	if (dir)
+	// TODO: hack - edit the files?
+	// NOTE: number-filenames are according to `fixFileName` at `RezArchive.cpp`
+
+
+	// HUD pistol
+	if (pidPath == "GAME/IMAGES/INTERFACE/WEAPONS/PISTOL/001.PID")
 	{
-		for (auto& [dirname, dir] : dir->rezDirectories)
-		{
-			loadWavDir(rez, dir->getFullPath());
-		}
-		for (auto& [filename, file] : dir->rezFiles)
-		{
-			AudioManager::addWavPlayer(file->getFullPath(), file->getBufferReader());
-		}
+		offsetY += 1;
 	}
-}
-
-// global initialization for menu and levels
-static void GlobalInit(RezArchive* rez)
-{
-	MidiFile boss(rez->getFile("LEVEL2/MUSIC/BOSS.XMI")->getFileData());
-	// every level with boss contains the same file, so we can use LEVEL2/BOSS.XMI for all levels
-	AudioManager::addMidiPlayer("boss", boss.data);
-
-	MidiFile powerup(rez->getFile("GAME/MUSIC/POWERUP.XMI")->getFileData());
-	AudioManager::addMidiPlayer("powerup", powerup.data);
-
-	MidiFile credits(rez->getFile("STATES/CREDITS/MUSIC/PLAY.XMI")->getFileData());
-	AudioManager::addMidiPlayer("credits", credits.data);
-}
-
-// initialize more assets. TODO: move to other place
-static void LevelInit(shared_ptr<WapWwd> wwd, RezArchive* rez)
-{
-	char path[25];
-
-	// initialize level palette
-	shared_ptr<WapPal> pal = AssetsManager::loadPidPalette(wwd->rezPalettePath);
-
-	// initialize level root paths
-	string imageSet[4], prefix[4];
-	for (int i = 0; i < 4; i++)
+	// HUD magic
+	else if (pidPath == "GAME/IMAGES/INTERFACE/WEAPONS/MAGIC/001.PID")
 	{
-		imageSet[i] = wwd->imageSet[i];
-		prefix[i] = wwd->prefix[i];
+		offsetY += 2;
 	}
-	PathManager::setRoots(prefix, imageSet);
-
-	// set background color
-	WindowManager::setBackgroundColor(ColorF(
-		pal->colors[wwd->planes[0].fillColor].r / 255.f,
-		pal->colors[wwd->planes[0].fillColor].g / 255.f,
-		pal->colors[wwd->planes[0].fillColor].b / 255.f
-	));
-
-	// add all wav files to audio manager
-	loadWavDir(rez, "CLAW/SOUNDS");
-	loadWavDir(rez, "GAME/SOUNDS");
-	sprintf(path, "LEVEL%d/SOUNDS", wwd->levelNumber);
-	loadWavDir(rez, path);
-
-	// add midi background music
-	MidiFile level(rez->getFile(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY"))->getFileData());
-	AudioManager::addMidiPlayer("level", level.data);
+	else if (pidPath == "LEVEL7/IMAGES/SANDHOLE/005.PID")
+	{
+		offsetX -= 2;
+	}
+	// MagicClaw
+	else if (pidPath == "CLAW/IMAGES/165.PID")
+	{
+		offsetX += 15;
+	}
+	else if (pidPath == "CLAW/IMAGES/166.PID")
+	{
+		offsetX += -5;
+	}
+	else if (pidPath == "CLAW/IMAGES/167.PID")
+	{
+		offsetX += 10;
+	}
+	// Claw swipe
+	else if (pidPath == "CLAW/IMAGES/024.PID" || pidPath == "CLAW/IMAGES/025.PID" ||
+		pidPath == "CLAW/IMAGES/026.PID" || pidPath == "CLAW/IMAGES/027.PID")
+	{
+		offsetX += 22;
+	}
+	// Cursor
+	else if (pidPath == "GAME/IMAGES/CURSOR/004.PID")
+	{
+		offsetX += 2;
+	}
+	// Tower Cannon
+	else if (pidPath == "LEVEL2/IMAGES/TOWERCANNONLEFT/002.PID" ||
+		pidPath == "LEVEL2/IMAGES/TOWERCANNONLEFT/004.PID" ||
+		pidPath == "LEVEL2/IMAGES/TOWERCANNONLEFT/005.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL2/IMAGES/TOWERCANNONRIGHT/002.PID"
+		|| pidPath == "LEVEL2/IMAGES/TOWERCANNONRIGHT/004.PID"
+		|| pidPath == "LEVEL2/IMAGES/TOWERCANNONRIGHT/005.PID")
+	{
+		offsetX += 2;
+	}
+	else if (pidPath == "LEVEL8/IMAGES/CANNONSWITCH/002.PID")
+	{
+		offsetX -= 2;
+		offsetY -= 1;
+	}
+	// shooters from level 14
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/002.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/003.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/004.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/005.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/007.PID")
+	{
+		offsetX -= 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/002.PID")
+	{
+		offsetX += 4;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/003.PID")
+	{
+		offsetX += 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/004.PID")
+	{
+		offsetX += 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/005.PID")
+	{
+		offsetX += 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/006.PID")
+	{
+		offsetX += 2;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/007.PID")
+	{
+		offsetX += 5;
+	}
+	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHRIGHT/008.PID")
+	{
+		offsetX += 3;
+	}
 }
 
 
@@ -91,16 +138,21 @@ AssetsManager::AssetsManager()
 #else
 	_rezArchive = DBG_NEW RezArchive("CLAW.REZ");
 #endif
-	_imagesManager = DBG_NEW ImagesManager(_rezArchive);
 	_animationsManager = DBG_NEW AnimationsManager(_rezArchive);
 	_lastType = AssetsManager::BackgroundMusicType::None;
 	srand((unsigned int)time(nullptr));
 
-	GlobalInit(_rezArchive);
+	// load background musics that used all over the game
+	MidiFile boss(_rezArchive->getFile("LEVEL2/MUSIC/BOSS.XMI")->getFileData());
+	// every level with boss contains the same file, so we can use LEVEL2/BOSS.XMI for all levels
+	AudioManager::addMidiPlayer("BOSS", boss.data);
+	MidiFile powerup(_rezArchive->getFile("GAME/MUSIC/POWERUP.XMI")->getFileData());
+	AudioManager::addMidiPlayer("POWERUP", powerup.data);
+	MidiFile credits(_rezArchive->getFile("STATES/CREDITS/MUSIC/PLAY.XMI")->getFileData());
+	AudioManager::addMidiPlayer("CREDITS", credits.data);
 }
 AssetsManager::~AssetsManager()
 {
-	SafeDelete(_imagesManager);
 	SafeDelete(_animationsManager);
 	SafeDelete(_rezArchive);
 }
@@ -121,8 +173,68 @@ void AssetsManager::Finalize()
 
 shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 {
-	return instance->_imagesManager->loadImage(path);
+	shared_ptr<UIBaseImage> img;
+
+	if (WindowManager::hasImage(path))
+	{
+		img = WindowManager::getImage(path);
+	}
+	else
+	{
+		try
+		{
+			if (endsWith(path, ".PID"))
+			{
+				WapPid pid(instance->_rezArchive->getFile(path)->getFileData(), &instance->_palette);
+
+				fixPidOffset(path, pid.offsetX, pid.offsetY);
+
+				img = WindowManager::createImage(path, pid.colors.data(),
+					pid.width, pid.height, (float)pid.offsetX, (float)pid.offsetY);
+			}
+			else if (endsWith(path, ".PCX"))
+			{
+				PcxFile pcx(instance->_rezArchive->getFile(path)->getBufferReader());
+
+				img = WindowManager::createImage(path, pcx.colors.data(),
+					pcx.width, pcx.height, 0, 0);
+
+				// pcx files saves their palette and the palette is used for images at score screen
+				instance->_palette = pcx.palette;
+			}
+			else throw Exception("empty imgae");
+		}
+		catch (const Exception& ex)
+		{
+			img = allocNewSharedPtr<UIBaseImage>(nullptr); // empty image
+			DBG_PRINT("WARNING: a blank image has been inserted. image path: \"%s\"\n", path.c_str());
+		}
+	}
+
+	return img;
 }
+map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const string& planeImagesPath)
+{
+	map<int32_t, shared_ptr<UIBaseImage>> images;
+
+	const RezDirectory* dir = instance->_rezArchive->getDirectory(planeImagesPath);
+	if (dir)
+	{
+		string newname;
+		for (auto& [filename, file] : dir->rezFiles)
+		{
+			newname = filename.substr(0, filename.length() - 4); // remove ".PID"
+			// the files path format is "LEVEL<N>/TILES/<PLN>/<XXX>.PID"
+			if (!strcmp(file->extension, "PID") && isNumber(newname))
+			{
+				images[stoi(newname)] = loadImage(file->getFullPath());
+			}
+		}
+	}
+
+	return images;
+}
+
 shared_ptr<UIAnimation> AssetsManager::loadAnimation(const string& aniPath, const string& imageSetPath)
 {
 	return instance->_animationsManager->loadAnimation(aniPath, imageSetPath);
@@ -152,42 +264,47 @@ map<string, shared_ptr<UIAnimation>> AssetsManager::loadAnimationsFromDirectory(
 	return instance->_animationsManager->loadAnimationsFromDirectory(dirPath, imageSetPath);
 }
 
-shared_ptr<WapWwd> AssetsManager::loadLevelWwdFile(int levelNumber)
+shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)
 {
 	char path[25];
 	sprintf(path, "LEVEL%d/WORLDS/WORLD.WWD", levelNumber);
 	shared_ptr<WapWwd> wwd = allocNewSharedPtr<WapWwd>(instance->_rezArchive->getFile(path)->getBufferReader(), levelNumber);
-	LevelInit(wwd, instance->_rezArchive);
+
+	// initialize level palette
+	loadPidPalette(wwd->rezPalettePath);
+
+	// initialize level root paths
+	string imageSet[4], prefix[4];
+	for (int i = 0; i < 4; i++)
+	{
+		imageSet[i] = wwd->imageSet[i];
+		prefix[i] = wwd->prefix[i];
+	}
+	PathManager::setRoots(prefix, imageSet);
+
+	// set background color
+	WindowManager::setBackgroundColor(ColorF(
+		instance->_palette.colors[wwd->planes[0].fillColor].r / 255.f,
+		instance->_palette.colors[wwd->planes[0].fillColor].g / 255.f,
+		instance->_palette.colors[wwd->planes[0].fillColor].b / 255.f
+	));
+
+	// add all wav files to audio manager
+	instance->loadWavDir("CLAW/SOUNDS");
+	instance->loadWavDir("GAME/SOUNDS");
+	sprintf(path, "LEVEL%d/SOUNDS", wwd->levelNumber);
+	instance->loadWavDir(path);
+
+	// add midi background music
+	MidiFile level(instance->_rezArchive->getFile(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY"))->getFileData());
+	AudioManager::addMidiPlayer("LEVEL", level.data);
+
 	return wwd;
 }
-shared_ptr<WapPal> AssetsManager::loadPidPalette(const string& palPath)
+void AssetsManager::loadPidPalette(const string& palPath)
 {
-	shared_ptr<WapPal> pal(DBG_NEW WapPal(instance->_rezArchive->getFile(palPath)->getFileData()));
-	instance->_imagesManager->setPalette(pal);
-	return pal;
+	instance->_palette = WapPal(instance->_rezArchive->getFile(palPath)->getFileData());
 }
-map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const string& planeImagesPath)
-{
-	map<int32_t, shared_ptr<UIBaseImage>> images;
-
-	const RezDirectory* dir = instance->_rezArchive->getDirectory(planeImagesPath);
-	if (dir)
-	{
-		string newname;
-		for (auto& [filename, file] : dir->rezFiles)
-		{
-			newname = filename.substr(0, filename.length() - 4); // remove ".PID"
-			// the files path format is "LEVEL<N>/TILES/<PLN>/<XXX>.PID"
-			if (!strcmp(file->extension, "PID") && isNumber(newname))
-			{
-				images[stoi(newname)] = loadImage(file->getFullPath());
-			}
-		}
-	}
-
-	return images;
-}
-
 string AssetsManager::getCreditsText()
 {
 	const RezFile* file = instance->_rezArchive->getFile("STATES/CREDITS/CREDITS.TXT");
@@ -216,6 +333,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 void AssetsManager::stopWavFile(uint32_t wavId)
 {
 	AudioManager::stop(wavId);
+	AudioManager::remove(wavId);
 }
 #else
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
@@ -224,9 +342,13 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 }
 void AssetsManager::stopWavFile(uint32_t wavId) {}
 #endif
+uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
+{
+	return AudioManager::getDuration(wavFileKey);
+}
 
 #ifndef _DEBUG // if debug - no background music
-void AssetsManager::setBackgroundMusic(BackgroundMusicType type)
+void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
 	if (instance->_lastType == type)
 		return;
@@ -234,24 +356,16 @@ void AssetsManager::setBackgroundMusic(BackgroundMusicType type)
 	stopBackgroundMusic();
 	instance->_lastType = type;
 
-	/*auto it = instance->bgMusics.find(type);
-	if (it != instance->bgMusics.end())
+	uint32_t id = 0;
+	switch (type)
 	{
-		AudioManager::continuePlay(it->second);
+	case BackgroundMusicType::Level: id = AudioManager::playMidi("LEVEL", true); break;
+	case BackgroundMusicType::Powerup: id = AudioManager::playMidi("POWERUP", true); break;
+	case BackgroundMusicType::Boss: id = AudioManager::playMidi("BOSS", true); break;
+	case BackgroundMusicType::Credits: id = AudioManager::playMidi("CREDITS", true); break;
 	}
-	else*/
-	{
-		uint32_t id = UINT32_MAX;
-		switch (type)
-		{
-		case BackgroundMusicType::Level: id = AudioManager::playMidi("level", true); break;
-		case BackgroundMusicType::Powerup: id = AudioManager::playMidi("powerup", true); break;
-		case BackgroundMusicType::Boss: id = AudioManager::playMidi("boss", true); break;
-		case BackgroundMusicType::Credits: id = AudioManager::playMidi("credits", true); break;
-		}
-		if (id != AudioManager::INVALID_ID)
-			instance->bgMusics[type] = id;
-	}
+	if (id != INVALID_AUDIOPLAYER_ID)
+		instance->bgMusics[type] = id;
 }
 void AssetsManager::stopBackgroundMusic()
 {
@@ -265,15 +379,10 @@ void AssetsManager::stopBackgroundMusic()
 	instance->_lastType = BackgroundMusicType::None; // no background music
 }
 #else
-void AssetsManager::setBackgroundMusic(BackgroundMusicType type) {}
+void AssetsManager::startBackgroundMusic(BackgroundMusicType type) {}
 void AssetsManager::stopBackgroundMusic() {}
 #endif
-uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
-{
-	return AudioManager::getDuration(wavFileKey);
-}
 
-// calls logics for all animations and sounds
 void AssetsManager::callLogics(uint32_t elapsedTime)
 {
 	instance->_animationsManager->callAnimationsLogic(elapsedTime);
@@ -284,14 +393,31 @@ void AssetsManager::clearLevelAssets(int lvl)
 {
 	if (instance)
 	{
-		const string prefix = "LEVEL" + to_string(lvl);
-		instance->_imagesManager->clearLevelImages(prefix);
-		instance->_animationsManager->clearLevelAnimations(prefix);
+		const string prefix = "LEVEL";// +to_string(lvl);
+		auto removeByPrefix = [&prefix](const string& key) { return startsWith(key, prefix); };
+
+		WindowManager::clearImages(removeByPrefix);
+		instance->_animationsManager->clearAnimations(removeByPrefix);
+
 		stopBackgroundMusic();
-		AudioManager::remove([&prefix](const string& key) { return key.find(prefix) != string::npos; });
+		AudioManager::remove(removeByPrefix);
 		AudioManager::remove(instance->bgMusics[BackgroundMusicType::Level]);
-		instance->bgMusics.erase(BackgroundMusicType::Level);
-		instance->_lastType = BackgroundMusicType::None;
+		instance->bgMusics[BackgroundMusicType::Level] = INVALID_AUDIOPLAYER_ID;
 		PathManager::resetPaths();
+	}
+}
+
+void AssetsManager::loadWavDir(const string& path)
+{
+	if (const RezDirectory* dir = _rezArchive->getDirectory(path))
+	{
+		for (auto& [dirname, dir] : dir->rezDirectories)
+		{
+			loadWavDir(dir->getFullPath());
+		}
+		for (auto& [filename, file] : dir->rezFiles)
+		{
+			AudioManager::addWavPlayer(file->getFullPath(), file->getBufferReader());
+		}
 	}
 }

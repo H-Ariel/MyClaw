@@ -33,7 +33,7 @@ struct HierarchicalMenu
 		EndGame
 	};
 
-	HierarchicalMenu(string pcxPath, uint8_t cmd, float xRatio, float yRatio, vector<HierarchicalMenu> subMenus = {})
+	HierarchicalMenu(const string& pcxPath, uint8_t cmd, float xRatio, float yRatio, vector<HierarchicalMenu> subMenus = {})
 		: pcxPath(pcxPath), subMenus(subMenus), xRatio(xRatio), yRatio(yRatio), cmd(cmd) {}
 
 	vector<HierarchicalMenu> subMenus;
