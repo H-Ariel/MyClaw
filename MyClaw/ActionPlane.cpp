@@ -65,9 +65,8 @@
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
 
 #ifdef _DEBUG
-//#undef LOW_DETAILS
 //#define NO_ENEMIES
-#define NO_OBSTACLES
+//#define NO_OBSTACLES
 #endif
 
 
@@ -105,8 +104,8 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		_shakeTime -= elapsedTime;
 	updatePosition();
 
-	sort(_objects.begin(), _objects.end(), 
-		[](BasePlaneObject * a, BasePlaneObject * b) { return a->logicZ < b->logicZ; }); // for this method (`Logic`)
+	sort(_objects.begin(), _objects.end(),
+		[](BasePlaneObject* a, BasePlaneObject* b) { return a->logicZ < b->logicZ; }); // for this method (`Logic`)
 
 	BasePlaneObject* obj;
 	bool exploseShake = false; // shake screen after explodes of Claw's dynamit and powder-kegs
@@ -185,7 +184,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	sort(_objects.begin(), _objects.end(), 
+	sort(_objects.begin(), _objects.end(),
 		[](BasePlaneObject* a, BasePlaneObject* b) { return a->drawZ < b->drawZ; }); // for `Draw` method
 
 	AssetsManager::callLogics(elapsedTime);
@@ -216,7 +215,7 @@ void ActionPlane::init()
 	_planeSize.height = (float)TILE_SIZE * _wwdPlane->tilesOnAxisY;
 
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
-	physics = allocNewSharedPtr<PhysicsManager>(_wwd, this); // must be after WWD map loaded and before objects added
+	physics = make_shared<PhysicsManager>(_wwd, this); // must be after WWD map loaded and before objects added
 
 	// player's initializtion must be before LevelPlane::readPlaneObjects() because some of objects need player
 	if (player && player->hasLives()) // if we have player from previous level, we don't need to create new one
@@ -227,7 +226,7 @@ void ActionPlane::init()
 	}
 	else
 	{
-		player = allocNewSharedPtr<Player>();
+		player = make_shared<Player>();
 		player->position.x = player->startPosition.x = (float)_wwd->startX;
 		player->position.y = player->startPosition.y = (float)_wwd->startY;
 	}
@@ -244,7 +243,7 @@ void ActionPlane::init()
 }
 void ActionPlane::addObject(const WwdObject& obj)
 {
-#ifndef LOW_DETAILS
+	/* Objects */
 	if (obj.logic == "FrontCandy" || obj.logic == "FrontAniCandy" ||
 		obj.logic == "BehindCandy" || obj.logic == "BehindAniCandy" ||
 		obj.logic == "DoNothing" || obj.logic == "DoNothingNormal" ||
@@ -283,9 +282,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_objects.push_back(p);
 		_powderKegs.push_back(p);
 	}
-	else
-#endif
-	if (endsWith(obj.logic, "Elevator"))
+	else if (endsWith(obj.logic, "Elevator"))
 	{
 		_objects.push_back(Elevator::create(obj, _wwd->levelNumber));
 	}
@@ -322,7 +319,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 		if (_wwd->levelNumber == 5) idx = 509;
 		else if (_wwd->levelNumber == 11) idx = 39;
 		//else throw Exception("invalid level");
-		
+
 		WwdTileDescription& tileDesc = _wwd->tileDescriptions[idx];
 
 		float topOffset = (float)tileDesc.rect.top;
@@ -358,6 +355,9 @@ void ActionPlane::addObject(const WwdObject& obj)
 	{
 		_objects.push_back(DBG_NEW ConveyorBelt(obj));
 	}
+
+	/* Enemies */
+
 #ifndef NO_ENEMIES
 	else if (obj.logic == "CrabNest")
 	{
@@ -436,6 +436,9 @@ void ActionPlane::addObject(const WwdObject& obj)
 		ADD_ENEMY(TigerGuard(obj));
 	}
 #endif
+
+	/* Obstacles */
+
 #ifndef NO_OBSTACLES
 	else if (obj.logic == "TowerCannonLeft" || obj.logic == "TowerCannonRight")
 	{
@@ -484,11 +487,14 @@ void ActionPlane::addObject(const WwdObject& obj)
 		_shakeRects.push_back(Rectangle2D((float)obj.attackRect.left, (float)obj.attackRect.top,
 			(float)obj.attackRect.right, (float)obj.attackRect.bottom));
 	}
-#endif
 	else if (obj.logic == "LavaHand")
 	{
 		_objects.push_back(DBG_NEW LavaHand(obj));
 	}
+#endif
+
+	/* Bosses and their objects */
+	
 	else if (obj.logic == "Raux")
 	{
 		ADD_BOSS_OBJECT(LeRauxe(obj));
@@ -566,7 +572,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 		ADD_BOSS_OBJECT(LordOmar(obj));
 	}
 
-//	throw Exception("TODO: logic=" + obj.logic);
+	//	throw Exception("TODO: logic=" + obj.logic);
 }
 
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
@@ -582,7 +588,7 @@ void ActionPlane::loadGame(int level, int checkpoint)
 	if (data.level == level && data.savePoint == checkpoint)
 	{
 		// success to load checkpoint
-		_loadGameData = allocNewSharedPtr<SavedGameManager::GameData>(data);
+		_loadGameData = make_shared<SavedGameManager::GameData>(data);
 	}
 }
 void ActionPlane::resetObjects()

@@ -25,7 +25,7 @@ BearSailor::BearSailor(const WwdObject& obj)
 	for (int i = 0; i < 3; i++)
 		for (UIAnimation::FrameData* frame : ANIMATION_HUG->getImagesList())
 			images.push_back(frame);
-	ANIMATION_HUG = allocNewSharedPtr<UIAnimation>(images);
+	ANIMATION_HUG =  make_shared<UIAnimation>(images);
 
 	drawZ = DefaultZCoord::Characters + 1; // when this enemy hug CC it should be above him
 }

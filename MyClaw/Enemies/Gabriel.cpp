@@ -72,7 +72,7 @@ Gabriel::~Gabriel()
 	if (removeObject)
 	{
 		ActionPlane::addPlaneObject(DBG_NEW DeadGabriel(position,
-			allocNewSharedPtr<UIAnimation>(
+			 make_shared<UIAnimation>(
 				_animations["KILLFALL1"]->getImagesList() +
 				_animations["KILLFALL2"]->getImagesList() +
 				_animations["KILLFALL3"]->getImagesList() +

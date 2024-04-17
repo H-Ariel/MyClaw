@@ -14,7 +14,7 @@ UITextElement::UITextElement()
 }
 UITextElement::~UITextElement()
 {
-	SafeRelease(_textFormat);
+	_textFormat->Release();
 }
 
 void UITextElement::Draw()
@@ -33,7 +33,7 @@ void UITextElement::setFont(const FontData& font)
 {
 	_font = font;
 	if (_textFormat)
-		SafeRelease(_textFormat);
+		_textFormat->Release();
 	_textFormat = WindowManager::createTextFormat(_font);
 }
 FontData UITextElement::getFont() const

@@ -80,7 +80,7 @@ map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirect
 				else ++i;
 			}
 
-			anis["IDLE"] = allocNewSharedPtr<UIAnimation>(imagesList);
+			anis["IDLE"] = make_shared<UIAnimation>(imagesList);
 		}
 		else if (endsWith(dirPath, "/ANIS/SEAGULL"))
 		{
@@ -101,7 +101,7 @@ map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirect
 				else ++i;
 			}
 
-			anis["DIVE"] = allocNewSharedPtr<UIAnimation>(imagesList);
+			anis["DIVE"] =  make_shared<UIAnimation>(imagesList);
 		}
 
 		_savedAniDirs[dirPath] = anis;
@@ -139,7 +139,7 @@ shared_ptr<UIAnimation> AnimationsManager::createAnimationFromDirectory(const st
 			reverse(images.begin(), images.end());
 		}
 
-		_loadedAnimations[k] = allocNewSharedPtr<UIAnimation>(images);
+		_loadedAnimations[k] =  make_shared<UIAnimation>(images);
 	}
 
 	return _loadedAnimations[k];
@@ -150,7 +150,7 @@ shared_ptr<UIAnimation> AnimationsManager::createAnimationFromPidImage(const str
 	{
 		shared_ptr<UIBaseImage> img = AssetsManager::loadImage(pidPath);
 		vector<UIAnimation::FrameData*> images = { DBG_NEW UIAnimation::FrameData(img) };
-		_loadedAnimations[pidPath] = allocNewSharedPtr<UIAnimation>(images);
+		_loadedAnimations[pidPath] =  make_shared<UIAnimation>(images);
 		_loadedAnimations[pidPath]->updateFrames = false;
 	}
 	return _loadedAnimations[pidPath];

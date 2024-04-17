@@ -88,7 +88,7 @@ uint32_t AudioManager::playWav(const string& key, bool infinite)
 	uint32_t id = instance->getNewId();
 
 	auto& [fmt, wavSoundData] = it->second;
-	instance->_audioPlayers[id] = allocNewSharedPtr<WavPlayer>(key, fmt, wavSoundData);
+	instance->_audioPlayers[id] = make_shared<WavPlayer>(key, fmt, wavSoundData);
 	instance->_audioPlayers[id]->play(infinite);
 
 	return id;
@@ -107,7 +107,7 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 	uint32_t id = instance->getNewId();
 
 	auto& [fmt, midiData] = it->second;
-	instance->_audioPlayers[id] = allocNewSharedPtr<MidiPlayer>(key, midiData);
+	instance->_audioPlayers[id] = make_shared<MidiPlayer>(key, midiData);
 	instance->_audioPlayers[id]->play(infinite);
 
 	return id;

@@ -29,7 +29,7 @@ public:
 	void updateImageData() const; // position, mirrored, etc.
 	void reset(); // reset to the first frame
 
-	shared_ptr<UIAnimation> getCopy() const { return allocNewSharedPtr<UIAnimation>(getImagesList()); }
+	shared_ptr<UIAnimation> getCopy() const { return  make_shared<UIAnimation>(getImagesList()); }
 	vector<FrameData*> getImagesList() const; // return a copy of the images list. WARNING: you should release that memory
 	size_t getTotalDuration() const;
 	size_t getImagesCount() const { return _images.size(); }

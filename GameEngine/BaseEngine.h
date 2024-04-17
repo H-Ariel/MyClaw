@@ -36,7 +36,7 @@ protected:
 	template <class NextEngine, class... Args>
 	void changeEngine(Args... args)
 	{
-		_nextEngine = allocNewSharedPtr<NextEngine>(args...);
+		_nextEngine = make_shared<NextEngine>(args...);
 		StopEngine = true;
 	}
 

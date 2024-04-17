@@ -67,7 +67,7 @@ private:
 class RezArchive
 {
 public:
-	RezArchive(const string& rezFilePath = "../CLAW.REZ");
+	RezArchive(const string& rezFilePath);
 	~RezArchive();
 
 	RezFile* getFile(const string& rezFilePath);

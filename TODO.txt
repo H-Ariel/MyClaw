@@ -1,8 +1,7 @@
 + handle setting (low details, front plane, etc. add menu)
 
 - make sure all options works well
-- use make_shared instead of allocNewSharedPtr
-- use trie<T> instead of map<string,T> (end of string contains value T)
+- use trie<T> instead of map<string,T> (end of string contains value T) (should be faster and less memory)
 - move Framework, GameEngine, RezParser to DLLs (not .lib)
 
 * add BossStager logic

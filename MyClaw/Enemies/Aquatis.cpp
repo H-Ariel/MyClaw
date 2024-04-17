@@ -24,7 +24,7 @@ Aquatis::Aquatis(const WwdObject& obj)
 	_health = 5;
 
 	// create punch animation (punch up and punch down)
-	_animations["PUNCH"] = allocNewSharedPtr<UIAnimation>(_animations["STRIKE1"]->getImagesList() + _animations["STRIKE2"]->getImagesList());
+	_animations["PUNCH"] =  make_shared<UIAnimation>(_animations["STRIKE1"]->getImagesList() + _animations["STRIKE2"]->getImagesList());
 	_animations.erase("STRIKE1"); _animations.erase("STRIKE2");
 }
 Aquatis::~Aquatis()

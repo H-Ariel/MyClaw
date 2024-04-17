@@ -21,11 +21,11 @@ GameMainApp::~GameMainApp()
 void GameMainApp::init()
 {
 #ifdef _DEBUG
-	//_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
-	//_pEngine = allocNewSharedPtr<MenuEngine>();
-	_pEngine = allocNewSharedPtr<LevelLoadingEngine>(5);
+	//_pEngine =  make_shared<OpeningScreenEngine>();
+	//_pEngine =  make_shared<MenuEngine>();
+	_pEngine =  make_shared<LevelLoadingEngine>(5);
 #else
-	_pEngine = allocNewSharedPtr<OpeningScreenEngine>();
+	_pEngine =  make_shared<OpeningScreenEngine>();
 #endif
 }
 

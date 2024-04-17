@@ -49,15 +49,12 @@ WindowManager::WindowManager(const TCHAR WindowClassName[], const TCHAR title[],
 WindowManager::~WindowManager()
 {
 	for (auto& i : images)
-	{
-		ID2D1Bitmap* bitmap = i.second->_bitmap;
-		SafeRelease(bitmap);
-	}
+		i.second->_bitmap->Release();
 	for (auto& i : brushes)
-		SafeRelease(i.second);
-	SafeRelease(_renderTarget);
-	SafeRelease(_d2dFactory);
-	SafeRelease(_dWriteFactory);
+		i.second->Release();
+	_renderTarget->Release();
+	_d2dFactory->Release();
+	_dWriteFactory->Release();
 }
 
 void WindowManager::Initialize(const TCHAR WindowClassName[], const TCHAR title[], void* lpParam)
@@ -199,7 +196,7 @@ void WindowManager::drawText(const wstring& text, const FontData& font, ColorF c
 {
 	IDWriteTextFormat* textFormat = createTextFormat(font);
 	drawText(text, textFormat, color, layoutRect);
-	SafeRelease(textFormat);
+	textFormat->Release();
 }
 
 void WindowManager::drawHole(D2D1_POINT_2F center, float radius)
@@ -227,9 +224,9 @@ void WindowManager::drawHole(D2D1_POINT_2F center, float radius)
 	instance->_renderTarget->FillGeometry(group, brush);
 
 end:
-	SafeRelease(group);
-	SafeRelease(background);
-	SafeRelease(hole);
+	group->Release();
+	background->Release();
+	hole->Release();
 }
 void WindowManager::drawWrapCover(float top)
 {
@@ -295,7 +292,7 @@ shared_ptr<UIBaseImage> WindowManager::createImage(const string& key, const void
 			&bitmap),
 			"Failed to create D2D bitmap");
 
-		instance->images[key] = allocNewSharedPtr<UIBaseImage>(bitmap, Point2F(offsetX, offsetY));
+		instance->images[key] = make_shared<UIBaseImage>(bitmap, Point2F(offsetX, offsetY));
 	}
 
 	return instance->images[key];

@@ -119,16 +119,6 @@ inline vector<T>& operator+=(vector<T>& v1, const vector<T>& v2)
 	return v1;
 }
 
-// safe release for COM objects
-template <class T>
-inline void SafeRelease(T*& p)
-{
-	if (p)
-	{
-		p->Release();
-		p = nullptr;
-	}
-}
 // safe delete for regular objects
 template <class T>
 inline void SafeDelete(T*& p)
@@ -140,10 +130,6 @@ inline void SafeDelete(T*& p)
 	}
 }
 
-
-// allocate new object as `shared_ptr`
-template <class T, class ... Args>
-inline shared_ptr<T> allocNewSharedPtr(Args... args) { return shared_ptr<T>(DBG_NEW T(args...)); }
 
 // my shell for `memcpy`. It can also accept `const` values.
 template <class T>

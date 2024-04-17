@@ -100,13 +100,11 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 		(Type&)_type = ItemsMap.at(obj.imageSet);
 	}
 
-#ifndef LOW_DETAILS
 	if (isFromMap && _type != Type::BossWarp && _type != Type::Warp && _type != Type::Treasure_Coins)
 	{
 		_useGlitter = true;
 		_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
 	}
-#endif
 
 	_respawning = obj.damage;
 
@@ -186,11 +184,8 @@ void Item::stopFalling(float collisionSize)
 	speed.y = 0;
 	speed.x = 0;
 	position.y -= collisionSize;
-
-#ifndef LOW_DETAILS
 	_useGlitter = true;
 	_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
-#endif
 }
 int Item::getTreasureScore() const
 {

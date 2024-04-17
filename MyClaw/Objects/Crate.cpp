@@ -118,7 +118,7 @@ StackedCrates::StackedCrates(const WwdObject& obj)
 		*/
 		*(&newObj.userRect1.left + crateIdx) = *(&obj.userRect1.left + crateIdx); // match treasure by index
 
-		crates.push_back(allocNewSharedPtr<Crate>(newObj));
+		crates.push_back( make_shared<Crate>(newObj));
 	}
 }
 void StackedCrates::Logic(uint32_t elapsedTime)

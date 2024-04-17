@@ -133,11 +133,7 @@ const uint32_t AssetsManager::INVALID_AUDIOPLAYER_ID = AudioManager::INVALID_ID;
 
 AssetsManager::AssetsManager()
 {
-#ifdef _DEBUG
-	_rezArchive = DBG_NEW RezArchive();
-#else
 	_rezArchive = DBG_NEW RezArchive("CLAW.REZ");
-#endif
 	_animationsManager = DBG_NEW AnimationsManager(_rezArchive);
 	_lastType = AssetsManager::BackgroundMusicType::None;
 	srand((unsigned int)time(nullptr));
@@ -206,7 +202,7 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 		}
 		catch (const Exception& ex)
 		{
-			img = allocNewSharedPtr<UIBaseImage>(nullptr); // empty image
+			img =  make_shared<UIBaseImage>(nullptr); // empty image
 			DBG_PRINT("WARNING: a blank image has been inserted. image path: \"%s\"\n", path.c_str());
 		}
 	}
@@ -268,7 +264,7 @@ shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)
 {
 	char path[25];
 	sprintf(path, "LEVEL%d/WORLDS/WORLD.WWD", levelNumber);
-	shared_ptr<WapWwd> wwd = allocNewSharedPtr<WapWwd>(instance->_rezArchive->getFile(path)->getBufferReader(), levelNumber);
+	shared_ptr<WapWwd> wwd =  make_shared<WapWwd>(instance->_rezArchive->getFile(path)->getBufferReader(), levelNumber);
 
 	// initialize level palette
 	loadPidPalette(wwd->rezPalettePath);

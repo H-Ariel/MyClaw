@@ -27,7 +27,7 @@ BaseApp::~BaseApp()
 
 void BaseApp::init()
 {
-	_pEngine = allocNewSharedPtr<BaseEngine>();
+	_pEngine =  make_shared<BaseEngine>();
 }
 void BaseApp::run()
 {

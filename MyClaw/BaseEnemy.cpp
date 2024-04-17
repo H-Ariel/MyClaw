@@ -322,7 +322,6 @@ bool BaseEnemy::checkClawHit()
 
 	if (checkForHurt(clawAttackRect))
 	{
-#ifndef LOW_DETAILS
 		// draw damage animation
 		Rectangle2D damageRc = _saveCurrRect.getCollision(clawAttackRect.first);
 		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(
@@ -332,7 +331,6 @@ bool BaseEnemy::checkClawHit()
 			},
 			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", false, 50));
 		ActionPlane::addPlaneObject(ani);
-#endif
 		return true;
 	}
 	return false;

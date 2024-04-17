@@ -152,7 +152,7 @@ Player::Player()
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
 
-	_animations["SQUEEZED"] = allocNewSharedPtr<UIAnimation>(vector<UIAnimation::FrameData*>({
+	_animations["SQUEEZED"] =  make_shared<UIAnimation>(vector<UIAnimation::FrameData*>({
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage( "CLAW/IMAGES/450.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/451.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/452.PID"))
@@ -877,8 +877,6 @@ bool Player::collectItem(Item* item)
 		_collectedTreasures[type] += 1;
 		int tScore = item->getTreasureScore();
 		_score += tScore;
-
-#ifndef LOW_DETAILS
 		int i = 0;
 
 		switch (tScore)
@@ -896,11 +894,10 @@ bool Player::collectItem(Item* item)
 
 		vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
 		myMemCpy(images[0]->duration, 1000U);
-		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, allocNewSharedPtr<UIAnimation>(images));
+		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position,  make_shared<UIAnimation>(images));
 		myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);
 
 		ActionPlane::addPlaneObject(ani);
-#endif
 	}	return true;
 
 	case Item::Ammo_Deathbag:	ADD_WEAPON(pistol, 25);
@@ -1145,7 +1142,6 @@ bool Player::checkForHurts()
 					_lastAttackRect = atkRc.first;
 					_health -= atkRc.second;
 
-#ifndef LOW_DETAILS
 					// draw damage animation
 					OneTimeAnimation* ani = DBG_NEW OneTimeAnimation({
 							position.x + (damageRc.left - damageRc.right) / 2,
@@ -1153,7 +1149,7 @@ bool Player::checkForHurts()
 						}, AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", false, 50));
 					myMemCpy(ani->drawZ, drawZ + 1);
 					ActionPlane::addPlaneObject(ani);
-#endif
+
 					return true;
 				}
 			}
