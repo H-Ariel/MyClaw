@@ -343,7 +343,7 @@ uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 	return AudioManager::getDuration(wavFileKey);
 }
 
-#ifndef _DEBUG // if debug - no background music
+#ifndef _DEBUG0 // if debug - no background music
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
 	if (instance->_lastType == type)
@@ -382,7 +382,6 @@ void AssetsManager::stopBackgroundMusic() {}
 void AssetsManager::callLogics(uint32_t elapsedTime)
 {
 	instance->_animationsManager->callAnimationsLogic(elapsedTime);
-	AudioManager::checkForRestart();
 }
 
 void AssetsManager::clearLevelAssets(int lvl)

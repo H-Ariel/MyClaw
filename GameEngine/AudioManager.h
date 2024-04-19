@@ -17,14 +17,11 @@ public:
 	static uint32_t playMidi(const string& key, bool infinite);
 
 	static void stop(uint32_t id);
-	static void continuePlay(uint32_t id);
 	static void remove(uint32_t id);
 	static void remove(function<bool(const string& key)> predicate);
 
 	static uint32_t getDuration(const string& key);
 	static void setVolume(uint32_t id, int volume); // set the volume. value range is [0,100]
-
-	static void checkForRestart();
 
 
 	static const uint32_t INVALID_ID = 0;

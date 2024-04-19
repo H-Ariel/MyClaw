@@ -21,9 +21,9 @@ static void WAV_CALL(MMRESULT mmResult)
 
 WavPlayer::WavPlayer(const string& key, const WAVEFORMATEX& fmt, const vector<uint8_t>& wavSoundData)
 	: IAudioPlayer(key, wavSoundData), _wav(nullptr), _fmt(fmt), _hdr({}),
-	_volume(make_dword(WAV_VOLUME_MAX, WAV_VOLUME_MAX))
+	_volume(make_dword(WAV_VOLUME_MAX, WAV_VOLUME_MAX)),
+	_tryPlaying(false), _infinite(false)
 {
-	_duration = (uint32_t)((float)wavSoundData.size() / fmt.nAvgBytesPerSec * 1000); // duartion in milliseconds
 }
 WavPlayer::~WavPlayer()
 {

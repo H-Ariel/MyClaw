@@ -119,12 +119,6 @@ void AudioManager::stop(uint32_t id)
 	if (it != instance->_audioPlayers.end())
 		it->second->stop();
 }
-void AudioManager::continuePlay(uint32_t id)
-{
-	auto it = instance->_audioPlayers.find(id);
-	if (it != instance->_audioPlayers.end())
-		it->second->play(it->second->isInfinite());
-}
 void AudioManager::remove(uint32_t midiId)
 {
 	auto it = instance->_audioPlayers.find(midiId);
@@ -162,21 +156,4 @@ void AudioManager::setVolume(uint32_t id, int volume)
 	auto it = instance->_audioPlayers.find(id);
 	if (it != instance->_audioPlayers.end())
 		it->second->setVolume(volume);
-}
-
-void AudioManager::checkForRestart()
-{
-	for (auto& [id, audioPlayer] : instance->_audioPlayers)
-	{
-		if (audioPlayer->shouldPlay())
-			audioPlayer->play(audioPlayer->isInfinite());
-		else
-		{
-			if (!audioPlayer->isPlaying() && !audioPlayer->isInfinite()
-				&& isinstance<WavPlayer>(audioPlayer.get()))
-				audioPlayer->stop();
-		}
-	}
-
-	// TODO: delete the audio players that are not playing and not infinite
 }

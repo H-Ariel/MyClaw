@@ -23,4 +23,5 @@ private:
 	WAVEHDR _hdr;
 	HWAVEOUT _wav;
 	DWORD _volume; // low-word contains the left-channel volume setting, and the high-word contains the right-channel setting
+	bool _tryPlaying, _infinite;
 };

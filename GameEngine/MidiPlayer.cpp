@@ -19,8 +19,6 @@ static void MIDI_CALL(MMRESULT mmResult)
 #define MIDI_CALL(func) func
 #endif
 
-static const LARGE_INTEGER EMPTY_LARGE_INTEGER = {};
-
 float MidiPlayer::MusicSpeed = 1;
 HMIDIOUT MidiPlayer::_midiOut = nullptr;
 int MidiPlayer::_objCount = 0;
@@ -30,13 +28,12 @@ LARGE_INTEGER MidiPlayer::PerformanceFrequency = {};
 MidiPlayer::MidiPlayer(const string& key, const vector<uint8_t>& midiData)
 	: IAudioPlayer(key, midiData), track({}), PPQN_CLOCK(0), ticks(0)
 {
-	if (!memcmp(&PerformanceFrequency, &EMPTY_LARGE_INTEGER, sizeof(LARGE_INTEGER)))
-		QueryPerformanceFrequency(&PerformanceFrequency);
-
 	if (_objCount++ == 0)
 	{
 		// open the MIDI device if it's the first instance
 		MIDI_CALL(midiOutOpen(&_midiOut, 0, 0, 0, CALLBACK_NULL));
+		// get the performance frequency
+		QueryPerformanceFrequency(&PerformanceFrequency);
 	}
 }
 
