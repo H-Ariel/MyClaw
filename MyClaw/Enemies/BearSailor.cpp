@@ -9,11 +9,8 @@ STRIKE4 - I couldn't figure it out
 */
 
 
-#define ANIMATION_WALK			_animations.at(_walkAniName)
-#define ANIMATION_IDLE			_animations.at("IDLE")
-#define ANIMATION_STRIKE		_animations.at("STRIKE1")
-#define ANIMATION_TRYCATCH		_animations.at("STRIKE2")
-#define ANIMATION_HUG			_animations.at("STRIKE3")
+#define ANIMATION_STRIKE	_animations.at("STRIKE1")
+#define ANIMATION_HUG		_animations.at("STRIKE3")
 
 
 BearSailor::BearSailor(const WwdObject& obj)
@@ -25,7 +22,7 @@ BearSailor::BearSailor(const WwdObject& obj)
 	for (int i = 0; i < 3; i++)
 		for (UIAnimation::FrameData* frame : ANIMATION_HUG->getImagesList())
 			images.push_back(frame);
-	ANIMATION_HUG =  make_shared<UIAnimation>(images);
+	ANIMATION_HUG = make_shared<UIAnimation>(images);
 
 	drawZ = DefaultZCoord::Characters + 1; // when this enemy hug CC it should be above him
 }

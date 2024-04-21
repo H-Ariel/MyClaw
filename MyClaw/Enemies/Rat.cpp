@@ -12,7 +12,7 @@ void Rat::makeAttack(float deltaX, float deltaY)
 {
 	if (deltaX < 352 && deltaY < 42)
 	{
-		_ani = _animations[_shootAniName];
+		_ani = _aniShoot;
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;

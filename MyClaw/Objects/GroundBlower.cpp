@@ -38,12 +38,10 @@ void GroundBlower::Draw()
 {
 	_ani->position = position;
 	_ani->mirrored = _isMirrored;
-	_ani->updateImageData();
 	_ani->Draw();
 
 	_blowhole->position = position;
 	_blowhole->position.y += BLOWHOLE_OFFSET_Y;
 	_blowhole->mirrored = _isMirrored;
-	_blowhole->updateImageData();
 	_blowhole->Draw();
 }

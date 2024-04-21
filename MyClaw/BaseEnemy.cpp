@@ -7,36 +7,37 @@
 #include "Objects/EnemyProjectile.h"
 
 
-#define ANIMATION_IDLE			_animations.at(_idleAniName)
-#define ANIMATION_WALK			_animations.at(_walkAniName)
-#define ANIMATION_STRIKE_HIGH	_animations.at(_strikeAniName)
-#define ANIMATION_STRIKE_LOW	_animations.at(_strikeDuckAniName)
-#define ANIMATION_HITHIGH		_animations.at(_hitHighAniName)
-#define ANIMATION_HITLOW		_animations.at(_hitLowAniName)
-#define ANIMATION_SHOOT			_animations.at(_shootAniName)
-#define ANIMATION_SHOOTDUCK		_animations.at(_shootDuckAniName)
-
-
 BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string& walkAni,
 	const string& hithigh, const string& hitlow, const string& fallDeadAni, const string& strikeAni,
 	const string& strikeDuckAni, const string& shootAni, const string& shootDuckAni,
 	const string& projectileAniDir, float walkingSpeed, bool noTreasures)
-	: BaseCharacter(obj), _damage(damage), _isStanding(false), _strikeAniName(strikeAni),
-	_strikeDuckAniName(strikeDuckAni), _canStrike(!strikeAni.empty()),
-	_canStrikeDuck(!strikeDuckAni.empty()), _walkAniName(walkAni), _shootAniName(shootAni),
-	_canShoot(!shootAni.empty()), _shootDuckAniName(shootDuckAni), _canShootDuck(!shootDuckAni.empty()),
-	_projectileAniDir(projectileAniDir), _hitHighAniName(hithigh), _hitLowAniName(hitlow),
-	_fallDeadAniName(fallDeadAni), _minX((float)obj.minX), _maxX((float)obj.maxX),
-	_isStaticEnemy(obj.userValue1), _idleAniName("IDLE"), _attackRest(0), _fallDead(true),
+	: BaseCharacter(obj), _damage(damage), _isStanding(false),
+	_canStrike(!strikeAni.empty()),
+	_canStrikeDuck(!strikeDuckAni.empty()),
+	_canShoot(!shootAni.empty()), _canShootDuck(!shootDuckAni.empty()),
+	_projectileAniDir(projectileAniDir),
+	_minX((float)obj.minX), _maxX((float)obj.maxX),
+	_isStaticEnemy(obj.userValue1), _attackRest(0), _fallDead(true),
 	_deathType(DeathType::Regular)
 {
 	_isMirrored = false;
-	
+
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
 	// add burnt and frozen animations:
 	string imagesDirectoryPath = PathManager::getImageSetPath(obj.imageSet);
 	_animations["burnt"] = AssetsManager::createCopyAnimationFromPidImage(imagesDirectoryPath + "/550.PID");
 	_animations["frozen"] = AssetsManager::createCopyAnimationFromPidImage(imagesDirectoryPath + "/560.PID");
+
+	_aniWalk = _animations[walkAni];
+	_aniStrike = _animations[strikeAni];
+	_aniStrikeDuck = _animations[strikeDuckAni];
+	_aniShoot = _animations[shootAni];
+	_aniShootDuck = _animations[shootDuckAni];
+	_aniHitHigh = _animations[hithigh];
+	_aniHitLow = _animations[hitlow];
+	_aniIdle = _animations["IDLE"];
+	_aniFallDead = _animations[fallDeadAni];
+
 
 	_health = health;
 
@@ -57,8 +58,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string&
 	if (_isStaticEnemy)
 	{
 		_isStanding = true;
-		if (!_idleAniName.empty())
-			_ani = ANIMATION_IDLE;
+		_ani = _aniIdle;
 	}
 	else
 	{
@@ -70,8 +70,8 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string&
 			myMemCpy(_maxX, range.second);
 		}
 
-		if (!_walkAniName.empty())
-			_ani = ANIMATION_WALK;
+		if (!walkAni.empty())
+			_ani = _aniWalk;
 		//else
 		//	_ani = ANIMATION_IDLE; // TODO: breakpoint here
 	}
@@ -110,12 +110,12 @@ BaseEnemy::~BaseEnemy()
 			break;
 
 		case BaseEnemy::DeathType::LightningSword:
-			ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position,"GAME_LIGHTNINGEXPLOSION", "GAME_EXPLOS_LIGHTNING"));
+			ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_LIGHTNINGEXPLOSION", "GAME_EXPLOS_LIGHTNING"));
 			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
 			break;
 
 		default:
-			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations[_fallDeadAniName]));
+			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _aniFallDead));
 			break;
 		}
 
@@ -129,15 +129,15 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 
 	if (_isStanding)
 	{
-		if (_ani != ANIMATION_IDLE)
+		if (_ani != _aniIdle)
 		{
-			_ani = ANIMATION_IDLE;
+			_ani = _aniIdle;
 			_ani->reset();
 		}
 		else if (_ani->isFinishAnimation())
 		{
 			_isStanding = false;
-			_ani = ANIMATION_WALK;
+			_ani = _aniWalk;
 			_ani->reset();
 		}
 	}
@@ -157,7 +157,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 	{
 		if (_ani->isFinishAnimation())
 		{
-			_ani = ANIMATION_WALK;
+			_ani = _aniWalk;
 			_ani->reset();
 			_isAttack = false;
 			_isMirrored = speed.x < 0;
@@ -189,7 +189,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 	{
 		if (_canStrike)
 		{
-			_ani = ANIMATION_STRIKE_HIGH;
+			_ani = _aniStrike;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
@@ -197,7 +197,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 		}
 		if (_canStrikeDuck && player->isDuck())
 		{
-			_ani = ANIMATION_STRIKE_LOW;
+			_ani = _aniStrikeDuck;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
@@ -208,7 +208,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 	{
 		if (_canShootDuck && deltaY < 128 && player->isDuck())
 		{
-			_ani = ANIMATION_SHOOTDUCK;
+			_ani = _aniShootDuck;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
@@ -223,7 +223,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 		}
 		else if (_canShoot && deltaY < 16)
 		{
-			_ani = ANIMATION_SHOOT;
+			_ani = _aniShoot;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
@@ -252,10 +252,10 @@ bool BaseEnemy::PreLogic(uint32_t elapsedTime)
 		// match hit-high / hit-low to attack height
 		//if (_saveCurrRect.top + (_saveCurrRect.top - _saveCurrRect.bottom) / 2 < _lastAttackRect.top)
 		if (3 * _saveCurrRect.top - _saveCurrRect.bottom < 2 * _lastAttackRect.top) // the magic of math :)
-			_ani = ANIMATION_HITHIGH;
+			_ani = _aniHitHigh;
 		else
-			_ani = ANIMATION_HITLOW;
-		
+			_ani = _aniHitLow;
+
 		_ani->reset();
 		_ani->loopAni = false;
 		_ani->mirrored = !_isMirrored;
@@ -265,7 +265,7 @@ bool BaseEnemy::PreLogic(uint32_t elapsedTime)
 		_lastAttackRect = {};
 		return false;
 	}
-	
+
 	return true;
 }
 void BaseEnemy::PostLogic(uint32_t elapsedTime)
@@ -282,9 +282,9 @@ Rectangle2D BaseEnemy::GetRect()
 }
 
 bool BaseEnemy::isStanding() const { return _isStanding; }
-bool BaseEnemy::isDuck() const { return _ani == ANIMATION_SHOOTDUCK; }
-bool BaseEnemy::isTakeDamage() const { return (_ani == ANIMATION_HITHIGH || _ani == ANIMATION_HITLOW) && !_ani->isFinishAnimation(); }
-bool BaseEnemy::isWalkAnimation() const { return _ani == ANIMATION_WALK; }
+bool BaseEnemy::isDuck() const { return _ani == _aniShootDuck; }
+bool BaseEnemy::isTakeDamage() const { return (_ani == _aniHitHigh || _ani == _aniHitLow) && !_ani->isFinishAnimation(); }
+bool BaseEnemy::isWalkAnimation() const { return _ani == _aniWalk; }
 void BaseEnemy::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
@@ -392,8 +392,7 @@ BaseBoss::BaseBoss(const WwdObject& obj, const string& fallDeadAni)
 	if (fallDeadAni.empty())
 		_fallDead = false;
 
-	if (_animations.count(_idleAniName))
-		_ani = ANIMATION_IDLE;
+	_ani = _aniIdle;
 }
 BaseBoss::~BaseBoss()
 {

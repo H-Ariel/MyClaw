@@ -42,14 +42,12 @@ void LevelHUD::Draw()
 	pos.y = 20 + _offset.y;
 
 	_chest->position = { 20 + _offset.x, pos.y };
-	_chest->updateImageData();
 	_chest->Draw();
 	
 	float powerupLeftTime = BasePlaneObject::player->getPowerupLeftTime() / 1000.f;
 	if (powerupLeftTime > 0)
 	{
 		_stopwatch->position = { 20 + _offset.x, pos.y + 30 };
-		_stopwatch->updateImageData();
 		_stopwatch->Draw();
 		drawNumbers((uint32_t)powerupLeftTime, 3, _scoreNumbers, { 50 + _offset.x, 50 }, true);
 	}
@@ -58,7 +56,6 @@ void LevelHUD::Draw()
 	{
 		Rectangle2D rc = ani->GetRect();
 		ani->position = { winWidth - (rc.right - rc.left) / 2 + _offset.x, pos.y };
-		ani->updateImageData();
 		ani->Draw();
 		pos.y += 30;
 	}
@@ -73,7 +70,6 @@ void LevelHUD::Draw()
 	{
 		_bossBar->position.x = _offset.x + 0.5f * wndSz.width;
 		_bossBar->position.y = _offset.y + 0.9f * wndSz.height;
-		_bossBar->updateImageData();
 		_bossBar->Draw();
 
 		// find the health bar rect (inside the boss bar frame)

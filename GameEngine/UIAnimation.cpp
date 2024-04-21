@@ -5,6 +5,8 @@
 UIAnimation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, const string& soundKey)
 	: image(image), duration(duration), soundKey(soundKey), elapsedTime(0), soundPlayed(false)
 {
+	if (image == nullptr)
+		throw Exception("image can't be null"); // should never happen
 }
 
 
@@ -57,15 +59,15 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 			}
 		}
 	}
-
-	updateImageData();
 }
 void UIAnimation::Draw()
 {
+	updateImageData();
 	_images[_currImgIdx]->image->Draw();
 }
 Rectangle2D UIAnimation::GetRect()
 {
+	updateImageData();
 	return _images[_currImgIdx]->image->GetRect();
 }
 

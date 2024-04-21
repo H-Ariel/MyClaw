@@ -28,7 +28,7 @@ FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
 	myMemCpy(appearImages.back()->duration, uint32_t((obj.speedX > 0) ? obj.speedX : 1500));
 	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));
 
-	_ani =  make_shared<UIAnimation>(appearImages + disappearImages);
+	_ani = make_shared<UIAnimation>(appearImages + disappearImages);
 
 	setObjectRectangle();
 }
@@ -65,7 +65,7 @@ SawBlade::SawBlade(const WwdObject& obj)
 	
 	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));
 	
-	_ani =  make_shared<UIAnimation>(appearImages + waitImages + disappearImages);
+	_ani = make_shared<UIAnimation>(appearImages + waitImages + disappearImages);
 
 	setObjectRectangle();
 }
@@ -81,6 +81,6 @@ LavaGeyser::LavaGeyser(const WwdObject& obj)
 {
 	vector<UIAnimation::FrameData*> images = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAGEYSER"), false,50)->getImagesList();
 	myMemCpy(images.back()->duration, uint32_t((obj.speed > 0) ? obj.speed : 500));
-	_ani =  make_shared<UIAnimation>(images);
+	_ani = make_shared<UIAnimation>(images);
 	setObjectRectangle();
 }

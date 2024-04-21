@@ -2,7 +2,6 @@
 #include "../Player.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAniName)
 #define ANIMATION_JUMP		_animations.at("JUMP")
 #define ANIMATION_STRIKE	_animations.at("STRIKE1")
 
@@ -22,7 +21,7 @@ void Fish::Logic(uint32_t elapsedTime)
 		speed.y += GRAVITY * elapsedTime;
 		position.y += speed.y * elapsedTime;
 		if (_ani->isFinishAnimation())
-			_ani = ANIMATION_WALK;
+			_ani = _aniWalk;
 	}
 	else
 		position.y = _yPos;
@@ -44,7 +43,7 @@ void Fish::Logic(uint32_t elapsedTime)
 	{
 		if (_ani->isFinishAnimation())
 		{
-			_ani = ANIMATION_WALK;
+			_ani = _aniWalk;
 			_ani->reset();
 			_isAttack = false;
 			_isMirrored = speed.x < 0;

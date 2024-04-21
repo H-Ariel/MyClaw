@@ -31,7 +31,6 @@ SpringBoard::SpringBoard(const WwdObject& obj, int levelNumber)
 
 	_ani = _idle;
 	_ani->position = position;
-	_ani->updateImageData();
 	Rectangle2D rc = _ani->GetRect();
 	rc.left = position.x - 32;
 	rc.right = position.x + 32;

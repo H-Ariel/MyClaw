@@ -65,7 +65,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 		images = appearImages + images;
 	}
 
-	_ani =  make_shared<UIAnimation>(images);
+	_ani = make_shared<UIAnimation>(images);
 	_ani->updateFrames = !isAlwaysOn;
 
 	setObjectRectangle();
@@ -101,7 +101,7 @@ StartSteppingStone::StartSteppingStone(const WwdObject& obj)
 	myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 2000));
 	images = appearImages + images;
 
-	_ani =  make_shared<UIAnimation>(images);
+	_ani = make_shared<UIAnimation>(images);
 
 	setObjectRectangle();
 }
@@ -130,7 +130,7 @@ CrumblingPeg::CrumblingPeg(const WwdObject& obj)
 {
 	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList();
 	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
-	_ani =  make_shared<UIAnimation>(images);
+	_ani = make_shared<UIAnimation>(images);
 	_ani->position = position;
 	Reset();
 	setObjectRectangle();

@@ -3,7 +3,7 @@
 
 
 LevelPlane::LevelPlane(WapWwd* wwd, WwdPlane* wwdPlane)
-	: _wwd(wwd), _wwdPlane(wwdPlane), _isMainPlane(false),
+	: _wwd(wwd), _wwdPlane(wwdPlane),
 	maxTileIdxX(((wwdPlane->flags& WwdPlane::WwdPlaneFlags_XWrapping) ? INT32_MAX : wwdPlane->tilesOnAxisX)),
 	maxTileIdxY(((wwdPlane->flags& WwdPlane::WwdPlaneFlags_YWrapping) ? INT32_MAX : wwdPlane->tilesOnAxisY))
 {

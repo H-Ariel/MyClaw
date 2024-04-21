@@ -5,11 +5,6 @@
 #include "../Objects/EnemyProjectile.h"
 
 
-#define ANIMATION_WALK		_animations.at(_walkAniName)
-#define ANIMATION_SHOOT		_animations.at(_shootAniName)
-#define ANIMATION_IDLE		_animations.at(_idleAniName)
-
-
 HermitCrab::HermitCrab(const WwdObject& obj, bool isFromNest)
 	: BaseEnemy(obj, 1, 10, "FASTADVANCE", "HIT", "HIT", "KILLFALL",
 		"STRIKE1", "", "STRIKE1", "", "", ENEMY_PATROL_SPEED), _isFromNest(isFromNest)
@@ -44,7 +39,7 @@ void HermitCrab::makeAttack(float deltaX, float deltaY)
 {
 	if (deltaX < 256 && deltaY < 42)
 	{
-		_ani = ANIMATION_SHOOT;
+		_ani = _aniShoot;
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;

@@ -174,7 +174,6 @@ void Item::Draw()
 		if (_useGlitter)
 		{
 			_glitterAnimation->position = position;
-			_glitterAnimation->updateImageData();
 			_glitterAnimation->Draw();
 		}
 	}

@@ -167,7 +167,6 @@ WapWwd::WapWwd(shared_ptr<BufferReader> wwdReader, int levelNumber)
 	if (!(flags & WwdFlag_Compress))
 		throw Exception("WWD file is not compressed");
 
-	// TODO: better code here
 	vector<uint8_t> cdata = wwdReader->getData();
 	uint8_t* data = cdata.data();
 	uint32_t length = (uint32_t)cdata.size();

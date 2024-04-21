@@ -25,12 +25,12 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
 		shared_ptr<LevelPlane> pln;
 		if (wwdPlane.flags & WwdPlane::WwdPlaneFlags_MainPlane)
 		{
-			pln =  make_shared<ActionPlane>(_wwd.get(), &wwdPlane);
+			pln = make_shared<ActionPlane>(_wwd.get(), &wwdPlane);
 			_mainPlanePosition = &pln->position;
 		}
 		else
 		{
-			pln =  make_shared<LevelPlane>(_wwd.get(), &wwdPlane);
+			pln = make_shared<LevelPlane>(_wwd.get(), &wwdPlane);
 		}
 
 		pln->init();
@@ -54,7 +54,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 {
 	if (checkpoint != -1) // according to LevelLoadingEngine
 		ActionPlane::loadGame(levelNumber, checkpoint);
-	_fields =  make_shared<ClawLevelEngineFields>(levelNumber);
+	_fields = make_shared<ClawLevelEngineFields>(levelNumber);
 	WindowManager::setDefaultPixelSize();
 
 	init();

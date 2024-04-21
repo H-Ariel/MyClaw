@@ -18,7 +18,6 @@ void BasePlaneObject::Draw()
 	{
 		_ani->position = position;
 		_ani->mirrored = _isMirrored;
-		_ani->updateImageData();
 		_ani->Draw();
 	}
 }
@@ -26,7 +25,6 @@ Rectangle2D BasePlaneObject::GetRect()
 {
 	_ani->position = position;
 	_ani->mirrored = _isMirrored;
-	_ani->updateImageData();
 	return _ani->GetRect();
 }
 void BasePlaneObject::Reset() {}

@@ -74,7 +74,6 @@ public:
 				for (int i = 0; i < NUM_OF_ITEMS_IN_SHIELD; i++)
 				{
 					_ani->position = getItemPosition(i);
-					_ani->updateImageData();
 					if (p->GetRect().intersects(_ani->GetRect()))
 					{
 						p->removeObject = true;
@@ -89,7 +88,6 @@ public:
 		for (int i = 0; i < NUM_OF_ITEMS_IN_SHIELD; i++)
 		{
 			_ani->position = getItemPosition(i);
-			_ani->updateImageData();
 			_ani->Draw();
 		}
 	}
@@ -127,7 +125,6 @@ LordOmar::LordOmar(const WwdObject& obj)
 {
 	_ani = ANIMATION_IDLE;
 	_health = States::End; // the total amount of states
-	_state = Bullet_1; // TODO: continue check fade animation and delete this
 }
 LordOmar::~LordOmar()
 {

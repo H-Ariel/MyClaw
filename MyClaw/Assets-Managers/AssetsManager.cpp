@@ -202,7 +202,7 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 		}
 		catch (const Exception& ex)
 		{
-			img =  make_shared<UIBaseImage>(nullptr); // empty image
+			img = make_shared<UIBaseImage>(nullptr); // empty image
 			DBG_PRINT("WARNING: a blank image has been inserted. image path: \"%s\"\n", path.c_str());
 		}
 	}
@@ -264,7 +264,7 @@ shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)
 {
 	char path[25];
 	sprintf(path, "LEVEL%d/WORLDS/WORLD.WWD", levelNumber);
-	shared_ptr<WapWwd> wwd =  make_shared<WapWwd>(instance->_rezArchive->getFile(path)->getBufferReader(), levelNumber);
+	shared_ptr<WapWwd> wwd = make_shared<WapWwd>(instance->_rezArchive->getFile(path)->getBufferReader(), levelNumber);
 
 	// initialize level palette
 	loadPidPalette(wwd->rezPalettePath);
@@ -343,7 +343,7 @@ uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 	return AudioManager::getDuration(wavFileKey);
 }
 
-#ifndef _DEBUG0 // if debug - no background music
+#ifndef _DEBUG // if debug - no background music
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
 	if (instance->_lastType == type)

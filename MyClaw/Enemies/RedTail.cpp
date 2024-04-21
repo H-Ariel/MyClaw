@@ -3,10 +3,6 @@
 #include "../ActionPlane.h"
 
 
-#define SHOOT_HIGH_ANI_NAME "STRIKE4"
-#define STRIKE_HIGH_ANI_NAME "STRIKE8"
-
-
 #define ANIMATION_BLOCK _animations["BLOCK"]
 
 
@@ -19,14 +15,14 @@ RedTail::RedTail(const WwdObject& obj)
 	: BaseBoss(obj, "KILLFALL"), _windTimeCounter(0)
 {
 	_health = 100;
-	(string&)_walkAniName = "FASTADVANCE";
-	(string&)_strikeAniName = STRIKE_HIGH_ANI_NAME;
+	_aniWalk = _animations["FASTADVANCE"];
+	_aniStrike = _animations["STRIKE8"];
 	(bool&)_canStrike = true;
-	(string&)_shootAniName = SHOOT_HIGH_ANI_NAME;
+	_aniShoot = _animations["STRIKE4"];
 	(bool&)_canShoot = true;
 	(string&)_projectileAniDir = "LEVEL_REDTAILBULLET";
 
-	_ani = _animations[_walkAniName];
+	_ani = _aniWalk;
 }
 void RedTail::Logic(uint32_t elapsedTime)
 {
@@ -43,7 +39,7 @@ void RedTail::Logic(uint32_t elapsedTime)
 }
 pair<Rectangle2D, int> RedTail::GetAttackRect()
 {
-	if (_ani == _animations[STRIKE_HIGH_ANI_NAME])
+	if (_ani == _aniStrike)
 	{
 		Rectangle2D rc;
 		rc.top = position.y - 20;

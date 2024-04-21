@@ -31,7 +31,6 @@ void Chameleon::Logic(uint32_t elapsedTime)
 	}
 
 	_ani->opacity = _opacity;
-	_ani->updateImageData();
 }
 
 Rectangle2D Chameleon::GetRect()

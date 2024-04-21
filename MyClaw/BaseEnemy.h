@@ -40,9 +40,11 @@ protected:
 	bool checkForHurt(const pair<Rectangle2D, int>& hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
 	bool checkClawHit(); // returns `true` if the enemy hurt by CC
 
-	const string _walkAniName, _hitHighAniName, _hitLowAniName, _fallDeadAniName,
-		_strikeAniName, _strikeDuckAniName, _shootAniName, _shootDuckAniName,
-		_projectileAniDir, _idleAniName;
+	const string _projectileAniDir;
+
+	shared_ptr<UIAnimation> _aniWalk, _aniHitHigh, _aniHitLow, _aniFallDead,
+		_aniStrike, _aniStrikeDuck, _aniShoot, _aniShootDuck, _aniIdle;
+
 	vector<int8_t> _itemsTypes;
 	const float _minX, _maxX;
 	const int _damage; // the amount of health that enemy took when he hit Claw

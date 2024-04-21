@@ -152,7 +152,7 @@ Player::Player()
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
 
-	_animations["SQUEEZED"] =  make_shared<UIAnimation>(vector<UIAnimation::FrameData*>({
+	_animations["SQUEEZED"] = make_shared<UIAnimation>(vector<UIAnimation::FrameData*>({
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage( "CLAW/IMAGES/450.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/451.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/452.PID"))
@@ -607,7 +607,6 @@ void Player::Draw()
 	if (_dialogLeftTime > 0)
 	{
 		EXCLAMATION_MARK->position = { position.x, position.y - 64 };
-		EXCLAMATION_MARK->updateImageData();
 		EXCLAMATION_MARK->Draw();
 	}
 
@@ -787,7 +786,6 @@ void Player::stopFalling(float collisionSize)
 		_ani->reset();
 		_ani->mirrored = _isMirrored && !_isOnLadder;
 		_ani->position = position;
-		_ani->updateImageData();
 	}
 	_isOnLadder = false;
 }
@@ -894,7 +892,7 @@ bool Player::collectItem(Item* item)
 
 		vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
 		myMemCpy(images[0]->duration, 1000U);
-		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position,  make_shared<UIAnimation>(images));
+		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, make_shared<UIAnimation>(images));
 		myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);
 
 		ActionPlane::addPlaneObject(ani);

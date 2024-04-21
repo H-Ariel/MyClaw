@@ -13,7 +13,6 @@ public:
 	virtual void init();
 	virtual void updateObject(WwdObject& obj); // called from `init`
 	virtual void addObject(const WwdObject& obj); // called from `init`
-	bool isMainPlane() const { return _isMainPlane; }
 
 protected:
 	vector<BasePlaneObject*> _objects;
@@ -21,7 +20,6 @@ protected:
 	WapWwd* _wwd;
 	WwdPlane* _wwdPlane;
 	int32_t maxTileIdxX, maxTileIdxY;
-	bool _isMainPlane; // TODO: delete this
 
 
 	friend class WapWorld;
