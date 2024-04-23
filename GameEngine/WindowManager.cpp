@@ -18,22 +18,10 @@ const D2D1_SIZE_F WindowManager::DEFAULT_WINDOW_SIZE = { 640, 480 };
 WindowManager* WindowManager::instance = nullptr;
 
 
-static void mulPixelSize(Rectangle2D& rc)
-{
-	float p = WindowManager::getPixelSize();
-	rc.top *= p;
-	rc.bottom *= p;
-	rc.left *= p;
-	rc.right *= p;
-}
-
-
 WindowManager::WindowManager(const TCHAR WindowClassName[], const TCHAR title[], void* lpParam)
 	: _windowOffset(&defaultWindowOffset), _backgroundColor(0),
 	_camSize(DEFAULT_WINDOW_SIZE), _realSize(DEFAULT_WINDOW_SIZE), _windowScale(1)
 {
-	//_windowScale = 1; // min value: 1
-
 	_d2dFactory = nullptr;
 	_dWriteFactory = nullptr;
 	_renderTarget = nullptr;
@@ -95,6 +83,8 @@ void WindowManager::setPixelSize(float pixelSize)
 
 	instance->_windowScale = pixelSize;
 	instance->_camSize = { instance->_realSize.width / pixelSize, instance->_realSize.height / pixelSize };
+
+	instance->_renderTarget->SetTransform(Matrix3x2F::Scale(instance->_windowScale, instance->_windowScale));
 }
 float WindowManager::getPixelSize() { return instance->_windowScale; }
 void WindowManager::setDefaultPixelSize()
@@ -131,14 +121,10 @@ void WindowManager::EndDraw()
 
 void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)
 {
-	if (!_isInScreen(dst)) return;
-
-	ID2D1SolidColorBrush* brush = getBrush(color);
-	if (brush)
-	{
-		mulPixelSize(dst);
+	if (!_isInScreen(dst))
+		return;
+	if (ID2D1SolidColorBrush* brush = getBrush(color))
 		instance->_renderTarget->DrawRectangle(dst, brush, width);
-	}
 }
 void WindowManager::drawRect(Rectangle2D dst, ColorF color, float width)
 {
@@ -146,14 +132,10 @@ void WindowManager::drawRect(Rectangle2D dst, ColorF color, float width)
 }
 void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
 {
-	if (!_isInScreen(dst)) return;
-
-	ID2D1SolidColorBrush* brush = getBrush(color);
-	if (brush)
-	{
-		mulPixelSize(dst);
+	if (!_isInScreen(dst))
+		return;
+	if (ID2D1SolidColorBrush* brush = getBrush(color))
 		instance->_renderTarget->FillRectangle(dst, brush);
-	}
 }
 void WindowManager::fillRect(Rectangle2D dst, ColorF color)
 {
@@ -163,17 +145,13 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 {
 	if (!_isInScreen(dst) || bitmap == nullptr) return;
 
-	mulPixelSize(dst);
+	Matrix3x2F transformMatrix;
 
 	if (mirrored)
 	{
-		// to draw mirrored we need to reverse the X-axis, so we change the sign of these points
-		dst.left = -dst.left;
-		dst.right = -dst.right;
-
-		// set to draw mirrored
-		D2D1_MATRIX_3X2_F transformMatrix = Matrix3x2F::Identity();
-		transformMatrix.m11 = -1;
+		instance->_renderTarget->GetTransform(&transformMatrix);
+		transformMatrix.dx = (dst.left + dst.right) * transformMatrix.m11; // set offset of x axis to draw mirrored
+		transformMatrix.m11 = -transformMatrix.m11; // set to draw mirrored (reverse the X-axis)
 		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 
@@ -182,14 +160,23 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 	if (mirrored)
 	{
 		// back to normal
-		instance->_renderTarget->SetTransform(Matrix3x2F::Identity());
+		transformMatrix.dx = 0;
+		transformMatrix.m11 = -transformMatrix.m11;
+		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 }
 void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat, ColorF color, const Rectangle2D& _layoutRect)
 {
 	ID2D1SolidColorBrush* brush = getBrush(color);
 	if (!textFormat || !brush) return;
+
+	// convert layoutRect to the window scale
 	Rectangle2D layoutRect(_layoutRect);
+	layoutRect.left /= instance->_windowScale;
+	layoutRect.right /= instance->_windowScale;
+	layoutRect.top /= instance->_windowScale;
+	layoutRect.bottom /= instance->_windowScale;
+
 	instance->_renderTarget->DrawText(text.c_str(), (UINT32)text.length(), textFormat, layoutRect, brush);
 }
 void WindowManager::drawText(const wstring& text, const FontData& font, ColorF color, const Rectangle2D& layoutRect)
@@ -207,8 +194,8 @@ void WindowManager::drawHole(D2D1_POINT_2F center, float radius)
 	ID2D1Geometry* groupItems[2] = {};
 	ID2D1SolidColorBrush* brush = nullptr;
 
-	center.x = (center.x - instance->_windowOffset->x) * instance->_windowScale;
-	center.y = (center.y - instance->_windowOffset->y) * instance->_windowScale;
+	center.x -= instance->_windowOffset->x;
+	center.y -= instance->_windowOffset->y;
 	instance->_d2dFactory->CreateEllipseGeometry(Ellipse(center, radius, radius), &hole);
 	instance->_d2dFactory->CreateRectangleGeometry(RectF(instance->_realSize.width, instance->_realSize.height), &background);
 	if (!hole || !background) goto end;
@@ -224,15 +211,14 @@ void WindowManager::drawHole(D2D1_POINT_2F center, float radius)
 	instance->_renderTarget->FillGeometry(group, brush);
 
 end:
-	group->Release();
-	background->Release();
-	hole->Release();
+	if (group) group->Release();
+	if (background) background->Release();
+	if (hole) hole->Release();
 }
 void WindowManager::drawWrapCover(float top)
 {
 	// for now, just draw a black rectangle... I want to make it better in the future
-	ID2D1SolidColorBrush* brush = getBrush(ColorF::Black);
-	if (brush)
+	if (ID2D1SolidColorBrush* brush = getBrush(ColorF::Black))
 	{
 		top *= instance->_windowScale;
 		instance->_renderTarget->FillRectangle(RectF(0, top, instance->_realSize.width, top + instance->_realSize.height), brush);
