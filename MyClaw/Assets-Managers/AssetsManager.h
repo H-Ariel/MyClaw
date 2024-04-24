@@ -2,6 +2,8 @@
 
 #include "AnimationsManager.h"
 #include "PathManager.h"
+#include "RezParser/PalFile.h"
+#include "RezParser/WwdFile.h"
 
 
 class AssetsManager
@@ -59,7 +61,7 @@ private:
 	
 	WapPal _palette; // current palette
 	map<AssetsManager::BackgroundMusicType, uint32_t> bgMusics; // [type]=audio-player-id
-	RezArchive* _rezArchive;
+	RezArchive _rezArchive;
 	AnimationsManager* _animationsManager;
 	BackgroundMusicType _lastType; // last played background music type
 };

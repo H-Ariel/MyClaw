@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RezArchiveFile.h"
+#include "Framework/Framework.h"
 
 
 struct ColorRGBA

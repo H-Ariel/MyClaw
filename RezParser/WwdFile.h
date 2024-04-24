@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RezArchiveFile.h"
+#include "Framework/BufferReader.h"
 
 
 #define TILE_SIZE 64 // width and height of tile in pixels (by default)

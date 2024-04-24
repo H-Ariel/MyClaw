@@ -156,18 +156,17 @@
     <ClCompile Include="PalFile.cpp" />
     <ClCompile Include="PcxFile.cpp" />
     <ClCompile Include="PidFile.cpp" />
-    <ClCompile Include="RezArchiveFile.cpp" />
+    <ClCompile Include="RezArchive.cpp" />
     <ClCompile Include="WwdFile.cpp" />
     <ClCompile Include="XmiFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AniFile.h" />
-    <ClInclude Include="libwap.h" />
     <ClInclude Include="Miniz.h" />
     <ClInclude Include="PalFile.h" />
     <ClInclude Include="PcxFile.h" />
     <ClInclude Include="PidFile.h" />
-    <ClInclude Include="RezArchiveFile.h" />
+    <ClInclude Include="RezArchive.h" />
     <ClInclude Include="WwdFile.h" />
     <ClInclude Include="XmiFile.h" />
   </ItemGroup>

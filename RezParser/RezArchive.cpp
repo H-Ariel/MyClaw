@@ -1,4 +1,4 @@
-#include "libwap.h"
+#include "RezArchive.h"
 
 
 #define DIRECTORY_SEPARATOR '/'
@@ -35,48 +35,38 @@ static inline string fixFileName(const string& filename)
 }
 
 
-RezFile::RezFile()
-	: size(0), offset(0), parent(nullptr), owner(nullptr)
+RezFile::RezFile(RezDirectory* parent, ifstream* ownerFileStream)
+	: size(0), offset(0), parent(parent), ownerFileStream(ownerFileStream)
 {
 	memset(extension, 0, sizeof(extension));
 }
-RezFile::~RezFile()
-{
-	auto it = owner->rezFilesCache.find(this);
-	if (it != owner->rezFilesCache.end())
-		owner->rezFilesCache.erase(it);
-}
 vector<uint8_t> RezFile::getFileData() const
 {
-	if (owner == nullptr)
+	if (ownerFileStream == nullptr)
 		return vector<uint8_t>();
 
-	if (owner->rezFilesCache.count(this) == 0)
-	{
-		owner->rezFilesCache[this] = vector<uint8_t>(size);
-		owner->fileStream->seekg(offset, ios::beg);
-		owner->fileStream->read((char*)owner->rezFilesCache[this].data(), size);
-	}
-
-	return owner->rezFilesCache[this];
+	vector<uint8_t> vec(size);
+	ownerFileStream->seekg(offset, ios::beg);
+	ownerFileStream->read((char*)vec.data(), size);
+	return vec;
 }
 shared_ptr<BufferReader> RezFile::getBufferReader() const
 {
-	owner->fileStream->seekg(offset);
-	return make_shared<BufferReader>(owner->fileStream, size);
+	ownerFileStream->seekg(offset);
+	return make_shared<BufferReader>(ownerFileStream, size);
 }
 string RezFile::getFullPath() const
 {
 	string dirPath;
-	for (RezDirectory* parentDir = parent; parentDir != nullptr; parentDir = parentDir->parent)
+	for (const RezDirectory* parentDir = parent; parentDir != nullptr; parentDir = parentDir->parent)
 		dirPath = parentDir->name + DIRECTORY_SEPARATOR + dirPath;
 	return fixPath(dirPath + name + '.' + extension);
 }
 
 
 
-RezDirectory::RezDirectory()
-	: parent(nullptr) {}
+RezDirectory::RezDirectory(RezDirectory* parent)
+	: parent(parent) {}
 RezDirectory::~RezDirectory()
 {
 	for (auto& i : rezDirectories) delete i.second;
@@ -125,7 +115,7 @@ RezFile* RezDirectory::getChildFile(const string& fileName)
 string RezDirectory::getFullPath() const
 {
 	string dirPath;
-	for (RezDirectory* parentDir = parent; parentDir != nullptr; parentDir = parentDir->parent)
+	for (const RezDirectory* parentDir = parent; parentDir != nullptr; parentDir = parentDir->parent)
 		dirPath = parentDir->name + DIRECTORY_SEPARATOR + dirPath;
 	return dirPath + name;
 }
@@ -147,7 +137,7 @@ RezArchive::RezArchive(const string& rezFilePath)
 		throw Exception("Failed to open REZ file: " + rezFilePath);
 	}
 
-	rootDirectory = DBG_NEW RezDirectory;
+	rootDirectory = DBG_NEW RezDirectory(nullptr);
 
 	fileStream->read(header, 127);
 	FileRead(version, fileStream);
@@ -204,8 +194,7 @@ void RezArchive::readDirectory(RezDirectory* parent, int32_t dirOffset, int32_t 
 		if (isDirectoryFlag)
 		{
 			// Create new rez directory
-			RezDirectory* newDir = DBG_NEW RezDirectory;
-			newDir->parent = parent;
+			RezDirectory* newDir = DBG_NEW RezDirectory(parent);
 
 			FileRead(offset, fileStream);
 			FileRead(size, fileStream);
@@ -222,9 +211,7 @@ void RezArchive::readDirectory(RezDirectory* parent, int32_t dirOffset, int32_t 
 		else
 		{
 			// Create new rez file
-			RezFile* newFile = DBG_NEW RezFile;
-			newFile->parent = parent;
-			newFile->owner = this;
+			RezFile* newFile = DBG_NEW RezFile(parent, fileStream);
 
 			FileRead(newFile->offset, fileStream);
 			FileRead(newFile->size, fileStream);

@@ -1,6 +1,10 @@
 #include "AssetsManager.h"
 #include "GameEngine/AudioManager.h"
 #include "GameEngine/WindowManager.h"
+#include "RezParser/PidFile.h"
+#include "RezParser/PcxFile.h"
+#include "RezParser/XmiFile.h"
+#include "RezParser/WwdFile.h"
 
 
 // check if `str` is number as string
@@ -145,25 +149,24 @@ const uint32_t AssetsManager::INVALID_AUDIOPLAYER_ID = AudioManager::INVALID_ID;
 
 
 AssetsManager::AssetsManager()
+	: _rezArchive("CLAW.REZ")
 {
-	_rezArchive = DBG_NEW RezArchive("CLAW.REZ");
-	_animationsManager = DBG_NEW AnimationsManager(_rezArchive);
+	_animationsManager = DBG_NEW AnimationsManager(&_rezArchive);
 	_lastType = AssetsManager::BackgroundMusicType::None;
 	srand((unsigned int)time(nullptr));
 
 	// load background musics that used all over the game
-	MidiFile boss(_rezArchive->getFile("LEVEL2/MUSIC/BOSS.XMI")->getFileData());
+	MidiFile boss(_rezArchive.getFile("LEVEL2/MUSIC/BOSS.XMI")->getFileData());
 	// every level with boss contains the same file, so we can use LEVEL2/BOSS.XMI for all levels
 	AudioManager::addMidiPlayer("BOSS", boss.data);
-	MidiFile powerup(_rezArchive->getFile("GAME/MUSIC/POWERUP.XMI")->getFileData());
+	MidiFile powerup(_rezArchive.getFile("GAME/MUSIC/POWERUP.XMI")->getFileData());
 	AudioManager::addMidiPlayer("POWERUP", powerup.data);
-	MidiFile credits(_rezArchive->getFile("STATES/CREDITS/MUSIC/PLAY.XMI")->getFileData());
+	MidiFile credits(_rezArchive.getFile("STATES/CREDITS/MUSIC/PLAY.XMI")->getFileData());
 	AudioManager::addMidiPlayer("CREDITS", credits.data);
 }
 AssetsManager::~AssetsManager()
 {
-	SafeDelete(_animationsManager);
-	SafeDelete(_rezArchive);
+	delete _animationsManager;
 }
 
 void AssetsManager::Initialize()
@@ -194,7 +197,7 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 		{
 			if (endsWith(path, ".PID"))
 			{
-				WapPid pid(instance->_rezArchive->getFile(path)->getFileData(), &instance->_palette);
+				WapPid pid(instance->_rezArchive.getFile(path)->getFileData(), &instance->_palette);
 
 				fixPidOffset(path, pid.offsetX, pid.offsetY);
 
@@ -203,7 +206,7 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 			}
 			else if (endsWith(path, ".PCX"))
 			{
-				PcxFile pcx(instance->_rezArchive->getFile(path)->getBufferReader());
+				PcxFile pcx(instance->_rezArchive.getFile(path)->getBufferReader());
 
 				img = WindowManager::createImage(path, pcx.colors.data(),
 					pcx.width, pcx.height, 0, 0);
@@ -226,7 +229,7 @@ map<int, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const stri
 {
 	map<int, shared_ptr<UIBaseImage>> images;
 
-	const RezDirectory* dir = instance->_rezArchive->getDirectory(planeImagesPath);
+	const RezDirectory* dir = instance->_rezArchive.getDirectory(planeImagesPath);
 	if (dir)
 	{
 		string newname;
@@ -275,7 +278,7 @@ shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)
 {
 	char path[25];
 	sprintf(path, "LEVEL%d/WORLDS/WORLD.WWD", levelNumber);
-	shared_ptr<WapWwd> wwd = make_shared<WapWwd>(instance->_rezArchive->getFile(path)->getBufferReader(), levelNumber);
+	shared_ptr<WapWwd> wwd = make_shared<WapWwd>(instance->_rezArchive.getFile(path)->getBufferReader(), levelNumber);
 
 	// initialize level palette
 	loadPidPalette(wwd->rezPalettePath);
@@ -303,18 +306,18 @@ shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)
 	instance->loadWavDir(path);
 
 	// add midi background music
-	MidiFile level(instance->_rezArchive->getFile(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY"))->getFileData());
+	MidiFile level(instance->_rezArchive.getFile(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY"))->getFileData());
 	AudioManager::addMidiPlayer("LEVEL", level.data);
 
 	return wwd;
 }
 void AssetsManager::loadPidPalette(const string& palPath)
 {
-	instance->_palette = WapPal(instance->_rezArchive->getFile(palPath)->getFileData());
+	instance->_palette = WapPal(instance->_rezArchive.getFile(palPath)->getFileData());
 }
 string AssetsManager::getCreditsText()
 {
-	const RezFile* file = instance->_rezArchive->getFile("STATES/CREDITS/CREDITS.TXT");
+	const RezFile* file = instance->_rezArchive.getFile("STATES/CREDITS/CREDITS.TXT");
 	vector<uint8_t> data = file->getFileData();
 	return string((char*)data.data(), data.size());
 }
@@ -327,7 +330,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 	if (id == AudioManager::INVALID_ID)
 	{
 		// load WAV to audio manager
-		shared_ptr<BufferReader> reader = instance->_rezArchive->getFile(wavFilePath)->getBufferReader();
+		shared_ptr<BufferReader> reader = instance->_rezArchive.getFile(wavFilePath)->getBufferReader();
 		AudioManager::addWavPlayer(wavFilePath, reader);
 
 		// play WAV
@@ -415,7 +418,7 @@ void AssetsManager::clearLevelAssets(int lvl)
 
 void AssetsManager::loadWavDir(const string& path)
 {
-	if (const RezDirectory* dir = _rezArchive->getDirectory(path))
+	if (const RezDirectory* dir = _rezArchive.getDirectory(path))
 	{
 		for (auto& [dirname, dir] : dir->rezDirectories)
 		{

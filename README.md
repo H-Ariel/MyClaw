@@ -8,7 +8,7 @@ _by Ariel Halili_
 - *RezParser* - Classes and methods to prase the REZ file and its content. Based on OpenClaw/libwap.
 - *ExtractRez* - Saves the parsed REZ file to local directory.
 - *GameEngine* - Library of GUI and Audio management.
-- **MyClaw** - The main game (for now it just for test the other libraries).
+- **MyClaw** - The main game.
 
 ### Credits:
 - https://captainclaw.net/ - the Claw Recluse

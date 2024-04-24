@@ -1,4 +1,4 @@
-#include "libwap.h"
+#include "XmiFile.h"
 #include "Framework/BufferReader.h"
 #include "Framework/BufferWriter.h"
 

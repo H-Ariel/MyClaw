@@ -1,20 +1,20 @@
 #pragma once
 
-#include "RezArchiveFile.h"
+#include "Framework/BufferReader.h"
 
-
-struct AniAnimationFrame
-{
-	uint16_t useSoundFile; // 0 - no, other - yes
-	uint16_t imageFileId;
-	uint16_t duration;
-	string eventFilePath; // sound file path
-};
 
 struct WapAni
 {
+	struct Frame
+	{
+		uint16_t useSoundFile; // 0 - no, other - yes
+		uint16_t imageFileId;
+		uint16_t duration;
+		string eventFilePath; // sound file path
+	};
+
 	WapAni(shared_ptr<BufferReader> aniFileStream);
 
 	string imageSetPath;
-	vector<AniAnimationFrame> animationFrames;
+	vector<Frame> animationFrames;
 };

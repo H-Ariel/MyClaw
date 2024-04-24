@@ -29,7 +29,7 @@ WapAni::WapAni(shared_ptr<BufferReader> aniFileStream)
 	// Load all animation frames, one by one
 	for (i = 0; i < animationFramesCount; i++)
 	{
-		AniAnimationFrame animFrame = {};
+		Frame animFrame = {};
 
 		aniFileStream->read(triggeredEventFlag);
 		aniFileStream->read(animFrame.useSoundFile);

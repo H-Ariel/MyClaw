@@ -1,4 +1,5 @@
 #include "PidFile.h"
+#include "Framework/BufferReader.h"
 
 
 WapPid::WapPid(const vector<uint8_t>& data, WapPal* palette)

@@ -119,18 +119,6 @@ inline vector<T>& operator+=(vector<T>& v1, const vector<T>& v2)
 	return v1;
 }
 
-// safe delete for regular objects
-template <class T>
-inline void SafeDelete(T*& p)
-{
-	if (p)
-	{
-		delete p;
-		p = nullptr;
-	}
-}
-
-
 // my shell for `memcpy`. It can also accept `const` values.
 template <class T>
 inline void myMemCpy(const T& dst, const T& src) { memcpy((void*)&dst, &src, sizeof(T)); /* Hmmm... I am a hacker */ }

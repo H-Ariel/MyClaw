@@ -1,4 +1,5 @@
 #include "AssetsManager.h"
+#include "RezParser/AniFile.h"
 
 
 // return if we should update the enemy's idle animation
@@ -198,7 +199,7 @@ vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const stri
 		throw Exception("empty imageSetPath at " + aniPath);
 	}
 
-	for (AniAnimationFrame frame : ani.animationFrames)
+	for (WapAni::Frame frame : ani.animationFrames)
 	{
 		if (!frame.eventFilePath.empty() && frame.useSoundFile)
 		{

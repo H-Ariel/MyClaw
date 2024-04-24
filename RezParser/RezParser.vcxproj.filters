@@ -26,7 +26,7 @@
     <ClCompile Include="PidFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RezArchiveFile.cpp">
+    <ClCompile Include="RezArchive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WwdFile.cpp">
@@ -38,9 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AniFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="libwap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Miniz.h">
@@ -55,7 +52,7 @@
     <ClInclude Include="PidFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RezArchiveFile.h">
+    <ClInclude Include="RezArchive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WwdFile.h">

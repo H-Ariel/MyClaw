@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RezParser/libwap.h"
+#include "RezParser/RezArchive.h"
 #include "GameEngine/UIAnimation.h"
 
 

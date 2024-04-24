@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PalFile.h"
+#include "Framework/BufferReader.h"
 
 
 struct PcxFile
