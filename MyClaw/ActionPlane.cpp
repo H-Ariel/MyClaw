@@ -1,5 +1,4 @@
 #include "ActionPlane.h"
-#include "LevelHUD.h"
 #include "PhysicsManager.h"
 #include "GameEngine/WindowManager.h"
 #include "Objects/ActionPlaneMessage.h"
@@ -63,10 +62,11 @@
 #define ADD_ENEMY(p) { BaseEnemy* enemy = DBG_NEW p; _objects.push_back(enemy); _enemies.push_back(enemy); }
 #define ADD_DAMAGE_OBJECT(p) { BaseDamageObject* dObj = DBG_NEW p; _objects.push_back(dObj); _damageObjects.push_back(dObj); }
 #define ADD_BOSS_OBJECT(p) { _bossObjects.push_back(DBG_NEW p); }
+#define ADD_BOSS(p) { _boss = DBG_NEW p; _bossObjects.push_back(_boss); }
 
 #ifdef _DEBUG
-//#define NO_ENEMIES
-//#define NO_OBSTACLES
+#define NO_ENEMIES
+#define NO_OBSTACLES
 #endif
 
 
@@ -76,7 +76,7 @@ shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
 
 
 ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane)
-	: LevelPlane(wwd, wwdPlane), _planeSize({}), _boss(nullptr), _shakeTime(0)
+	: LevelPlane(wwd, wwdPlane), _planeSize({}), _boss(nullptr), _shakeTime(0), _isInBoss(false)
 {
 	if (_instance)
 		DBG_PRINT("Warning: ActionPlane already exists (instance of level %d)", _instance->_wwd->levelNumber);
@@ -155,7 +155,10 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			{
 				eraseByValue(_enemies, obj);
 				if (isbaseinstance<BaseBoss>(obj))
+				{
 					_boss = nullptr;
+					_isInBoss = false;
+				}
 			}
 			else if (isbaseinstance<Projectile>(obj))
 			{
@@ -494,22 +497,22 @@ void ActionPlane::addObject(const WwdObject& obj)
 #endif
 
 	/* Bosses and their objects */
-	
+#pragma region Bosses
 	else if (obj.logic == "Raux")
 	{
-		ADD_BOSS_OBJECT(LeRauxe(obj));
+		ADD_BOSS(LeRauxe(obj));
 	}
 	else if (obj.logic == "Katherine")
 	{
-		ADD_BOSS_OBJECT(Katherine(obj));
+		ADD_BOSS(Katherine(obj));
 	}
 	else if (obj.logic == "Wolvington")
 	{
-		ADD_BOSS_OBJECT(Wolvington(obj));
+		ADD_BOSS(Wolvington(obj));
 	}
 	else if (obj.logic == "Gabriel")
 	{
-		ADD_BOSS_OBJECT(Gabriel(obj));
+		ADD_BOSS(Gabriel(obj));
 	}
 	else if (obj.logic == "GabrielCannon")
 	{
@@ -525,7 +528,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "Marrow")
 	{
-		ADD_BOSS_OBJECT(Marrow(obj));
+		ADD_BOSS(Marrow(obj));
 	}
 	else if (obj.logic == "Parrot")
 	{
@@ -537,7 +540,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "Aquatis")
 	{
-		ADD_BOSS_OBJECT(Aquatis(obj));
+		ADD_BOSS(Aquatis(obj));
 	}
 	else if (obj.logic == "Tentacle")
 	{
@@ -557,7 +560,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "RedTail")
 	{
-		ADD_BOSS_OBJECT(RedTail(obj));
+		ADD_BOSS(RedTail(obj));
 	}
 	else if (obj.logic == "RedTailSpikes")
 	{
@@ -569,10 +572,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 	else if (obj.logic == "Omar")
 	{
-		ADD_BOSS_OBJECT(LordOmar(obj));
+		ADD_BOSS(LordOmar(obj));
 	}
+#pragma endregion
 
-	//	throw Exception("TODO: logic=" + obj.logic);
+//	throw Exception("TODO: logic=" + obj.logic);
 }
 
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
@@ -617,11 +621,7 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 	{
 		_instance->_objects.push_back(obj);
 		if (isbaseinstance<BaseEnemy>(obj))
-		{
-			if (isbaseinstance<BaseBoss>(obj)) // we need that becaues at level 10 we boss (Marrow) and regular enemy (parrot)
-				_instance->_boss = (BaseBoss*)obj;
 			_instance->_enemies.push_back((BaseEnemy*)obj);
-		}
 		else if (isbaseinstance<Projectile>(obj))
 			_instance->_projectiles.push_back((Projectile*)obj);
 		else if (isbaseinstance<BaseDamageObject>(obj))
@@ -629,7 +629,7 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 	}
 	_instance->_bossObjects.clear();
 
-	LevelHUD::setBossInitialHealth(_instance->_boss->getHealth());
+	_instance->_isInBoss = true;
 
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Boss);
 }

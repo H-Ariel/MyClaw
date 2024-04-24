@@ -25,22 +25,26 @@ public:
 	static const vector<BaseEnemy*>& getEnemies() { return _instance->_enemies; }
 	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }
 	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
-	static bool isInBoss() { return _instance->_boss != nullptr; }
+	static bool isInBoss() { return _instance->_isInBoss; }
 	static int getBossHealth() { return _instance->_boss ? _instance->_boss->getHealth() : 0; }
 	static void writeMessage(const string& message, int timeout = 2000);
 
 	static void updatePosition();
-private:
 
-	vector<BasePlaneObject*> _bossObjects;
+private:
+	vector<BasePlaneObject*> _bossObjects; // Keep the boss objects separately so as not to call their Logic method (saves time)
+	
+	// save objects for easy access
 	vector<PowderKeg*> _powderKegs;
 	vector<BaseEnemy*> _enemies;
 	vector<Projectile*> _projectiles;
 	vector<BaseDamageObject*> _damageObjects;
+
 	vector<Rectangle2D> _shakeRects;
 	D2D1_SIZE_F _planeSize;
 	BaseBoss* _boss;
 	int _shakeTime;
+	bool _isInBoss;
 
 	static ActionPlane* _instance;
 	static shared_ptr<SavedGameManager::GameData> _loadGameData;
