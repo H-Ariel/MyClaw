@@ -1,13 +1,13 @@
 #include "WindowManager.h"
 #include "AudioManager.h"
 
-// TODO: save all D2D1 objects (ID2D1Bitmap, IDWriteTextFormat) in a list and release them in `WindowManager::Finalize`
-// TODO: hide all D2D1 objects (ID2D1Bitmap, IDWriteTextFormat) in `WindowManager` and create a function to get them with my format
+/*
+TODO: save all D2D1 objects (IDWriteTextFormat) in a list and release them in `WindowManager::Finalize`
+and create a function to get them with my format (like ID2D1SolidColorBrush and ID2D1Bitmap)
+*/
 
 // throw exception if `func` failed
 #define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
-
-static const D2D1_POINT_2F defaultWindowOffset = {}; // empty point
 
 
 bool operator<(ColorF a, ColorF b) { return memcmp(&a, &b, sizeof(ColorF)) < 0; }
@@ -19,8 +19,7 @@ WindowManager* WindowManager::instance = nullptr;
 
 
 WindowManager::WindowManager(const TCHAR WindowClassName[], const TCHAR title[], void* lpParam)
-	: _windowOffset(&defaultWindowOffset), _backgroundColor(0),
-	_camSize(DEFAULT_WINDOW_SIZE), _realSize(DEFAULT_WINDOW_SIZE), _windowScale(1)
+	: _windowOffset({}), _backgroundColor(0), _camSize(DEFAULT_WINDOW_SIZE), _realSize(DEFAULT_WINDOW_SIZE), _windowScale(1)
 {
 	_d2dFactory = nullptr;
 	_dWriteFactory = nullptr;
@@ -63,33 +62,20 @@ void WindowManager::setTitle(const string& title)
 {
 	SetWindowText(instance->_hWnd, wstring(title.begin(), title.end()).c_str());
 }
-void WindowManager::setWindowOffset(const D2D1_POINT_2F* offset)
-{
-	if (offset)
-		instance->_windowOffset = offset;
-	else
-		instance->_windowOffset = &defaultWindowOffset;
-}
-void WindowManager::setBackgroundColor(ColorF bgColor) { instance->_backgroundColor = bgColor; }
-ColorF WindowManager::getBackgroundColor() { return instance->_backgroundColor; }
-D2D1_SIZE_F WindowManager::getSize() { return instance->_camSize; }
-D2D1_SIZE_F WindowManager::getRealSize() { return instance->_realSize; }
-HWND WindowManager::getHwnd() { return instance->_hWnd; }
 
-void WindowManager::setPixelSize(float pixelSize)
+void WindowManager::setWindowScale(float windowScale)
 {
-	if (pixelSize > 3.5f) pixelSize = 3.5f;
-	else if (pixelSize < 1) pixelSize = 1;
+	if (windowScale > 3.5f) windowScale = 3.5f;
+	else if (windowScale < 1) windowScale = 1;
 
-	instance->_windowScale = pixelSize;
-	instance->_camSize = { instance->_realSize.width / pixelSize, instance->_realSize.height / pixelSize };
+	instance->_windowScale = windowScale;
+	instance->_camSize = { instance->_realSize.width / windowScale, instance->_realSize.height / windowScale };
 
 	instance->_renderTarget->SetTransform(Matrix3x2F::Scale(instance->_windowScale, instance->_windowScale));
 }
-float WindowManager::getPixelSize() { return instance->_windowScale; }
-void WindowManager::setDefaultPixelSize()
+void WindowManager::setDefaultWindowScale()
 {
-	setPixelSize(min(
+	setWindowScale(min(
 		instance->_realSize.width / DEFAULT_WINDOW_SIZE.width,
 		instance->_realSize.height / DEFAULT_WINDOW_SIZE.height
 	));
@@ -194,8 +180,8 @@ void WindowManager::drawHole(D2D1_POINT_2F center, float radius)
 	ID2D1Geometry* groupItems[2] = {};
 	ID2D1SolidColorBrush* brush = nullptr;
 
-	center.x -= instance->_windowOffset->x;
-	center.y -= instance->_windowOffset->y;
+	center.x -= instance->_windowOffset.x;
+	center.y -= instance->_windowOffset.y;
 	instance->_d2dFactory->CreateEllipseGeometry(Ellipse(center, radius, radius), &hole);
 	instance->_d2dFactory->CreateRectangleGeometry(RectF(instance->_realSize.width, instance->_realSize.height), &background);
 	if (!hole || !background) goto end;
@@ -283,14 +269,6 @@ shared_ptr<UIBaseImage> WindowManager::createImage(const string& key, const void
 
 	return instance->images[key];
 }
-bool WindowManager::hasImage(const string& key)
-{
-	return instance->images.count(key) != 0;
-}
-shared_ptr<UIBaseImage> WindowManager::getImage(const string& key)
-{
-	return instance->images[key];
-}
 void WindowManager::clearImages(function<bool(const string&)> predicate)
 {
 	for (auto it = instance->images.begin(); it != instance->images.end();)
@@ -305,10 +283,10 @@ void WindowManager::clearImages(function<bool(const string&)> predicate)
 // remove the window-offset from `rc` and return if it's in the window area
 bool WindowManager::_isInScreen(Rectangle2D& rc)
 {
-	rc.top -= instance->_windowOffset->y;
-	rc.bottom -= instance->_windowOffset->y;
-	rc.left -= instance->_windowOffset->x;
-	rc.right -= instance->_windowOffset->x;
+	rc.top -= instance->_windowOffset.y;
+	rc.bottom -= instance->_windowOffset.y;
+	rc.left -= instance->_windowOffset.x;
+	rc.right -= instance->_windowOffset.x;
 
 	return (0 <= rc.right && rc.left < instance->_camSize.width && 0 <= rc.bottom && rc.top < instance->_camSize.height);
 }

@@ -4,8 +4,8 @@
 
 LevelPlane::LevelPlane(WapWwd* wwd, WwdPlane* wwdPlane)
 	: _wwd(wwd), _wwdPlane(wwdPlane),
-	maxTileIdxX(((wwdPlane->flags& WwdPlane::WwdPlaneFlags_XWrapping) ? INT32_MAX : wwdPlane->tilesOnAxisX)),
-	maxTileIdxY(((wwdPlane->flags& WwdPlane::WwdPlaneFlags_YWrapping) ? INT32_MAX : wwdPlane->tilesOnAxisY))
+	maxTileIdxX(((wwdPlane->flags & WwdPlane::WwdPlaneFlags_XWrapping) ? INT_MAX : wwdPlane->tilesOnAxisX)),
+	maxTileIdxY(((wwdPlane->flags & WwdPlane::WwdPlaneFlags_YWrapping) ? INT_MAX : wwdPlane->tilesOnAxisY))
 {
 }
 
@@ -15,13 +15,13 @@ void LevelPlane::Draw()
 	size_t i;
 	int row, col, tileId, rowTileIndex;
 
-	const D2D1_SIZE_F wndSz = WindowManager::getSize();
+	const D2D1_SIZE_F camSz = WindowManager::getCameraSize();
 	const float parallaxCameraPosX = position.x * _wwdPlane->movementPercentX;
 	const float parallaxCameraPosY = position.y * _wwdPlane->movementPercentY;
 	const int startRow = int(parallaxCameraPosY / TILE_SIZE);
 	const int startCol = int(parallaxCameraPosX / TILE_SIZE);
-	const int endRow = min<int>(maxTileIdxY, int(wndSz.height / TILE_SIZE + 2 + startRow));
-	const int endCol = min<int>(maxTileIdxX, int(wndSz.width / TILE_SIZE + 2 + startCol));
+	const int endRow = min(maxTileIdxY, int(camSz.height / TILE_SIZE + 2 + startRow));
+	const int endCol = min(maxTileIdxX, int(camSz.width / TILE_SIZE + 2 + startCol));
 
 	for (i = 0; i < _objects.size() && _objects[i]->drawZ < _wwdPlane->coordZ; i++)
 		_objects[i]->Draw();
@@ -86,7 +86,7 @@ void LevelPlane::updateObject(WwdObject& obj)
 {
 	if (obj.logic == "ConveyorBelt")
 	{
-		int32_t x = obj.x - obj.x % TILE_SIZE, y = obj.y - obj.y % TILE_SIZE;
+		int x = obj.x - obj.x % TILE_SIZE, y = obj.y - obj.y % TILE_SIZE;
 		obj.moveRect = _wwd->tileDescriptions[_wwdPlane->tiles[obj.y / TILE_SIZE][obj.x / TILE_SIZE]].rect;
 		obj.moveRect.left += x;
 		obj.moveRect.right += x;

@@ -10,7 +10,7 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 
 private:
-	int32_t _startTimeDelay; // in milliseconds
+	int _startTimeDelay; // in milliseconds
 };
 
 

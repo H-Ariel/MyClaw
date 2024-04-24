@@ -22,5 +22,5 @@ private:
 	void makeAttack(float deltaX, float deltaY) override;
 	bool checkForHurts() override;
 
-	int32_t _magicAttackCuonter; // count the times W attack CC with magic
+	int _magicAttackCuonter; // count the times W attack CC with magic
 };

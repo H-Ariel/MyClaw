@@ -327,7 +327,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 
 		float topOffset = (float)tileDesc.rect.top;
 
-		for (int32_t i = 0; i < obj.width; i++)
+		for (int i = 0; i < obj.width; i++)
 		{
 			_objects.push_back(DBG_NEW BreakPlank(obj, topOffset));
 			(int32_t&)obj.x += TILE_SIZE;
@@ -637,12 +637,12 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 void ActionPlane::updatePosition()
 {
 	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
-	const D2D1_SIZE_F wndSize = WindowManager::getSize();
-	_instance->position.x = player->position.x - wndSize.width / 2.0f;
-	_instance->position.y = player->position.y - wndSize.height / 2.0f;
+	const D2D1_SIZE_F camSize = WindowManager::getCameraSize();
+	_instance->position.x = player->position.x - camSize.width / 2.0f;
+	_instance->position.y = player->position.y - camSize.height / 2.0f;
 
-	float maxOffsetX = _instance->_planeSize.width - wndSize.width;
-	float maxOffsetY = _instance->_planeSize.height - wndSize.height;
+	float maxOffsetX = _instance->_planeSize.width - camSize.width;
+	float maxOffsetY = _instance->_planeSize.height - camSize.height;
 
 	if (_instance->position.x < 0) _instance->position.x = 0;
 	if (_instance->position.y < 0) _instance->position.y = 0;

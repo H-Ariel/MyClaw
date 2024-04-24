@@ -73,10 +73,7 @@ void BaseApp::run()
 		}
 
 		_pEngine->Logic(min(elapsedTime, MAX_ITER_TIME));
-		WindowManager::BeginDraw();
-		_pEngine->Draw();
-		WindowManager::EndDraw();
-
+		
 		if (_pEngine->StopEngine)
 		{
 			_pEngine = _pEngine->getNextEngine();
@@ -85,7 +82,12 @@ void BaseApp::run()
 				_runApp = false;
 				return;
 			}
+			_pEngine->Logic(0); // just for update positions for drawing
 		}
+
+		WindowManager::BeginDraw();
+		_pEngine->Draw();
+		WindowManager::EndDraw();
 	}
 }
 LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)

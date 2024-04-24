@@ -57,10 +57,10 @@ SawBlade::SawBlade(const WwdObject& obj)
 	vector<UIAnimation::FrameData*> disappearImages = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_DOWN"))->getImagesList();
 
 	vector<UIAnimation::FrameData*> waitImages;
-	for (int32_t timeUp = (obj.speedX > 0) ? obj.speedX : 1500; timeUp > 0;)
+	for (int timeUp = (obj.speedX > 0) ? obj.speedX : 1500; timeUp > 0;)
 	{
 		waitImages += spinAni->getImagesList();
-		timeUp -= (int32_t)spinAni->getTotalDuration();
+		timeUp -= (int)spinAni->getTotalDuration();
 	}
 	
 	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));

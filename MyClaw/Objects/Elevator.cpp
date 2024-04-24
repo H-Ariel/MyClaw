@@ -27,7 +27,7 @@ public:
 	void Reset() override;
 
 private:
-	vector<pair<int32_t, int32_t>> _paths; // { direction, delay (ms) }
+	vector<pair<int, int>> _paths; // { direction, delay (ms) }
 	int _pathIdx, _timeCounter;
 	const float _totalSpeed;
 };
@@ -248,7 +248,7 @@ void PathElevator::Logic(uint32_t elapsedTime)
 	if (_timeCounter <= 0)
 	{
 		_pathIdx = (_pathIdx + 1) % _paths.size();
-		_timeCounter = int32_t(_paths[_pathIdx].second / _totalSpeed);
+		_timeCounter = (int)(_paths[_pathIdx].second / _totalSpeed);
 		switch (_paths[_pathIdx].first)
 		{
 		case WwdObject::Direction_BottomLeft:	speed = { -_totalSpeed, _totalSpeed }; break;

@@ -13,8 +13,8 @@ public:
 private:
 	shared_ptr<UIAnimation> _projectileAni;
 	const D2D1_POINT_2F _projSpeed, _offset;
-	const int32_t _maxRestTime, _damage;
+	const int _maxRestTime, _damage;
 	int _shootIndex;
-	int32_t _restTime;
+	int _restTime;
 	bool _projIsOut;
 };

@@ -11,8 +11,8 @@ public:
 	void Reset() override;
 
 private:
-	const int32_t _timesToPlay;
-	int32_t _timesCounter;
+	const int _timesToPlay;
+	int _timesCounter;
 	const bool _isClawDialog;
 	bool _isInCollision;
 };

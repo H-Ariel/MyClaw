@@ -95,9 +95,9 @@ vector<BasePlaneObject*> Crate::getItems()
 StackedCrates::StackedCrates(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
-	int32_t height = obj.height;
+	int height = obj.height;
 	if (height < 1) height = 1;
-	if (height > 8) height = 8;
+	else if (height > 8) height = 8;
 
 	for (int crateIdx = 0; crateIdx < height; crateIdx++)
 	{

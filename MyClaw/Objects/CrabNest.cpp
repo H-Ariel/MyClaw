@@ -26,7 +26,7 @@ CrabNest::CrabNest(const WwdObject& obj)
 	memcpy(treasuresList + 5, &obj.userRect2, sizeof(int32_t) * 4);
 
 	// TODO: make sure we used all the treasures
-	for (int32_t i = 0; i < obj.userValue1; i++)
+	for (int i = 0; i < obj.userValue1; i++)
 	{
 		crabObj.powerup = treasuresList[i];
 		crabObj.speedX = getRandomInt(-250, 250);

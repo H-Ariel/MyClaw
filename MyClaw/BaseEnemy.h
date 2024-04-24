@@ -76,7 +76,7 @@ public:
 protected:
 	virtual bool checkForHurts() override = 0; // We added this function because bosses are not hit by CC projectiles
 
-	int32_t _hitsCuonter; // count the times CC hit the boss
+	int _hitsCuonter; // count the times CC hit the boss
 	bool _blockClaw, _canJump;
 
 private:

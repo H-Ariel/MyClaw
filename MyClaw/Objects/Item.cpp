@@ -423,6 +423,7 @@ Item* Item::getItem(const WwdObject& obj)
 }
 void Item::resetItemsPaths()
 {
+	ItemsPaths.erase("LEVEL_GEM");
 	ItemsPaths.erase("LEVEL_HEALTH");
 	ItemsPaths.erase("GAME_HEALTH_BREADWATER");
 }
@@ -434,22 +435,22 @@ string Item::getItemPath(Type type, const string& imageSet)
 		return PathManager::getImageSetPath(imageSet);
 	}
 
-	for (const auto& i : ItemsMap)
+	for (const auto& [basepath, basetype] : ItemsMap)
 	{
-		if (i.second == type)
+		if (basetype == type)
 		{
-			if (ItemsPaths.count(i.first) == 0)
+			if (ItemsPaths.count(basepath) == 0)
 			{
-				if (i.first == "LEVEL_HEALTH" || i.first == "GAME_HEALTH_BREADWATER")
+				if (basepath == "GAME_HEALTH_BREADWATER")
 				{
-					ItemsPaths[i.first] = PathManager::getImageSetPath("LEVEL_HEALTH");
+					ItemsPaths[basepath] = PathManager::getImageSetPath("LEVEL_HEALTH");
 				}
 				else
 				{
-					ItemsPaths[i.first] = PathManager::getImageSetPath(i.first);
+					ItemsPaths[basepath] = PathManager::getImageSetPath(basepath);
 				}
 			}
-			return ItemsPaths[i.first];
+			return ItemsPaths[basepath];
 		}
 	}
 

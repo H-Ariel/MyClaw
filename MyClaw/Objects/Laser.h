@@ -12,7 +12,7 @@ public:
 	bool isDamage() const override;
 
 private:
-	const int32_t _swapTime; // in milliseconds
-	int32_t _timeCounter;
+	const int _swapTime; // in milliseconds
+	int _timeCounter;
 	bool _isActive;
 };

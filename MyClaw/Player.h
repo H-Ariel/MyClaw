@@ -57,7 +57,7 @@ public:
 	int getWeaponAmount() const { return _weaponsAmount[_currWeapon]; }
 	int getDynamiteAmount() const { return _weaponsAmount.dynamite; }
 	uint32_t getScore() const { return _score; }
-	int32_t getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
+	int getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
 	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }
 
 	SavedGameManager::GameData getGameData() const;
@@ -67,7 +67,7 @@ public:
 	void keyUp(int key);
 	void keyDown(int key);
 
-	void activateDialog(int32_t duration) { _dialogLeftTime = duration; }
+	void activateDialog(int duration) { _dialogLeftTime = duration; }
 
 	void squeeze(D2D1_POINT_2F pos, bool mirror = false);
 	void unsqueeze();
@@ -120,10 +120,10 @@ private:
 	WeaponsAmount _weaponsAmount;
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
 	uint32_t _score;
-	int32_t _dialogLeftTime, _powerupLeftTime; // in milliseconds
-	int32_t _holdAltTime; // in milliseconds. it used for pre-dynamite
-	int32_t _damageRest; // rest time between enemies attacks
-	int32_t _freezeTime; // in milliseconds. it used for freeze from siren.
+	int _dialogLeftTime, _powerupLeftTime; // in milliseconds
+	int _holdAltTime; // in milliseconds. it used for pre-dynamite
+	int _damageRest; // rest time between enemies attacks
+	int _freezeTime; // in milliseconds. it used for freeze from siren.
 	int _lives;
 	ClawProjectile::Types _currWeapon;
 	Item::Type _currPowerup; // the current powerup he has (not treasures!)

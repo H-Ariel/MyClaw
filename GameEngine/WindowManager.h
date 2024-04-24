@@ -11,16 +11,17 @@ public:
 	static void Finalize();
 
 	static void setTitle(const string& title);
-	static void setWindowOffset(const D2D1_POINT_2F* offset);
-	static void setBackgroundColor(ColorF bgColor);
-	static ColorF getBackgroundColor();
-	static D2D1_SIZE_F getSize();// get screen size and consider PixelSize
-	static D2D1_SIZE_F getRealSize();
-	static HWND getHwnd();
 
-	static void setPixelSize(float pixelSize);
-	static float getPixelSize();
-	static void setDefaultPixelSize(); // fit pixel size to default resolution (640x480)
+	static void setWindowOffset(const D2D1_POINT_2F& offset) { myMemCpy(instance->_windowOffset, offset); }
+	static void setBackgroundColor(ColorF bgColor) { instance->_backgroundColor = bgColor; }
+	static ColorF getBackgroundColor() { return instance->_backgroundColor; }
+	static D2D1_SIZE_F getCameraSize() { return instance->_camSize; };
+	static D2D1_SIZE_F getRealSize() { return instance->_realSize; }
+	static HWND getHwnd() { return instance->_hWnd; }
+
+	static void setWindowScale(float scale);
+	static float getWindowScale() { return instance->_windowScale; }
+	static void setDefaultWindowScale(); // fit pixel size to default resolution (640x480)
 
 	static bool isInScreen(Rectangle2D rc); // return if `rc` is in the window area
 
@@ -40,10 +41,10 @@ public:
 	// create D2D1 objects.
 	static ID2D1SolidColorBrush* getBrush(ColorF color);
 	static IDWriteTextFormat* createTextFormat(const FontData& font);
-	
+
 	static shared_ptr<UIBaseImage> createImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY);
-	static bool hasImage(const string& key);
-	static shared_ptr<UIBaseImage> getImage(const string& key);
+	static bool hasImage(const string& key) { return instance->images.count(key) != 0; }
+	static shared_ptr<UIBaseImage> getImage(const string& key) { return instance->images[key]; }
 	static void clearImages(function <bool(const string&)> predicate);
 
 	static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE;
@@ -66,9 +67,10 @@ private:
 	ID2D1Factory* _d2dFactory;
 	IDWriteFactory* _dWriteFactory;
 	ID2D1HwndRenderTarget* _renderTarget;
-	const D2D1_POINT_2F* _windowOffset;
+	const D2D1_POINT_2F _windowOffset;
 	ColorF _backgroundColor;
-	D2D1_SIZE_F _realSize;
-	D2D1_SIZE_F _camSize; // camera size (according to the screen size and PixelSize)
+	D2D1_SIZE_F _realSize; // real size of window
+	D2D1_SIZE_F _camSize; // camera size (according to the screen size and _windowScale)
 	float _windowScale;
+	// we save `_realSize`, `_camSize`, and `_windowScale` to save time instead of calculating them every time
 };

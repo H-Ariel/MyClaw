@@ -12,7 +12,7 @@ public:
 	bool isDamage() const override;
 
 protected:
-	int32_t _startTimeDelay; // in milliseconds
+	int _startTimeDelay; // in milliseconds
 };
 
 

@@ -13,9 +13,9 @@ ScreenEngine::ScreenEngine(const string& bgPcxPath)
 	_bgImg = DBG_NEW MenuBackgroundImage(bgPcxPath.empty() ? DEFAULT_BG_IMAGE : bgPcxPath);
 	_elementsList.push_back(_bgImg);
 
-	WindowManager::setWindowOffset(nullptr);
+	WindowManager::setWindowOffset({});
 	WindowManager::setBackgroundColor(ColorF::Black);
-	WindowManager::setPixelSize(1);
+	WindowManager::setWindowScale(1);
 }
 ScreenEngine::ScreenEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath)
 	: ScreenEngine(bgPcxPath)

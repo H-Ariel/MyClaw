@@ -31,23 +31,23 @@ LevelHUD::LevelHUD(const D2D1_POINT_2F* windowOffset)
 
 void LevelHUD::Draw()
 {
-	WindowManager::setWindowOffset(nullptr); // reset the offset
+	WindowManager::setWindowOffset({}); // reset the offset
 
 
 	Rectangle2D rc;
-	D2D1_SIZE_F wndSz = WindowManager::getSize();
+	D2D1_SIZE_F camSz = WindowManager::getCameraSize();
 
 	_chest->position = { 20 , 20 };
 	_chest->Draw();
 	rc = _health->GetRect();
-	_health->position = { wndSz.width - 32, 20 };
+	_health->position = { camSz.width - 32, 20 };
 	_health->Draw();
 	shared_ptr<UIAnimation> ani = _weaponAni[BasePlaneObject::player->getCurrentWeapon()];
 	rc = ani->GetRect();
-	ani->position = { wndSz.width - (rc.right - rc.left) / 2, 50 };
+	ani->position = { camSz.width - (rc.right - rc.left) / 2, 50 };
 	ani->Draw();
 	rc = _lives->GetRect();
-	_lives->position = { wndSz.width - 18, 80 };
+	_lives->position = { camSz.width - 18, 80 };
 	_lives->Draw();
 
 	float powerupLeftTime = BasePlaneObject::player->getPowerupLeftTime() / 1000.f;
@@ -58,7 +58,7 @@ void LevelHUD::Draw()
 		drawNumbers((uint32_t)powerupLeftTime, 3, _scoreNumbers, 68, 50);
 	}
 
-	float posX = wndSz.width - 32;
+	float posX = camSz.width - 32;
 	drawNumbers(BasePlaneObject::player->getHealth(), 3, _healthNumbers, posX, 17);
 	drawNumbers(BasePlaneObject::player->getWeaponAmount(), 2, _smallNumbers, posX, 52);
 	drawNumbers(BasePlaneObject::player->getLivesAmount(), 1, _smallNumbers, posX, 81);
@@ -66,8 +66,8 @@ void LevelHUD::Draw()
 
 	if (ActionPlane::isInBoss())
 	{
-		_bossBar->position.x = 0.5f * wndSz.width;
-		_bossBar->position.y = 0.9f * wndSz.height;
+		_bossBar->position.x = 0.5f * camSz.width;
+		_bossBar->position.y = 0.9f * camSz.height;
 		_bossBar->Draw();
 
 		// find the health bar rect (inside the boss bar frame)
@@ -84,7 +84,7 @@ void LevelHUD::Draw()
 	}
 
 
-	WindowManager::setWindowOffset(_windowOffset); // restore the offset
+	WindowManager::setWindowOffset(*_windowOffset); // restore the offset
 }
 
 void LevelHUD::drawNumbers(uint32_t amount, int numOfDigits, shared_ptr<UIBaseImage> const numArr[],

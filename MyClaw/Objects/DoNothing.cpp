@@ -9,7 +9,7 @@ DoNothing::DoNothing(const WwdObject& obj)
 	if (obj.imageSet == "LEVEL_ARCHESFRONT" || obj.imageSet == "LEVEL_WANTED")
 	{
 		char str[9];
-		int32_t i = obj.i;
+		int i = obj.i;
 		if (i == -1) i = 1;
 		sprintf(str, "/%03d.PID", i);
 		_ani = AssetsManager::createAnimationFromPidImage(path + str);

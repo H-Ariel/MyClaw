@@ -21,6 +21,10 @@ static void fixPidOffset(const string& pidPath, int32_t& offsetX, int32_t& offse
 	// HUD pistol
 	if (pidPath == "GAME/IMAGES/INTERFACE/WEAPONS/PISTOL/001.PID")
 	{
+		offsetY += 2;
+	}
+	else if (pidPath == "GAME/IMAGES/INTERFACE/WEAPONS/PISTOL/004.PID")
+	{
 		offsetY += 1;
 	}
 	// HUD magic
@@ -28,9 +32,14 @@ static void fixPidOffset(const string& pidPath, int32_t& offsetX, int32_t& offse
 	{
 		offsetY += 2;
 	}
-	else if (pidPath == "LEVEL7/IMAGES/SANDHOLE/005.PID")
+	else if (pidPath == "GAME/IMAGES/INTERFACE/WEAPONS/MAGIC/004.PID")
 	{
-		offsetX -= 2;
+		offsetY -= 1;
+	}
+	// HUD dynamite
+	else if (pidPath == "GAME/IMAGES/INTERFACE/WEAPONS/DYNAMITE/001.PID")
+	{
+		offsetY += 2;
 	}
 	// MagicClaw
 	else if (pidPath == "CLAW/IMAGES/165.PID")
@@ -68,6 +77,10 @@ static void fixPidOffset(const string& pidPath, int32_t& offsetX, int32_t& offse
 		|| pidPath == "LEVEL2/IMAGES/TOWERCANNONRIGHT/005.PID")
 	{
 		offsetX += 2;
+	}
+	else if (pidPath == "LEVEL7/IMAGES/SANDHOLE/005.PID")
+	{
+		offsetX -= 2;
 	}
 	else if (pidPath == "LEVEL8/IMAGES/CANNONSWITCH/002.PID")
 	{
@@ -209,9 +222,9 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 
 	return img;
 }
-map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const string& planeImagesPath)
+map<int, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const string& planeImagesPath)
 {
-	map<int32_t, shared_ptr<UIBaseImage>> images;
+	map<int, shared_ptr<UIBaseImage>> images;
 
 	const RezDirectory* dir = instance->_rezArchive->getDirectory(planeImagesPath);
 	if (dir)
@@ -222,9 +235,7 @@ map<int32_t, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const 
 			newname = filename.substr(0, filename.length() - 4); // remove ".PID"
 			// the files path format is "LEVEL<N>/TILES/<PLN>/<XXX>.PID"
 			if (!strcmp(file->extension, "PID") && isNumber(newname))
-			{
 				images[stoi(newname)] = loadImage(file->getFullPath());
-			}
 		}
 	}
 

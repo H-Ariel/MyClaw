@@ -16,7 +16,7 @@
 
 
 ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
-	: _mainPlanePosition(nullptr), _hud(nullptr), _saveBgColor(0), _savePixelSize(0)
+	: _mainPlanePosition(nullptr), _hud(nullptr), _saveBgColor(0), _saveWindowScale(1)
 {
 	_wwd = AssetsManager::loadLevel(levelNumber);
 
@@ -37,7 +37,7 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
 		_planes.push_back(pln);
 	}
 
-	if (!_mainPlanePosition) throw Exception("no main plane found");
+	if (!_mainPlanePosition) throw Exception("no main plane found"); // should never happen
 	_hud = DBG_NEW LevelHUD(_mainPlanePosition);
 	_cheatsManager = DBG_NEW CheatsManager();
 }
@@ -45,8 +45,6 @@ ClawLevelEngineFields::~ClawLevelEngineFields()
 {
 	delete _hud;
 	delete _cheatsManager;
-	AssetsManager::clearLevelAssets(_wwd->levelNumber);
-	Item::resetItemsPaths();
 }
 
 
@@ -55,7 +53,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	if (checkpoint != -1) // according to LevelLoadingEngine
 		ActionPlane::loadGame(levelNumber, checkpoint);
 	_fields = make_shared<ClawLevelEngineFields>(levelNumber);
-	WindowManager::setDefaultPixelSize();
+	WindowManager::setDefaultWindowScale();
 
 	init();
 
@@ -162,7 +160,7 @@ ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
 	: _fields(fields)
 {
 	WindowManager::setBackgroundColor(_fields->_saveBgColor);
-	WindowManager::setPixelSize(_fields->_savePixelSize);
+	WindowManager::setWindowScale(_fields->_saveWindowScale);
 
 	init();
 }
@@ -181,7 +179,7 @@ void ClawLevelEngine::init()
 		_elementsList.push_back(pln.get());
 	_elementsList.push_back(_fields->_hud);
 
-	WindowManager::setWindowOffset(_fields->_mainPlanePosition);
+	WindowManager::setWindowOffset(*_fields->_mainPlanePosition);
 }
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
@@ -214,6 +212,8 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			if (player->isFinishLevel())
 			{
 				changeEngine<LevelEndEngine>(_fields->_wwd->levelNumber, player->getCollectedTreasures());
+				AssetsManager::clearLevelAssets(_fields->_wwd->levelNumber);
+				Item::resetItemsPaths();
 			}
 			else if (!player->hasLives())
 			{
@@ -226,7 +226,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			else if (Warp::DestinationWarp)
 			{
 				_state = States::WrapClose;
-				_wrapCoverTop = WindowManager::getSize().height;
+				_wrapCoverTop = WindowManager::getCameraSize().height;
 				_wrapDestination = Warp::DestinationWarp->getDestination();
 				_isBossWarp = Warp::DestinationWarp->isBossWarp();
 				_bossWarpX = Warp::DestinationWarp->position.x;
@@ -242,7 +242,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	case ClawLevelEngine::States::DeathFall:
 		player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
 		player->Logic(0); // update position of animation
-		if (player->position.y - _fields->_mainPlanePosition->y > WindowManager::getSize().height)
+		if (player->position.y - _fields->_mainPlanePosition->y > WindowManager::getCameraSize().height)
 		{
 			player->loseLife();
 			_holeRadius = initialHoleRadius;
@@ -301,7 +301,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 
 	case ClawLevelEngine::States::WrapOpen:
 		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
-		if (_wrapCoverTop < -WindowManager::getSize().height)
+		if (_wrapCoverTop < -WindowManager::getCameraSize().height)
 			_state = States::Play;
 		break;
 
@@ -337,7 +337,7 @@ void ClawLevelEngine::Draw()
 		break;
 
 	case States::GameOver:
-		const D2D1_SIZE_F wndSz = WindowManager::getSize();
+		const D2D1_SIZE_F wndSz = WindowManager::getCameraSize();
 		shared_ptr<UIBaseImage> img = AssetsManager::loadImage("GAME/IMAGES/MESSAGES/004.PID");
 		img->position.x = _fields->_mainPlanePosition->x + wndSz.width / 2;
 		img->position.y = _fields->_mainPlanePosition->y + wndSz.height / 2;
@@ -357,27 +357,27 @@ void ClawLevelEngine::OnKeyUp(int key)
 	case VK_F1: // open help
 		AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
-		_fields->_savePixelSize = WindowManager::getPixelSize();
+		_fields->_saveWindowScale = WindowManager::getWindowScale();
 		changeEngine<HelpScreenEngine>(_fields);
 		break;
 
 	case VK_ESCAPE:// open pause menu
 		AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
-		_fields->_savePixelSize = WindowManager::getPixelSize();
+		_fields->_saveWindowScale = WindowManager::getWindowScale();
 		changeEngine<MenuEngine>(_fields);
 		break;
 
 	case VK_ADD: // zoom in
-		WindowManager::setPixelSize(WindowManager::getPixelSize() + 0.5f);
+		WindowManager::setWindowScale(WindowManager::getWindowScale() + 0.5f);
 		break;
 
 	case VK_SUBTRACT: // zoom out
-		WindowManager::setPixelSize(WindowManager::getPixelSize() - 0.5f);
+		WindowManager::setWindowScale(WindowManager::getWindowScale() - 0.5f);
 		break;
 
 	case VK_DIVIDE:
-		WindowManager::setDefaultPixelSize();
+		WindowManager::setDefaultWindowScale();
 		break;
 
 	default:
@@ -392,5 +392,5 @@ void ClawLevelEngine::OnKeyDown(int key)
 
 void ClawLevelEngine::OnResize()
 {
-	WindowManager::setDefaultPixelSize();
+	WindowManager::setDefaultWindowScale();
 }

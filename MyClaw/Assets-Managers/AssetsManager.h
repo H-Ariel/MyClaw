@@ -20,7 +20,7 @@ public:
 	static void Finalize();
 
 	static shared_ptr<UIBaseImage> loadImage(const string& path);
-	static map<int32_t, shared_ptr<UIBaseImage>> loadPlaneTilesImages(const string& planeImagesPath);
+	static map<int, shared_ptr<UIBaseImage>> loadPlaneTilesImages(const string& planeImagesPath);
 
 	static shared_ptr<UIAnimation> loadAnimation(const string& aniPath, const string& imageSetPath = ""); // load from ANI file
 	static shared_ptr<UIAnimation> loadCopyAnimation(const string& aniPath, const string& imageSetPath = "");

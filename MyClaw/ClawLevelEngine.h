@@ -18,7 +18,7 @@ struct ClawLevelEngineFields
 	LevelHUD* _hud;
 	CheatsManager* _cheatsManager;
 	ColorF _saveBgColor;
-	float _savePixelSize;
+	float _saveWindowScale;
 };
 
 class ClawLevelEngine : public BaseEngine
