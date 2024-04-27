@@ -108,7 +108,7 @@ string PathManager::getSoundFilePath(const string& _path)
 		{
 			path = "LEVEL_AMBIENT_ANVIL";
 		}
-		else if (imageSetMap["LEVEL"] == "LEVEL3")
+		else if (imageSetMap["LEVEL"] == "LEVEL3_IMAGES")
 		{
 			if (path == "LEVEL_TRIGGER_1013")
 			{

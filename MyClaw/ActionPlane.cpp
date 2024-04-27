@@ -76,7 +76,8 @@ shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
 
 
 ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane)
-	: LevelPlane(wwd, wwdPlane), _planeSize({}), _boss(nullptr), _shakeTime(0), _isInBoss(false)
+	: LevelPlane(wwd, wwdPlane), _planeSize({}), _boss(nullptr), _shakeTime(0),
+	_BossStagerDelay(0), _isInBoss(false), _levelState(LevelState::Playing)
 {
 	if (_instance)
 		DBG_PRINT("Warning: ActionPlane already exists (instance of level %d)", _instance->_wwd->levelNumber);
@@ -99,6 +100,78 @@ ActionPlane::~ActionPlane()
 void ActionPlane::Logic(uint32_t elapsedTime)
 {
 	if (player->isFinishLevel()) return;
+
+	if (_levelState != LevelState::Playing)
+	{
+		/*
+		The BossStager have 4 states:
+		1. update boss' and Claw's positions
+		2. The boss talks to Captain Claw
+		3. Claw talks to the Claw
+		4. Show the boss' name and play the defeat sound (boss name)
+		5. Captain Claw and Boss are fighting (normal game state)
+		*/
+
+		if (_shakeTime > 0)
+			_shakeTime -= elapsedTime;
+		updatePosition();
+
+		if (_BossStagerDelay > 0)
+		{
+			_BossStagerDelay -= elapsedTime;
+			return;
+		}
+
+		char path[64] = {};
+		D2D1_SIZE_F camSz = {};
+
+		switch (_levelState)
+		{
+		case LevelState::BossStager_Start:
+			_boss->Logic(0); // set boss' position
+			player->Logic(0); // set player's position
+#ifdef _DEBUG
+			_instance->_levelState = LevelState::Playing; // skip the boss stager
+#else
+			_levelState = LevelState::BossStager_BossTalk;
+#endif
+			break;
+
+		case LevelState::BossStager_BossTalk:
+			sprintf(path, "LEVEL%d/SOUNDS/STAGING/ENEMY.WAV", _wwd->levelNumber);
+			AssetsManager::playWavFile(path);
+			_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+			_levelState = LevelState::BossStager_ClawTalk;
+			break;
+
+		case LevelState::BossStager_ClawTalk:
+			sprintf(path, "LEVEL%d/SOUNDS/STAGING/CLAW.WAV", _wwd->levelNumber);
+			_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+			AssetsManager::playWavFile(path);
+			_levelState = LevelState::BossStager_BossName;
+			break;
+
+		case LevelState::BossStager_BossName:
+			camSz = WindowManager::getCameraSize();
+			sprintf(path, "LEVEL%d/IMAGES/BOSSNAME/001.PID", _wwd->levelNumber);
+			_objects.push_back(DBG_NEW OneTimeAnimation(
+				{ camSz.width / 2 + position.x,camSz.height / 2 + position.y },
+				AssetsManager::createAnimationFromPidImage(path), false));
+			sprintf(path, "LEVEL%d/SOUNDS/DEFEAT.WAV", _wwd->levelNumber);
+			_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+			_shakeTime = _BossStagerDelay; // shake the screen while the boss name is showing
+			AssetsManager::playWavFile(path);
+			_levelState = LevelState::BossStager_Waiting;
+			break;
+
+		case LevelState::BossStager_Waiting:
+			_objects.back()->removeObject = true; // remove the boss name
+			_levelState = LevelState::Playing;
+			break;
+		}
+
+		return;
+	}
 
 	if (_shakeTime > 0)
 		_shakeTime -= elapsedTime;
@@ -243,6 +316,9 @@ void ActionPlane::init()
 		_loadGameData = nullptr;
 	}
 	_objects.push_back(player.get()); // must be after LevelPlane::init() because we reset the objects vector there
+
+	_levelState = LevelState::Playing;
+	_BossStagerDelay = 0;
 }
 void ActionPlane::addObject(const WwdObject& obj)
 {
@@ -576,16 +652,9 @@ void ActionPlane::addObject(const WwdObject& obj)
 	}
 #pragma endregion
 
-//	throw Exception("TODO: logic=" + obj.logic);
+	//	throw Exception("TODO: logic=" + obj.logic);
 }
 
-void ActionPlane::addPlaneObject(BasePlaneObject* obj)
-{
-	//if (obj == nullptr) return;
-	_instance->_objects.push_back(obj); // don't insert in middle because some of the object add new objects in their destructor
-	if (isbaseinstance<Projectile>(obj)) _instance->_projectiles.push_back((Projectile*)obj);
-	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
-}
 void ActionPlane::loadGame(int level, int checkpoint)
 {
 	SavedGameManager::GameData data = SavedGameManager::load(level, checkpoint);
@@ -594,6 +663,13 @@ void ActionPlane::loadGame(int level, int checkpoint)
 		// success to load checkpoint
 		_loadGameData = make_shared<SavedGameManager::GameData>(data);
 	}
+}
+void ActionPlane::addPlaneObject(BasePlaneObject* obj)
+{
+	//if (obj == nullptr) return;
+	_instance->_objects.push_back(obj); // don't insert in middle because some of the object add new objects in their destructor
+	if (isbaseinstance<Projectile>(obj)) _instance->_projectiles.push_back((Projectile*)obj);
+	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
 }
 void ActionPlane::resetObjects()
 {
@@ -632,14 +708,21 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 	_instance->_isInBoss = true;
 
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Boss);
+	_instance->_BossStagerDelay = 0;
+	_instance->_levelState = LevelState::BossStager_Start;
 }
 
 void ActionPlane::updatePosition()
 {
-	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
 	const D2D1_SIZE_F camSize = WindowManager::getCameraSize();
-	_instance->position.x = player->position.x - camSize.width / 2.0f;
-	_instance->position.y = player->position.y - camSize.height / 2.0f;
+	BaseCharacter* character = player.get();
+
+	if (_instance->_levelState == LevelState::BossStager_BossTalk || _instance->_levelState == LevelState::BossStager_ClawTalk)
+		character = _instance->_boss; // if we are in boss stager, we need to show the boss while s/he is talking
+
+	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
+	_instance->position.x = character->position.x - camSize.width / 2.0f;
+	_instance->position.y = character->position.y - camSize.height / 2.0f;
 
 	float maxOffsetX = _instance->_planeSize.width - camSize.width;
 	float maxOffsetY = _instance->_planeSize.height - camSize.height;
