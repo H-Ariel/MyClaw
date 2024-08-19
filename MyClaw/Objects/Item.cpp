@@ -20,71 +20,6 @@ const initializer_list<Item::Type> Item::UpdateFramesTypes = {
 	Powerup_IceSword,
 	BossWarp,
 };
-const map<string, Item::Type> Item::ItemsMap = {
-	{ "GAME_TREASURE_GOLDBARS", Treasure_Goldbars },
-	{ "GAME_TREASURE_RINGS_RED", Treasure_Rings_Red },
-	{ "GAME_TREASURE_RINGS_GREEN", Treasure_Rings_Green },
-	{ "GAME_TREASURE_RINGS_BLUE", Treasure_Rings_Blue },
-	{ "GAME_TREASURE_RINGS_PURPLE", Treasure_Rings_Purple },
-	{ "GAME_TREASURE_NECKLACE", Treasure_Necklace },
-	{ "GAME_TREASURE_CROSSES_RED", Treasure_Crosses_Red },
-	{ "GAME_TREASURE_CROSSES_GREEN", Treasure_Crosses_Green },
-	{ "GAME_TREASURE_CROSSES_BLUE", Treasure_Crosses_Blue },
-	{ "GAME_TREASURE_CROSSES_PURPLE", Treasure_Crosses_Purple },
-	{ "GAME_TREASURE_SCEPTERS_RED", Treasure_Scepters_Red },
-	{ "GAME_TREASURE_SCEPTERS_GREEN", Treasure_Scepters_Green },
-	{ "GAME_TREASURE_SCEPTERS_BLUE", Treasure_Scepters_Blue },
-	{ "GAME_TREASURE_SCEPTERS_PURPLE", Treasure_Scepters_Purple },
-	{ "GAME_TREASURE_GECKOS_RED", Treasure_Geckos_Red },
-	{ "GAME_TREASURE_GECKOS_GREEN", Treasure_Geckos_Green },
-	{ "GAME_TREASURE_GECKOS_BLUE", Treasure_Geckos_Blue },
-	{ "GAME_TREASURE_GECKOS_PURPLE", Treasure_Geckos_Purple },
-	{ "GAME_AMMO_DEATHBAG", Ammo_Deathbag },
-	{ "GAME_AMMO_SHOT", Ammo_Shot },
-	{ "GAME_AMMO_SHOTBAG", Ammo_Shotbag },
-	{ "GAME_CATNIPS_NIP1", Powerup_Catnip_White },
-	{ "GAME_CATNIPS_NIP2", Powerup_Catnip_Red },
-	{ "LEVEL_HEALTH", Health_Level },
-	{ "GAME_HEALTH_BREADWATER", Health_Level },
-	{ "GAME_HEALTH_POTION3", Health_25 },
-	{ "GAME_HEALTH_POTION1", Health_10 },
-	{ "GAME_HEALTH_POTION2", Health_15 },
-	{ "GAME_MAGIC_GLOW", Ammo_Magic_5 },
-	{ "GAME_MAGIC_STARGLOW", Ammo_Magic_10 },
-	{ "GAME_MAGIC_MAGICCLAW", Ammo_Magic_25 },
-	{ "GAME_MAPPIECE", MapPiece },
-	{ "GAME_WARP", Warp },
-	{ "GAME_VERTWARP", Warp },
-	{ "GAME_TREASURE_COINS", Treasure_Coins },
-	{ "GAME_DYNAMITE", Ammo_Dynamite },
-	{ "GAME_CURSES_AMMO", Curse_Ammo },
-	{ "GAME_CURSES_MAGIC", Curse_Magic },
-	{ "GAME_CURSES_HEALTH", Curse_Health },
-	{ "GAME_CURSES_LIFE", Curse_Life },
-	{ "GAME_CURSES_TREASURE", Curse_Treasure },
-	{ "GAME_CURSES_FREEZE", Curse_Freeze },
-	{ "GAME_TREASURE_CHALICES_RED", Treasure_Chalices_Red },
-	{ "GAME_TREASURE_CHALICES_GREEN", Treasure_Chalices_Green },
-	{ "GAME_TREASURE_CHALICES_BLUE", Treasure_Chalices_Blue },
-	{ "GAME_TREASURE_CHALICES_PURPLE", Treasure_Chalices_Purple },
-	{ "GAME_TREASURE_CROWNS_RED", Treasure_Crowns_Red },
-	{ "GAME_TREASURE_CROWNS_GREEN", Treasure_Crowns_Green },
-	{ "GAME_TREASURE_CROWNS_BLUE", Treasure_Crowns_Blue },
-	{ "GAME_TREASURE_CROWNS_PURPLE", Treasure_Crowns_Purple },
-	{ "GAME_TREASURE_JEWELEDSKULL_RED", Treasure_Skull_Red },
-	{ "GAME_TREASURE_JEWELEDSKULL_GREEN", Treasure_Skull_Green },
-	{ "GAME_TREASURE_JEWELEDSKULL_BLUE", Treasure_Skull_Blue },
-	{ "GAME_TREASURE_JEWELEDSKULL_PURPLE", Treasure_Skull_Purple },
-	{ "GAME_POWERUPS_GHOST", Powerup_Invisibility },
-	{ "GAME_POWERUPS_INVULNERABLE", Powerup_Invincibility },
-	{ "GAME_POWERUPS_EXTRALIFE", Powerup_ExtraLife },
-	{ "GAME_POWERUPS_LIGHTNINGSWORD", Powerup_LightningSword },
-	{ "GAME_POWERUPS_FIRESWORD", Powerup_FireSword },
-	{ "GAME_POWERUPS_ICESWORD", Powerup_IceSword },
-	{ "GAME_BOSSWARP", BossWarp },
-	{ "LEVEL_GEM", NineLivesGem }
-};
-map<string, string> Item::ItemsPaths;
 const Warp* Warp::DestinationWarp = nullptr;
 
 
@@ -93,11 +28,11 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 {
 	if (_type == Type::Default)
 	{
-		(Type&)_type = Type::Treasure_Coins;
+		myMemCpy(_type, Type::Treasure_Coins);
 	}
 	else if (_type == Type::None)
 	{
-		(Type&)_type = ItemsMap.at(obj.imageSet);
+		myMemCpy(_type, (Type)PathManager::getItemType(obj.imageSet));
 	}
 
 	if (isFromMap && _type != Type::BossWarp && _type != Type::Warp && _type != Type::Treasure_Coins)
@@ -128,7 +63,7 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 		}
 	}
 
-	_ani = AssetsManager::createAnimationFromDirectory(getItemPath(_type, obj.imageSet));
+	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getItemPath(_type, obj.imageSet));
 	_ani->updateFrames = FindInArray(UpdateFramesTypes, _type);
 
 	if (drawZ == 0) // is that correct?
@@ -395,19 +330,20 @@ void Item::playItemSound() const
 Item* Item::getItem(const WwdObject& obj, bool isFromMap, int8_t type)
 {
 	Type _type((Type)type);
+	// TODO: same code at Item-ctor. try remove one of them (probably here)
 	if (_type == Type::Default)
 	{
 		_type = Type::Treasure_Coins;
 	}
 	if (_type == Type::None)
 	{
-		_type = ItemsMap.at(obj.imageSet);
+		_type = (Type)PathManager::getItemType(obj.imageSet);
 	}
 	if (_type == Type::Warp || _type == Type::BossWarp)
 	{
-		return DBG_NEW ::Warp(obj, type);
+		return DBG_NEW::Warp(obj, _type);
 	}
-	return DBG_NEW Item(obj, type, isFromMap);
+	return DBG_NEW Item(obj, _type, isFromMap);
 }
 Item* Item::getItem(const WwdObject& obj, bool isFromMap)
 {
@@ -420,41 +356,6 @@ Item* Item::getItem(const WwdObject& obj, int8_t type)
 Item* Item::getItem(const WwdObject& obj)
 {
 	return getItem(obj, false, Type::None);
-}
-void Item::resetItemsPaths()
-{
-	ItemsPaths.erase("LEVEL_GEM");
-	ItemsPaths.erase("LEVEL_HEALTH");
-	ItemsPaths.erase("GAME_HEALTH_BREADWATER");
-}
-string Item::getItemPath(Type type, const string& imageSet)
-{
-	if (type == Type::Warp)
-	{
-		// because we have WARP and VERTWARP
-		return PathManager::getImageSetPath(imageSet);
-	}
-
-	for (const auto& [basepath, basetype] : ItemsMap)
-	{
-		if (basetype == type)
-		{
-			if (ItemsPaths.count(basepath) == 0)
-			{
-				if (basepath == "GAME_HEALTH_BREADWATER")
-				{
-					ItemsPaths[basepath] = PathManager::getImageSetPath("LEVEL_HEALTH");
-				}
-				else
-				{
-					ItemsPaths[basepath] = PathManager::getImageSetPath(basepath);
-				}
-			}
-			return ItemsPaths[basepath];
-		}
-	}
-
-	return "";
 }
 
 

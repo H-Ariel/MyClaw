@@ -30,10 +30,14 @@ private:
 	static AudioManager* instance;
 
 	AudioManager();
+	~AudioManager();
 
 	uint32_t getNewId(); // return new id of audio player
+	static void playQueue();
 
 
 	map<uint32_t, shared_ptr<IAudioPlayer>> _audioPlayers; // [key]=audio-player
 	map<string, tuple<WAVEFORMATEX, vector<uint8_t>>> _audioDataCache; // [key]=(fmt, data) | if its MIDI data, fmt is empty
+	queue<pair<shared_ptr<IAudioPlayer>, bool>> audioQueue; // (player, infinite)
+	mutex audioQueueMutex; // mutex for audioQueue
 };

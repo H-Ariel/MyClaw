@@ -33,22 +33,20 @@ WavPlayer::~WavPlayer()
 void WavPlayer::play(bool infinite)
 {
 	stop();
-	
-	thread([&](bool infinite) {
-		_tryPlaying = true;
-		WAV_CALL(waveOutOpen(&_wav, WAVE_MAPPER, &_fmt, (DWORD_PTR)waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION));
-		if (_wav)
-		{
-			WAV_CALL(waveOutPrepareHeader(_wav, &_hdr, sizeof(_hdr)));
-			_hdr.lpData = (LPSTR)_soundData.data();
-			_hdr.dwBufferLength = (DWORD)_soundData.size();
-			WAV_CALL(waveOutSetVolume(_wav, _volume));
-			WAV_CALL(waveOutWrite(_wav, &_hdr, sizeof(_hdr)));
-			_isPlaying = true;
-			_tryPlaying = false;
-			_infinite = infinite;
-		}
-	}, infinite).detach();
+
+	_tryPlaying = true;
+	WAV_CALL(waveOutOpen(&_wav, WAVE_MAPPER, &_fmt, (DWORD_PTR)waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION));
+	if (_wav)
+	{
+		WAV_CALL(waveOutPrepareHeader(_wav, &_hdr, sizeof(_hdr)));
+		_hdr.lpData = (LPSTR)_soundData.data();
+		_hdr.dwBufferLength = (DWORD)_soundData.size();
+		WAV_CALL(waveOutSetVolume(_wav, _volume));
+		WAV_CALL(waveOutWrite(_wav, &_hdr, sizeof(_hdr)));
+		_isPlaying = true;
+		_tryPlaying = false;
+		_infinite = infinite;
+	}
 }
 
 void WavPlayer::stop()
@@ -73,7 +71,7 @@ void WavPlayer::setVolume(int volume)
 {
 	WORD tmp = (WORD)(volume / 150.f * WAV_VOLUME_MAX);
 	_volume = make_dword(tmp, tmp); // the right and left channel get the same volume
-	
+
 	/*if (_wav)
 	{
 		WAV_CALL(waveOutSetVolume(_wav, _volume));

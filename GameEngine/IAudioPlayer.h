@@ -16,12 +16,10 @@ public:
 	virtual void setVolume(int volume) = 0; // set the volume. value range is [0,100]
 
 	bool isPlaying() const { return _isPlaying; }
-
-	void setKey(const string& key) { _key = key; }
 	const string& getKey() const { return _key; }
 
 protected:
-	string _key;
+	const string _key;
 	vector<uint8_t> _soundData;
 	bool _isPlaying;
 };

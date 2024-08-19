@@ -1,9 +1,14 @@
++ split long functions (like [ActrionPlane|Player]::Logic
++ add log file. no DBG_PRINT
++ check why memory usage is too high. maybe there are objects which not free
+
 + handle setting (low details, front plane, etc. add menu)
 
 - make sure all options works well
 - use trie<T> instead of map<string,T> (end of string contains value T) (should be faster and less memory)
 - move Framework, GameEngine, RezParser to DLLs (not .lib)
 
+* the usage of Warp::DestinationWarp is bad. change it
 * add BossStager logic
 * fix AmbientSound objects
 * play all objects WAV file

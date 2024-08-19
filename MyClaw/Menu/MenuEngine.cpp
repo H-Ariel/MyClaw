@@ -129,7 +129,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MouseButtons) {
-				AssetsManager::stopBackgroundMusic();
+				AssetsManager::clearLevelAssets(_clawLevelEngineFields->_wwd->levelNumber);
 				CLEAR_MENUS_STACK;
 				_currMenu = &HierarchicalMenu::MainMenu;
 				_clawLevelEngineFields.reset();

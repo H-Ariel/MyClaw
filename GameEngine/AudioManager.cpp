@@ -2,6 +2,8 @@
 #include "MidiPlayer.h"
 #include "WavPlayer.h"
 
+#define NUM_OF_PLAYING_THREADS 6
+
 
 AudioManager* AudioManager::instance = nullptr;
 
@@ -21,13 +23,16 @@ void AudioManager::Finalize()
 }
 
 
-AudioManager::AudioManager() {}
-//AudioManager::~AudioManager() {}
+AudioManager::AudioManager() { thread(AudioManager::playQueue).detach(); }
+AudioManager::~AudioManager() { }
 
 uint32_t AudioManager::getNewId()
 {
-	uint32_t size = (uint32_t)_audioPlayers.size() + 1; // 0 is reserved for invalid id
-	for (uint32_t i = 1; i < size; i++)
+	//	uint32_t size = (uint32_t)_audioPlayers.size() + 1; // 0 is reserved for invalid id
+	//	for (uint32_t i = 1; i < size; i++)
+	// TODO: make sure the new way is better
+	uint32_t size = (uint32_t)_audioPlayers.size();
+	for (uint32_t i = INVALID_ID + 1; i < size; i++)
 	{
 		if (_audioPlayers.count(i) == 0)
 			return i;
@@ -71,9 +76,6 @@ void AudioManager::addMidiPlayer(const string& key, const vector<uint8_t>& midi)
 		instance->_audioDataCache[key] = { {}, midi };
 }
 
-// I don't know why I saved MIDI after stopping it, while I freed WAV after stopping it.
-// However, if its works - don't touch it !!!
-
 uint32_t AudioManager::playWav(const string& key, bool infinite)
 {
 	if (key.empty()) return INVALID_ID;
@@ -89,7 +91,9 @@ uint32_t AudioManager::playWav(const string& key, bool infinite)
 
 	auto& [fmt, wavSoundData] = it->second;
 	instance->_audioPlayers[id] = make_shared<WavPlayer>(key, fmt, wavSoundData);
-	instance->_audioPlayers[id]->play(infinite);
+	instance->audioQueueMutex.lock();
+	instance->audioQueue.push({ instance->_audioPlayers[id], infinite });
+	instance->audioQueueMutex.unlock();
 
 	return id;
 }
@@ -108,7 +112,9 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 
 	auto& [fmt, midiData] = it->second;
 	instance->_audioPlayers[id] = make_shared<MidiPlayer>(key, midiData);
-	instance->_audioPlayers[id]->play(infinite);
+	instance->audioQueueMutex.lock();
+	instance->audioQueue.push({ instance->_audioPlayers[id], infinite });
+	instance->audioQueueMutex.unlock();
 
 	return id;
 }
@@ -119,9 +125,9 @@ void AudioManager::stop(uint32_t id)
 	if (it != instance->_audioPlayers.end())
 		it->second->stop();
 }
-void AudioManager::remove(uint32_t midiId)
+void AudioManager::remove(uint32_t id)
 {
-	auto it = instance->_audioPlayers.find(midiId);
+	auto it = instance->_audioPlayers.find(id);
 	if (it != instance->_audioPlayers.end())
 		instance->_audioPlayers.erase(it);
 }
@@ -156,4 +162,46 @@ void AudioManager::setVolume(uint32_t id, int volume)
 	auto it = instance->_audioPlayers.find(id);
 	if (it != instance->_audioPlayers.end())
 		it->second->setVolume(volume);
+}
+
+void AudioManager::playQueue() {
+	// open threads-pool to play the sounds from the queue
+	for (int i = 0; i < NUM_OF_PLAYING_THREADS; i++)
+	{
+		thread([]() {
+			shared_ptr<IAudioPlayer> player;
+			bool inf = false;
+			bool play = false;
+			while (instance)
+			{
+				play = false;
+
+				instance->audioQueueMutex.lock();
+				if (!instance->audioQueue.empty())
+				{
+					player = instance->audioQueue.front().first;
+					inf = instance->audioQueue.front().second;
+					instance->audioQueue.pop();
+					play = true;
+				}
+				instance->audioQueueMutex.unlock();
+
+				if (!play)
+					this_thread::sleep_for(chrono::milliseconds(100));
+				else
+				{
+					if (isinstance<MidiPlayer>(player.get()))
+						player->play(inf); // in case of MIDI sound, we don't need to open new thread to play it because it's already async
+					else if (inf)
+						thread([&]() { player->play(inf); }).detach(); // in case of infinite sound, open new thread to play it
+					else
+					{
+						player->play(inf);
+						while (instance && player->isPlaying())
+							this_thread::sleep_for(chrono::milliseconds(100));
+					}
+				}
+			}
+			}).detach();
+	}
 }

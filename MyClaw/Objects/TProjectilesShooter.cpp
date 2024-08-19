@@ -19,7 +19,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 	{
 		if (obj.userValue2 == 1) // shoot from right to left
 		{
-			(float&)_projSpeed.x = -_projSpeed.x;
+			myMemCpy(_projSpeed.x, -_projSpeed.x);
 		}
 
 		sprintf(frame, "/%d", obj.userValue2);

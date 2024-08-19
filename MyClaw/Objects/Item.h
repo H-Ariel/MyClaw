@@ -88,7 +88,6 @@ public:
 	static Item* getItem(const WwdObject& obj, bool isFromMap);
 	static Item* getItem(const WwdObject& obj, int8_t type);
 	static Item* getItem(const WwdObject& obj);
-	static void resetItemsPaths();
 
 protected:
 	Item(const WwdObject& obj, int8_t type, bool isFromMap);
@@ -102,11 +101,8 @@ private:
 	bool _respawning;
 	bool _useGlitter;
 
-	static string getItemPath(Item::Type type, const string& imageSet);
 
 	static const initializer_list<Item::Type> UpdateFramesTypes;
-	static const map<string, Item::Type> ItemsMap;
-	static map<string, string> ItemsPaths;
 };
 
 

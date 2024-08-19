@@ -36,6 +36,7 @@
 #include <map>
 #include <stack>
 #include <set>
+#include <queue>
 
 #include "Exception.hpp"
 

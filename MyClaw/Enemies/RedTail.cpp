@@ -10,17 +10,17 @@ static RedTailWind* _wind = nullptr;
 
 
 // TODO: write real logic for this boss (combine Red-Tail and wind)
-// TODO: ad original death animation
+// TODO: add original death animation
 RedTail::RedTail(const WwdObject& obj)
 	: BaseBoss(obj, "KILLFALL"), _windTimeCounter(0)
 {
 	_health = 100;
 	_aniWalk = _animations["FASTADVANCE"];
 	_aniStrike = _animations["STRIKE8"];
-	(bool&)_canStrike = true;
+	myMemCpy(_canStrike, true);
 	_aniShoot = _animations["STRIKE4"];
-	(bool&)_canShoot = true;
-	(string&)_projectileAniDir = "LEVEL_REDTAILBULLET";
+	myMemCpy(_canShoot, true);
+	myMemCpy<string>(_projectileAniDir, "LEVEL_REDTAILBULLET");
 
 	_ani = _aniWalk;
 }
