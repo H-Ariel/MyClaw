@@ -42,6 +42,7 @@ WindowManager::~WindowManager()
 	_renderTarget->Release();
 	_d2dFactory->Release();
 	_dWriteFactory->Release();
+	DestroyWindow(_hWnd);
 }
 
 void WindowManager::Initialize(const TCHAR WindowClassName[], const TCHAR title[], void* lpParam)

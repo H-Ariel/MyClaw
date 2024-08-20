@@ -34,6 +34,8 @@ public:
 	static void updatePosition();
 
 private:
+	void bossStagerLogic(uint32_t elapsedTime);
+
 	enum class LevelState
 	{
 		Playing,

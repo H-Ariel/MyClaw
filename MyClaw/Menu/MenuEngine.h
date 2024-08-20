@@ -20,6 +20,8 @@ protected:
 	static stack<const HierarchicalMenu*> _menusStack;
 	static const HierarchicalMenu* _currMenu;
 
+	static void clearMenusStack();
+
 	void menuIn(const HierarchicalMenu* newMenu);
 	void menuOut();
 	void backToGame();

@@ -42,12 +42,12 @@ void ScreenEngine::backToMenu()
 void ScreenEngine::setIngameMenu()
 {
 	MenuEngine::_currMenu = &HierarchicalMenu::InGameMenu;
-	while (MenuEngine::_menusStack.size()) MenuEngine::_menusStack.pop();
+	MenuEngine::clearMenusStack();
 }
 void ScreenEngine::setMainMenu()
 {
 	MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
-	while (MenuEngine::_menusStack.size()) MenuEngine::_menusStack.pop();
+	MenuEngine::clearMenusStack();
 }
 void ScreenEngine::clearClawLevelEngineFields()
 {

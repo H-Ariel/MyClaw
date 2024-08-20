@@ -22,12 +22,6 @@ string BufferReader::ReadString(size_t len)
 	if (_idx + len > _size)
 		throw Exception("unable to read data (reached to end of buffer)");
 
-	/*
-	string str((char*)_data + _idx, len);
-	_idx += len;
-	return str;
-	*/
-
 	char* tmp = DBG_NEW char[len + 1];
 	memcpy(tmp, _data + _idx, len);
 	tmp[len] = 0;

@@ -9,9 +9,6 @@
 #include "MenuItem.h"
 
 
-#define CLEAR_MENUS_STACK for (; _menusStack.size(); _menusStack.pop())
-
-
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
@@ -121,7 +118,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::EndLife:
 			onClick = [&](MouseButtons) {
 				BasePlaneObject::player->endLife();
-				CLEAR_MENUS_STACK;
+				clearMenusStack();
 				_currMenu = &HierarchicalMenu::InGameMenu;
 				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
 			};
@@ -130,7 +127,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MouseButtons) {
 				AssetsManager::clearLevelAssets(_clawLevelEngineFields->_wwd->levelNumber);
-				CLEAR_MENUS_STACK;
+				clearMenusStack();
 				_currMenu = &HierarchicalMenu::MainMenu;
 				_clawLevelEngineFields.reset();
 				changeEngine<MenuEngine>();
@@ -239,6 +236,11 @@ void MenuEngine::OnKeyUp(int key)
 	}
 }
 
+void MenuEngine::clearMenusStack()
+{
+	for (; _menusStack.size(); _menusStack.pop());
+}
+
 void MenuEngine::menuIn(const HierarchicalMenu* newMenu)
 {
 	_menusStack.push(_currMenu);
@@ -256,7 +258,7 @@ void MenuEngine::menuOut()
 }
 void MenuEngine::backToGame()
 {
-	CLEAR_MENUS_STACK;
+	clearMenusStack();
 	_currMenu = &HierarchicalMenu::InGameMenu;
 	changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
 }

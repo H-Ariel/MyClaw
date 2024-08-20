@@ -9,7 +9,6 @@
 - move Framework, GameEngine, RezParser to DLLs (not .lib)
 
 * the usage of Warp::DestinationWarp is bad. change it
-* add BossStager logic
 * fix AmbientSound objects
 * play all objects WAV file
 * find perfect speeds (for CC, enemies, projectiles, etc.)

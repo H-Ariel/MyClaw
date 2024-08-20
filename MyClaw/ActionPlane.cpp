@@ -103,73 +103,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 	if (_levelState != LevelState::Playing)
 	{
-		/*
-		The BossStager have 4 states:
-		1. update boss' and Claw's positions
-		2. The boss talks to Captain Claw
-		3. Claw talks to the Claw
-		4. Show the boss' name and play the defeat sound (boss name)
-		5. Captain Claw and Boss are fighting (normal game state)
-		*/
-
-		if (_shakeTime > 0)
-			_shakeTime -= elapsedTime;
-		updatePosition();
-
-		if (_BossStagerDelay > 0)
-		{
-			_BossStagerDelay -= elapsedTime;
-			return;
-		}
-
-		char path[64] = {};
-		D2D1_SIZE_F camSz = {};
-
-		switch (_levelState)
-		{
-		case LevelState::BossStager_Start:
-			_boss->Logic(0); // set boss' position
-			player->Logic(0); // set player's position
-#ifdef _DEBUG
-			_instance->_levelState = LevelState::Playing; // skip the boss stager
-#else
-			_levelState = LevelState::BossStager_BossTalk;
-#endif
-			break;
-
-		case LevelState::BossStager_BossTalk:
-			sprintf(path, "LEVEL%d/SOUNDS/STAGING/ENEMY.WAV", _wwd->levelNumber);
-			AssetsManager::playWavFile(path);
-			_BossStagerDelay = AssetsManager::getWavFileDuration(path);
-			_levelState = LevelState::BossStager_ClawTalk;
-			break;
-
-		case LevelState::BossStager_ClawTalk:
-			sprintf(path, "LEVEL%d/SOUNDS/STAGING/CLAW.WAV", _wwd->levelNumber);
-			_BossStagerDelay = AssetsManager::getWavFileDuration(path);
-			AssetsManager::playWavFile(path);
-			_levelState = LevelState::BossStager_BossName;
-			break;
-
-		case LevelState::BossStager_BossName:
-			camSz = WindowManager::getCameraSize();
-			sprintf(path, "LEVEL%d/IMAGES/BOSSNAME/001.PID", _wwd->levelNumber);
-			_objects.push_back(DBG_NEW OneTimeAnimation(
-				{ camSz.width / 2 + position.x,camSz.height / 2 + position.y },
-				AssetsManager::createAnimationFromPidImage(path), false));
-			sprintf(path, "LEVEL%d/SOUNDS/DEFEAT.WAV", _wwd->levelNumber);
-			_BossStagerDelay = AssetsManager::getWavFileDuration(path);
-			_shakeTime = _BossStagerDelay; // shake the screen while the boss name is showing
-			AssetsManager::playWavFile(path);
-			_levelState = LevelState::BossStager_Waiting;
-			break;
-
-		case LevelState::BossStager_Waiting:
-			_objects.back()->removeObject = true; // remove the boss name
-			_levelState = LevelState::Playing;
-			break;
-		}
-
+		bossStagerLogic(elapsedTime);
 		return;
 	}
 
@@ -281,6 +215,75 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	if (exploseShake)
 		_shakeTime = 500;
 #endif
+}
+
+void ActionPlane::bossStagerLogic(uint32_t elapsedTime) {
+	/*
+	The BossStager have 4 states:
+	1. update boss' and Claw's positions
+	2. The boss talks to Captain Claw
+	3. Claw talks to the Claw
+	4. Show the boss' name and play the defeat sound (boss name)
+	5. Captain Claw and Boss are fighting (normal game state)
+	*/
+
+	if (_shakeTime > 0)
+		_shakeTime -= elapsedTime;
+	updatePosition();
+
+	if (_BossStagerDelay > 0)
+	{
+		_BossStagerDelay -= elapsedTime;
+		return;
+	}
+
+	char path[64] = {};
+	D2D1_SIZE_F camSz = {};
+
+	switch (_levelState)
+	{
+	case LevelState::BossStager_Start:
+		_boss->Logic(0); // set boss' position
+		player->Logic(0); // set player's position
+#ifdef _DEBUG
+		_instance->_levelState = LevelState::Playing; // skip the boss stager
+#else
+		_levelState = LevelState::BossStager_BossTalk;
+#endif
+		break;
+
+	case LevelState::BossStager_BossTalk:
+		sprintf(path, "LEVEL%d/SOUNDS/STAGING/ENEMY.WAV", _wwd->levelNumber);
+		AssetsManager::playWavFile(path);
+		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+		_levelState = LevelState::BossStager_ClawTalk;
+		break;
+
+	case LevelState::BossStager_ClawTalk:
+		sprintf(path, "LEVEL%d/SOUNDS/STAGING/CLAW.WAV", _wwd->levelNumber);
+		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+		AssetsManager::playWavFile(path);
+		_levelState = LevelState::BossStager_BossName;
+		break;
+
+	case LevelState::BossStager_BossName:
+		camSz = WindowManager::getCameraSize();
+		sprintf(path, "LEVEL%d/IMAGES/BOSSNAME/001.PID", _wwd->levelNumber);
+		_objects.push_back(DBG_NEW OneTimeAnimation(
+			{ camSz.width / 2 + position.x,camSz.height / 2 + position.y },
+			AssetsManager::createAnimationFromPidImage(path), false));
+		sprintf(path, "LEVEL%d/SOUNDS/DEFEAT.WAV", _wwd->levelNumber);
+		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+		_shakeTime = _BossStagerDelay; // shake the screen while the boss name is showing
+		AssetsManager::playWavFile(path);
+		_levelState = LevelState::BossStager_Waiting;
+		break;
+
+	case LevelState::BossStager_Waiting:
+		_objects.back()->removeObject = true; // remove the boss name
+		_levelState = LevelState::Playing;
+		break;
+	}
 }
 
 void ActionPlane::init()
