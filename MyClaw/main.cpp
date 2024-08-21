@@ -20,7 +20,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int)
 	}
 	catch (const Exception& ex)
 	{
-		LogFile::logf(LogFile::Error, "%s", ex.message.c_str());
+		LogFile::log(LogFile::Error, "%s", ex.message.c_str());
 	}
 
 	return 0;

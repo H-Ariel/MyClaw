@@ -6,7 +6,7 @@ LevelLoadingEngine::LevelLoadingEngine(int level, int checkpoint)
 	: ScreenEngine("LEVEL" + to_string(level) + "/SCREENS/LOADING.PCX"),
 	_level(level), _checkpoint(checkpoint), _totalTime(0)
 {
-	LogFile::logf(LogFile::Info, "load level %d", level);
+	LogFile::log(LogFile::Info, "load level %d", level);
 }
 
 void LevelLoadingEngine::Logic(uint32_t elapsedTime)

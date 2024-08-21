@@ -1,65 +1,59 @@
 #include "Framework.h"
 
 
-// TODO: use C code here (FILE*, fprintf, etc.). The overhead of C++ is too high
+FILE* LogFile::logFile = nullptr;
+mutex LogFile::logMutex;
 
 
-// Definition of the static member
-ofstream LogFile::logStream;
+void LogFile::Initialize(const char* filename) {
+	lock_guard<mutex> lock(logMutex);
 
-void LogFile::Initialize(const string& filename) {
-	logStream.open(filename, ios::out | ios::app);
-	if (!logStream) {
+	if (logFile)
+		throw Exception("LogFile is already initialized.");
+
+	logFile = fopen(filename, "a");
+	if (!logFile)
 		throw Exception("Failed to open log file");
-	}
-	log(Info, "Good morning!");
+
+	unsafe_log(Info, "Logger initialized successfully.", nullptr);
 }
 
 void LogFile::Finalize() {
-	if (logStream.is_open()) {
-		log(Info, "Good night :)");
-		logStream.close();
+	lock_guard<mutex> lock(logMutex);
+	if (logFile) {
+		unsafe_log(Info, "Logger finalized successfully.", nullptr);
+		fclose(logFile);
+		logFile = nullptr;
 	}
 }
 
-void LogFile::log(LogType type, const string& message) {
-	if (logStream.is_open()) {
-		logStream << getCurrentTime() << " [" << logTypeToString(type) << "] " << message << endl;
-	}
-}
-
-void LogFile::logf(LogType type, const char* format, ...) {
-	if (logStream.is_open()) {
+void LogFile::log(LogType type, const char* format, ...) {
+	lock_guard<mutex> lock(logMutex);
+	if (logFile) {
 		va_list args;
 		va_start(args, format);
-		string formattedMessage = vformat(format, args);
+		unsafe_log(type, format, args);
 		va_end(args);
-		log(type, formattedMessage);
 	}
 }
 
-string LogFile::getCurrentTime() {
+void LogFile::unsafe_log(LogType type, const char* format, va_list args)
+{
+	// get time
 	time_t now = time(nullptr);
-	char buffer[20];
-	strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&now));
-	return buffer;
-}
+	char timeBuffer[20];
+	strftime(timeBuffer, sizeof(timeBuffer), "%Y-%m-%d %H:%M:%S", localtime(&now));
 
-const char* LogFile::logTypeToString(LogType type) {
+	// get type
+	const char* typeStr = "UNKNOWN";
 	switch (type) {
-	case Error:   return "ERROR";
-	case Warning: return "WARNING";
-	case Info:    return "INFO";
-	default:      return "UNKNOWN";
+	case Error:   typeStr = "ERROR"; break;
+	case Warning: typeStr = "WARNING"; break;
+	case Info:    typeStr = "INFO"; break;
 	}
-}
 
-string LogFile::vformat(const char* format, va_list args) {
-	va_list tmpArgs;
-	va_copy(tmpArgs, args);
-	const int len = vsnprintf(nullptr, 0, format, tmpArgs);
-	va_end(tmpArgs);
-	vector<char> buffer(len + 1);
-	vsnprintf(buffer.data(), buffer.size(), format, args);
-	return string(buffer.data(), len);
+	// log to file
+	fprintf(logFile, "%s [%s] ", timeBuffer, typeStr);
+	vfprintf(logFile, format, args);
+	fprintf(logFile, "\n"); // To add a newline after the message if desired
 }

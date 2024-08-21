@@ -60,7 +60,7 @@ static string getBGImgPath2(int l) { return getBGImgPath(l, l * 2); }
 LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures)
 	: ScreenEngine(getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start)
 {
-	LogFile::logf(LogFile::Info, "end level %d", lvlNum);
+	LogFile::log(LogFile::Info, "end level %d", lvlNum);
 
 	if (_lvlNum != 14)
 	{

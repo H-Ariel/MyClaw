@@ -83,7 +83,7 @@ uint32_t AudioManager::playWav(const string& key, bool infinite)
 	auto it = instance->_audioDataCache.find(key);
 	if (it == instance->_audioDataCache.end())
 	{
-		LogFile::logf(LogFile::Warning, "AudioManager::playMidi: key not found. key: %s", key.c_str());
+		LogFile::log(LogFile::Warning, "AudioManager::playMidi: key not found. key: %s", key.c_str());
 		return INVALID_ID;
 	}
 
@@ -104,7 +104,7 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 	auto it = instance->_audioDataCache.find(key);
 	if (it == instance->_audioDataCache.end())
 	{
-		LogFile::logf(LogFile::Warning, "AudioManager::playMidi: key not found. key: %s", key.c_str());
+		LogFile::log(LogFile::Warning, "AudioManager::playMidi: key not found. key: %s", key.c_str());
 		return INVALID_ID;
 	}
 
