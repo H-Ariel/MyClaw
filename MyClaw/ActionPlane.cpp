@@ -80,7 +80,7 @@ ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane)
 	_BossStagerDelay(0), _isInBoss(false), _levelState(LevelState::Playing)
 {
 	if (_instance)
-		DBG_PRINT("Warning: ActionPlane already exists (instance of level %d)", _instance->_wwd->levelNumber);
+		LogFile::logf(LogFile::Warning, "ActionPlane already exists (instance of level %d)", _instance->_wwd->levelNumber);
 	_instance = this;
 }
 ActionPlane::~ActionPlane()
@@ -138,16 +138,14 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		}
 		else if (isinstance<StackedCrates>(obj))
 		{
-			vector<BasePlaneObject*> items = ((StackedCrates*)obj)->getItems();
-			_objects += items;
+			_objects += ((StackedCrates*)obj)->getItems();
 		}
 		else if (isbaseinstance<Crate>(obj))
 		{
 			Crate* crate = (Crate*)obj;
 			if (crate->isBreaking())
 			{
-				vector<BasePlaneObject*> items = crate->getItems();
-				_objects += items;
+				_objects += crate->getItems();
 			}
 		}
 

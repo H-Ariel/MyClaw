@@ -26,6 +26,9 @@
     <ClInclude Include="BufferWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LogFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework.cpp">
@@ -38,6 +41,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BufferWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LogFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

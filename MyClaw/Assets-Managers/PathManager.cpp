@@ -1,5 +1,5 @@
 #include "PathManager.h"
-#include "Framework/framework.h"
+#include "Framework/Framework.h"
 #include "../Objects/Item.h"
 
 

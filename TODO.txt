@@ -1,5 +1,3 @@
-+ split long functions (like [ActrionPlane|Player]::Logic
-+ add log file. no DBG_PRINT
 + check why memory usage is too high. maybe there are objects which not free
 
 + handle setting (low details, front plane, etc. add menu)

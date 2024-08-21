@@ -20,11 +20,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int)
 	}
 	catch (const Exception& ex)
 	{
-#ifdef _DEBUG
-		DBG_PRINT("Error: %s\n", ex.message.c_str());
-#else
-		MessageBoxA(nullptr, ex.message.c_str(), "Error", MB_OK | MB_ICONERROR);
-#endif
+		LogFile::logf(LogFile::Error, "%s", ex.message.c_str());
 	}
 
 	return 0;

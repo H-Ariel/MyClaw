@@ -12,7 +12,7 @@ static void MIDI_CALL(MMRESULT mmResult)
 	{
 		char text[256] = {};
 		midiOutGetErrorTextA(mmResult, text, sizeof(text));
-		DBG_PRINT("MIDI error: %s\n", text);
+		LogFile::logf(LogFile::Error, "MIDI Error: %s", text);
 	}
 }
 #else

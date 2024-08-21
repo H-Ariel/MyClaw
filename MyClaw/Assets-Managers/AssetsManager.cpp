@@ -214,12 +214,12 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 				// pcx files saves their palette and the palette is used for images at score screen
 				instance->_palette = pcx.palette;
 			}
-			else throw Exception("empty imgae");
+			else throw Exception("invalid extension");
 		}
-		catch (const Exception& ex)
+		catch (const Exception&)
 		{
 			img = make_shared<UIBaseImage>(nullptr); // empty image
-			DBG_PRINT("WARNING: a blank image has been inserted. image path: \"%s\"\n", path.c_str());
+			LogFile::logf(LogFile::Warning, "a blank image has been inserted. image path: \"%s\"", path.c_str());
 		}
 	}
 

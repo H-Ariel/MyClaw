@@ -11,7 +11,7 @@ static void WAV_CALL(MMRESULT mmResult)
 	{
 		char text[256];
 		waveOutGetErrorTextA(mmResult, text, sizeof(text));
-		DBG_PRINT("WaveError: %s\n", text);
+		LogFile::logf(LogFile::Error, "WAV Error: %s", text);
 	}
 }
 #else

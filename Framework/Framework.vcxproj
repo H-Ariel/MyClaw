@@ -152,12 +152,14 @@
     <ClInclude Include="BufferWriter.h" />
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="LogFile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseBuffer.cpp" />
     <ClCompile Include="BufferReader.cpp" />
     <ClCompile Include="BufferWriter.cpp" />
     <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="LogFile.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

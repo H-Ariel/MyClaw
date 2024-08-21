@@ -8,7 +8,7 @@ File format:
   - all the data of the save point
   * repeat for all levels
 */
-#define SAVE_FILE_NAME "CLAW_SAVE.DAT"
+#define SAVE_FILE_NAME "Claw.dat"
 
 
 bool isFileExists(const char* fileName)

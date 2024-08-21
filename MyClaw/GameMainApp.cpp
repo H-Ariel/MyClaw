@@ -11,11 +11,13 @@
 GameMainApp::GameMainApp()
 	: BaseApp(WndProc, L"Claw")
 {
+	LogFile::Initialize("Claw.log");
 	AssetsManager::Initialize();
 }
 GameMainApp::~GameMainApp()
 {
 	AssetsManager::Finalize();
+	LogFile::Finalize();
 }
 
 void GameMainApp::init()

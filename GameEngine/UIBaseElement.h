@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Framework/framework.h"
+#include "Framework/Framework.h"
 #include "Rectangle2D.h"
 
 

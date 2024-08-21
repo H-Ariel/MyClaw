@@ -45,7 +45,7 @@ vector<uint8_t> BufferReader::ReadVector(size_t n, bool alwaysRead)
 	{
 		if (alwaysRead)
 		{
-			DBG_PRINT("WARNING at " __FUNCTION__ ": unable to read data (reached to end of buffer)\n");
+			LogFile::log(LogFile::Warning, "at " __FUNCTION__ ": unable to read data (reached to end of buffer)");
 			n = _size - _idx;
 		}
 		else
