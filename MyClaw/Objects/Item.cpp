@@ -323,7 +323,7 @@ void Item::playItemSound() const
 	{
 		AssetsManager::playWavFile(path);
 		if (!strcmp(path, "GAME/SOUNDS/MAPPIECE.WAV"))
-			Sleep(1520); // wait until the sound ends
+			Sleep(1520); // in case of map piece sound, wait for the sound to finish
 	}
 }
 

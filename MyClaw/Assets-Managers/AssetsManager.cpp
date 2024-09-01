@@ -322,7 +322,7 @@ string AssetsManager::getCreditsText()
 	return string((char*)data.data(), data.size());
 }
 
-#ifndef _DEBUG // if debug - no sounds
+#ifndef _DEBUG0 // if debug - no sounds
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
 {
 	uint32_t id = AudioManager::playWav(wavFilePath, infinite);
@@ -357,7 +357,7 @@ uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 	return AudioManager::getDuration(wavFileKey);
 }
 
-#ifndef _DEBUG // if debug - no background music
+#ifndef _DEBUG0 // if debug - no background music
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
 	if (instance->_lastType == type)

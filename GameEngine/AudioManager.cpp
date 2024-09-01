@@ -2,8 +2,6 @@
 #include "MidiPlayer.h"
 #include "WavPlayer.h"
 
-#define NUM_OF_PLAYING_THREADS 6
-
 
 AudioManager* AudioManager::instance = nullptr;
 
@@ -23,16 +21,32 @@ void AudioManager::Finalize()
 }
 
 
-AudioManager::AudioManager() { thread(AudioManager::playQueue).detach(); }
-AudioManager::~AudioManager() { }
+AudioManager::AudioManager() : running(true) {
+	//	AudioManager::playQueue();
+
+	// open threads-pool to play the sounds from the queue
+	for (int i = 0; i < NUM_OF_PLAYING_THREADS; i++)
+		threads[i] = DBG_NEW thread(&AudioManager::playFromQueue, this);
+}
+AudioManager::~AudioManager() {
+	running = false;
+
+	audioQueueMutex.lock();
+	while (!audioQueue.empty())
+		audioQueue.pop();
+	audioQueueMutex.unlock();
+
+	for (int i = 0; i < NUM_OF_PLAYING_THREADS; i++)
+	{
+		threads[i]->join();
+		delete threads[i];
+	}
+}
 
 uint32_t AudioManager::getNewId()
 {
-	//	uint32_t size = (uint32_t)_audioPlayers.size() + 1; // 0 is reserved for invalid id
-	//	for (uint32_t i = 1; i < size; i++)
-	// TODO: make sure the new way is better
-	uint32_t size = (uint32_t)_audioPlayers.size();
-	for (uint32_t i = INVALID_ID + 1; i < size; i++)
+	uint32_t size = (uint32_t)_audioPlayers.size() + 1; // 0 is reserved for invalid id
+	for (uint32_t i = 1; i < size; i++)
 	{
 		if (_audioPlayers.count(i) == 0)
 			return i;
@@ -164,44 +178,38 @@ void AudioManager::setVolume(uint32_t id, int volume)
 		it->second->setVolume(volume);
 }
 
-void AudioManager::playQueue() {
-	// open threads-pool to play the sounds from the queue
-	for (int i = 0; i < NUM_OF_PLAYING_THREADS; i++)
+void AudioManager::playFromQueue() {
+	shared_ptr<IAudioPlayer> player;
+	bool inf = false;
+	bool play = false;
+	while (running)
 	{
-		thread([]() {
-			shared_ptr<IAudioPlayer> player;
-			bool inf = false;
-			bool play = false;
-			while (instance)
+		play = false;
+
+		audioQueueMutex.lock();
+		if (!audioQueue.empty())
+		{
+			player = audioQueue.front().first;
+			inf = audioQueue.front().second;
+			audioQueue.pop();
+			play = true;
+		}
+		audioQueueMutex.unlock();
+
+		if (!play)
+			this_thread::sleep_for(chrono::milliseconds(100));
+		else
+		{
+			if (isinstance<MidiPlayer>(player.get()))
+				player->play(inf); // in case of MIDI sound, we don't need to open new thread to play it because it's already async
+			else if (inf)
+				thread([&]() { player->play(inf); }).detach(); // in case of infinite sound, open new thread to play it (TODO: find when we realy use this)
+			else
 			{
-				play = false;
-
-				instance->audioQueueMutex.lock();
-				if (!instance->audioQueue.empty())
-				{
-					player = instance->audioQueue.front().first;
-					inf = instance->audioQueue.front().second;
-					instance->audioQueue.pop();
-					play = true;
-				}
-				instance->audioQueueMutex.unlock();
-
-				if (!play)
+				player->play(inf);
+				while (running && player->isPlaying())
 					this_thread::sleep_for(chrono::milliseconds(100));
-				else
-				{
-					if (isinstance<MidiPlayer>(player.get()))
-						player->play(inf); // in case of MIDI sound, we don't need to open new thread to play it because it's already async
-					else if (inf)
-						thread([&]() { player->play(inf); }).detach(); // in case of infinite sound, open new thread to play it
-					else
-					{
-						player->play(inf);
-						while (instance && player->isPlaying())
-							this_thread::sleep_for(chrono::milliseconds(100));
-					}
-				}
 			}
-			}).detach();
+		}
 	}
 }

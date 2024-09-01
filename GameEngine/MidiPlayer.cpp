@@ -26,7 +26,7 @@ LARGE_INTEGER MidiPlayer::PerformanceFrequency = {};
 
 
 MidiPlayer::MidiPlayer(const string& key, const vector<uint8_t>& midiData)
-	: IAudioPlayer(key, midiData), track({}), PPQN_CLOCK(0), ticks(0)
+	: IAudioPlayer(key, midiData), track({}), PPQN_CLOCK(0), ticks(0), _thread(nullptr)
 {
 	if (_objCount++ == 0)
 	{
@@ -51,17 +51,24 @@ MidiPlayer::~MidiPlayer()
 void MidiPlayer::stop()
 {
 	_mutex.lock();
-	usleep(100000); // wait 1 second for the last note to finish playing (so mutex won't crash)
 	_isPlaying = false;
+	if (_thread)
+		_thread->join();
 	midiOutReset(_midiOut); // turn off all notes and reset the MIDI device
 	_mutex.unlock();
+
+	if (_thread)
+	{
+		delete _thread;
+		_thread = nullptr;
+	}
 }
 
 void MidiPlayer::play(bool infinite)
 {
 	reset();
 	_isPlaying = true;
-	thread(&MidiPlayer::play_sync, this, infinite).detach();
+	_thread = DBG_NEW thread(&MidiPlayer::play_sync, this, infinite);
 }
 
 void MidiPlayer::reset()
@@ -118,24 +125,21 @@ start:
 			time = evt.absolute_time;
 
 		if (!_isPlaying)
-		{
 			break;
-		}
 
 		_mutex.lock();
 
 		evt = getNextEvent();
-
 		track.absolute_time = evt.absolute_time;
 		time = track.absolute_time - current_time;
 		current_time = track.absolute_time;
 
 		_mutex.unlock();
+
 		usleep(time * PPQN_CLOCK);
 		if (!_isPlaying)
-		{
 			break;
-		}
+
 		_mutex.lock();
 
 		if (!(evt.event & 0x80)) // running mode

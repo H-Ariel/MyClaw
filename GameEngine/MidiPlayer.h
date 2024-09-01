@@ -66,6 +66,7 @@ private:
 
 
 	mutex _mutex;
+	thread* _thread; // thread for playing the MIDI asynchronously
 	MidiTrack track; // in our MIDI data we know there's only one track
 	uint32_t PPQN_CLOCK;
 	uint16_t ticks; // from the header
