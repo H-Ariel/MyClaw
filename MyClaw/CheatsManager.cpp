@@ -21,10 +21,12 @@ CheatsManager::CheatsManager()
 		{ FillDynamite	, "MPBLASTER"	, "Full Dynamite" },
 		{ FillLife		, "AHCAKE"		, "Full Life" },
 		{ FinishLevel	, "MPSCULLY"	, "Finish Level" },
+		{ SuperStrong	, "MPBUNZ"		, "Roids mode is %s" },
+		{ Flying		, "MPFLY"		, "Flying mode is %s" },
 		{ BgMscSpeedUp	, "MPMAESTRO"	, "Time to speed things up!" },
 		{ BgMscSlowDown	, "MPLANGSAM"	, "Ready to slow things down?" },
 		{ BgMscNormal	, "MPNORMALMUSIC", "Back to normal..." }
-	})
+		})
 {
 	// The list of cheats, format: { type, keys, message }
 	// NOTE: make sure cheat-code contains only uppercase letters
@@ -55,7 +57,10 @@ void CheatsManager::addKey(int key)
 	case FillMagic:
 	case FillDynamite:
 	case FillLife:
-	case FinishLevel:		BasePlaneObject::player->cheat(type); break;
+	case FinishLevel:
+	case SuperStrong:
+	case Flying:
+		BasePlaneObject::player->cheat(type); break;
 //	case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
 //	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
 //	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
@@ -81,7 +86,22 @@ int CheatsManager::getCheatType()
 			if (match)
 			{
 				keys.clear();
-				ActionPlane::writeMessage(msg);
+
+				string msgToWrite;
+				if (type == SuperStrong) {
+					char temp[32] = {};
+					sprintf(temp, msg, BasePlaneObject::player->isSuperStrongCheat() ? "off" : "on");
+					msgToWrite = temp;
+				}
+				else if (type == Flying) {
+					char temp[32] = {};
+					sprintf(temp, msg, BasePlaneObject::player->isFlyingCheat() ? "off" : "on");
+					msgToWrite = temp;
+				}
+				else
+					msgToWrite = msg;
+
+				ActionPlane::writeMessage(msgToWrite);
 				return type;
 			}
 		}

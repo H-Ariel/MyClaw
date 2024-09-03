@@ -26,7 +26,6 @@ public:
 	void Draw() override;
 	Rectangle2D GetRect() override;
 
-	void updateImageData() const; // position, mirrored, etc.
 	void reset(); // reset to the first frame
 
 	shared_ptr<UIAnimation> getCopy() const { return make_shared<UIAnimation>(getImagesList()); }
@@ -41,9 +40,12 @@ public:
 	float opacity; // value between 0 (transparent) and 1 (opaque)
 	bool updateFrames;
 	bool mirrored; // flag to set whether to draw normal or inverted
+	bool upsideDown; // flag to set whether to draw normal or upside-down
 	bool loopAni; // Defines whether at the end of the animation it will return to the beginning or remain in the current state
 
 private:
+	void updateImageData() const; // position, mirrored, etc.
+
 	vector<FrameData*> _images;
 	size_t _currImgIdx;
 	bool _isFinishAnimation;

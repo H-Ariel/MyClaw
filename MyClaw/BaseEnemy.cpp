@@ -180,7 +180,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 }
 void BaseEnemy::makeAttack()
 {
-	if (_isStanding || enemySeeClaw())
+	if (_isStanding || doesEnemySeeClaw())
 		makeAttack(abs(player->position.x - position.x), abs(player->position.y - position.y));
 }
 void BaseEnemy::makeAttack(float deltaX, float deltaY)
@@ -375,12 +375,12 @@ bool BaseEnemy::checkForHurts()
 	return false;
 }
 
-bool BaseEnemy::enemySeeClaw() const
+bool BaseEnemy::doesEnemySeeClaw() const
 {
 	return !player->isGhost() && (
 		(!_isMirrored && player->position.x > position.x) ||
 		(_isMirrored && player->position.x < position.x)
-		);
+	);
 }
 
 

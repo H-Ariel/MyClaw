@@ -130,7 +130,8 @@ int Player::WeaponsAmount::operator[](ClawProjectile::Types type) const
 Player::Player()
 	: BaseCharacter({}), _currWeapon(ClawProjectile::Types::Pistol),
 	_finishLevel(false), _powerupSparkles(&_saveCurrRect),
-	_weaponsAmount(10, 5, 3), startPosition({})
+	_weaponsAmount(10, 5, 3), startPosition({}),
+	_isSuperStrongCheat(false), _isFlyingCheat(false)
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_lives = 6;
@@ -151,16 +152,34 @@ Player::Player()
 
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
+	_animations["FLYING-CHEAT"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/401.PID");
+	_animations["FLYING-CHEAT"]->upsideDown = true;
 
 	_animations["SQUEEZED"] = make_shared<UIAnimation>(vector<UIAnimation::FrameData*>({
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/450.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/451.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/452.PID"))
-	}));
+		}));
 }
 
 void Player::Logic(uint32_t elapsedTime)
 {
+	if (_isFlyingCheat) {
+		if (_upPressed) position.y -= elapsedTime;
+		if (_downPressed) position.y += elapsedTime;
+		if (_leftPressed) position.x -= elapsedTime;
+		if (_rightPressed) position.x += elapsedTime;
+
+		// TODO: set ani to fly and upside down
+
+		_ani->position = position;
+		_ani->Logic(elapsedTime);
+
+		calcRect();
+
+		return;
+	}
+
 	if (isSqueezed())
 	{
 		_ani->position = position;
@@ -173,7 +192,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_aniName == "EMPTYPOSTDYNAMITE" || _aniName == "DUCKEMPTYPOSTDYNAMITE" ||
 		_aniName == "SPIKEDEATH")
 	{
-		if (!_ani->isFinishAnimation() || _aniName == "FALLDEATH"|| _aniName == "SPIKEDEATH")
+		if (!_ani->isFinishAnimation() || _aniName == "FALLDEATH" || _aniName == "SPIKEDEATH")
 		{
 			_ani->position = position;
 			_ani->Logic(elapsedTime);
@@ -535,18 +554,17 @@ void Player::Logic(uint32_t elapsedTime)
 				else
 				{
 					// try lift powder keg
-					for (PowderKeg* p : ActionPlane::getPowderKegs())
-					{
-						if (_saveCurrRect.intersects(p->GetRect()))
-						{
-							if (p->raise())
-							{
-								_raisedPowderKeg = p;
-								_aniName = "LIFT";
-								_zPressed = false; // if we lift do not try throw other keg
-								break;
-							}
-						}
+					const vector<PowderKeg*>& powderKegs = ActionPlane::getPowderKegs();
+					auto keg = find_if(powderKegs.begin(), powderKegs.end(),
+						[&](PowderKeg* p) {
+							if (_saveCurrRect.intersects(p->GetRect()))
+								return p->raise();
+							return false;
+						});
+					if (keg != powderKegs.end()) {
+						_raisedPowderKeg = *keg;
+						_aniName = "LIFT";
+						_zPressed = false; // if we lift do not try throw other keg
 					}
 
 					// TODO: throw enemies
@@ -773,11 +791,14 @@ void Player::calcAttackRect()
 	_saveCurrAttackRect = { rc, (_currPowerup == Item::Powerup_Catnip
 		|| _currPowerup == Item::Powerup_FireSword
 		|| _currPowerup == Item::Powerup_IceSword
-		|| _currPowerup == Item::Powerup_LightningSword) ? 100 : damage };
+		|| _currPowerup == Item::Powerup_LightningSword
+		|| _isSuperStrongCheat) ? 100 : damage };
 }
 
 void Player::stopFalling(float collisionSize)
 {
+	if (_isFlyingCheat) return;
+
 	BaseCharacter::stopFalling(collisionSize);
 	if (speed.x == 0 && !isDuck() && !isStanding() && !_isAttack && !isWeaponAnimation())
 	{
@@ -791,6 +812,8 @@ void Player::stopFalling(float collisionSize)
 }
 void Player::stopMovingLeft(float collisionSize)
 {
+	if (_isFlyingCheat) return;
+
 	if (isClimbing()) return;
 	if (speed.x != 0)
 	{
@@ -802,6 +825,8 @@ void Player::stopMovingLeft(float collisionSize)
 }
 void Player::stopMovingRight(float collisionSize)
 {
+	if (_isFlyingCheat) return;
+
 	if (isClimbing()) return;
 	if (speed.x != 0)
 	{
@@ -813,6 +838,8 @@ void Player::stopMovingRight(float collisionSize)
 }
 void Player::whenTouchDeath()
 {
+	if (_isFlyingCheat) return;
+
 #ifndef _DEBUG // in debug mode CC can't die
 	player->loseLife();
 #endif
@@ -901,7 +928,7 @@ bool Player::collectItem(Item* item)
 	case Item::Ammo_Deathbag:	ADD_WEAPON(pistol, 25);
 	case Item::Ammo_Shot:		ADD_WEAPON(pistol, 5);
 	case Item::Ammo_Shotbag:	ADD_WEAPON(pistol, 10);
-	case Item::Ammo_Magic_5:	ADD_WEAPON(magic,  5);
+	case Item::Ammo_Magic_5:	ADD_WEAPON(magic, 5);
 	case Item::Ammo_Magic_10:	ADD_WEAPON(magic, 10);
 	case Item::Ammo_Magic_25:	ADD_WEAPON(magic, 25);
 	case Item::Ammo_Dynamite:	ADD_WEAPON(dynamite, 5);
@@ -928,7 +955,7 @@ bool Player::collectItem(Item* item)
 		// impleted as `class Warp`
 		break;
 
-	// these items used in multiplayer mode, so I don't need to implement them now
+		// these items used in multiplayer mode, so I don't need to implement them now
 	case Item::Curse_Ammo:		break;
 	case Item::Curse_Magic:		break;
 	case Item::Curse_Health:	break;
@@ -983,8 +1010,10 @@ void Player::backToLife()
 	elevator = nullptr;
 	rope = nullptr;
 	_health = 100;
-	_aniName = "STAND";
-	_ani = _animations["STAND"];
+	if (!_isFlyingCheat) {
+		_aniName = "STAND";
+		_ani = _animations["STAND"];
+	}
 	position = startPosition;
 	speed = {};
 	_saveCurrRect = GetRect();
@@ -1101,7 +1130,7 @@ void Player::keyDown(int key)
 
 	switch (key)
 	{
-	case VK_UP:		if (!_useWeapon && !_isAttack && !_altPressed && !rope && !_raisedPowderKeg) _upPressed = true; break;
+	case VK_UP:		if ((!_useWeapon && !_isAttack && !_altPressed && !rope && !_raisedPowderKeg) || _isFlyingCheat) _upPressed = true; break;
 	case VK_DOWN:	if (!rope && !_raisedPowderKeg) _downPressed = true; break;
 	case VK_LEFT:	_leftPressed = true; break;
 	case VK_RIGHT:	_rightPressed = true; break;
@@ -1255,6 +1284,15 @@ void Player::cheat(int cheatType)
 	case CheatsManager::FillPistol:		_weaponsAmount.pistol = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FillMagic:		_weaponsAmount.magic = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FillDynamite:	_weaponsAmount.dynamite = MAX_WEAPON_AMOUNT; break;
-	case CheatsManager::FinishLevel:	_finishLevel = true;
+	case CheatsManager::FinishLevel:	_finishLevel = true; break;
+	case CheatsManager::SuperStrong:	_isSuperStrongCheat = !_isSuperStrongCheat; break;
+	case CheatsManager::Flying:
+		_isFlyingCheat = !_isFlyingCheat;
+		if (_isFlyingCheat)
+			_ani = _animations["FLYING-CHEAT"];
+		else
+			_ani = _animations["STAND"];
+		_saveCurrAttackRect = {}; // cancel attack
+		break;
 	}
 }

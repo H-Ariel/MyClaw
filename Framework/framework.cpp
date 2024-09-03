@@ -1,12 +1,6 @@
 #include "Framework.h"
 
 
-string replaceString(string str, char src, char dst)
-{
-	replace(str.begin(), str.end(), src, dst);
-	return str;
-}
-
 string fixPath(string path)
 {
 	for (char& c : path)

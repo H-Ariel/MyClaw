@@ -185,32 +185,23 @@ void AssetsManager::Finalize()
 
 shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 {
-	shared_ptr<UIBaseImage> img;
-
-	if (WindowManager::hasImage(path))
-	{
-		img = WindowManager::getImage(path);
-	}
-	else
+	shared_ptr<UIBaseImage> img = WindowManager::getImage(path);
+	if (img == nullptr)
 	{
 		try
 		{
 			if (endsWith(path, ".PID"))
 			{
 				WapPid pid(instance->_rezArchive.getFile(path)->getFileData(), &instance->_palette);
-
 				fixPidOffset(path, pid.offsetX, pid.offsetY);
-
 				img = WindowManager::createImage(path, pid.colors.data(),
 					pid.width, pid.height, (float)pid.offsetX, (float)pid.offsetY);
 			}
 			else if (endsWith(path, ".PCX"))
 			{
 				PcxFile pcx(instance->_rezArchive.getFile(path)->getBufferReader());
-
 				img = WindowManager::createImage(path, pcx.colors.data(),
 					pcx.width, pcx.height, 0, 0);
-
 				// pcx files saves their palette and the palette is used for images at score screen
 				instance->_palette = pcx.palette;
 			}
@@ -322,7 +313,7 @@ string AssetsManager::getCreditsText()
 	return string((char*)data.data(), data.size());
 }
 
-#ifndef _DEBUG0 // if debug - no sounds
+#ifndef _DEBUG // if debug - no sounds
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
 {
 	uint32_t id = AudioManager::playWav(wavFilePath, infinite);
@@ -357,7 +348,7 @@ uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 	return AudioManager::getDuration(wavFileKey);
 }
 
-#ifndef _DEBUG0 // if debug - no background music
+#ifndef _DEBUG // if debug - no background music
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
 	if (instance->_lastType == type)

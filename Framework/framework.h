@@ -57,9 +57,6 @@ using namespace std;
 using namespace D2D1;
 
 
-// replace `src` with `dst` in `str`
-string replaceString(string str, char src, char dst);
-
 // replace '\' with '/' and remove the first '/' if exists
 string fixPath(string path);
 

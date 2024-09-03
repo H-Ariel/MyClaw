@@ -74,10 +74,14 @@ public:
 
 	void cheat(int cheatType);
 
+	bool isSuperStrongCheat() const { return _isSuperStrongCheat; }
+	bool isFlyingCheat() const { return _isFlyingCheat; }
+
+
 	D2D1_POINT_2F startPosition;
 	Elevator* elevator; // stores the elevator he is standing on (if any)
 	Rope* rope; // stores the rope he is holding (if any)
-	
+
 
 private:
 	class PowerupSparkles
@@ -89,7 +93,7 @@ private:
 
 	private:
 		void init(shared_ptr<UIAnimation> sparkle); // init one sparkle (from the list)
-		
+
 		Rectangle2D* _playerRc;
 		shared_ptr<UIAnimation> _sparkles[30]; // all sparkles' list
 	};
@@ -130,4 +134,5 @@ private:
 	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _spacePressed, _altPressed, _zPressed;
 	bool _leftCollision, _rightCollision, _isOnLadder, _useWeapon;
 	bool _finishLevel, _isCollideWithLadder, _isOnLadderTop;
+	bool _isSuperStrongCheat, _isFlyingCheat; // used for cheat
 };

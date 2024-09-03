@@ -21,6 +21,8 @@ public:
 		FillDynamite,
 		FillLife,
 		FinishLevel,
+		SuperStrong,
+		Flying,
 		BgMscSpeedUp,
 		BgMscSlowDown,
 		BgMscNormal,

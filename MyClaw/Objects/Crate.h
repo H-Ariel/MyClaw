@@ -14,7 +14,6 @@ public:
 
 private:
 	vector<int8_t> _itemsTypes; // contents of the crate
-	bool _itemsTaken; // store if the items were taken from this crate
 
 	friend class StackedCrates;
 };

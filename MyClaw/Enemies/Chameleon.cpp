@@ -17,7 +17,7 @@ void Chameleon::Logic(uint32_t elapsedTime)
 {
 	BaseEnemy::Logic(elapsedTime);
 
-	if (!_isAttack && enemySeeClaw())
+	if (!_isAttack && doesEnemySeeClaw())
 	{
 		_opacity -= OPACITY_SPEED * elapsedTime;
 		if (_opacity < 0)

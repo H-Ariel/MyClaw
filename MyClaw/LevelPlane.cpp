@@ -19,9 +19,9 @@ void LevelPlane::Draw()
 	const float parallaxCameraPosX = position.x * _wwdPlane->movementPercentX;
 	const float parallaxCameraPosY = position.y * _wwdPlane->movementPercentY;
 	const int startRow = int(parallaxCameraPosY / TILE_SIZE);
-	const int startCol = int(parallaxCameraPosX / TILE_SIZE);
+	const int startCol = max(int(parallaxCameraPosX / TILE_SIZE) - 1, 0);
 	const int endRow = min(maxTileIdxY, int(camSz.height / TILE_SIZE + 2 + startRow));
-	const int endCol = min(maxTileIdxX, int(camSz.width / TILE_SIZE + 2 + startCol));
+	const int endCol = min(maxTileIdxX, int(camSz.width / TILE_SIZE + 3 + startCol));
 
 	for (i = 0; i < _objects.size() && _objects[i]->drawZ < _wwdPlane->coordZ; i++)
 		_objects[i]->Draw();

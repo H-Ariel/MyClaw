@@ -128,27 +128,37 @@ void WindowManager::fillRect(Rectangle2D dst, ColorF color)
 {
 	fillRect(dst, (D2D1_COLOR_F)color);
 }
-void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity)
+void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, bool upsideDown, float opacity)
 {
 	if (!_isInScreen(dst) || bitmap == nullptr) return;
 
 	Matrix3x2F transformMatrix;
 
-	if (mirrored)
-	{
+	if (mirrored || upsideDown) {
 		instance->_renderTarget->GetTransform(&transformMatrix);
-		transformMatrix.dx = (dst.left + dst.right) * transformMatrix.m11; // set offset of x axis to draw mirrored
-		transformMatrix.m11 = -transformMatrix.m11; // set to draw mirrored (reverse the X-axis)
+		if (mirrored) {
+			transformMatrix.dx = (dst.left + dst.right) * transformMatrix.m11; // set offset of x axis to draw mirrored
+			transformMatrix.m11 = -transformMatrix.m11; // set to draw mirrored (reverse the X-axis)
+		}
+		if (upsideDown) {
+			transformMatrix.dy = (dst.top + dst.bottom) * transformMatrix.m22; // set offset of y-axis to draw upside down
+			transformMatrix.m22 = -transformMatrix.m22; // reverse the Y-axis for upside-down
+		}
 		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 
 	instance->_renderTarget->DrawBitmap(bitmap, dst, opacity);
 
-	if (mirrored)
-	{
-		// back to normal
-		transformMatrix.dx = 0;
-		transformMatrix.m11 = -transformMatrix.m11;
+	// Reset the transformation if it was altered
+	if (mirrored || upsideDown) {
+		if (mirrored) {
+			transformMatrix.dx = 0;
+			transformMatrix.m11 = -transformMatrix.m11; // restore the X-axis
+		}
+		if (upsideDown) {
+			transformMatrix.dy = 0;
+			transformMatrix.m22 = -transformMatrix.m22; // restore the Y-axis
+		}
 		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 }
@@ -269,6 +279,13 @@ shared_ptr<UIBaseImage> WindowManager::createImage(const string& key, const void
 	}
 
 	return instance->images[key];
+}
+shared_ptr<UIBaseImage> WindowManager::getImage(const string& key)
+{
+	auto it = instance->images.find(key);
+	if (it == instance->images.end())
+		return nullptr;
+	return it->second;
 }
 void WindowManager::clearImages(function<bool(const string&)> predicate)
 {

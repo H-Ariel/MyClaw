@@ -30,7 +30,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 		_attackRest -= elapsedTime;
 
 		// if CC close to enemy - dive and attack
-		if (_attackRest <= 0 && enemySeeClaw() &&
+		if (_attackRest <= 0 && doesEnemySeeClaw() &&
 			(_minX <= player->position.x && player->position.x <= _maxX) &&
 			(_minY <= player->position.y && player->position.y <= _maxY))
 		{

@@ -144,9 +144,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		{
 			Crate* crate = (Crate*)obj;
 			if (crate->isBreaking())
-			{
 				_objects += crate->getItems();
-			}
 		}
 
 		if (_shakeTime <= 0 &&
@@ -199,18 +197,12 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 #ifndef _DEBUG // when I'm debugging, I don't want to shake the screen (it's annoying)
 	const Rectangle2D playerRect = player->GetRect();
-	for (auto i = _shakeRects.begin(); i != _shakeRects.end(); i++)
-	{
-		if (playerRect.intersects(*i))
-		{
-			_shakeTime = SHAKE_TIME;
-			_shakeRects.erase(i);
-			exploseShake = false; // we don't want to shake the screen twice
-			break;
-		}
-	}
-
-	if (exploseShake)
+ 	auto it = find_if(_shakeRects.begin(), _shakeRects.end(), [&](const Rectangle2D& r) { return playerRect.intersects(r); });
+ 	if (it != _shakeRects.end()) {
+ 		_shakeTime = SHAKE_TIME;
+ 		_shakeRects.erase(it);
+ 	}
+	else if (exploseShake)
 		_shakeTime = 500;
 #endif
 }

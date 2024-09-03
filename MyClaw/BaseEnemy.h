@@ -35,7 +35,7 @@ protected:
 	virtual bool checkForHurts() override; // returns `true` if the enemy hurt (by CC attack, projectiles, etc.)
 
 	void makeAttack(); // calc deltaX and deltaY and call `makeAttack(float deltaX, float deltaY)`
-	bool enemySeeClaw() const;
+	bool doesEnemySeeClaw() const;
 	bool isWalkAnimation() const;
 	bool checkForHurt(const pair<Rectangle2D, int>& hurtData); // returns `true` if the enemy hurt. `hurtData`={rect,damage}
 	bool checkClawHit(); // returns `true` if the enemy hurt by CC

@@ -7,19 +7,19 @@
 
 
 Crate::Crate(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _itemsTaken(false)
+	: BaseStaticPlaneObject(obj)
 {
-	if (obj.powerup				> 0) _itemsTypes.push_back(obj.powerup);
-	if (obj.userRect1.left		> 0) _itemsTypes.push_back(obj.userRect1.left);
-	if (obj.userRect1.right		> 0) _itemsTypes.push_back(obj.userRect1.right);
-	if (obj.userRect1.bottom	> 0) _itemsTypes.push_back(obj.userRect1.bottom);
-	if (obj.userRect1.top		> 0) _itemsTypes.push_back(obj.userRect1.top);
-	if (obj.userRect2.left		> 0) _itemsTypes.push_back(obj.userRect2.left);
-	if (obj.userRect2.right		> 0) _itemsTypes.push_back(obj.userRect2.right);
-	if (obj.userRect2.bottom	> 0) _itemsTypes.push_back(obj.userRect2.bottom);
-	if (obj.userRect2.top		> 0) _itemsTypes.push_back(obj.userRect2.top);
-	if (_itemsTypes.size()		== 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
-	
+	if (obj.powerup > 0) _itemsTypes.push_back(obj.powerup);
+	if (obj.userRect1.left > 0) _itemsTypes.push_back(obj.userRect1.left);
+	if (obj.userRect1.right > 0) _itemsTypes.push_back(obj.userRect1.right);
+	if (obj.userRect1.bottom > 0) _itemsTypes.push_back(obj.userRect1.bottom);
+	if (obj.userRect1.top > 0) _itemsTypes.push_back(obj.userRect1.top);
+	if (obj.userRect2.left > 0) _itemsTypes.push_back(obj.userRect2.left);
+	if (obj.userRect2.right > 0) _itemsTypes.push_back(obj.userRect2.right);
+	if (obj.userRect2.bottom > 0) _itemsTypes.push_back(obj.userRect2.bottom);
+	if (obj.userRect2.top > 0) _itemsTypes.push_back(obj.userRect2.top);
+	if (_itemsTypes.size() == 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
+
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
 	_ani->updateFrames = false;
 	_ani->loopAni = false;
@@ -37,32 +37,23 @@ void Crate::Logic(uint32_t elapsedTime)
 	}
 	else
 	{
-		for (Projectile* p : ActionPlane::getProjectiles())
-		{
-			if (isbaseinstance<Projectile>(p))
-			{
-				if (p->isClawDynamite() && p->getDamage() == 0) continue;
-				if (_objRc.intersects(p->GetRect()))
-				{
-					_ani->updateFrames = true;
-					if (p->isClawBullet() || isinstance<EnemyProjectile>(p))
-						p->removeObject = true; // bullets don't keep flying, but magic does
-					break;
-				}
-			}
-		}
+	 	const vector<Projectile*>& projectiles = ActionPlane::getProjectiles();
+	 	auto proj = find_if(projectiles.begin(), projectiles.end(), [&](Projectile* p) {
+	 		return (!p->isClawDynamite() || p->getDamage() != 0) && _objRc.intersects(p->GetRect());
+	 	});
+	 	if (proj != projectiles.end())
+	 	{
+	 		_ani->updateFrames = true;
+	 		if ((*proj)->isClawBullet() || isbaseinstance<EnemyProjectile>(*proj))
+	 			(*proj)->removeObject = true; // bullets don't keep flying, but magic does
+	 	}
 
-		for (PowderKeg* p : ActionPlane::getPowderKegs())
+		if (!_ani->updateFrames)
 		{
-			int damage = p->getDamage();
-			if (damage > 0)
-			{
-				if (_objRc.intersects(p->GetRect()))
-				{
-					_ani->updateFrames = true;
-					break;
-				}
-			}
+			const vector<PowderKeg*>& powderKegs = ActionPlane::getPowderKegs();
+			_ani->updateFrames = any_of(powderKegs.begin(), powderKegs.end(), [&](PowderKeg* p) {
+				return p->getDamage() > 0 && _objRc.intersects(p->GetRect());
+			});
 		}
 	}
 
@@ -72,7 +63,7 @@ vector<BasePlaneObject*> Crate::getItems()
 {
 	vector<BasePlaneObject*> items;
 
-	if (!_itemsTaken)
+	if (!_itemsTypes.empty())
 	{
 		WwdObject newObj;
 		newObj.x = (int32_t)position.x;
@@ -86,7 +77,8 @@ vector<BasePlaneObject*> Crate::getItems()
 			items.push_back(i);
 		}
 
-		_itemsTaken = true;
+		// TODO: add here cheat of infinite-treasures
+		_itemsTypes.clear(); // do not collect them again
 	}
 
 	return items;
@@ -118,7 +110,7 @@ StackedCrates::StackedCrates(const WwdObject& obj)
 		*/
 		*(&newObj.userRect1.left + crateIdx) = *(&obj.userRect1.left + crateIdx); // match treasure by index
 
-		crates.push_back( make_shared<Crate>(newObj));
+		crates.push_back(make_shared<Crate>(newObj));
 	}
 }
 void StackedCrates::Logic(uint32_t elapsedTime)
@@ -154,14 +146,12 @@ vector<BasePlaneObject*> StackedCrates::getItems()
 	{
 		if (crates[i]->isBreaking())
 		{
-			vector<BasePlaneObject*> tmp = crates[i]->getItems();
+			vector<BasePlaneObject*> items = crates[i]->getItems();
 
-			for (BasePlaneObject* j : tmp)
-			{
-				((Item*)j)->speed.x = getRandomFloat(-0.25f, 0.25f);
-			}
+			for (BasePlaneObject* i : items)
+				((Item*)i)->speed.x = getRandomFloat(-0.25f, 0.25f);
 
-			allItems += tmp;
+			allItems += items;
 		}
 		if (crates[i]->removeObject)
 		{

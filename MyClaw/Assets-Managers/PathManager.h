@@ -1,10 +1,6 @@
 #pragma once
 
-#include <string>
-#include <map>
-
-using std::string;
-using std::map;
+#include "Framework/Framework.h"
 
 
 class PathManager
@@ -24,6 +20,8 @@ public:
 	static int getItemType(const string& imageSet);
 
 private:
+	static  map<string, string>::iterator findImageSet(const string& imageSet);
+
 	static map<string, string> imageSetMap;
 	static map<string, string> data[5];
 	static const map<string, int> ItemsMap;

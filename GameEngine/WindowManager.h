@@ -31,7 +31,7 @@ public:
 
 	static void drawRect(Rectangle2D dst, ColorF color, float width = 1);
 	static void fillRect(Rectangle2D dst, ColorF color);
-	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, float opacity = 1);
+	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, bool upsideDown, float opacity);
 	static void drawText(const wstring& text, IDWriteTextFormat* textFormat, ColorF color, const Rectangle2D& layoutRect);
 	static void drawText(const wstring& text, const FontData& font, ColorF color, const Rectangle2D& layoutRect);
 
@@ -43,8 +43,7 @@ public:
 	static IDWriteTextFormat* createTextFormat(const FontData& font);
 
 	static shared_ptr<UIBaseImage> createImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY);
-	static bool hasImage(const string& key) { return instance->images.count(key) != 0; }
-	static shared_ptr<UIBaseImage> getImage(const string& key) { return instance->images[key]; }
+	static shared_ptr<UIBaseImage> getImage(const string& key);
 	static void clearImages(function <bool(const string&)> predicate);
 
 	static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE;

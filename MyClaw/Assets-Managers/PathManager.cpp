@@ -88,6 +88,12 @@ static string replaceFirst(string str, const string& src, const string& dst)
 		return str.replace(str.find(src), src.length(), dst);
 	return str;
 }
+// replace underscores with slashes
+static string updatePath(string path)
+{
+	replace(path.begin(), path.end(), '_', '/');
+	return path;
+}
 
 
 void PathManager::setRoots(string prefix[], string imageSet[])
@@ -108,123 +114,111 @@ void PathManager::resetPaths()
 	ItemsPaths.erase("GAME_HEALTH_BREADWATER");
 }
 
-string PathManager::getImageSetPath(const string& _imageSet)
+string PathManager::getImageSetPath(const string& imageSet)
 {
-	if (data[IMAGE_SET].count(_imageSet) == 0)
+	if (data[IMAGE_SET].count(imageSet) == 0)
 	{
-		string newImageSet(_imageSet);
+		string newImageSet;
 
-		if (!contains(newImageSet, "IMAGES"))
-			for (const auto& [prefix, imageSet] : imageSetMap)
-				if (startsWith(newImageSet, prefix + '_'))
-				{
-					newImageSet = replaceFirst(newImageSet, prefix, imageSet);
-					break;
-				}
-
-		newImageSet = replaceString(newImageSet, '_', '/');
-		data[IMAGE_SET][_imageSet] = newImageSet;
-	}
-
-	return data[IMAGE_SET][_imageSet];
-}
-string PathManager::getAnimationSetPath(const string& _aniSet)
-{
-	if (data[ANIMATION_SET].count(_aniSet) == 0)
-	{
-		string aniSet(_aniSet);
-
-		for (const auto& [prefix, imageSet] : imageSetMap)
+		if (!contains(imageSet, "IMAGES"))
 		{
-			if (startsWith(aniSet, prefix + '_'))
-			{
-				aniSet = replaceFirst(aniSet, prefix, replaceFirst(imageSet, "IMAGES", "ANIS"));
-				break;
-			}
+			auto it = findImageSet(imageSet);
+			if (it != imageSetMap.end())
+				newImageSet = replaceFirst(imageSet, it->first, it->second);
 		}
 
-		aniSet = replaceString(aniSet, '_', '/');
-		if (aniSet == "LEVEL12/ANIS/KINGAQUATIS")
-			aniSet = "LEVEL12/ANIS/AQUATIS";
-		data[ANIMATION_SET][_aniSet] = aniSet;
+		if (newImageSet.empty())
+			newImageSet = imageSet;
+
+		data[IMAGE_SET][imageSet] = updatePath(newImageSet);
 	}
 
-	return data[ANIMATION_SET][_aniSet];
+	return data[IMAGE_SET][imageSet];
 }
-string PathManager::getAnimationPath(const string& _path)
+string PathManager::getAnimationSetPath(const string& aniSet)
 {
-	if (data[ANIMATION].count(_path) == 0)
+	if (data[ANIMATION_SET].count(aniSet) == 0)
 	{
-		string path(_path);
-		path = getAnimationSetPath(path);
-		path += ".ANI";
+		string newAniSet;
+
+		auto it = findImageSet(aniSet);
+		if (it != imageSetMap.end())
+			newAniSet = replaceFirst(aniSet, it->first, replaceFirst(it->second, "IMAGES", "ANIS"));
+
+		if (newAniSet.empty())
+			newAniSet = aniSet;
+
+		newAniSet = updatePath(newAniSet);
+		if (newAniSet == "LEVEL12/ANIS/KINGAQUATIS")
+			newAniSet = "LEVEL12/ANIS/AQUATIS";
+		data[ANIMATION_SET][aniSet] = newAniSet;
+	}
+
+	return data[ANIMATION_SET][aniSet];
+}
+string PathManager::getAnimationPath(const string& path)
+{
+	if (data[ANIMATION].count(path) == 0)
+	{
+		string newPath = getAnimationSetPath(path);
 		// TODO: hack - something else
-		if (path == "LEVEL1/ANIS/MANICALS/MANICAL.ANI" || path == "LEVEL1/ANIS/MANICALS/M.ANI")
-		{
-			path = "LEVEL1/ANIS/MANICLES/MANICAL.ANI";
-		}
+		if (newPath == "LEVEL1/ANIS/MANICALS/MANICAL" || newPath == "LEVEL1/ANIS/MANICALS/M")
+			newPath = "LEVEL1/ANIS/MANICLES/MANICAL";
 
-		data[ANIMATION][_path] = path;
+		data[ANIMATION][path] = newPath + ".ANI";
 	}
 
-	return data[ANIMATION][_path];
+	return data[ANIMATION][path];
 }
-string PathManager::getSoundFilePath(const string& _path)
+string PathManager::getSoundFilePath(const string& path)
 {
-	if (data[SOUND].count(_path) == 0)
+	if (data[SOUND].count(path) == 0)
 	{
-		string path(_path);
+		string newPath;
 
 		// TODO: hack - something else
 		if (imageSetMap["LEVEL"] == "LEVEL1" && path == "LEVEL_AMBIENT_ANGVIL")
 		{
-			path = "LEVEL_AMBIENT_ANVIL";
+			newPath = "LEVEL_AMBIENT_ANVIL";
 		}
 		else if (imageSetMap["LEVEL"] == "LEVEL3_IMAGES")
 		{
 			if (path == "LEVEL_TRIGGER_1013")
-			{
-				path = "LEVEL_TRIGGER_1012";
-			}
+				newPath = "LEVEL_TRIGGER_1012";
 			else if (path == "LEVEL_TRIGGER_BIRDCALL2")
-			{
-				path = "LEVEL_AMBIENT_BIRDCALL2";
-			}
+				newPath = "LEVEL_AMBIENT_BIRDCALL2";
 		}
 
-		path = replaceFirst(path, "CLAW", "CLAW/SOUNDS");
+		if (newPath.empty())
+			newPath = path;
 
-		for (const auto& [prefix, imageSet] : imageSetMap)
-			if (startsWith(path, prefix + '_'))
-			{
-				path = replaceFirst(path, prefix, replaceFirst(imageSet, "IMAGES", "SOUNDS"));
-				break;
-			}
+		newPath = replaceFirst(newPath, "CLAW", "CLAW/SOUNDS");
 
-		path = replaceString(path, '_', '/');
-		data[SOUND][_path] = path + ".WAV";
+		auto it = findImageSet(newPath);
+		if (it != imageSetMap.end())
+			newPath = replaceFirst(newPath, it->first, replaceFirst(it->second, "IMAGES", "SOUNDS"));
+
+		data[SOUND][path] = updatePath(newPath) + ".WAV";
 	}
 
-	return data[SOUND][_path];
+	return data[SOUND][path];
 }
-string PathManager::getBackgroundMusicFilePath(const string& _path)
+string PathManager::getBackgroundMusicFilePath(const string& path)
 {
-	if (data[BACKGROUND_MUSIC].count(_path) == 0)
+	if (data[BACKGROUND_MUSIC].count(path) == 0)
 	{
-		string path(_path);
+		string newPath;
 
-		for (const auto& [prefix, imageSet] : imageSetMap)
-			if (startsWith(path, prefix + '_'))
-			{
-				path = replaceFirst(path, prefix, replaceFirst(imageSet, "IMAGES", "MUSIC"));
-				break;
-			}
+		auto it = findImageSet(path);
+		if (it == imageSetMap.end())
+			newPath = path;
+		else
+			newPath = replaceFirst(path, it->first, replaceFirst(it->second, "IMAGES", "MUSIC"));
 
-		path = replaceString(path, '_', '/');
-		data[BACKGROUND_MUSIC][_path] = path + ".XMI";
+		data[BACKGROUND_MUSIC][path] = updatePath(newPath) + ".XMI";
 	}
 
-	return data[BACKGROUND_MUSIC][_path];
+	return data[BACKGROUND_MUSIC][path];
 }
 
 string PathManager::getItemPath(int type, const string& imageSet)
@@ -255,4 +249,11 @@ string PathManager::getItemPath(int type, const string& imageSet)
 int PathManager::getItemType(const string& imageSet)
 {
 	return ItemsMap.at(imageSet);
+}
+
+map<string, string>::iterator PathManager::findImageSet(const string& imageSet)
+{
+	return find_if(imageSetMap.begin(), imageSetMap.end(),
+		[&](const pair<string, string>& p) { return startsWith(imageSet, p.first + '_'); }
+	);
 }

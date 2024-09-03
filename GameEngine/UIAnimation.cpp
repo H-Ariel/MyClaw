@@ -75,6 +75,7 @@ void UIAnimation::updateImageData() const
 {
 	_images[_currImgIdx]->image->position = position;
 	_images[_currImgIdx]->image->mirrored = mirrored;
+	_images[_currImgIdx]->image->upsideDown = upsideDown;
 	_images[_currImgIdx]->image->opacity = opacity;
 }
 void UIAnimation::reset()
@@ -82,6 +83,7 @@ void UIAnimation::reset()
 	_currImgIdx = 0;
 	_isFinishAnimation = false;
 	mirrored = false;
+	upsideDown = false;
 	updateFrames = true;
 	loopAni = true;
 	opacity = 1;
