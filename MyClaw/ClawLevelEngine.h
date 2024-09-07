@@ -4,7 +4,6 @@
 #include "LevelHUD.h"
 
 
-class CheatsManager;
 class LevelPlane;
 
 struct ClawLevelEngineFields
@@ -16,7 +15,6 @@ struct ClawLevelEngineFields
 	vector<shared_ptr<LevelPlane>> _planes;
 	D2D1_POINT_2F* _mainPlanePosition;
 	LevelHUD* _hud;
-	CheatsManager* _cheatsManager;
 	ColorF _saveBgColor;
 	float _saveWindowScale;
 };

@@ -5,13 +5,15 @@
 
 shared_ptr<Player> BasePlaneObject::player;
 shared_ptr<PhysicsManager> BasePlaneObject::physics;
+shared_ptr<CheatsManager> BasePlaneObject::cheats;
 
 
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)
 	: UIBaseElement({ (float)obj.x, (float)obj.y }),
 	logicZ(obj.z), drawZ(obj.z), removeObject(false), _ani(nullptr),
 	_isMirrored(obj.drawFlags & WwdObject::Mirror),
-	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)) {}
+	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)),
+	_upsideDown(obj.drawFlags & WwdObject::Invert) {}
 void BasePlaneObject::Draw()
 {
 	if (_isVisible && _ani)

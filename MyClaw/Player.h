@@ -16,6 +16,7 @@ class Player : public BaseCharacter // The legendary Captain Claw !
 {
 public:
 	Player();
+	~Player();
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
@@ -72,10 +73,7 @@ public:
 	void squeeze(D2D1_POINT_2F pos, bool mirror = false);
 	void unsqueeze();
 
-	void cheat(int cheatType);
-
-	bool isSuperStrongCheat() const { return _isSuperStrongCheat; }
-	bool isFlyingCheat() const { return _isFlyingCheat; }
+	bool cheat(int cheatType); // return `true` if the cheat is activated
 
 
 	D2D1_POINT_2F startPosition;
@@ -134,5 +132,4 @@ private:
 	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _spacePressed, _altPressed, _zPressed;
 	bool _leftCollision, _rightCollision, _isOnLadder, _useWeapon;
 	bool _finishLevel, _isCollideWithLadder, _isOnLadderTop;
-	bool _isSuperStrongCheat, _isFlyingCheat; // used for cheat
 };

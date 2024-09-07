@@ -3,34 +3,50 @@
 #include "Objects/Item.h"
 
 
+#define CHEATS_PREFIX "MP" // Monolith Production (the original game) prefix
+#define CHEATS_PREFIX_SIZE 2
+
+#define MODE_CHANGE_MSG "%s mode is %s"
+
+
 // TODO: add more cheats
 // maybe use the original game's cheats codes
 
 
+// The list of cheats, format: { type, keys, message }
+// NOTE: make sure cheat-code contains only uppercase letters
+// AH - my own cheats. it means Ariel Halili (me) :)
+const vector<tuple<int, const char*, const char*>> CheatsManager::cheatsKeys({
+	{ FireSword		, "HOTSTUFF", "Fire sword rules..." },
+	{ IceSword		, "PENGUIN"	, "Ice sword rules..." },
+	{ LightningSword, "FRANKLIN", "Lightning sword rules..." },
+	{ Catnip		, "FREAK"	, "Catnip...Yummy!" },
+	{ Invisibility	, "CASPER"	, "Now you see me... now you dont!" },
+	{ Invincibility	, "VADER"	, "Sticks and stones won't break my bones..." },
+	{ FillHealth	, "APPLE"	, "Full Health" },
+	{ FillPistol	, "LOADED"	, "Full Ammo" },
+	{ FillMagic		, "GANDOLF"	, "Full Magic" },
+	{ FillDynamite	, "BLASTER"	, "Full Dynamite" },
+	{ FillLife		, "AHCAKE"	, "Full Life" },
+	{ FinishLevel	, "SCULLY"	, "Finish Level" },
+	{ GodMode		, "KFA"		, MODE_CHANGE_MSG },
+	{ EasyMode		, "EASYMODE", MODE_CHANGE_MSG },
+	{ SuperStrong	, "BUNZ"	, MODE_CHANGE_MSG },
+	{ Flying		, "FLY"		, MODE_CHANGE_MSG },
+	{ SuperJump		, "JORDAN"	, MODE_CHANGE_MSG },
+	{ BgMscSpeedUp	, "MAESTRO"	, "Time to speed things up!" },
+	{ BgMscSlowDown	, "LANGSAM"	, "Ready to slow things down?" },
+	{ BgMscNormal	, "NORMALMUSIC", "Back to normal..." }
+	});
+
+
 CheatsManager::CheatsManager()
-	: cheatKeys({
-		{ FireSword		, "MPHOTSTUFF"	, "Fire sword rules..." },
-		{ IceSword		, "MPPENGUIN"	, "Ice sword rules..." },
-		{ LightningSword, "MPFRANKLIN"	, "Lightning sword rules..." },
-		{ Catnip		, "MPFREAK"		, "Catnip...Yummy!" },
-		{ Invisibility	, "MPCASPER"	, "Now you see me...now you dont!" },
-		{ Invincibility	, "MPVADER"		, "Sticks and stones won't break my bones..." },
-		{ FillHealth	, "MPAPPLE"		, "Full Health" },
-		{ FillPistol	, "MPLOADED"	, "Full Ammo" },
-		{ FillMagic		, "MPGANDOLF"	, "Full Magic" },
-		{ FillDynamite	, "MPBLASTER"	, "Full Dynamite" },
-		{ FillLife		, "AHCAKE"		, "Full Life" },
-		{ FinishLevel	, "MPSCULLY"	, "Finish Level" },
-		{ SuperStrong	, "MPBUNZ"		, "Roids mode is %s" },
-		{ Flying		, "MPFLY"		, "Flying mode is %s" },
-		{ BgMscSpeedUp	, "MPMAESTRO"	, "Time to speed things up!" },
-		{ BgMscSlowDown	, "MPLANGSAM"	, "Ready to slow things down?" },
-		{ BgMscNormal	, "MPNORMALMUSIC", "Back to normal..." }
-		})
+	: _god(false), _superStrong(false), _flying(false), _easy(false), _superJump(false)
 {
-	// The list of cheats, format: { type, keys, message }
-	// NOTE: make sure cheat-code contains only uppercase letters
-	// MP - Monolith Production (the original game) ; AH - Ariel Halili (me)
+#ifdef _DEBUG
+	_god = true;
+	_superJump = true;
+#endif
 }
 
 void CheatsManager::addKey(int key)
@@ -57,13 +73,19 @@ void CheatsManager::addKey(int key)
 	case FillMagic:
 	case FillDynamite:
 	case FillLife:
-	case FinishLevel:
-	case SuperStrong:
+	case FinishLevel:	BasePlaneObject::player->cheat(type); break;
+		//	case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
+		//	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
+		//	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
+
+	case GodMode:		_god = !_god; break;
+	case EasyMode:		_easy = !_easy; break;
+	case SuperStrong:	_superStrong = !_superStrong; break;
 	case Flying:
-		BasePlaneObject::player->cheat(type); break;
-//	case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
-//	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
-//	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
+		if (BasePlaneObject::player->cheat(type)) // try to enable flying mode
+			_flying = !_flying;
+		break;
+	case SuperJump:		_superJump = !_superJump; break;
 
 	default: break;
 	}
@@ -71,39 +93,33 @@ void CheatsManager::addKey(int key)
 
 int CheatsManager::getCheatType()
 {
-	size_t keysSize = keys.size();
+	int keysSize = (int)keys.size() - CHEATS_PREFIX_SIZE;
 
-	for (const auto& [type, cheatKeys, msg] : cheatKeys)
-	{
-		size_t cheatKeysSize = strlen(cheatKeys);
+	// check if keys starts with the prefix
+	if (keysSize <= 0 || strncmp(keys.data(), CHEATS_PREFIX, CHEATS_PREFIX_SIZE))
+		return Types::None;
 
-		if (keysSize >= cheatKeysSize)
-		{
-			bool match = true;
-			for (int i = 0; match && i < cheatKeysSize; i++)
-				match = (keys[keysSize - i - 1] == cheatKeys[cheatKeysSize - i - 1]);
+	for (const auto& [type, cheatKey, msg] : cheatsKeys) {
+		size_t cheatKeySize = strlen(cheatKey);
 
-			if (match)
-			{
-				keys.clear();
-
-				string msgToWrite;
-				if (type == SuperStrong) {
-					char temp[32] = {};
-					sprintf(temp, msg, BasePlaneObject::player->isSuperStrongCheat() ? "off" : "on");
-					msgToWrite = temp;
+		if (keysSize == cheatKeySize && !strncmp(&keys[2], cheatKey, cheatKeySize)) {
+			keys.clear();
+			char temp[32] = {};
+			if (msg == MODE_CHANGE_MSG) {
+				bool status = false;
+				const char* mode = nullptr;
+				switch (type) {
+				case GodMode:		status = _god;			mode = "God";		break;
+				case EasyMode:		status = _easy;			mode = "Easy";		break;
+				case SuperStrong:	status = _superStrong;	mode = "Roids";		break;
+				case Flying:		status = _flying;		mode = "Flying";	break;
+				case SuperJump:		status = _superJump;	mode = "Super Jump"; break;
+				default: mode = "<Unknown>"; break;
 				}
-				else if (type == Flying) {
-					char temp[32] = {};
-					sprintf(temp, msg, BasePlaneObject::player->isFlyingCheat() ? "off" : "on");
-					msgToWrite = temp;
-				}
-				else
-					msgToWrite = msg;
-
-				ActionPlane::writeMessage(msgToWrite);
-				return type;
+				sprintf(temp, msg, mode, status ? "off" : "on");
 			}
+			ActionPlane::writeMessage(temp[0] ? temp : msg);
+			return type;
 		}
 	}
 

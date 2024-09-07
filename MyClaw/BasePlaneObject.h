@@ -8,6 +8,7 @@
 
 class Player;
 class PhysicsManager;
+class CheatsManager;
 
 
 // the base class for all objects that are used in the game
@@ -41,10 +42,11 @@ public:
 
 	static shared_ptr<Player> player;
 	static shared_ptr<PhysicsManager> physics;
+	static shared_ptr<CheatsManager> cheats;
 
 protected:
 	shared_ptr<UIAnimation> _ani;
-	bool _isMirrored, _isVisible;
+	bool _isMirrored, _isVisible, _upsideDown;
 };
 
 

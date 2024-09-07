@@ -37,12 +37,10 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
 
 	if (!_mainPlanePosition) throw Exception("no main plane found"); // should never happen
 	_hud = DBG_NEW LevelHUD(_mainPlanePosition);
-	_cheatsManager = DBG_NEW CheatsManager();
 }
 ClawLevelEngineFields::~ClawLevelEngineFields()
 {
 	delete _hud;
-	delete _cheatsManager;
 }
 
 
@@ -347,7 +345,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 {
 	if (key == 0xFF) return; // `Fn` key
 
-	_fields->_cheatsManager->addKey(key);
+	BasePlaneObject::cheats->addKey(key);
 
 	switch (key)
 	{

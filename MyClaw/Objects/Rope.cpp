@@ -1,5 +1,6 @@
 #include "Rope.h"
 #include "../Player.h"
+#include "../CheatsManager.h"
 
 
 #define RECT_OFFSET 5
@@ -47,7 +48,7 @@ void Rope::Logic(uint32_t elapsedTime)
 	_edgePos.x = position.x + offset.x;
 	_edgePos.y = position.y + offset.y;
 
-	if (!player->isJumping() && player->GetRect().intersects(GetRect()))
+	if (!player->isJumping() && player->GetRect().intersects(GetRect()) && !cheats->isFlying())
 	{
 		player->rope = this;
 	}

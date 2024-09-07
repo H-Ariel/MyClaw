@@ -16,7 +16,7 @@ PhysicsManager::PhysicsManager(WapWwd* wwd, const LevelPlane* plane)
 
 	WwdTileDescription tileDesc;
 	Rectangle2D tileRc;
-	int i, j;
+	uint32_t i, j;
 	float x1, x2, y1, y2;
 
 	// add rectangle to list and merge it with previous rectangle if possible

@@ -1,4 +1,5 @@
 #include "Pegs.h"
+#include "../CheatsManager.h"
 
 
 void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<UIAnimation> ani)
@@ -86,6 +87,18 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 		return;
 	}
 
+	if (cheats->isEasyMode()) {
+ 		size_t idx = _ani->getFrameNumber() * 4, framesAmount = _ani->getImagesCount();
+ 		if (idx <= framesAmount || framesAmount * 3 <= idx)
+ 		{
+			if(_ani->isFinishAnimation())
+			_ani->updateFrames = false;
+ 			tryCatchPlayer();
+ 		}
+
+		// TODO: when enable easy-mode and then desable it, the pegs will not work
+	}
+
 	_ani->Logic(elapsedTime);
 	pegTryCatchPlayer(this, _ani);
 }
@@ -141,7 +154,7 @@ void CrumblingPeg::Logic(uint32_t elapsedTime)
 		return; // the object is not used
 
 	if (!_ani->isPassedHalf() && tryCatchPlayer())
-		_ani->updateFrames = true;
+		_ani->updateFrames = !cheats->isEasyMode();
 
 	_ani->Logic(elapsedTime);
 }

@@ -21,11 +21,9 @@
 
 #ifdef _DEBUG // move fast in debug mode
 #undef SpeedX_Normal
+#define SpeedX_Normal	SpeedX_SuperSpeed
 #undef SpeedY_Climb
-#undef SpeedY_RegularJump
-#define SpeedX_Normal		SpeedX_SuperSpeed
-#define SpeedY_Climb		SpeedY_SuperClimb
-#define SpeedY_RegularJump	SpeedY_SuperJump
+#define SpeedY_Climb	SpeedY_SuperClimb
 #endif
 
 #define EXCLAMATION_MARK	_animations["exclamation-mark"] // it used when claw is speaking
@@ -53,6 +51,10 @@
 	_powerupLeftTime += item->getDuration(); \
 	_currPowerup = Item:: t; \
 	return true; }
+
+
+#define loseHealth(damage) if (_currPowerup != Item::Powerup_Invincibility && !cheats->isGodMode()) _health -= damage;
+
 
 #define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
 
@@ -130,9 +132,11 @@ int Player::WeaponsAmount::operator[](ClawProjectile::Types type) const
 Player::Player()
 	: BaseCharacter({}), _currWeapon(ClawProjectile::Types::Pistol),
 	_finishLevel(false), _powerupSparkles(&_saveCurrRect),
-	_weaponsAmount(10, 5, 3), startPosition({}),
-	_isSuperStrongCheat(false), _isFlyingCheat(false)
+	_weaponsAmount(10, 5, 3), startPosition({})
 {
+	cheats = make_shared<CheatsManager>(); // the cheats manager is for all objects, but but actually it is for the user
+
+
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_lives = 6;
 	_score = 0;
@@ -159,12 +163,15 @@ Player::Player()
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/450.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/451.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/452.PID"))
-		}));
+	}));
+}
+Player::~Player() {
+	cheats = nullptr; // when reset the game, the cheats manager should be reset too
 }
 
 void Player::Logic(uint32_t elapsedTime)
 {
-	if (_isFlyingCheat) {
+	if (cheats->isFlying()) {
 		if (_upPressed) position.y -= elapsedTime;
 		if (_downPressed) position.y += elapsedTime;
 		if (_leftPressed) position.x -= elapsedTime;
@@ -530,14 +537,7 @@ void Player::Logic(uint32_t elapsedTime)
 		}
 		else if (goLeft || goRight)
 		{
-			if (_raisedPowderKeg)
-			{
-				_aniName = "LIFTWALK";
-			}
-			else
-			{
-				_aniName = "WALK";
-			}
+			_aniName = _raisedPowderKeg ? "LIFTWALK" : "WALK";
 		}
 		else if (_aniName != "JUMP")
 		{
@@ -570,13 +570,9 @@ void Player::Logic(uint32_t elapsedTime)
 					// TODO: throw enemies
 				}
 			}
-			else if (_raisedPowderKeg)
-			{
-				_aniName = "LIFT2";
-			}
 			else
 			{
-				_aniName = "STAND";
+				_aniName = _raisedPowderKeg ? "LIFT2" : "STAND";
 			}
 		}
 
@@ -792,12 +788,12 @@ void Player::calcAttackRect()
 		|| _currPowerup == Item::Powerup_FireSword
 		|| _currPowerup == Item::Powerup_IceSword
 		|| _currPowerup == Item::Powerup_LightningSword
-		|| _isSuperStrongCheat) ? 100 : damage };
+		|| cheats->isSuperStrong()) ? 1000 : damage }; // 1000 so CC defeats even the strongest bosses
 }
 
 void Player::stopFalling(float collisionSize)
 {
-	if (_isFlyingCheat) return;
+	if (cheats->isFlying()) return;
 
 	BaseCharacter::stopFalling(collisionSize);
 	if (speed.x == 0 && !isDuck() && !isStanding() && !_isAttack && !isWeaponAnimation())
@@ -812,7 +808,7 @@ void Player::stopFalling(float collisionSize)
 }
 void Player::stopMovingLeft(float collisionSize)
 {
-	if (_isFlyingCheat) return;
+	if (cheats->isFlying()) return;
 
 	if (isClimbing()) return;
 	if (speed.x != 0)
@@ -825,7 +821,7 @@ void Player::stopMovingLeft(float collisionSize)
 }
 void Player::stopMovingRight(float collisionSize)
 {
-	if (_isFlyingCheat) return;
+	if (cheats->isFlying()) return;
 
 	if (isClimbing()) return;
 	if (speed.x != 0)
@@ -838,11 +834,8 @@ void Player::stopMovingRight(float collisionSize)
 }
 void Player::whenTouchDeath()
 {
-	if (_isFlyingCheat) return;
-
-#ifndef _DEBUG // in debug mode CC can't die
-	player->loseLife();
-#endif
+	if (!cheats->isGodMode() && !cheats->isFlying())
+		loseLife();
 }
 void Player::jump(float force)
 {
@@ -855,7 +848,7 @@ void Player::jump(float force)
 }
 void Player::jump()
 {
-	if (_currPowerup == Item::Powerup_Catnip)
+	if (_currPowerup == Item::Powerup_Catnip || cheats->isSuperJump())
 		jump(SpeedY_SuperJump);
 	else
 		jump(SpeedY_RegularJump);
@@ -1010,7 +1003,7 @@ void Player::backToLife()
 	elevator = nullptr;
 	rope = nullptr;
 	_health = 100;
-	if (!_isFlyingCheat) {
+	if (!cheats->isFlying()) {
 		_aniName = "STAND";
 		_ani = _animations["STAND"];
 	}
@@ -1130,7 +1123,7 @@ void Player::keyDown(int key)
 
 	switch (key)
 	{
-	case VK_UP:		if ((!_useWeapon && !_isAttack && !_altPressed && !rope && !_raisedPowderKeg) || _isFlyingCheat) _upPressed = true; break;
+	case VK_UP:		if (!_useWeapon && !_isAttack && !_altPressed && !rope && !_raisedPowderKeg) _upPressed = true; break;
 	case VK_DOWN:	if (!rope && !_raisedPowderKeg) _downPressed = true; break;
 	case VK_LEFT:	_leftPressed = true; break;
 	case VK_RIGHT:	_rightPressed = true; break;
@@ -1145,11 +1138,7 @@ void Player::keyDown(int key)
 
 bool Player::checkForHurts()
 {
-#ifdef _DEBUG
-	return false; // no damage in debug mode
-#endif
-
-	if (_isAttack || isTakeDamage() || _damageRest > 0 || _currPowerup == Item::Powerup_Invincibility)
+	if (_isAttack || isTakeDamage() || _damageRest > 0 || _currPowerup == Item::Powerup_Invincibility || cheats->isGodMode())
 		return false;
 
 	pair<Rectangle2D, int> atkRc;
@@ -1167,7 +1156,7 @@ bool Player::checkForHurts()
 				if (!damageRc.isEmpty())
 				{
 					_lastAttackRect = atkRc.first;
-					_health -= atkRc.second;
+					loseHealth(atkRc.second);
 
 					// draw damage animation
 					OneTimeAnimation* ani = DBG_NEW OneTimeAnimation({
@@ -1194,7 +1183,7 @@ bool Player::checkForHurts()
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{
-				_health -= p->getDamage();
+				loseHealth(p->getDamage());
 				p->removeObject = true;
 				return true;
 			}
@@ -1203,7 +1192,7 @@ bool Player::checkForHurts()
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{
-				_health -= p->getDamage();
+				loseHealth(p->getDamage());
 				return true;
 			}
 		}
@@ -1215,7 +1204,7 @@ bool Player::checkForHurts()
 				{
 					if (_saveCurrRect.intersects(damageRc))
 					{
-						_health -= damage;
+						loseHealth(damage);
 						_lastAttackRect = damageRc;
 						return true;
 					}
@@ -1231,7 +1220,7 @@ bool Player::checkForHurts()
 		{
 			if (_saveCurrRect.intersects(damageRc))
 			{
-				_health -= damage;
+				loseHealth(damage);
 				_lastAttackRect = damageRc;
 				return true;
 			}
@@ -1243,7 +1232,7 @@ bool Player::checkForHurts()
 		if ((damage = obj->getDamage()) > 0)
 			if (_saveCurrRect.intersects(obj->GetRect()))
 			{
-				_health -= damage;
+				loseHealth(damage);
 				return true;
 			}
 	}
@@ -1275,7 +1264,7 @@ void Player::unsqueeze()
 }
 #endif
 
-void Player::cheat(int cheatType)
+bool Player::cheat(int cheatType)
 {
 	switch (cheatType)
 	{
@@ -1285,14 +1274,26 @@ void Player::cheat(int cheatType)
 	case CheatsManager::FillMagic:		_weaponsAmount.magic = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FillDynamite:	_weaponsAmount.dynamite = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FinishLevel:	_finishLevel = true; break;
-	case CheatsManager::SuperStrong:	_isSuperStrongCheat = !_isSuperStrongCheat; break;
 	case CheatsManager::Flying:
-		_isFlyingCheat = !_isFlyingCheat;
-		if (_isFlyingCheat)
-			_ani = _animations["FLYING-CHEAT"];
-		else
-			_ani = _animations["STAND"];
-		_saveCurrAttackRect = {}; // cancel attack
+		if (_raisedPowderKeg) return false; // CC can't fly when he lifts a keg
+		_aniName = "FLYING-CHEAT" ;
+		_ani = _animations[_aniName];
+		// cancel all actions
+		_isAttack = false;
+		_saveCurrAttackRect = {};
+		_lastAttackRect = {};
+		_freezeTime = false;
+		_useWeapon = false;
+		_altPressed = false;
+		_zPressed = false;
+		_holdAltTime = 0;
+		_damageRest = 0;
+		_leftCollision= false;
+		_rightCollision = false;
+		elevator = nullptr;
+		rope = nullptr;
 		break;
 	}
+
+	return true;
 }

@@ -21,8 +21,11 @@ public:
 		FillDynamite,
 		FillLife,
 		FinishLevel,
+		GodMode,
+		EasyMode,
 		SuperStrong,
 		Flying,
+		SuperJump,
 		BgMscSpeedUp,
 		BgMscSlowDown,
 		BgMscNormal,
@@ -32,10 +35,17 @@ public:
 
 	void addKey(int key);
 
+	bool isGodMode() const { return _god; }
+	bool isEasyMode() const { return _easy; }
+	bool isSuperStrong() const { return _superStrong; }
+	bool isFlying() const { return _flying; }
+	bool isSuperJump() const { return _superJump; }
+
 private:
 	int getCheatType();
 	void addPowerup(int8_t powerupType);
 
+	static const vector<tuple<int, const char*, const char*>> cheatsKeys; // cheat keys list
 	vector<char> keys; // keys pressed
-	const vector<tuple<int, const char*, const char*>> cheatKeys;
+	bool _god, _easy, _superStrong, _flying, _superJump;
 };
