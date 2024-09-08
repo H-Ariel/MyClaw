@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AniFile.cpp" />
+    <ClCompile Include="IfcFile.cpp" />
     <ClCompile Include="Miniz.cpp" />
     <ClCompile Include="PalFile.cpp" />
     <ClCompile Include="PcxFile.cpp" />
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AniFile.h" />
+    <ClInclude Include="IfcFile.h" />
     <ClInclude Include="Miniz.h" />
     <ClInclude Include="PalFile.h" />
     <ClInclude Include="PcxFile.h" />

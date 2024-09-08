@@ -35,6 +35,9 @@
     <ClCompile Include="XmiFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IfcFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AniFile.h">
@@ -59,6 +62,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="XmiFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IfcFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

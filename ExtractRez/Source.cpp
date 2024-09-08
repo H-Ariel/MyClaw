@@ -1,4 +1,10 @@
-#include "RezParser/libwap.h"
+#include "RezParser/RezArchive.h"
+#include "RezParser/PidFile.h"
+#include "RezParser/PcxFile.h"
+#include "RezParser/AniFile.h"
+#include "RezParser/WwdFile.h"
+#include "RezParser/XmiFile.h"
+#include "RezParser/IfcFile.h"
 #include "lodepng.h"
 #include "json.hpp"
 
@@ -52,10 +58,8 @@ static void savePcxFile(RezFile* file)
 }
 static void saveXmiFile(RezFile* file)
 {
-	MidiFile md(file->getFileData());
-	saveRaw(file->getFullPath() + ".midi", md.data);
+	saveRaw(file->getFullPath() + ".midi", MidiFile(file->getFileData()).data);
 }
-
 static void saveAniFile(RezFile* file)
 {
 	auto b = file->getBufferReader();
@@ -81,7 +85,6 @@ static void saveAniFile(RezFile* file)
 
 	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << j.dump(2);
 }
-
 static void saveWwdFile(RezFile* file)
 {
 	json j;
@@ -144,7 +147,21 @@ static void saveWwdFile(RezFile* file)
 
 	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << j.dump(2);
 }
+static json menuDataToJson(MenuData menuData) {
+	vector<json> subMenus;
+	for (const MenuData m : menuData.subMenus)
+		subMenus.push_back(menuDataToJson(m));
 
+	return json({
+		{ "name", menuData.name },
+		{ "images", menuData.images },
+		{ "magicNumber", menuData.magicNumber },
+		{ "subMenus", subMenus }
+	});
+}
+static void saveIfcFile(RezFile* file) {
+	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << menuDataToJson(MenuData(file->getBufferReader())).dump(2);
+}
 
 static set<string> notImpletedTypes;
 
@@ -169,7 +186,11 @@ static void loadDirectory(RezDirectory* dir, WapPal* pal)
 			else if (strcmp(file->extension, "TXT") == 0) saveRaw(file);
 			else if (strcmp(file->extension, "ANI") == 0) saveAniFile(file);
 			else if (strcmp(file->extension, "WWD") == 0) saveWwdFile(file);
-			else notImpletedTypes.insert(file->extension);
+			else if (strcmp(file->extension, "IFC") == 0) saveIfcFile(file);
+			else {
+				notImpletedTypes.insert(file->extension);
+				saveRaw(file);
+			}
 		}
 		catch (const Exception& ex)
 		{
