@@ -2,6 +2,7 @@
 #include "EnemyProjectile.h"
 #include "../Player.h"
 #include "../ActionPlane.h"
+#include "../CheatsManager.h"
 
 #define CRATE_HEIGHT 43
 
@@ -74,11 +75,13 @@ vector<BasePlaneObject*> Crate::getItems()
 		{
 			Item* i = Item::getItem(newObj, t);
 			i->speed.y = -0.6f;
+			if (cheats->isMultiTreasures())
+				i->speed.x = getRandomFloat(-0.25f, 0.25f); // treasures are scattered around
 			items.push_back(i);
 		}
 
-		// TODO: add here cheat of infinite-treasures
-		_itemsTypes.clear(); // do not collect them again
+		if (!cheats->isMultiTreasures())
+			_itemsTypes.clear(); // do not collect them again
 	}
 
 	return items;

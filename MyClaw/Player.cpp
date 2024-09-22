@@ -894,7 +894,13 @@ bool Player::collectItem(Item* item)
 	case Item::Treasure_Skull_Purple: {
 		_collectedTreasures[type] += 1;
 		int tScore = item->getTreasureScore();
+		
+		// each 500,000 points CC gets an extra life
+		int lastScoreForExtraLife = _score / 500000;
 		_score += tScore;
+		if (lastScoreForExtraLife < _score / 500000)
+			ADD_LIFE(1);
+
 		int i = 0;
 
 		switch (tScore)

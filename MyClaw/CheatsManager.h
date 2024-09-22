@@ -29,6 +29,7 @@ public:
 		BgMscSpeedUp,
 		BgMscSlowDown,
 		BgMscNormal,
+		MultiTeasures,
 	};
 
 	CheatsManager();
@@ -40,6 +41,7 @@ public:
 	bool isSuperStrong() const { return _superStrong; }
 	bool isFlying() const { return _flying; }
 	bool isSuperJump() const { return _superJump; }
+	bool isMultiTreasures() const { return _multiTreasures; }
 
 private:
 	int getCheatType();
@@ -47,5 +49,5 @@ private:
 
 	static const vector<tuple<int, const char*, const char*>> cheatsKeys; // cheat keys list
 	vector<char> keys; // keys pressed
-	bool _god, _easy, _superStrong, _flying, _superJump;
+	bool _god, _easy, _superStrong, _flying, _superJump, _multiTreasures;
 };

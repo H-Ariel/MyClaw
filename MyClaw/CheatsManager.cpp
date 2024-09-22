@@ -36,12 +36,14 @@ const vector<tuple<int, const char*, const char*>> CheatsManager::cheatsKeys({
 	{ SuperJump		, "JORDAN"	, MODE_CHANGE_MSG },
 	{ BgMscSpeedUp	, "MAESTRO"	, "Time to speed things up!" },
 	{ BgMscSlowDown	, "LANGSAM"	, "Ready to slow things down?" },
-	{ BgMscNormal	, "NORMALMUSIC", "Back to normal..." }
-	});
+	{ BgMscNormal	, "NORMALMUSIC", "Back to normal..." },
+	{ MultiTeasures	, "AHGOLD"	, MODE_CHANGE_MSG } // gives more treasures at crates
+});
 
 
 CheatsManager::CheatsManager()
-	: _god(false), _superStrong(false), _flying(false), _easy(false), _superJump(false)
+	: _god(false), _superStrong(false), _flying(false),
+	_easy(false), _superJump(false), _multiTreasures(false)
 {
 #ifdef _DEBUG
 	_god = true;
@@ -86,6 +88,7 @@ void CheatsManager::addKey(int key)
 			_flying = !_flying;
 		break;
 	case SuperJump:		_superJump = !_superJump; break;
+	case MultiTeasures: _multiTreasures = !_multiTreasures; break;
 
 	default: break;
 	}
@@ -114,6 +117,7 @@ int CheatsManager::getCheatType()
 				case SuperStrong:	status = _superStrong;	mode = "Roids";		break;
 				case Flying:		status = _flying;		mode = "Flying";	break;
 				case SuperJump:		status = _superJump;	mode = "Super Jump"; break;
+				case MultiTeasures: status = _multiTreasures; mode = "Multi Ttreasures"; break;
 				default: mode = "<Unknown>"; break;
 				}
 				sprintf(temp, msg, mode, status ? "off" : "on");
