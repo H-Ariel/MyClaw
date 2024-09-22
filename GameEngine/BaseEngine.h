@@ -30,14 +30,15 @@ public:
 
 
 	D2D1_POINT_2U mousePosition;
-	bool StopEngine;
+	bool stopEngine;
+	bool clearScreen; // if true, the screen will be cleared before drawing each frame
 
 protected:
 	template <class NextEngine, class... Args>
 	void changeEngine(Args... args)
 	{
 		_nextEngine = make_shared<NextEngine>(args...);
-		StopEngine = true;
+		stopEngine = true;
 	}
 
 	vector<UIBaseElement*> _elementsList;

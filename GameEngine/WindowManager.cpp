@@ -99,11 +99,14 @@ void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
 void WindowManager::BeginDraw()
 {
 	instance->_renderTarget->BeginDraw();
-	instance->_renderTarget->Clear(instance->_backgroundColor);
 }
 void WindowManager::EndDraw()
 {
 	instance->_renderTarget->EndDraw();
+}
+void WindowManager::Clear()
+{
+	instance->_renderTarget->Clear(instance->_backgroundColor);
 }
 
 void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)

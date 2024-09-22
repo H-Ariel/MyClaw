@@ -28,6 +28,7 @@ public:
 	static void resizeRenderTarget(D2D1_SIZE_U newSize);
 	static void BeginDraw();
 	static void EndDraw();
+	static void Clear(); // fill window with background color
 
 	static void drawRect(Rectangle2D dst, ColorF color, float width = 1);
 	static void fillRect(Rectangle2D dst, ColorF color);

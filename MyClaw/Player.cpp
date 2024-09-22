@@ -1179,7 +1179,7 @@ bool Player::checkForHurts()
 			_freezeTime = 3000; // freeze CC for 3 seconds
 			return false;
 		}
-		else if (isbaseinstance<EnemyProjectile>(p))
+		else if (isinstance<EnemyProjectile>(p))
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{

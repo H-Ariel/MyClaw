@@ -179,6 +179,10 @@ void AudioManager::setVolume(uint32_t id, int volume)
 }
 
 void AudioManager::playFromQueue() {
+#ifdef _DEBUG
+	return; // disable the sound in debug mode
+#endif
+
 	shared_ptr<IAudioPlayer> player;
 	bool inf = false;
 	bool play = false;

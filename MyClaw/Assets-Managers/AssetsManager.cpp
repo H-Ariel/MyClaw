@@ -233,6 +233,19 @@ map<int, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const stri
 		}
 	}
 
+	if (endsWith(planeImagesPath, "BACK")) {
+		// create image for background color
+		ColorF bgF = WindowManager::getBackgroundColor();
+		ColorRGBA bg = {
+			(uint8_t)(bgF.r * 255),
+			(uint8_t)(bgF.g * 255),
+			(uint8_t)(bgF.b * 255),
+			(uint8_t)(bgF.a * 255)
+		};
+		images[EMPTY_TILE] = WindowManager::createImage("LEVEL/BACKGROUND", &bg, 1, 1, 0, 0);
+		images[EMPTY_TILE]->size = { TILE_SIZE, TILE_SIZE };
+	}
+
 	return images;
 }
 

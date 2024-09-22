@@ -44,7 +44,7 @@ void Crate::Logic(uint32_t elapsedTime)
 	 	if (proj != projectiles.end())
 	 	{
 	 		_ani->updateFrames = true;
-	 		if ((*proj)->isClawBullet() || isbaseinstance<EnemyProjectile>(*proj))
+	 		if ((*proj)->isClawBullet() || isinstance<EnemyProjectile>(*proj))
 	 			(*proj)->removeObject = true; // bullets don't keep flying, but magic does
 	 	}
 

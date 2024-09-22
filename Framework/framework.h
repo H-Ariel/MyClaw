@@ -117,8 +117,4 @@ inline void myMemCpy(const T& dst, const T& src) { memcpy((void*)&dst, &src, siz
 
 // check if `p`'s type is `Type`
 template<typename Type, typename V>
-inline bool isinstance(const V* p) { return typeid(*p) == typeid(Type); }
-
-// check if `p`'s base type is `Base`
-template<typename Base, typename V>
-inline bool isbaseinstance(const V* p) { return dynamic_cast<const Base*>(p) != nullptr; }
+inline bool isinstance(const V* p) { return dynamic_cast<const Type*>(p) != nullptr; }

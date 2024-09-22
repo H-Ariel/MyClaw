@@ -4,6 +4,7 @@
 
 
 #define TILE_SIZE 64 // width and height of tile in pixels (by default)
+#define EMPTY_TILE -1 // empty tile id
 
 
 struct WwdRect

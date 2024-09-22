@@ -227,7 +227,7 @@ bool LeRauxe::checkForHurts()
 {
 	for (Projectile* p : ActionPlane::getProjectiles())
 	{
-		if (isbaseinstance<ClawProjectile>(p))
+		if (isinstance<ClawProjectile>(p))
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{

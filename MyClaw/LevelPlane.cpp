@@ -2,6 +2,9 @@
 #include "GameEngine/WindowManager.h"
 
 
+const float STEP_SIZE = TILE_SIZE - 0.6f; // small delta so that there is no space between tiles
+
+
 LevelPlane::LevelPlane(WapWwd* wwd, WwdPlane* wwdPlane)
 	: _wwd(wwd), _wwdPlane(wwdPlane),
 	maxTileIdxX(((wwdPlane->flags & WwdPlane::WwdPlaneFlags_XWrapping) ? INT_MAX : wwdPlane->tilesOnAxisX)),
@@ -13,7 +16,8 @@ void LevelPlane::Draw()
 {
 	shared_ptr<UIBaseImage> img;
 	size_t i;
-	int row, col, tileId, rowTileIndex;
+	int row, col, tileId, rowTileIndex, colTileIndex;
+	float x, y;
 
 	const D2D1_SIZE_F camSz = WindowManager::getCameraSize();
 	const float parallaxCameraPosX = position.x * _wwdPlane->movementPercentX;
@@ -22,21 +26,25 @@ void LevelPlane::Draw()
 	const int startCol = max(int(parallaxCameraPosX / TILE_SIZE) - 1, 0);
 	const int endRow = min(maxTileIdxY, int(camSz.height / TILE_SIZE + 2 + startRow));
 	const int endCol = min(maxTileIdxX, int(camSz.width / TILE_SIZE + 3 + startCol));
+	const float startY = (startRow + 0.5f) * TILE_SIZE - parallaxCameraPosY + position.y;
+	const float startX = (startCol + 0.5f) * TILE_SIZE - parallaxCameraPosX + position.x;
 
 	for (i = 0; i < _objects.size() && _objects[i]->drawZ < _wwdPlane->coordZ; i++)
 		_objects[i]->Draw();
 
-	for (row = startRow; row < endRow; row++)
+	for (row = startRow, y = startY; row < endRow; row++, y += STEP_SIZE)
 	{
 		rowTileIndex = row % _wwdPlane->tilesOnAxisY;
-		for (col = startCol; col < endCol; col++)
+
+		for (col = startCol, x = startX; col < endCol; col++, x += STEP_SIZE)
 		{
-			tileId = _wwdPlane->tiles[rowTileIndex][col % _wwdPlane->tilesOnAxisX];
+			colTileIndex = col % _wwdPlane->tilesOnAxisX;
+			tileId = _wwdPlane->tiles[rowTileIndex][colTileIndex];
 			if (tilesImages.count(tileId))
 			{
 				img = tilesImages.at(tileId);
-				img->position.x = (col + 0.5f) * TILE_SIZE - parallaxCameraPosX + position.x;
-				img->position.y = (row + 0.5f) * TILE_SIZE - parallaxCameraPosY + position.y;
+				img->position.x = x;
+				img->position.y = y;
 				img->Draw();
 
 				/*

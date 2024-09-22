@@ -1,7 +1,7 @@
 #include "BaseEngine.h"
 
 
-BaseEngine::BaseEngine() : mousePosition({}), StopEngine(false) {}
+BaseEngine::BaseEngine() : mousePosition({}), stopEngine(false), clearScreen(false) {}
 BaseEngine::~BaseEngine() {}
 
 void BaseEngine::OnKeyUp(int key) {}
@@ -23,6 +23,6 @@ void BaseEngine::Draw()
 
 shared_ptr<BaseEngine> BaseEngine::getNextEngine()
 {
-	StopEngine = false;
+	stopEngine = false;
 	return _nextEngine;
 }

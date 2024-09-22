@@ -129,7 +129,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 				physics->checkCollides(player.get());
 			}
 		}
-		else if (isbaseinstance<BaseEnemy>(obj) || isbaseinstance<Projectile>(obj)
+		else if (isinstance<BaseEnemy>(obj) || isinstance<Projectile>(obj)
 			|| (isinstance<PowderKeg>(obj) && !((PowderKeg*)obj)->isExplode())
 			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
 			|| isinstance<GabrielRedTailPirate>(obj))
@@ -140,7 +140,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 		{
 			_objects += ((StackedCrates*)obj)->getItems();
 		}
-		else if (isbaseinstance<Crate>(obj))
+		else if (isinstance<Crate>(obj))
 		{
 			Crate* crate = (Crate*)obj;
 			if (crate->isBreaking())
@@ -154,16 +154,16 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 		if (obj->removeObject)
 		{
-			if (isbaseinstance<BaseEnemy>(obj))
+			if (isinstance<BaseEnemy>(obj))
 			{
 				eraseByValue(_enemies, obj);
-				if (isbaseinstance<BaseBoss>(obj))
+				if (isinstance<BaseBoss>(obj))
 				{
 					_boss = nullptr;
 					_isInBoss = false;
 				}
 			}
-			else if (isbaseinstance<Projectile>(obj))
+			else if (isinstance<Projectile>(obj))
 			{
 				if (isinstance<Stalactite>(obj))
 				{
@@ -175,7 +175,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			}
 			else if (isinstance<PowderKeg>(obj))
 				eraseByValue(_powderKegs, obj);
-			else if (isbaseinstance<BaseDamageObject>(obj))
+			else if (isinstance<BaseDamageObject>(obj))
 				eraseByValue(_damageObjects, obj);
 			else if (isinstance<Warp>(obj) && obj == Warp::DestinationWarp)
 			{
@@ -661,8 +661,8 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 {
 	//if (obj == nullptr) return;
 	_instance->_objects.push_back(obj); // don't insert in middle because some of the object add new objects in their destructor
-	if (isbaseinstance<Projectile>(obj)) _instance->_projectiles.push_back((Projectile*)obj);
-	else if (isbaseinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
+	if (isinstance<Projectile>(obj)) _instance->_projectiles.push_back((Projectile*)obj);
+	else if (isinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
 }
 void ActionPlane::resetObjects()
 {
@@ -689,11 +689,11 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 	for (BasePlaneObject* obj : _instance->_bossObjects)
 	{
 		_instance->_objects.push_back(obj);
-		if (isbaseinstance<BaseEnemy>(obj))
+		if (isinstance<BaseEnemy>(obj))
 			_instance->_enemies.push_back((BaseEnemy*)obj);
-		else if (isbaseinstance<Projectile>(obj))
+		else if (isinstance<Projectile>(obj))
 			_instance->_projectiles.push_back((Projectile*)obj);
-		else if (isbaseinstance<BaseDamageObject>(obj))
+		else if (isinstance<BaseDamageObject>(obj))
 			_instance->_damageObjects.push_back((BaseDamageObject*)obj);
 	}
 	_instance->_bossObjects.clear();

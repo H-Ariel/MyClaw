@@ -43,7 +43,7 @@ void BaseApp::run()
 
 	_runApp = true;
 
-	while (_runApp && _pEngine && !_pEngine->StopEngine)
+	while (_runApp && _pEngine && !_pEngine->stopEngine)
 	{
 		end = chrono::steady_clock::now();
 		elapsedTime = (uint32_t)chrono::duration_cast<chrono::milliseconds>(end - begin).count();
@@ -74,7 +74,7 @@ void BaseApp::run()
 
 		_pEngine->Logic(min(elapsedTime, MAX_ITER_TIME));
 		
-		if (_pEngine->StopEngine)
+		if (_pEngine->stopEngine)
 		{
 			_pEngine = _pEngine->getNextEngine();
 			if (_pEngine == nullptr)
@@ -86,6 +86,8 @@ void BaseApp::run()
 		}
 
 		WindowManager::BeginDraw();
+		if (_pEngine->clearScreen)
+			WindowManager::Clear();
 		_pEngine->Draw();
 		WindowManager::EndDraw();
 	}
@@ -139,7 +141,7 @@ void BaseApp::registerMyWindowClass(WNDPROC wndproc)
 	wcex.lpfnWndProc = wndproc ? wndproc : BaseApp::WndProc;
 	wcex.hInstance = HINST_THISCOMPONENT;
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.hbrBackground = nullptr; // (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszClassName = WINDOW_CLASS_NAME;
 	RegisterClassEx(&wcex);
 	doesClassRegistered = true;

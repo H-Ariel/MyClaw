@@ -233,7 +233,7 @@ bool AquatisTentacle::checkForHurts()
 
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
-			if (isbaseinstance<ClawProjectile>(p))
+			if (isinstance<ClawProjectile>(p))
 			{
 				if (p->isClawDynamite() && p->getDamage() == 0)
 					continue;

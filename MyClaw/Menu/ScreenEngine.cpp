@@ -12,6 +12,7 @@ ScreenEngine::ScreenEngine(const string& bgPcxPath)
 {
 	_bgImg = DBG_NEW MenuBackgroundImage(bgPcxPath.empty() ? DEFAULT_BG_IMAGE : bgPcxPath);
 	_elementsList.push_back(_bgImg);
+	clearScreen = true;
 
 	WindowManager::setWindowOffset({});
 	WindowManager::setBackgroundColor(ColorF::Black);

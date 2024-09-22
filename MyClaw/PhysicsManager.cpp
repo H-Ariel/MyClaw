@@ -7,8 +7,6 @@
 #define _checkCollides_define1(x) if (cumulatedCollision.x == 0) cumulatedCollision.x = collisions[collisionsNumber].x;
 #define _checkCollides_define2(x) if (cumulatedCollision.x != 0) for (cumulatedCollision.x = 0, i = 0; i < collisionsNumber; cumulatedCollision.x = fmax(cumulatedCollision.x, collisions[i++].x));
 
-#define EMPTY_TILE -1
-
 
 PhysicsManager::PhysicsManager(WapWwd* wwd, const LevelPlane* plane)
 {

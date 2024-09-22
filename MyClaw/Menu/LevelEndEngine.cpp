@@ -169,7 +169,7 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 			y = (-230 + 53 * i) / 600.f;
 
 			// draw current treasures
-			item = DBG_NEW MenuItem(treasuresData[i].second, -0.25f, y, {}, _bgImg, this);
+			item = DBG_NEW MenuItem(treasuresData[i].second, "", -0.25f, y, {}, _bgImg, this);
 			item->mulImageSizeRatio(0.75f);
 			_elementsList.push_back((UIBaseImage*)item);
 
@@ -180,7 +180,7 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 			for (j = 0; j < 3; j++)
 			{
-				item = DBG_NEW MenuItem(scorenumbersPaths[digits[j]], x, y, {}, _bgImg, this);
+				item = DBG_NEW MenuItem(scorenumbersPaths[digits[j]], "", x, y, {}, _bgImg, this);
 				item->mulImageSizeRatio(0.75f);
 				_elementsList.push_back((UIBaseImage*)item);
 				x += 0.02f;

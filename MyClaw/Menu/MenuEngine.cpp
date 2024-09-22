@@ -9,13 +9,17 @@
 #include "MenuItem.h"
 
 
+// TODO: mark button when hover it
+// TODO: switch using keyboard (arrows up/down, enter)
+
+
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
 
 MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine({}, nullptr, bgPcxPath) {}
 MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const string& bgPcxPath)
-	: ScreenEngine(bgPcxPath)
+	: ScreenEngine(bgPcxPath), _currMarkedItem(nullptr)
 {
 	mousePosition = mPos;
 
@@ -33,6 +37,12 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		WindowManager::setTitle("Claw");
 
 	function<void(MouseButtons)> onClick;
+
+	// when the menu is SelectLevelMenu we have two columns of buttons
+	const bool isSelectLevelMenu = _currMenu == &HierarchicalMenu::SelectLevelMenu;
+	float xRatio = 0, yRatio = float(isSelectLevelMenu ? _currMenu->subMenus.size() - 7 : _currMenu->subMenus.size()) / -50;
+	float firstYRatio = yRatio;
+	int buttonsCount = 0;
 
 	for (const HierarchicalMenu& m : _currMenu->subMenus)
 	{
@@ -62,7 +72,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 				else if (endsWith(m.pcxPath, "003.PCX")) dir = "LOAD";
 				//else throw Exception("invalid pcx path: " + m.pcxPath);
 				HierarchicalMenu::SelectLevelMenu.subMenus[0].pcxPath = SINGLEPLAYER_ROOT + dir + "/001.PCX";
-			
+
 #ifndef _DEBUG // in debug mode, all levels are available for me :)
 				// check which levels are available and change the menu-buttons accordingly
 				for (int i = 2; i <= 14; i++) // i=2 because level 1 must be available by default
@@ -91,7 +101,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::ExitApp:
 			onClick = [&](MouseButtons) {
 				_nextEngine = nullptr;
-				StopEngine = true;
+				stopEngine = true;
 			};
 			break;
 
@@ -136,7 +146,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		default:
-			// here we play with bits, string, and paths to get the level number and checkpoint number:
+			// here we play with bits, strings, and paths to get the level number and checkpoint number :)
 
 			if ((m.cmd & HierarchicalMenu::LoadCheckpoint) == HierarchicalMenu::LoadCheckpoint)
 			{
@@ -162,7 +172,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 						char path[64] = {};
 						sprintf(path, LOAD_CHECKPOINT_ROOT "%03d.PCX", level + 10);
 						HierarchicalMenu::SelectCheckpoint.subMenus[0].pcxPath = path;
-						
+
 						// check which checkpoints are available and change the menu-buttons accordingly
 						if (SavedGameManager::canLoadGame(level, 1))
 						{
@@ -184,18 +194,30 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 							HierarchicalMenu::SelectCheckpoint.subMenus[3].cmd = HierarchicalMenu::Nop;
 							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "008.PCX";
 						}
-						
+
 						menuIn(&HierarchicalMenu::SelectCheckpoint);
 					}
 				};
 			}
-			
+
 			break;
 		}
 
-		MenuItem* itm = DBG_NEW MenuItem(m.pcxPath, m.xRatio, m.yRatio, onClick, _bgImg, this);
+		if (isSelectLevelMenu) { // find `xRatio` for title / columns
+			if (buttonsCount == 0 || buttonsCount == 15) xRatio = 0;
+			else if (buttonsCount <= 7) xRatio = -0.2f;
+			else xRatio = 0.2f;
+			if (buttonsCount == 8) yRatio = firstYRatio;
+			buttonsCount++;
+		}
+   
+		MenuItem* itm = DBG_NEW MenuItem(m.pcxPath, m.markedPcxPath, xRatio, yRatio, onClick, _bgImg, this);
 		itm->mulImageSizeRatio(1.25f); // magic number to fit image to screen size
-		_elementsList.push_back((UIBaseImage*)itm);
+		_elementsList.push_back(itm);
+		yRatio += itm->size.height / _bgImg->size.height / 2 + 0.04f;
+
+		if (isSelectLevelMenu && buttonsCount == 1)
+			firstYRatio = yRatio; // find the height of the first button (so columns are aligned)
 	}
 
 	if (_cursor)
@@ -215,24 +237,95 @@ MenuEngine::~MenuEngine()
 
 void MenuEngine::Logic(uint32_t elapsedTime) {
 	if (_cursor) _cursor->position = { mousePosition.x + 16.f, mousePosition.y + 17.f };
+	//if (_cursor) _cursor->position = { (float)mousePosition.x + 28.f , (float)mousePosition.y + 28 };
+
 	ScreenEngine::Logic(elapsedTime);
+
+	// check if cursor collide with any button
+	for (UIBaseElement* e : _elementsList)
+	{
+		if (isinstance<MenuItem>(e) && e->GetRect().intersects(_cursor->GetRect()))
+		{
+			_currMarkedItem = (MenuItem*)e;
+			if (!_currMarkedItem->isActive())
+				_currMarkedItem = nullptr;
+			break;
+		}
+	}
+
+	for (UIBaseElement* e : _elementsList)
+	{
+		if (isinstance<MenuItem>(e))
+		{
+			MenuItem* itm = (MenuItem*)e;
+			itm->marked = (itm == _currMarkedItem);
+		}
+	}
 }
 void MenuEngine::OnKeyUp(int key)
 {
 	if (key == VK_ESCAPE)
 	{
-		if (_currMenu == &HierarchicalMenu::MainMenu)
-		{
-			menuIn(&HierarchicalMenu::MainMenu.subMenus[7]); // quit-menu
-		}
-		else if (_currMenu == &HierarchicalMenu::MainMenu.subMenus[7])
-		{
-			menuOut(); // back to main-menu
-		}
-		else if (_currMenu == &HierarchicalMenu::InGameMenu)
-		{
+		if (_currMenu == &HierarchicalMenu::MainMenu) // from main-menu to quit-menu
+			menuIn(&HierarchicalMenu::MainMenu.subMenus[7]);
+		else if (_currMenu == &HierarchicalMenu::InGameMenu) // from in-game-menu back to game
 			backToGame();
+		else
+			menuOut(); // back to previous menu
+	}
+	else if (key == VK_RETURN && _currMarkedItem)
+	{
+		_currMarkedItem->onClick(MouseButtons::Left);
+	}
+	else if (key == VK_UP || key == VK_DOWN)
+	{
+		if (_currMarkedItem)
+		{
+			auto it = find(_elementsList.begin(), _elementsList.end(), _currMarkedItem);
+			if (it != _elementsList.end()) // if _currMarkedItem is null, it is not in the list
+			{
+				/*
+				The elements list is like this:
+				- background image
+				- title image (except for InGameMenu)
+				- button 1
+				- button 2
+				- ...
+				- cursor
+				*/
+
+				MenuItem* itm = nullptr;
+				const size_t minIdx = (_currMenu == &HierarchicalMenu::InGameMenu) ? 1 : 2;
+				const size_t maxIdx = _elementsList.size() - 2;
+				size_t idx = it - _elementsList.begin();
+
+				if (key == VK_UP)
+				{
+					do {
+						itm = (MenuItem*)(idx == minIdx ? _elementsList[maxIdx] : _elementsList[idx - 1]);
+						idx = (idx == minIdx ? maxIdx : idx - 1);
+					} while (!itm->isActive());
+				}
+				else if (key == VK_DOWN)
+				{
+					do {
+						itm = (MenuItem*)(idx == maxIdx ? _elementsList[minIdx] : _elementsList[idx + 1]);
+						idx = (idx == maxIdx ? minIdx : idx + 1);
+					} while (!itm->isActive());
+				}
+
+				_currMarkedItem = itm;
+			}
 		}
+		else 
+		{
+			if (key == VK_DOWN)
+				_currMarkedItem = (MenuItem*)_elementsList[2];
+			else if (key == VK_UP)
+				_currMarkedItem = (MenuItem*)_elementsList[_elementsList.size() - 1];
+		}
+
+		_currMarkedItem->marked = true;
 	}
 }
 

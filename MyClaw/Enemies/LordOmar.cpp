@@ -68,7 +68,7 @@ public:
 		// block claw projectiles:
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
-			if (isbaseinstance<ClawProjectile>(p)) // actually, there are only ClawProjectiles in this state.
+			if (isinstance<ClawProjectile>(p)) // actually, there are only ClawProjectiles in this state.
 			{
 				// if the projectile collides with shield item, remove it
 				for (int i = 0; i < NUM_OF_ITEMS_IN_SHIELD; i++)
@@ -198,7 +198,7 @@ void LordOmar::Logic(uint32_t elapsedTime)
 		// check for projectiles:
 		for (Projectile* p : ActionPlane::getProjectiles())
 		{
-			if (isbaseinstance<ClawProjectile>(p))
+			if (isinstance<ClawProjectile>(p))
 			{
 				ClawProjectile* cp = (ClawProjectile*)p;
 

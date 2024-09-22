@@ -44,7 +44,7 @@ void WwdPlane::ReadPlaneTiles(BufferReader& inputStream)
 		for (int32_t& i : vec)
 		{
 			inputStream.read(i);
-			if (i < 0) i = -1;
+			if (i < 0) i = EMPTY_TILE;
 		}
 	}
 }

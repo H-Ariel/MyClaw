@@ -5,6 +5,9 @@
 #include "ScreenEngine.h"
 
 
+class MenuItem;
+
+
 class MenuEngine : public ScreenEngine
 {
 public:
@@ -27,6 +30,7 @@ protected:
 	void backToGame();
 
 	shared_ptr<UIAnimation> _cursor;
+	MenuItem* _currMarkedItem;
 
 	friend class ScreenEngine;
 };
