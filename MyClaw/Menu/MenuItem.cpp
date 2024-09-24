@@ -8,8 +8,8 @@ MenuItem::MenuItem(const string& pcxPath, float xRatio, float yRatio,
 	: MenuItem(pcxPath, "", xRatio, yRatio, nullptr, bgImg, parent) {}
 
 MenuItem::MenuItem(const string& pcxPath, const string& markedPcxPath, float xRatio, float yRatio,
-	function<void(MenuItem*)> onClick, MenuBackgroundImage* bgImg, ScreenEngine* parent)
-	: MenuItem(pcxPath, markedPcxPath, "", "", xRatio, yRatio, onClick, bgImg, parent, 0) {}
+	function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent)
+	: MenuItem(pcxPath, markedPcxPath, "", "", xRatio, yRatio, itemOnClick, bgImg, parent, 0) {}
 
 MenuItem::MenuItem(const string& pcxPath, const string& markedPcxPath,
 	const string& pcxPath2, const string& markedPcxPath2, float xRatio, float yRatio,
@@ -59,4 +59,49 @@ void MenuItem::mulImageSizeRatio(float n)
 {
 	_sizeRatio.width *= n;
 	_sizeRatio.height *= n;
+}
+
+
+MenuSlider::MenuSlider(const string& pcxPath, const string& markedPcxPath,
+	const string& pcxPath2, const string& markedPcxPath2, float xRatio, float yRatio,
+	function<void(MenuSlider*, int)> onMove, MenuBackgroundImage* bgImg, ScreenEngine* parent, int initialValue)
+	: MenuItem(pcxPath, markedPcxPath, pcxPath2, markedPcxPath2, xRatio, yRatio,
+		[&](MenuItem*) { moveSlider(_value == 0 ? 10 : -10); }, bgImg, parent, 0),
+	_onMove(onMove), _value(initialValue)
+{
+	thumbImage = AssetsManager::loadImage(OPTIONS_ROOT "AUDIO/041.PCX")->getCopy();
+	markedThumbImage = AssetsManager::loadImage(OPTIONS_ROOT "AUDIO/042.PCX")->getCopy();
+
+	_thumbSizeRatio.width = WindowManager::DEFAULT_WINDOW_SIZE.width / thumbImage->size.width;
+	_thumbSizeRatio.height = WindowManager::DEFAULT_WINDOW_SIZE.height / thumbImage->size.height;
+	_thumbPosRatio.y = yRatio - 0.005f;
+	moveSlider(0); // to update the thumb position
+}
+void MenuSlider::Draw()
+{
+	MenuItem::Draw();
+
+	shared_ptr<UIBaseImage> imgToDraw = marked ? markedThumbImage : thumbImage;
+	imgToDraw->size.width = _bgImg->size.width / _thumbSizeRatio.width;
+	imgToDraw->size.height = _bgImg->size.height / _thumbSizeRatio.height;
+	imgToDraw->position.x = _bgImg->position.x + _thumbPosRatio.x * _bgImg->size.width;
+	imgToDraw->position.y = _bgImg->position.y + _thumbPosRatio.y * _bgImg->size.height;
+	imgToDraw->Draw();
+}
+
+void MenuSlider::mulImageSizeRatio(float n)
+{
+	MenuItem::mulImageSizeRatio(n);
+	_thumbSizeRatio.width *= n;
+	_thumbSizeRatio.height *= n;
+}
+
+void MenuSlider::moveSlider(int step)
+{
+	_value += step;
+	if (_value > 9) _value = 9;
+	else if (_value < 0) _value = 0;
+	_thumbPosRatio.x = _posRatio.x + 0.09f + 0.025f * _value;
+
+	_onMove(this, _value);
 }

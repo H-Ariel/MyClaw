@@ -24,6 +24,7 @@ public:
 
 	void setDetails(bool d) { settings.details = d; }
 	void setFrontLayer(bool f) { settings.frontLayer = f; }
+	void setArea(int a) { settings.area = a; }
 	void setMovies(bool m) { settings.movies = m; }
 
 	void setSoundVolume(int v) { settings.soundVolume = v; }
@@ -33,6 +34,7 @@ public:
 
 	bool getDetails() const { return settings.details; }
 	bool getFrontLayer() const { return settings.frontLayer; }
+	int getArea() const { return settings.area; }
 	bool getMovies() const { return settings.movies; }
 	int8_t getSoundVolume() const { return settings.soundVolume; }
 	bool getVoice() const { return settings.voice; }
@@ -74,17 +76,21 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		WindowManager::setTitle("Claw");
 
 	function<void(MenuItem*)> onClick;
+	function<void(MenuSlider*, int)> onMove;
 
 	// when the menu is SelectLevelMenu we have two columns of buttons
 	const bool isSelectLevelMenu = _currMenu == &HierarchicalMenu::SelectLevelMenu;
 	float xRatio = 0, yRatio = float(isSelectLevelMenu ? _currMenu->subMenus.size() - 7 : _currMenu->subMenus.size()) / -50;
 	float firstYRatio = yRatio;
 	int buttonsCount = 0;
-	int initialState = 0;
+	int initialValue = 0;
+	bool isSlider = false;
 
 	for (const HierarchicalMenu& m : _currMenu->subMenus)
 	{
-		initialState = 0;
+		initialValue = 0;
+
+		isSlider = false;
 
 		switch (m.cmd)
 		{
@@ -186,8 +192,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::Details:
-			initialState = settingsManager.getDetails();
-
+			initialValue = settingsManager.getDetails();
 			onClick = [&](MenuItem* item) {
 				item->state = (item->state == 0) ? 1 : 0;
 				settingsManager.switchDetails();
@@ -195,17 +200,23 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::FrontLayer:
-			initialState = settingsManager.getFrontLayer();
-
+			initialValue = settingsManager.getFrontLayer();
 			onClick = [&](MenuItem* item) {
 				item->state = (item->state == 0) ? 1 : 0;
 				settingsManager.switchFrontLayer();
 			};
 			break;
 
-		case HierarchicalMenu::Movies:
-			initialState = settingsManager.getMovies();
+		case HierarchicalMenu::Area:
+			isSlider = true;
+			initialValue = settingsManager.getArea();
+			onMove = [&](MenuSlider* slider, int value) {
+				settingsManager.setArea(value);
+			};
+			break;
 
+		case HierarchicalMenu::Movies:
+			initialValue = settingsManager.getMovies();
 			onClick = [&](MenuItem* item) {
 				item->state = (item->state == 0) ? 1 : 0;
 				settingsManager.switchMovies();
@@ -213,17 +224,16 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::Sound:
-			initialState = settingsManager.getSoundVolume() != 0;
-
-			onClick = [&](MenuItem* item) {
-				item->state = (item->state == 0) ? 1 : 0;
-				settingsManager.switchSoundVolume();
+			isSlider = true;
+			initialValue = settingsManager.getSoundVolume();
+			onMove = [&](MenuSlider* slider, int value) {
+				slider->state = (value == 0) ? 1 : 0;
+				settingsManager.setSoundVolume(value);
 			};
-		break;
+			break;
 
 		case HierarchicalMenu::Voice:
-			initialState = settingsManager.getVoice();
-
+			initialValue = settingsManager.getVoice();
 			onClick = [&](MenuItem* item) {
 				item->state = (item->state == 0) ? 1 : 0;
 				settingsManager.switchVoice();
@@ -231,8 +241,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::Ambient:
-			initialState = settingsManager.getAmbient();
-
+			initialValue = settingsManager.getAmbient();
 			onClick = [&](MenuItem* item) {
 				item->state = (item->state == 0) ? 1 : 0;
 				settingsManager.switchAmbient();
@@ -240,11 +249,11 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::Music:
-			initialState = settingsManager.getMusicVolume() != 0;
-
-			onClick = [&](MenuItem* item) {
-				item->state = (item->state == 0) ? 1 : 0;
-				settingsManager.switchMusicVolume();
+			isSlider = true;
+			initialValue = settingsManager.getMusicVolume();
+			onMove = [&](MenuSlider* slider, int value) {
+				slider->state = (value == 0) ? 1 : 0;
+				settingsManager.setMusicVolume(value);
 			};
 			break;
 
@@ -258,7 +267,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 						.pcxPath.substr(strlen(LOAD_CHECKPOINT_ROOT), 3)) - 10;
 					int checkpoint = ((m.cmd & 0xf0) >> 4) - 1;
 					changeEngine<LevelLoadingEngine>(level, checkpoint);
-				};
+					};
 			}
 			else if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
 			{
@@ -300,9 +309,9 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 
 						menuIn(&HierarchicalMenu::SelectCheckpoint);
 					}
-				};
+					};
 			}
-			else onClick = [](MenuItem*) { MessageBoxA(nullptr, "not impleted (default case)", "", 0); };
+			else onClick = nullptr;
 
 			break;
 		}
@@ -315,9 +324,12 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			buttonsCount++;
 		}
    
-		MenuItem* itm = DBG_NEW MenuItem(m.pcxPath, m.markedPcxPath, 
-			m.pcxPath2, m.markedPcxPath2,
-			xRatio, yRatio, onClick, _bgImg, this, initialState);
+		MenuItem* itm =
+			isSlider 
+			? DBG_NEW MenuSlider(m.pcxPath, m.markedPcxPath, m.pcxPath2, m.markedPcxPath2,
+				xRatio, yRatio, onMove, _bgImg, this, initialValue)
+			: DBG_NEW MenuItem(m.pcxPath, m.markedPcxPath, m.pcxPath2, m.markedPcxPath2,
+				xRatio, yRatio, onClick, _bgImg, this, initialValue);
 		itm->mulImageSizeRatio(1.25f); // magic number to fit image to screen size
 		_elementsList.push_back(itm);
 		yRatio += itm->size.height / _bgImg->size.height / 2 + 0.04f;
@@ -432,6 +444,14 @@ void MenuEngine::OnKeyUp(int key)
 		}
 
 		_currMarkedItem->marked = true;
+	}
+	else if (key == VK_LEFT || key == VK_RIGHT)
+	{
+		if (_currMarkedItem && isinstance<MenuSlider>(_currMarkedItem))
+		{
+			MenuSlider* slider = (MenuSlider*)_currMarkedItem;
+			slider->moveSlider(key == VK_RIGHT ? 1 : -1);
+		}
 	}
 }
 

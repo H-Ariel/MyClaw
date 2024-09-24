@@ -1,7 +1,5 @@
 #include "HierarchicalMenu.h"
 
-#define OPTIONS_ROOT	MAIN_MENU_ROOT "OPTIONS/"
-
 // TODO: add Slider-Buttons in HierarchicalMenu
 
 HierarchicalMenu HierarchicalMenu::MainMenu({
@@ -43,7 +41,7 @@ HierarchicalMenu HierarchicalMenu::MainMenu({
 			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/009.PCX", OPTIONS_ROOT "DISPLAY/011.PCX",
 							 OPTIONS_ROOT "DISPLAY/010.PCX", OPTIONS_ROOT "DISPLAY/012.PCX", FrontLayer),
 			// game play area
-			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/013.PCX", OPTIONS_ROOT "DISPLAY/014.PCX", NotImpleted),
+			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/013.PCX", OPTIONS_ROOT "DISPLAY/014.PCX", Area),
 			// movies
 			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/015.PCX", OPTIONS_ROOT "DISPLAY/017.PCX",
 							 OPTIONS_ROOT "DISPLAY/016.PCX", OPTIONS_ROOT "DISPLAY/018.PCX", Movies),

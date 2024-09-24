@@ -32,11 +32,12 @@ public:
 	{
 		bool details;    // 0-low, 1-high
 		bool frontLayer; // 0-off, 1-on
+		int8_t area;     // 0-9
 		bool movies;     // 0-stretched, 1-interlaced
-		int8_t soundVolume; // 0-100
+		int8_t soundVolume; // 0-9
 		bool voice;         // 0-off, 1-on
 		bool ambient;       // 0-off, 1-on
-		int8_t musicVolume; // 0-100
+		int8_t musicVolume; // 0-9
 	};
 #pragma pack(pop)
 

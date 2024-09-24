@@ -5,6 +5,7 @@
 #define MAIN_MENU_ROOT			"STATES/MENU/IMAGES/MAIN/"
 #define SINGLEPLAYER_ROOT		MAIN_MENU_ROOT "SINGLEPLAYER/"
 #define LOAD_CHECKPOINT_ROOT	SINGLEPLAYER_ROOT "LOAD/CHECKPOINTS/"
+#define OPTIONS_ROOT			MAIN_MENU_ROOT "OPTIONS/"
 #define INGAME_MENU_ROOT		"GAME/IMAGES/INGAMEMENU/MAIN/"
 
 
@@ -35,12 +36,13 @@ struct HierarchicalMenu
 		// display settings:
 		Details,    // High / Low
 		FrontLayer, // On / Off
+		Area,       // Slider (0-9) [0 is Off, else is On]
 		Movies,     // Stretched / Interlaced
 		// audio settings:
-		Sound,     // On / Off
-		Voice,     // On / Off
-		Ambient,   // On / Off
-		Music,     // On / Off
+		Sound,      // Slider (0-9) [0 is Off, else is On]
+		Voice,      // On / Off
+		Ambient,    // On / Off
+		Music,      // Slider (0-9) [0 is Off, else is On]
 	};
 
 	HierarchicalMenu(vector<HierarchicalMenu> subMenus)
