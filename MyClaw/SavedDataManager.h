@@ -17,15 +17,15 @@ public:
 	struct GameData
 	{
 		// save point data:
-		int32_t level;
-		int32_t savePoint; // SavePoints
+		int8_t level;
+		int8_t savePoint; // SavePoints
 		// player data:
-		int32_t lives;
-		int32_t health;
+		int8_t lives;
+		int8_t health;
 		int32_t score;
-		int32_t pistolAmount;
-		int32_t magicAmount;
-		int32_t dynamiteAmount;
+		int8_t pistolAmount;
+		int8_t magicAmount;
+		int8_t dynamiteAmount;
 	};
 
 	struct SettingsData
@@ -33,6 +33,10 @@ public:
 		bool details;    // 0-low, 1-high
 		bool frontLayer; // 0-off, 1-on
 		bool movies;     // 0-stretched, 1-interlaced
+		int8_t soundVolume; // 0-100
+		bool voice;         // 0-off, 1-on
+		bool ambient;       // 0-off, 1-on
+		int8_t musicVolume; // 0-100
 	};
 #pragma pack(pop)
 

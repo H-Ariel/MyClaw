@@ -9,10 +9,6 @@
 #include "MenuItem.h"
 
 
-// TODO: mark button when hover it
-// TODO: switch using keyboard (arrows up/down, enter)
-
-
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
@@ -30,13 +26,26 @@ public:
 	void setFrontLayer(bool f) { settings.frontLayer = f; }
 	void setMovies(bool m) { settings.movies = m; }
 
+	void setSoundVolume(int v) { settings.soundVolume = v; }
+	void setVoice(bool v) { settings.voice = v; }
+	void setAmbient(bool a) { settings.ambient = a; }
+	void setMusicVolume(int v) { settings.musicVolume = v; }
+
 	bool getDetails() const { return settings.details; }
 	bool getFrontLayer() const { return settings.frontLayer; }
 	bool getMovies() const { return settings.movies; }
+	int8_t getSoundVolume() const { return settings.soundVolume; }
+	bool getVoice() const { return settings.voice; }
+	bool getAmbient() const { return settings.ambient; }
+	int8_t getMusicVolume() const { return settings.musicVolume; }
 
 	void switchDetails() { settings.details = !settings.details; }
 	void switchFrontLayer() { settings.frontLayer = !settings.frontLayer; }
 	void switchMovies() { settings.movies = !settings.movies; }
+	void switchSoundVolume() { settings.soundVolume = (settings.soundVolume == 0) ? 100 : 0; }
+	void switchVoice() { settings.voice = !settings.voice; }
+	void switchAmbient() { settings.ambient = !settings.ambient; }
+	void switchMusicVolume() { settings.musicVolume = (settings.musicVolume == 0) ? 100 : 0; }
 
 private:
 	SavedDataManager::SettingsData settings;
@@ -203,6 +212,42 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			};
 			break;
 
+		case HierarchicalMenu::Sound:
+			initialState = settingsManager.getSoundVolume() != 0;
+
+			onClick = [&](MenuItem* item) {
+				item->state = (item->state == 0) ? 1 : 0;
+				settingsManager.switchSoundVolume();
+			};
+		break;
+
+		case HierarchicalMenu::Voice:
+			initialState = settingsManager.getVoice();
+
+			onClick = [&](MenuItem* item) {
+				item->state = (item->state == 0) ? 1 : 0;
+				settingsManager.switchVoice();
+			};
+			break;
+
+		case HierarchicalMenu::Ambient:
+			initialState = settingsManager.getAmbient();
+
+			onClick = [&](MenuItem* item) {
+				item->state = (item->state == 0) ? 1 : 0;
+				settingsManager.switchAmbient();
+			};
+			break;
+
+		case HierarchicalMenu::Music:
+			initialState = settingsManager.getMusicVolume() != 0;
+
+			onClick = [&](MenuItem* item) {
+				item->state = (item->state == 0) ? 1 : 0;
+				settingsManager.switchMusicVolume();
+			};
+			break;
+
 		default:
 			// here we play with bits, strings, and paths to get the level number and checkpoint number :)
 
@@ -318,8 +363,8 @@ void MenuEngine::Logic(uint32_t elapsedTime) {
 	{
 		if (isinstance<MenuItem>(e))
 		{
-			MenuItem* itm = (MenuItem*)e;
-			itm->marked = (itm == _currMarkedItem);
+			if (MenuItem* itm = (MenuItem*)e)
+				itm->marked = (itm == _currMarkedItem);
 		}
 	}
 }

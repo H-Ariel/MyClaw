@@ -32,7 +32,7 @@ void SavedDataManager::saveSettings(const SettingsData& data)
 	if (!doesFileExists())
 		initFile();
 
-	ofstream(SAVE_FILE_NAME, ios::binary).write((char*)&data, sizeof(SettingsData));
+	fstream(SAVE_FILE_NAME, ios::binary | ios::in | ios::out).seekp(0).write((char*)&data, sizeof(SettingsData));
 }
 SavedDataManager::SettingsData SavedDataManager::loadSettings()
 {
@@ -52,7 +52,7 @@ void SavedDataManager::saveGame(const GameData& data)
 
 	if (data.level < 1 || 14 < data.level) return;
 
-	ofstream(SAVE_FILE_NAME, ios::binary)
+	fstream(SAVE_FILE_NAME, ios::binary | ios::in | ios::out)
 		.seekp(getOffset(data.level, data.savePoint))
 		.write((char*)&data, sizeof(GameData));
 }
@@ -82,17 +82,23 @@ SavedDataManager::GameData SavedDataManager::loadGame(int level, int savePoint)
 void SavedDataManager::initFile()
 {
 	ofstream file(SAVE_FILE_NAME, ios::binary);
-	GameData data = {};
-	int n = 14 * 3; // 14 levels, 3 save points per level
-	for (int i = 0; i < n; i++)
-		file.write((char*)&data, sizeof(GameData));
-	file.close();
 
 	SettingsData settings = {};
 	settings.details = true;
 	settings.frontLayer = true;
 	settings.movies = false;
-	saveSettings(settings);
+	settings.soundVolume = 100;
+	settings.voice = true;
+	settings.ambient = true;
+	settings.musicVolume = 100;
+	file.write((char*)&settings, sizeof(SettingsData));
+
+	GameData data = {};
+	int n = 14 * 3; // 14 levels, 3 save points per level
+	for (int i = 0; i < n; i++)
+		file.write((char*)&data, sizeof(GameData));
+
+	file.close();
 
 	// create data for start of level 1:
 	data.level = 1;

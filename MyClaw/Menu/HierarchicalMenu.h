@@ -28,14 +28,19 @@ struct HierarchicalMenu
 		LoadCheckpoint_2 = LoadCheckpoint | (0x30),
 
 		// ingame menu commands:
-		BackToGame = OpenLevel + 1,
+		BackToGame = (OpenLevel | (14 << 4)) + 1, // pass commands to avoid conflicts
 		EndLife,
 		EndGame,
 
 		// display settings:
-		Details, // High / Low
+		Details,    // High / Low
 		FrontLayer, // On / Off
-		Movies, // Stretched / Interlaced
+		Movies,     // Stretched / Interlaced
+		// audio settings:
+		Sound,     // On / Off
+		Voice,     // On / Off
+		Ambient,   // On / Off
+		Music,     // On / Off
 	};
 
 	HierarchicalMenu(vector<HierarchicalMenu> subMenus)
