@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseCharacter.h"
-#include "SavedGameManager.h"
+#include "SavedDataManager.h"
 #include "Objects/Item.h"
 #include "Objects/ClawProjectile.h"
 
@@ -61,8 +61,8 @@ public:
 	int getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
 	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }
 
-	SavedGameManager::GameData getGameData() const;
-	void setGameData(const SavedGameManager::GameData& data);
+	SavedDataManager::GameData getGameData() const;
+	void setGameData(const SavedDataManager::GameData& data);
 
 	// used to move player
 	void keyUp(int key);

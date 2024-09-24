@@ -17,6 +17,34 @@ stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
 
+// TODO: combine with SavedDataManager (1 class and 1 file for setting and saved game)
+class SettingsManager
+{
+	const char* settingsFile = "Claw.settings";
+
+public:
+	SettingsManager() { settings = SavedDataManager::loadSettings(); }
+	~SettingsManager() { SavedDataManager::saveSettings(settings); }
+
+	void setDetails(bool d) { settings.details = d; }
+	void setFrontLayer(bool f) { settings.frontLayer = f; }
+	void setMovies(bool m) { settings.movies = m; }
+
+	bool getDetails() const { return settings.details; }
+	bool getFrontLayer() const { return settings.frontLayer; }
+	bool getMovies() const { return settings.movies; }
+
+	void switchDetails() { settings.details = !settings.details; }
+	void switchFrontLayer() { settings.frontLayer = !settings.frontLayer; }
+	void switchMovies() { settings.movies = !settings.movies; }
+
+private:
+	SavedDataManager::SettingsData settings;
+};
+
+static SettingsManager settingsManager;
+
+
 MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine({}, nullptr, bgPcxPath) {}
 MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const string& bgPcxPath)
 	: ScreenEngine(bgPcxPath), _currMarkedItem(nullptr)
@@ -36,16 +64,19 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 	if (_currMenu == &HierarchicalMenu::MainMenu)
 		WindowManager::setTitle("Claw");
 
-	function<void(MouseButtons)> onClick;
+	function<void(MenuItem*)> onClick;
 
 	// when the menu is SelectLevelMenu we have two columns of buttons
 	const bool isSelectLevelMenu = _currMenu == &HierarchicalMenu::SelectLevelMenu;
 	float xRatio = 0, yRatio = float(isSelectLevelMenu ? _currMenu->subMenus.size() - 7 : _currMenu->subMenus.size()) / -50;
 	float firstYRatio = yRatio;
 	int buttonsCount = 0;
+	int initialState = 0;
 
 	for (const HierarchicalMenu& m : _currMenu->subMenus)
 	{
+		initialState = 0;
+
 		switch (m.cmd)
 		{
 		case HierarchicalMenu::Nop:
@@ -53,19 +84,19 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::NotImpleted:
-			onClick = [](MouseButtons) { MessageBoxA(nullptr, "not impleted", "", 0); };
+			onClick = [](MenuItem*) { MessageBoxA(nullptr, "not impleted", "", 0); };
 			break;
 
 		case HierarchicalMenu::MenuIn:
-			onClick = [&](MouseButtons) { menuIn(&m); };
+			onClick = [&](MenuItem*) { menuIn(&m); };
 			break;
 
 		case HierarchicalMenu::MenuOut:
-			onClick = [&](MouseButtons) { menuOut(); };
+			onClick = [&](MenuItem*) { menuOut(); };
 			break;
 
 		case HierarchicalMenu::SelectLevel:
-			onClick = [&](MouseButtons) {
+			onClick = [&](MenuItem*) {
 				// change the title image:
 				string dir = "";
 				if (endsWith(m.pcxPath, "001.PCX")) dir = "NEW";
@@ -78,7 +109,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 				for (int i = 2; i <= 14; i++) // i=2 because level 1 must be available by default
 				{
 					int n = i * 3;
-					if (SavedGameManager::canLoadGame(i, 0))
+					if (SavedDataManager::canLoadGame(i, 0))
 					{
 						HierarchicalMenu::SelectLevelMenu.subMenus[i].cmd = HierarchicalMenu::OpenLevel | (i << 4);
 						n -= 2;
@@ -99,14 +130,14 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::ExitApp:
-			onClick = [&](MouseButtons) {
+			onClick = [&](MenuItem*) {
 				_nextEngine = nullptr;
 				stopEngine = true;
 			};
 			break;
 
 		case HierarchicalMenu::Help:
-			onClick = [&](MouseButtons) {
+			onClick = [&](MenuItem*) {
 				_menusStack.push(_currMenu);
 				_currMenu = &m;
 				changeEngine<HelpScreenEngine>();
@@ -114,7 +145,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::Credits:
-			onClick = [&](MouseButtons) {
+			onClick = [&](MenuItem*) {
 				_menusStack.push(_currMenu);
 				_currMenu = &m;
 				changeEngine<CreditsEngine>();
@@ -122,11 +153,11 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::BackToGame:
-			onClick = [&](MouseButtons) { backToGame(); };
+			onClick = [&](MenuItem*) { backToGame(); };
 			break;
 
 		case HierarchicalMenu::EndLife:
-			onClick = [&](MouseButtons) {
+			onClick = [&](MenuItem*) {
 				BasePlaneObject::player->endLife();
 				clearMenusStack();
 				_currMenu = &HierarchicalMenu::InGameMenu;
@@ -135,7 +166,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::EndGame:
-			onClick = [&](MouseButtons) {
+			onClick = [&](MenuItem*) {
 				AssetsManager::clearLevelAssets(_clawLevelEngineFields->_wwd->levelNumber);
 				clearMenusStack();
 				_currMenu = &HierarchicalMenu::MainMenu;
@@ -145,12 +176,39 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			};
 			break;
 
+		case HierarchicalMenu::Details:
+			initialState = settingsManager.getDetails();
+
+			onClick = [&](MenuItem* item) {
+				item->state = (item->state == 0) ? 1 : 0;
+				settingsManager.switchDetails();
+			};
+			break;
+
+		case HierarchicalMenu::FrontLayer:
+			initialState = settingsManager.getFrontLayer();
+
+			onClick = [&](MenuItem* item) {
+				item->state = (item->state == 0) ? 1 : 0;
+				settingsManager.switchFrontLayer();
+			};
+			break;
+
+		case HierarchicalMenu::Movies:
+			initialState = settingsManager.getMovies();
+
+			onClick = [&](MenuItem* item) {
+				item->state = (item->state == 0) ? 1 : 0;
+				settingsManager.switchMovies();
+			};
+			break;
+
 		default:
 			// here we play with bits, strings, and paths to get the level number and checkpoint number :)
 
 			if ((m.cmd & HierarchicalMenu::LoadCheckpoint) == HierarchicalMenu::LoadCheckpoint)
 			{
-				onClick = [&](MouseButtons) {
+				onClick = [&](MenuItem*) {
 					int level = stoi(HierarchicalMenu::SelectCheckpoint.subMenus[0]
 						.pcxPath.substr(strlen(LOAD_CHECKPOINT_ROOT), 3)) - 10;
 					int checkpoint = ((m.cmd & 0xf0) >> 4) - 1;
@@ -159,7 +217,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			}
 			else if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
 			{
-				onClick = [&](MouseButtons) {
+				onClick = [&](MenuItem*) {
 					int level = (m.cmd & 0xf0) >> 4;
 
 					if (contains(_currMenu->subMenus[0].pcxPath, "NEW")) // new game
@@ -174,7 +232,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 						HierarchicalMenu::SelectCheckpoint.subMenus[0].pcxPath = path;
 
 						// check which checkpoints are available and change the menu-buttons accordingly
-						if (SavedGameManager::canLoadGame(level, 1))
+						if (SavedDataManager::canLoadGame(level, 1))
 						{
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].cmd = HierarchicalMenu::LoadCheckpoint_1;
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "003.PCX";
@@ -184,7 +242,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].cmd = HierarchicalMenu::Nop;
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "005.PCX";
 						}
-						if (SavedGameManager::canLoadGame(level, 2))
+						if (SavedDataManager::canLoadGame(level, 2))
 						{
 							HierarchicalMenu::SelectCheckpoint.subMenus[3].cmd = HierarchicalMenu::LoadCheckpoint_2;
 							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "006.PCX";
@@ -199,6 +257,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 					}
 				};
 			}
+			else onClick = [](MenuItem*) { MessageBoxA(nullptr, "not impleted (default case)", "", 0); };
 
 			break;
 		}
@@ -211,7 +270,9 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			buttonsCount++;
 		}
    
-		MenuItem* itm = DBG_NEW MenuItem(m.pcxPath, m.markedPcxPath, xRatio, yRatio, onClick, _bgImg, this);
+		MenuItem* itm = DBG_NEW MenuItem(m.pcxPath, m.markedPcxPath, 
+			m.pcxPath2, m.markedPcxPath2,
+			xRatio, yRatio, onClick, _bgImg, this, initialState);
 		itm->mulImageSizeRatio(1.25f); // magic number to fit image to screen size
 		_elementsList.push_back(itm);
 		yRatio += itm->size.height / _bgImg->size.height / 2 + 0.04f;

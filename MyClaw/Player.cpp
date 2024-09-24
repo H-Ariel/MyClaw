@@ -1078,9 +1078,9 @@ void Player::shootSwordProjectile()
 	ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
 }
 
-SavedGameManager::GameData Player::getGameData() const
+SavedDataManager::GameData Player::getGameData() const
 {
-	SavedGameManager::GameData data = {};
+	SavedDataManager::GameData data = {};
 
 	data.lives = _lives;
 	data.health = _health;
@@ -1091,7 +1091,7 @@ SavedGameManager::GameData Player::getGameData() const
 
 	return data;
 }
-void Player::setGameData(const SavedGameManager::GameData& data)
+void Player::setGameData(const SavedDataManager::GameData& data)
 {
 	_lives = data.lives;
 	_health = data.health;

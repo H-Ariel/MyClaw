@@ -30,7 +30,12 @@ struct HierarchicalMenu
 		// ingame menu commands:
 		BackToGame = OpenLevel + 1,
 		EndLife,
-		EndGame
+		EndGame,
+
+		// display settings:
+		Details, // High / Low
+		FrontLayer, // On / Off
+		Movies, // Stretched / Interlaced
 	};
 
 	HierarchicalMenu(vector<HierarchicalMenu> subMenus)
@@ -41,12 +46,15 @@ struct HierarchicalMenu
 		: HierarchicalMenu(pcxPath, "", cmd, subMenus) {}
 	HierarchicalMenu(const string& pcxPath, const string& markedPcxPath, vector<HierarchicalMenu> subMenus)
 		: HierarchicalMenu(pcxPath, markedPcxPath, MenuIn, subMenus) {}
+	HierarchicalMenu(const string& pcxPath1, const string& markedPcxPath1, const string& pcxPath2, const string& markedPcxPath2, uint8_t cmd)
+		: pcxPath(pcxPath1), markedPcxPath(markedPcxPath1), pcxPath2(pcxPath2), markedPcxPath2(markedPcxPath2), cmd(cmd) {}
 	HierarchicalMenu(const string& pcxPath, const string& markedPcxPath, uint8_t cmd, vector<HierarchicalMenu> subMenus = {})
 		: pcxPath(pcxPath), markedPcxPath(markedPcxPath), subMenus(subMenus), cmd(cmd) {}
 
+
 	vector<HierarchicalMenu> subMenus;
-	string pcxPath;
-	string markedPcxPath;
+	string pcxPath, markedPcxPath;
+	string pcxPath2, markedPcxPath2; // if this is a two-state button (like "Details: [HIGH|LOW]")
 	uint8_t cmd;
 
 	static HierarchicalMenu MainMenu, InGameMenu;

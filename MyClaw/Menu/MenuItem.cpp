@@ -3,23 +3,36 @@
 #include "GameEngine/WindowManager.h"
 
 
+MenuItem::MenuItem(const string& pcxPath, float xRatio, float yRatio,
+	MenuBackgroundImage* bgImg, ScreenEngine* parent)
+	: MenuItem(pcxPath, "", xRatio, yRatio, nullptr, bgImg, parent) {}
+
 MenuItem::MenuItem(const string& pcxPath, const string& markedPcxPath, float xRatio, float yRatio,
-	function<void(MouseButtons)> onClick, MenuBackgroundImage* bgImg, ScreenEngine* parent)
-	: UIBaseButton(onClick, parent), _posRatio({ xRatio, yRatio }), _bgImg(bgImg), marked(false)
+	function<void(MenuItem*)> onClick, MenuBackgroundImage* bgImg, ScreenEngine* parent)
+	: MenuItem(pcxPath, markedPcxPath, "", "", xRatio, yRatio, onClick, bgImg, parent, 0) {}
+
+MenuItem::MenuItem(const string& pcxPath, const string& markedPcxPath,
+	const string& pcxPath2, const string& markedPcxPath2, float xRatio, float yRatio,
+	function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent, int initialState)
+	: UIBaseButton(nullptr, parent), _posRatio({ xRatio, yRatio }), _bgImg(bgImg), marked(false), state(initialState)
 {
 	_image = AssetsManager::loadImage(pcxPath)->getCopy(); // do not modify the original image, it makes the menu smaller each time it is opened
 	if (!markedPcxPath.empty())
 		_markedImage = AssetsManager::loadImage(markedPcxPath)->getCopy();
+	if (!pcxPath2.empty())
+		_image2 = AssetsManager::loadImage(pcxPath2)->getCopy();
+	if (!markedPcxPath2.empty())
+		_markedImage2 = AssetsManager::loadImage(markedPcxPath2)->getCopy();
 
 	_sizeRatio.width = WindowManager::DEFAULT_WINDOW_SIZE.width / _image->size.width;
 	_sizeRatio.height = WindowManager::DEFAULT_WINDOW_SIZE.height / _image->size.height;
 
-	if (onClick)
+	if (itemOnClick)
 	{
-		_onClick2 = onClick; // save the original onClick function
-		this->onClick = [&](MouseButtons btn) { // override onClick function so it will play the select sound
+		_itemOnClick = itemOnClick; // save the original onClick function
+		onClick = [&](MouseButtons) { // override onClick function so it will play the select sound
 			AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
-			_onClick2(btn);
+			_itemOnClick(this);
 		};
 	}
 
@@ -36,7 +49,7 @@ void MenuItem::Logic(uint32_t)
 }
 void MenuItem::Draw()
 {
-	shared_ptr<UIBaseImage> imgToDraw = (marked && _markedImage) ? _markedImage : _image;
+	shared_ptr<UIBaseImage> imgToDraw = (marked && _markedImage) ? (state == 0 ? _markedImage : _markedImage2) : (state == 0 ? _image : _image2);
 	imgToDraw->size = size;
 	imgToDraw->position = position;
 	imgToDraw->Draw();

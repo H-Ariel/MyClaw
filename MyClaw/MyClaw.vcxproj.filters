@@ -61,7 +61,7 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SavedGameManager.cpp">
+    <ClCompile Include="SavedDataManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Objects\ActionPlaneMessage.cpp">
@@ -465,7 +465,7 @@
     <ClInclude Include="Player.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="SavedGameManager.h">
+    <ClInclude Include="SavedDataManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Assets-Managers\PathManager.h">

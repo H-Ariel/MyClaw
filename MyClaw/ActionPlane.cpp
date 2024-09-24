@@ -72,7 +72,7 @@
 
 
 ActionPlane* ActionPlane::_instance = nullptr;
-shared_ptr<SavedGameManager::GameData> ActionPlane::_loadGameData;
+shared_ptr<SavedDataManager::GameData> ActionPlane::_loadGameData;
 
 
 ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane)
@@ -650,11 +650,11 @@ void ActionPlane::addObject(const WwdObject& obj)
 
 void ActionPlane::loadGame(int level, int checkpoint)
 {
-	SavedGameManager::GameData data = SavedGameManager::load(level, checkpoint);
+	SavedDataManager::GameData data = SavedDataManager::loadGame(level, checkpoint);
 	if (data.level == level && data.savePoint == checkpoint)
 	{
 		// success to load checkpoint
-		_loadGameData = make_shared<SavedGameManager::GameData>(data);
+		_loadGameData = make_shared<SavedDataManager::GameData>(data);
 	}
 }
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)

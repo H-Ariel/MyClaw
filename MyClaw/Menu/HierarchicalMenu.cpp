@@ -2,7 +2,7 @@
 
 #define OPTIONS_ROOT	MAIN_MENU_ROOT "OPTIONS/"
 
-// TODO: add Setting Manager, Switch-Buttons in HierarchicalMenu, Slider-Buttons in HierarchicalMenu, etc.
+// TODO: add Slider-Buttons in HierarchicalMenu
 
 HierarchicalMenu HierarchicalMenu::MainMenu({
 	// title
@@ -37,13 +37,16 @@ HierarchicalMenu HierarchicalMenu::MainMenu({
 			// title
 			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/021.PCX"),
 			// details
-			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/005.PCX", OPTIONS_ROOT "DISPLAY/007.PCX", NotImpleted),
+			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/005.PCX", OPTIONS_ROOT "DISPLAY/007.PCX",
+				OPTIONS_ROOT "DISPLAY/006.PCX", OPTIONS_ROOT "DISPLAY/008.PCX", Details),
 			// front layer
-			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/009.PCX", OPTIONS_ROOT "DISPLAY/011.PCX", NotImpleted),
+			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/009.PCX", OPTIONS_ROOT "DISPLAY/011.PCX",
+				OPTIONS_ROOT "DISPLAY/010.PCX", OPTIONS_ROOT "DISPLAY/012.PCX", FrontLayer),
 			// game play area
 			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/013.PCX", OPTIONS_ROOT "DISPLAY/014.PCX", NotImpleted),
 			// movies
-			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/015.PCX", OPTIONS_ROOT "DISPLAY/017.PCX", NotImpleted),
+			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/015.PCX", OPTIONS_ROOT "DISPLAY/017.PCX",
+				OPTIONS_ROOT "DISPLAY/016.PCX", OPTIONS_ROOT "DISPLAY/018.PCX", Movies),
 			// back
 			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/019.PCX", OPTIONS_ROOT "DISPLAY/020.PCX", MenuOut)
 		}),

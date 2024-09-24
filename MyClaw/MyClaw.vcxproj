@@ -242,7 +242,7 @@
     <ClCompile Include="Objects\TProjectilesShooter.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SavedGameManager.cpp" />
+    <ClCompile Include="SavedDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActionPlane.h" />
@@ -322,7 +322,7 @@
     <ClInclude Include="Objects\TProjectilesShooter.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="SavedGameManager.h" />
+    <ClInclude Include="SavedDataManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

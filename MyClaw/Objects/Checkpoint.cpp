@@ -1,7 +1,7 @@
 #include "Checkpoint.h"
 #include "../ActionPlane.h"
 #include "../Player.h"
-#include "../SavedGameManager.h"
+#include "../SavedDataManager.h"
 
 
 Checkpoint::Checkpoint(const WwdObject& obj, int levelNumber)
@@ -31,10 +31,10 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 
 			if (_superCheckpoint && !_isSaved)
 			{
-				SavedGameManager::GameData data = player->getGameData();
+				SavedDataManager::GameData data = player->getGameData();
 				data.level = _levelNumber;
-				data.savePoint = (SavedGameManager::SavePoints)_superCheckpoint;
-				SavedGameManager::save(data);
+				data.savePoint = (SavedDataManager::SavePoints)_superCheckpoint;
+				SavedDataManager::saveGame(data);
 				_isSaved = true;
 				ActionPlane::writeMessage("Your game has been saved");
 			}

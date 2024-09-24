@@ -2,7 +2,7 @@
 #include "LevelLoadingEngine.h"
 #include "CreditsEngine.h"
 #include "MenuItem.h"
-#include "../SavedGameManager.h"
+#include "../SavedDataManager.h"
 #include "../Player.h"
 
 
@@ -65,10 +65,10 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 	if (_lvlNum != 14)
 	{
 		// save as checkpoint:
-		SavedGameManager::GameData data = BasePlaneObject::player->getGameData();
+		SavedDataManager::GameData data = BasePlaneObject::player->getGameData();
 		data.level = _lvlNum + 1;
-		data.savePoint = SavedGameManager::SavePoints::Start;
-		SavedGameManager::save(data);
+		data.savePoint = SavedDataManager::SavePoints::Start;
+		SavedDataManager::saveGame(data);
 	}
 
 	clearClawLevelEngineFields(); // clear level data (if player enter menu from level)
@@ -166,10 +166,10 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 		for (i = 0; i < NUM_OF_TREASURES; i++)
 		{
 			x = -0.18f;
-			y = (-230 + 53 * i) / 600.f;
+			y = (-230 + 60 * i) / 600.f; // TODO: find perfect proportions
 
 			// draw current treasures
-			item = DBG_NEW MenuItem(treasuresData[i].second, "", -0.25f, y, {}, _bgImg, this);
+			item = DBG_NEW MenuItem(treasuresData[i].second, -0.25f, y, _bgImg, this);
 			item->mulImageSizeRatio(0.75f);
 			_elementsList.push_back((UIBaseImage*)item);
 
@@ -180,7 +180,7 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 			for (j = 0; j < 3; j++)
 			{
-				item = DBG_NEW MenuItem(scorenumbersPaths[digits[j]], "", x, y, {}, _bgImg, this);
+				item = DBG_NEW MenuItem(scorenumbersPaths[digits[j]], x, y, _bgImg, this);
 				item->mulImageSizeRatio(0.75f);
 				_elementsList.push_back((UIBaseImage*)item);
 				x += 0.02f;

@@ -3,7 +3,7 @@
 #include "LevelPlane.h"
 #include "Player.h"
 #include "BaseEnemy.h"
-#include "SavedGameManager.h"
+#include "SavedDataManager.h"
 #include "Objects/PowderKeg.h"
 
 
@@ -62,5 +62,5 @@ private:
 	LevelState _levelState;
 
 	static ActionPlane* _instance;
-	static shared_ptr<SavedGameManager::GameData> _loadGameData;
+	static shared_ptr<SavedDataManager::GameData> _loadGameData;
 };
