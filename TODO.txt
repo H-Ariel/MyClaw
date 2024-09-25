@@ -2,7 +2,7 @@
 + better threads-pool in AudioManager (threads' count according to CPUs' count,
   and should snc with other threads in code if needed)
 
-+ handle setting (low details, front plane, etc. add menu)
++ handle setting (low details, sound volume, etc.)
 
 - make sure all options works well
 - use trie<T> instead of map<string,T> (end of string contains value T) (should be faster and less memory)

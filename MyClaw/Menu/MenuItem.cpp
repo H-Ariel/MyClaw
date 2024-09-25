@@ -3,26 +3,26 @@
 #include "GameEngine/WindowManager.h"
 
 
-MenuItem::MenuItem(const string& pcxPath, float xRatio, float yRatio,
+MenuItem::MenuItem(const string& imagePath, float xRatio, float yRatio,
 	MenuBackgroundImage* bgImg, ScreenEngine* parent)
-	: MenuItem(pcxPath, "", xRatio, yRatio, nullptr, bgImg, parent) {}
+	: MenuItem(imagePath, "", xRatio, yRatio, nullptr, bgImg, parent) {}
 
-MenuItem::MenuItem(const string& pcxPath, const string& markedPcxPath, float xRatio, float yRatio,
+MenuItem::MenuItem(const string& imagePath, const string& markedImagePath, float xRatio, float yRatio,
 	function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent)
-	: MenuItem(pcxPath, markedPcxPath, "", "", xRatio, yRatio, itemOnClick, bgImg, parent, 0) {}
+	: MenuItem(imagePath, markedImagePath, "", "", xRatio, yRatio, itemOnClick, bgImg, parent, 0) {}
 
-MenuItem::MenuItem(const string& pcxPath, const string& markedPcxPath,
-	const string& pcxPath2, const string& markedPcxPath2, float xRatio, float yRatio,
+MenuItem::MenuItem(const string& imagePath, const string& markedImagePath,
+	const string& toggleStateImage, const string& markedToggleStateImage, float xRatio, float yRatio,
 	function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent, bool initialState)
 	: UIBaseButton(nullptr, parent), _posRatio({ xRatio, yRatio }), _bgImg(bgImg), marked(false), state(initialState)
 {
-	_image = AssetsManager::loadImage(pcxPath)->getCopy(); // do not modify the original image, it makes the menu smaller each time it is opened
-	if (!markedPcxPath.empty())
-		_markedImage = AssetsManager::loadImage(markedPcxPath)->getCopy();
-	if (!pcxPath2.empty())
-		_image2 = AssetsManager::loadImage(pcxPath2)->getCopy();
-	if (!markedPcxPath2.empty())
-		_markedImage2 = AssetsManager::loadImage(markedPcxPath2)->getCopy();
+	_image = AssetsManager::loadImage(imagePath)->getCopy(); // do not modify the original image, it makes the menu smaller each time it is opened
+	if (!markedImagePath.empty())
+		_markedImage = AssetsManager::loadImage(markedImagePath)->getCopy();
+	if (!toggleStateImage.empty())
+		_toggleStateImage = AssetsManager::loadImage(toggleStateImage)->getCopy();
+	if (!markedToggleStateImage.empty())
+		_markedToggleStateImage = AssetsManager::loadImage(markedToggleStateImage)->getCopy();
 
 	_sizeRatio.width = WindowManager::DEFAULT_WINDOW_SIZE.width / _image->size.width;
 	_sizeRatio.height = WindowManager::DEFAULT_WINDOW_SIZE.height / _image->size.height;
@@ -49,24 +49,18 @@ void MenuItem::Logic(uint32_t)
 }
 void MenuItem::Draw()
 {
-	shared_ptr<UIBaseImage> imgToDraw = (marked && _markedImage) ? (state ? _markedImage2 : _markedImage) : (state ? _image2 : _image);
+	shared_ptr<UIBaseImage> imgToDraw = (marked && _markedImage) ? (state ? _markedToggleStateImage : _markedImage) : (state ? _toggleStateImage : _image);
 	imgToDraw->size = size;
 	imgToDraw->position = position;
 	imgToDraw->Draw();
 }
-
-void MenuItem::mulImageSizeRatio(float n)
-{
-	_sizeRatio.width *= n;
-	_sizeRatio.height *= n;
-}
 bool MenuItem::isActive() const { return (bool)onClick; }
 
 
-MenuSlider::MenuSlider(const string& pcxPath, const string& markedPcxPath,
-	const string& pcxPath2, const string& markedPcxPath2, float xRatio, float yRatio,
+MenuSlider::MenuSlider(const string& imagePath, const string& markedImagePath,
+	const string& toggleStateImage, const string& markedToggleStateImage, float xRatio, float yRatio,
 	function<void(MenuSlider*, int)> onMove, MenuBackgroundImage* bgImg, ScreenEngine* parent, int initialValue)
-	: MenuItem(pcxPath, markedPcxPath, pcxPath2, markedPcxPath2, xRatio, yRatio,
+	: MenuItem(imagePath, markedImagePath, toggleStateImage, markedToggleStateImage, xRatio, yRatio,
 		[&](MenuItem*) { moveSlider(_value == 0 ? 10 : -10); }, bgImg, parent, 0),
 	_onMove(onMove), _value(initialValue)
 {
@@ -89,15 +83,7 @@ void MenuSlider::Draw()
 	imgToDraw->position.y = _bgImg->position.y + _thumbPosRatio.y * _bgImg->size.height;
 	imgToDraw->Draw();
 }
-
-void MenuSlider::mulImageSizeRatio(float n)
-{
-	MenuItem::mulImageSizeRatio(n);
-	_thumbSizeRatio.width *= n;
-	_thumbSizeRatio.height *= n;
-}
 bool MenuSlider::isActive() const { return true; }
-
 void MenuSlider::moveSlider(int step)
 {
 	_value += step;

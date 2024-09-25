@@ -3,8 +3,8 @@
 #include "GameEngine/WindowManager.h"
 
 
-MenuBackgroundImage::MenuBackgroundImage(const string& pcxPath)
-	: UIBaseImage(*AssetsManager::loadImage(pcxPath)), _imgRatio(size.width / size.height) {}
+MenuBackgroundImage::MenuBackgroundImage(const string& imagePath)
+	: UIBaseImage(*AssetsManager::loadImage(imagePath)), _imgRatio(size.width / size.height) {}
 void MenuBackgroundImage::Logic(uint32_t)
 {
 	// change image size according to window size:

@@ -36,7 +36,6 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
 	}
 
 	if (!_mainPlanePosition) throw Exception("no main plane found"); // should never happen
-	_planes.back()->isVisible = SavedDataManager::instance.settings.frontLayer;
 	_hud = DBG_NEW LevelHUD(_mainPlanePosition);
 }
 ClawLevelEngineFields::~ClawLevelEngineFields()
@@ -186,10 +185,12 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 
 	switch (_state)
 	{
-	case ClawLevelEngine::States::Play:
+	case States::Play:
 		BaseEngine::Logic(elapsedTime);
 		for (shared_ptr<LevelPlane>& p : _fields->_planes)
 			p->position = *_fields->_mainPlanePosition;
+
+		_fields->_planes.back()->isVisible = SavedDataManager::instance.settings.frontLayer;
 
 		if (player->isFinishDeathAnimation() && player->hasLives())
 		{
@@ -235,7 +236,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		break;
 
 
-	case ClawLevelEngine::States::DeathFall:
+	case States::DeathFall:
 		player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
 		player->Logic(0); // update position of animation
 		if (player->position.y - _fields->_mainPlanePosition->y > WindowManager::getCameraSize().height)
@@ -247,7 +248,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		}
 		break;
 
-	case ClawLevelEngine::States::DeathClose:
+	case States::DeathClose:
 		_holeRadius -= SCREEN_SPEED * elapsedTime;
 		if (_holeRadius <= 0)
 		{
@@ -266,14 +267,14 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		}
 		break;
 
-	case ClawLevelEngine::States::DeathOpen:
+	case States::DeathOpen:
 		_holeRadius += SCREEN_SPEED * elapsedTime;
 		if (initialHoleRadius < _holeRadius)
 			_state = States::Play;
 		break;
 
 
-	case ClawLevelEngine::States::WrapClose:
+	case States::WrapClose:
 		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
 		if (_wrapCoverTop <= 0)
 		{
@@ -295,14 +296,14 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		}
 		break;
 
-	case ClawLevelEngine::States::WrapOpen:
+	case States::WrapOpen:
 		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
 		if (_wrapCoverTop < -WindowManager::getCameraSize().height)
 			_state = States::Play;
 		break;
 
 
-	case ClawLevelEngine::States::GameOver:
+	case States::GameOver:
 		_gameOverTimeCounter -= elapsedTime;
 		if (_gameOverTimeCounter <= 0)
 		{

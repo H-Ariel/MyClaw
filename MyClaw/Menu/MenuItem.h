@@ -7,23 +7,20 @@
 class MenuItem : public UIBaseButton
 {
 public:
-	// TODO: beter name instead of pcxPath, markedPcxPath, pcxPath2, markedPcxPath2
-
-	MenuItem(const string& pcxPath, float xRatio, float yRatio,
+	MenuItem(const string& imagePath, float xRatio, float yRatio,
 		MenuBackgroundImage* bgImg, ScreenEngine* parent);
 
-	MenuItem(const string& pcxPath, const string& markedPcxPath, float xRatio, float yRatio,
+	MenuItem(const string& imagePath, const string& markedImagePath, float xRatio, float yRatio,
 		function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent);
 
-	MenuItem(const string& pcxPath, const string& markedPcxPath,
-		const string& pcxPath2, const string& markedPcxPath2,
+	MenuItem(const string& imagePath, const string& markedImagePath,
+		const string& toggleStateImage, const string& markedToggleStateImage,
 		float xRatio, float yRatio,
 		function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent, bool initialState);
 
 	void Logic(uint32_t) override;
 	void Draw() override;
 
-	virtual void mulImageSizeRatio(float n); // multiply the size ratio by n
 	virtual bool isActive() const;
 
 	void setStates(bool s) { state = s; }
@@ -37,22 +34,21 @@ protected:
 	D2D1_SIZE_F _sizeRatio;
 	MenuBackgroundImage* _bgImg; // save it to get the size and position, so we can save item's image ratio
 	shared_ptr<UIBaseImage> _image, _markedImage;
-	shared_ptr<UIBaseImage> _image2, _markedImage2;
-	bool state; // 0 for _image, 1 for _image2
+	shared_ptr<UIBaseImage> _toggleStateImage, _markedToggleStateImage;
+	bool state; // 0 for _image, 1 for _toggleStateImage
 };
 
 
 class MenuSlider : public MenuItem
 {
 public:
-	MenuSlider(const string& pcxPath, const string& markedPcxPath,
-		const string& pcxPath2, const string& markedPcxPath2,
+	MenuSlider(const string& imagePath, const string& markedImagePath,
+		const string& toggleStateImage, const string& markedToggleStateImage,
 		float xRatio, float yRatio,
 		function<void(MenuSlider*, int)> onMove,
 		MenuBackgroundImage* bgImg, ScreenEngine* parent, int initialValue);
 
 	void Draw() override;
-	void mulImageSizeRatio(float n) override;
 	bool isActive() const override;
 
 	void moveSlider(int step);

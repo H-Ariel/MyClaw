@@ -150,7 +150,6 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 	ScreenEngine::Logic(elapsedTime);
 
 	uint8_t digits[3] = {}; // we have only 3 digits to display
-	MenuItem* item;
 	float x, y;
 	int i, j;
 
@@ -169,9 +168,7 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 			y = (-230 + 60 * i) / 600.f; // TODO: find perfect proportions
 
 			// draw current treasures
-			item = DBG_NEW MenuItem(treasuresData[i].second, -0.25f, y, _bgImg, this);
-			item->mulImageSizeRatio(0.75f);
-			_elementsList.push_back((UIBaseImage*)item);
+			_elementsList.push_back(DBG_NEW MenuItem(treasuresData[i].second, -0.25f, y, _bgImg, this));
 
 			// draw collected treasures count
 			digits[0] = _collectedTreasures[treasuresData[i].first] / 100;
@@ -180,9 +177,7 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 			for (j = 0; j < 3; j++)
 			{
-				item = DBG_NEW MenuItem(scorenumbersPaths[digits[j]], x, y, _bgImg, this);
-				item->mulImageSizeRatio(0.75f);
-				_elementsList.push_back((UIBaseImage*)item);
+				_elementsList.push_back(DBG_NEW MenuItem(scorenumbersPaths[digits[j]], x, y, _bgImg, this));
 				x += 0.02f;
 			}
 

@@ -6,7 +6,6 @@
 #define SINGLEPLAYER_ROOT		MAIN_MENU_ROOT "SINGLEPLAYER/"
 #define LOAD_CHECKPOINT_ROOT	SINGLEPLAYER_ROOT "LOAD/CHECKPOINTS/"
 #define OPTIONS_ROOT			MAIN_MENU_ROOT "OPTIONS/"
-#define INGAME_MENU_ROOT		"GAME/IMAGES/INGAMEMENU/MAIN/"
 
 
 struct HierarchicalMenu
@@ -19,7 +18,6 @@ struct HierarchicalMenu
 		MenuOut, // back to previous menu
 		SelectLevel,
 		ExitApp,
-		Help,
 		Credits,
 		// NOTE: don't use OpenLevel and LoadCheckpoint directly!
 		OpenLevel, // `OpenLevel | (<lvlNo> << 4)`
@@ -47,23 +45,24 @@ struct HierarchicalMenu
 
 	HierarchicalMenu(vector<HierarchicalMenu> subMenus)
 		: HierarchicalMenu("", "", Nop, subMenus) {}
-	HierarchicalMenu(const string& pcxPath)
-		: HierarchicalMenu(pcxPath, "", Nop, {}) {}
-	HierarchicalMenu(const string& pcxPath, uint8_t cmd, vector<HierarchicalMenu> subMenus)
-		: HierarchicalMenu(pcxPath, "", cmd, subMenus) {}
-	HierarchicalMenu(const string& pcxPath, const string& markedPcxPath, vector<HierarchicalMenu> subMenus)
-		: HierarchicalMenu(pcxPath, markedPcxPath, MenuIn, subMenus) {}
-	HierarchicalMenu(const string& pcxPath1, const string& markedPcxPath1, const string& pcxPath2, const string& markedPcxPath2, uint8_t cmd)
-		: pcxPath(pcxPath1), markedPcxPath(markedPcxPath1), pcxPath2(pcxPath2), markedPcxPath2(markedPcxPath2), cmd(cmd) {}
-	HierarchicalMenu(const string& pcxPath, const string& markedPcxPath, uint8_t cmd, vector<HierarchicalMenu> subMenus = {})
-		: pcxPath(pcxPath), markedPcxPath(markedPcxPath), subMenus(subMenus), cmd(cmd) {}
+	HierarchicalMenu(const string& imagePath)
+		: HierarchicalMenu(imagePath, "", Nop, {}) {}
+	HierarchicalMenu(const string& imagePath, uint8_t cmd, vector<HierarchicalMenu> subMenus)
+		: HierarchicalMenu(imagePath, "", cmd, subMenus) {}
+	HierarchicalMenu(const string& imagePath, const string& markedImagePath, vector<HierarchicalMenu> subMenus)
+		: HierarchicalMenu(imagePath, markedImagePath, MenuIn, subMenus) {}
+	HierarchicalMenu(const string& pcxPath1, const string& markedPcxPath1, const string& toggleStateImage, const string& markedToggleStateImage, uint8_t cmd)
+		: imagePath(pcxPath1), markedImagePath(markedPcxPath1), toggleStateImage(toggleStateImage), markedToggleStateImage(markedToggleStateImage), cmd(cmd) {}
+	HierarchicalMenu(const string& imagePath, const string& markedImagePath, uint8_t cmd, vector<HierarchicalMenu> subMenus = {})
+		: imagePath(imagePath), markedImagePath(markedImagePath), subMenus(subMenus), cmd(cmd) {}
 
 
 	vector<HierarchicalMenu> subMenus;
-	string pcxPath, markedPcxPath;
-	string pcxPath2, markedPcxPath2; // if this is a two-state button (like "Details: [HIGH|LOW]")
+	string imagePath, markedImagePath;
+	string toggleStateImage, markedToggleStateImage; // if this is a two-state button (like "Details: [HIGH|LOW]")
 	uint8_t cmd;
-
+	
+	static HierarchicalMenu OptionsMenu, HelpScreen;
 	static HierarchicalMenu MainMenu, InGameMenu;
 	static HierarchicalMenu SelectLevelMenu, SelectCheckpoint;
 };
