@@ -1,6 +1,5 @@
 #include "HierarchicalMenu.h"
 
-// TODO: add Slider-Buttons in HierarchicalMenu
 
 HierarchicalMenu HierarchicalMenu::MainMenu({
 	// title
@@ -21,7 +20,7 @@ HierarchicalMenu HierarchicalMenu::MainMenu({
 	// multi player
 	HierarchicalMenu(MAIN_MENU_ROOT "003.PCX", MAIN_MENU_ROOT "004.PCX", NotImpleted),
 	// replay movies
-	HierarchicalMenu(MAIN_MENU_ROOT "005.PCX", MAIN_MENU_ROOT "006.PCX", NotImpleted),
+	HierarchicalMenu(MAIN_MENU_ROOT "007.PCX"), //HierarchicalMenu(MAIN_MENU_ROOT "005.PCX", MAIN_MENU_ROOT "006.PCX", NotImpleted),
 	// options
 	HierarchicalMenu(MAIN_MENU_ROOT "008.PCX", MAIN_MENU_ROOT "009.PCX", MenuIn, {
 		// title
@@ -38,8 +37,8 @@ HierarchicalMenu HierarchicalMenu::MainMenu({
 			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/005.PCX", OPTIONS_ROOT "DISPLAY/007.PCX",
 							 OPTIONS_ROOT "DISPLAY/006.PCX", OPTIONS_ROOT "DISPLAY/008.PCX", Details),
 			// front layer
-			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/009.PCX", OPTIONS_ROOT "DISPLAY/011.PCX",
-							 OPTIONS_ROOT "DISPLAY/010.PCX", OPTIONS_ROOT "DISPLAY/012.PCX", FrontLayer),
+			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/010.PCX", OPTIONS_ROOT "DISPLAY/012.PCX",
+							 OPTIONS_ROOT "DISPLAY/009.PCX", OPTIONS_ROOT "DISPLAY/011.PCX", FrontLayer),
 			// game play area
 			HierarchicalMenu(OPTIONS_ROOT "DISPLAY/013.PCX", OPTIONS_ROOT "DISPLAY/014.PCX", Area),
 			// movies
@@ -56,11 +55,11 @@ HierarchicalMenu HierarchicalMenu::MainMenu({
 			HierarchicalMenu(OPTIONS_ROOT "AUDIO/001.PCX", OPTIONS_ROOT "AUDIO/003.PCX",
 							 OPTIONS_ROOT "AUDIO/002.PCX", OPTIONS_ROOT "AUDIO/004.PCX", Sound),
 			// voice
-			HierarchicalMenu(OPTIONS_ROOT "AUDIO/005.PCX", OPTIONS_ROOT "AUDIO/007.PCX",
-							 OPTIONS_ROOT "AUDIO/006.PCX", OPTIONS_ROOT "AUDIO/008.PCX", Voice),
+			HierarchicalMenu(OPTIONS_ROOT "AUDIO/006.PCX", OPTIONS_ROOT "AUDIO/008.PCX",
+							 OPTIONS_ROOT "AUDIO/005.PCX", OPTIONS_ROOT "AUDIO/007.PCX", Voice),
 			// ambient
-			HierarchicalMenu(OPTIONS_ROOT "AUDIO/009.PCX", OPTIONS_ROOT "AUDIO/011.PCX",
-							 OPTIONS_ROOT "AUDIO/010.PCX", OPTIONS_ROOT "AUDIO/012.PCX", Ambient),
+			HierarchicalMenu(OPTIONS_ROOT "AUDIO/010.PCX", OPTIONS_ROOT "AUDIO/012.PCX",
+							 OPTIONS_ROOT "AUDIO/009.PCX", OPTIONS_ROOT "AUDIO/011.PCX", Ambient),
 			// music
 			HierarchicalMenu(OPTIONS_ROOT "AUDIO/013.PCX", OPTIONS_ROOT "AUDIO/015.PCX",
 							 OPTIONS_ROOT "AUDIO/014.PCX", OPTIONS_ROOT "AUDIO/016.PCX", Music),
@@ -82,6 +81,7 @@ HierarchicalMenu HierarchicalMenu::MainMenu({
 	})
 });
 
+// TODO: add in-game settings
 HierarchicalMenu HierarchicalMenu::InGameMenu({
 	HierarchicalMenu(INGAME_MENU_ROOT "001.PID", INGAME_MENU_ROOT "002.PID", BackToGame),
 	HierarchicalMenu(INGAME_MENU_ROOT "003.PID", INGAME_MENU_ROOT "004.PID", MenuIn, {

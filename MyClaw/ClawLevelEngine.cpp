@@ -36,6 +36,7 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
 	}
 
 	if (!_mainPlanePosition) throw Exception("no main plane found"); // should never happen
+	_planes.back()->isVisible = SavedDataManager::instance.settings.frontLayer;
 	_hud = DBG_NEW LevelHUD(_mainPlanePosition);
 }
 ClawLevelEngineFields::~ClawLevelEngineFields()

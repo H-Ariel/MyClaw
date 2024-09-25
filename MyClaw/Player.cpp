@@ -896,7 +896,7 @@ bool Player::collectItem(Item* item)
 		int tScore = item->getTreasureScore();
 		
 		// each 500,000 points CC gets an extra life
-		int lastScoreForExtraLife = _score / 500000;
+		uint32_t lastScoreForExtraLife = _score / 500000;
 		_score += tScore;
 		if (lastScoreForExtraLife < _score / 500000)
 			ADD_LIFE(1);

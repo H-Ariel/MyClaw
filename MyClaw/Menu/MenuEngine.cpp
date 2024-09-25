@@ -13,49 +13,6 @@ stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
 
-// TODO: combine with SavedDataManager (1 class and 1 file for setting and saved game)
-class SettingsManager
-{
-	const char* settingsFile = "Claw.settings";
-
-public:
-	SettingsManager() { settings = SavedDataManager::loadSettings(); }
-	~SettingsManager() { SavedDataManager::saveSettings(settings); }
-
-	void setDetails(bool d) { settings.details = d; }
-	void setFrontLayer(bool f) { settings.frontLayer = f; }
-	void setArea(int a) { settings.area = a; }
-	void setMovies(bool m) { settings.movies = m; }
-
-	void setSoundVolume(int v) { settings.soundVolume = v; }
-	void setVoice(bool v) { settings.voice = v; }
-	void setAmbient(bool a) { settings.ambient = a; }
-	void setMusicVolume(int v) { settings.musicVolume = v; }
-
-	bool getDetails() const { return settings.details; }
-	bool getFrontLayer() const { return settings.frontLayer; }
-	int getArea() const { return settings.area; }
-	bool getMovies() const { return settings.movies; }
-	int8_t getSoundVolume() const { return settings.soundVolume; }
-	bool getVoice() const { return settings.voice; }
-	bool getAmbient() const { return settings.ambient; }
-	int8_t getMusicVolume() const { return settings.musicVolume; }
-
-	void switchDetails() { settings.details = !settings.details; }
-	void switchFrontLayer() { settings.frontLayer = !settings.frontLayer; }
-	void switchMovies() { settings.movies = !settings.movies; }
-	void switchSoundVolume() { settings.soundVolume = (settings.soundVolume == 0) ? 100 : 0; }
-	void switchVoice() { settings.voice = !settings.voice; }
-	void switchAmbient() { settings.ambient = !settings.ambient; }
-	void switchMusicVolume() { settings.musicVolume = (settings.musicVolume == 0) ? 100 : 0; }
-
-private:
-	SavedDataManager::SettingsData settings;
-};
-
-static SettingsManager settingsManager;
-
-
 MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine({}, nullptr, bgPcxPath) {}
 MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const string& bgPcxPath)
 	: ScreenEngine(bgPcxPath), _currMarkedItem(nullptr)
@@ -121,10 +78,10 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 
 #ifndef _DEBUG // in debug mode, all levels are available for me :)
 				// check which levels are available and change the menu-buttons accordingly
-				for (int i = 2; i <= 14; i++) // i=2 because level 1 must be available by default
+				for (int i = 1; i <= 14; i++)
 				{
 					int n = i * 3;
-					if (SavedDataManager::canLoadGame(i, 0))
+					if (SavedDataManager::instance.canLoadGame(i, 0))
 					{
 						HierarchicalMenu::SelectLevelMenu.subMenus[i].cmd = HierarchicalMenu::OpenLevel | (i << 4);
 						n -= 2;
@@ -192,68 +149,68 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::Details:
-			initialValue = settingsManager.getDetails();
+			initialValue = SavedDataManager::instance.settings.details;
 			onClick = [&](MenuItem* item) {
-				item->state = (item->state == 0) ? 1 : 0;
-				settingsManager.switchDetails();
+				item->switchState();
+				SavedDataManager::instance.settings.details = !SavedDataManager::instance.settings.details;
 			};
 			break;
 
 		case HierarchicalMenu::FrontLayer:
-			initialValue = settingsManager.getFrontLayer();
+			initialValue = SavedDataManager::instance.settings.frontLayer;
 			onClick = [&](MenuItem* item) {
-				item->state = (item->state == 0) ? 1 : 0;
-				settingsManager.switchFrontLayer();
+				item->switchState();
+				SavedDataManager::instance.settings.frontLayer = !SavedDataManager::instance.settings.frontLayer;
 			};
 			break;
 
 		case HierarchicalMenu::Area:
 			isSlider = true;
-			initialValue = settingsManager.getArea();
+			initialValue = SavedDataManager::instance.settings.area;
 			onMove = [&](MenuSlider* slider, int value) {
-				settingsManager.setArea(value);
+				SavedDataManager::instance.settings.area = value;
 			};
 			break;
 
 		case HierarchicalMenu::Movies:
-			initialValue = settingsManager.getMovies();
+			initialValue = SavedDataManager::instance.settings.movies;
 			onClick = [&](MenuItem* item) {
-				item->state = (item->state == 0) ? 1 : 0;
-				settingsManager.switchMovies();
+				item->switchState();
+				SavedDataManager::instance.settings.movies = !SavedDataManager::instance.settings.movies;
 			};
 			break;
 
 		case HierarchicalMenu::Sound:
 			isSlider = true;
-			initialValue = settingsManager.getSoundVolume();
+			initialValue = SavedDataManager::instance.settings.soundVolume;
 			onMove = [&](MenuSlider* slider, int value) {
-				slider->state = (value == 0) ? 1 : 0;
-				settingsManager.setSoundVolume(value);
+				slider->setStates(value == 0);
+				SavedDataManager::instance.settings.soundVolume = value;
 			};
 			break;
 
 		case HierarchicalMenu::Voice:
-			initialValue = settingsManager.getVoice();
+			initialValue = SavedDataManager::instance.settings.voice;
 			onClick = [&](MenuItem* item) {
-				item->state = (item->state == 0) ? 1 : 0;
-				settingsManager.switchVoice();
+				item->switchState();
+				SavedDataManager::instance.settings.voice = !SavedDataManager::instance.settings.voice;
 			};
 			break;
 
 		case HierarchicalMenu::Ambient:
-			initialValue = settingsManager.getAmbient();
+			initialValue = SavedDataManager::instance.settings.ambient;
 			onClick = [&](MenuItem* item) {
-				item->state = (item->state == 0) ? 1 : 0;
-				settingsManager.switchAmbient();
+				item->switchState();
+				SavedDataManager::instance.settings.ambient = !SavedDataManager::instance.settings.ambient;
 			};
 			break;
 
 		case HierarchicalMenu::Music:
 			isSlider = true;
-			initialValue = settingsManager.getMusicVolume();
+			initialValue = SavedDataManager::instance.settings.musicVolume;
 			onMove = [&](MenuSlider* slider, int value) {
-				slider->state = (value == 0) ? 1 : 0;
-				settingsManager.setMusicVolume(value);
+				slider->setStates(value == 0);
+				SavedDataManager::instance.settings.musicVolume = value;
 			};
 			break;
 
@@ -267,7 +224,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 						.pcxPath.substr(strlen(LOAD_CHECKPOINT_ROOT), 3)) - 10;
 					int checkpoint = ((m.cmd & 0xf0) >> 4) - 1;
 					changeEngine<LevelLoadingEngine>(level, checkpoint);
-					};
+				};
 			}
 			else if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
 			{
@@ -286,7 +243,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 						HierarchicalMenu::SelectCheckpoint.subMenus[0].pcxPath = path;
 
 						// check which checkpoints are available and change the menu-buttons accordingly
-						if (SavedDataManager::canLoadGame(level, 1))
+						if (SavedDataManager::instance.canLoadGame(level, 1))
 						{
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].cmd = HierarchicalMenu::LoadCheckpoint_1;
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "003.PCX";
@@ -296,7 +253,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].cmd = HierarchicalMenu::Nop;
 							HierarchicalMenu::SelectCheckpoint.subMenus[2].pcxPath = LOAD_CHECKPOINT_ROOT "005.PCX";
 						}
-						if (SavedDataManager::canLoadGame(level, 2))
+						if (SavedDataManager::instance.canLoadGame(level, 2))
 						{
 							HierarchicalMenu::SelectCheckpoint.subMenus[3].cmd = HierarchicalMenu::LoadCheckpoint_2;
 							HierarchicalMenu::SelectCheckpoint.subMenus[3].pcxPath = LOAD_CHECKPOINT_ROOT "006.PCX";

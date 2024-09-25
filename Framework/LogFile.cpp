@@ -1,5 +1,6 @@
 #include "Framework.h"
 
+#ifdef _DEBUG
 
 FILE* LogFile::logFile = nullptr;
 mutex LogFile::logMutex;
@@ -57,3 +58,11 @@ void LogFile::unsafe_log(LogType type, const char* format, va_list args)
 	vfprintf(logFile, format, args);
 	fprintf(logFile, "\n"); // To add a newline after the message if desired
 }
+
+#else
+
+void LogFile::Initialize(const char* filename) {}
+void LogFile::Finalize() {}
+void LogFile::log(LogType type, const char* format, ...) {}
+
+#endif

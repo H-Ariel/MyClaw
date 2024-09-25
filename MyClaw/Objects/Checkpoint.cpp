@@ -34,7 +34,7 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 				SavedDataManager::GameData data = player->getGameData();
 				data.level = _levelNumber;
 				data.savePoint = (SavedDataManager::SavePoints)_superCheckpoint;
-				SavedDataManager::saveGame(data);
+				SavedDataManager::instance.saveGame(data);
 				_isSaved = true;
 				ActionPlane::writeMessage("Your game has been saved");
 			}

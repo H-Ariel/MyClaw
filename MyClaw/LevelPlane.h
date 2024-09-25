@@ -14,6 +14,8 @@ public:
 	virtual void updateObject(WwdObject& obj); // called from `init`
 	virtual void addObject(const WwdObject& obj); // called from `init`
 
+	bool isVisible;
+
 protected:
 	vector<BasePlaneObject*> _objects;
 	map<int, shared_ptr<UIBaseImage>> tilesImages; // [id]=image

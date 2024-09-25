@@ -650,7 +650,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 
 void ActionPlane::loadGame(int level, int checkpoint)
 {
-	SavedDataManager::GameData data = SavedDataManager::loadGame(level, checkpoint);
+	SavedDataManager::GameData data = SavedDataManager::instance.loadGame(level, checkpoint);
 	if (data.level == level && data.savePoint == checkpoint)
 	{
 		// success to load checkpoint

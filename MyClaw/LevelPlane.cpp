@@ -6,7 +6,7 @@ const float STEP_SIZE = TILE_SIZE - 0.6f; // small delta so that there is no spa
 
 
 LevelPlane::LevelPlane(WapWwd* wwd, WwdPlane* wwdPlane)
-	: _wwd(wwd), _wwdPlane(wwdPlane),
+	: _wwd(wwd), _wwdPlane(wwdPlane), isVisible(true),
 	maxTileIdxX(((wwdPlane->flags & WwdPlane::WwdPlaneFlags_XWrapping) ? INT_MAX : wwdPlane->tilesOnAxisX)),
 	maxTileIdxY(((wwdPlane->flags & WwdPlane::WwdPlaneFlags_YWrapping) ? INT_MAX : wwdPlane->tilesOnAxisY))
 {
@@ -14,6 +14,8 @@ LevelPlane::LevelPlane(WapWwd* wwd, WwdPlane* wwdPlane)
 
 void LevelPlane::Draw()
 {
+	if (!isVisible) return;
+
 	shared_ptr<UIBaseImage> img;
 	size_t i;
 	int row, col, tileId, rowTileIndex, colTileIndex;

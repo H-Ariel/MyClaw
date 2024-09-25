@@ -28,7 +28,7 @@ public:
 		int8_t dynamiteAmount;
 	};
 
-	struct SettingsData
+	struct Settings
 	{
 		bool details;    // 0-low, 1-high
 		bool frontLayer; // 0-off, 1-on
@@ -41,13 +41,17 @@ public:
 	};
 #pragma pack(pop)
 
-	static void saveSettings(const SettingsData& data);
-	static SettingsData loadSettings();
+	~SavedDataManager();
 
-	static void saveGame(const GameData& data);
-	static bool canLoadGame(int level, int savePoint);
-	static GameData loadGame(int level, int savePoint);
+	void saveGame(const GameData& data);
+	bool canLoadGame(int level, int savePoint);
+	GameData loadGame(int level, int savePoint);
+
+
+	static SavedDataManager instance;
+
+	Settings settings;
 
 private:
-	static void initFile(); // initialize the file with empty data
+	SavedDataManager();
 };

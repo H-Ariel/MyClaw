@@ -68,7 +68,7 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 		SavedDataManager::GameData data = BasePlaneObject::player->getGameData();
 		data.level = _lvlNum + 1;
 		data.savePoint = SavedDataManager::SavePoints::Start;
-		SavedDataManager::saveGame(data);
+		SavedDataManager::instance.saveGame(data);
 	}
 
 	clearClawLevelEngineFields(); // clear level data (if player enter menu from level)

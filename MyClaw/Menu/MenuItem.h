@@ -18,17 +18,18 @@ public:
 	MenuItem(const string& pcxPath, const string& markedPcxPath,
 		const string& pcxPath2, const string& markedPcxPath2,
 		float xRatio, float yRatio,
-		function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent, int initialState);
+		function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent, bool initialState);
 
 	void Logic(uint32_t) override;
 	void Draw() override;
 
 	virtual void mulImageSizeRatio(float n); // multiply the size ratio by n
+	virtual bool isActive() const;
 
-	virtual bool isActive() const { return (bool)onClick; }
+	void setStates(bool s) { state = s; }
+	void switchState() { state = !state; }
 
 	bool marked;
-	int state; // 0 for _image, 1 for _image2
 
 protected:
 	function<void(MenuItem*)> _itemOnClick; // send `this` as parameter
@@ -37,6 +38,7 @@ protected:
 	MenuBackgroundImage* _bgImg; // save it to get the size and position, so we can save item's image ratio
 	shared_ptr<UIBaseImage> _image, _markedImage;
 	shared_ptr<UIBaseImage> _image2, _markedImage2;
+	bool state; // 0 for _image, 1 for _image2
 };
 
 
@@ -51,7 +53,7 @@ public:
 
 	void Draw() override;
 	void mulImageSizeRatio(float n) override;
-	bool isActive() const override { return true; }
+	bool isActive() const override;
 
 	void moveSlider(int step);
 	int getValue() const { return _value; }

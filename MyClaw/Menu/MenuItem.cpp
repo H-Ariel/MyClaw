@@ -13,7 +13,7 @@ MenuItem::MenuItem(const string& pcxPath, const string& markedPcxPath, float xRa
 
 MenuItem::MenuItem(const string& pcxPath, const string& markedPcxPath,
 	const string& pcxPath2, const string& markedPcxPath2, float xRatio, float yRatio,
-	function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent, int initialState)
+	function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent, bool initialState)
 	: UIBaseButton(nullptr, parent), _posRatio({ xRatio, yRatio }), _bgImg(bgImg), marked(false), state(initialState)
 {
 	_image = AssetsManager::loadImage(pcxPath)->getCopy(); // do not modify the original image, it makes the menu smaller each time it is opened
@@ -49,7 +49,7 @@ void MenuItem::Logic(uint32_t)
 }
 void MenuItem::Draw()
 {
-	shared_ptr<UIBaseImage> imgToDraw = (marked && _markedImage) ? (state == 0 ? _markedImage : _markedImage2) : (state == 0 ? _image : _image2);
+	shared_ptr<UIBaseImage> imgToDraw = (marked && _markedImage) ? (state ? _markedImage2 : _markedImage) : (state ? _image2 : _image);
 	imgToDraw->size = size;
 	imgToDraw->position = position;
 	imgToDraw->Draw();
@@ -60,6 +60,7 @@ void MenuItem::mulImageSizeRatio(float n)
 	_sizeRatio.width *= n;
 	_sizeRatio.height *= n;
 }
+bool MenuItem::isActive() const { return (bool)onClick; }
 
 
 MenuSlider::MenuSlider(const string& pcxPath, const string& markedPcxPath,
@@ -95,6 +96,7 @@ void MenuSlider::mulImageSizeRatio(float n)
 	_thumbSizeRatio.width *= n;
 	_thumbSizeRatio.height *= n;
 }
+bool MenuSlider::isActive() const { return true; }
 
 void MenuSlider::moveSlider(int step)
 {
