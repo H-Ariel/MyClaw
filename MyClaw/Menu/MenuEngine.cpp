@@ -290,6 +290,20 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 	{
 		_elementsList.push_back(_cursor.get());
 	}
+
+	// set _currMarkedItem to the first button
+	for (UIBaseElement* e : _elementsList)
+	{
+		if (MenuItem* i = dynamic_cast<MenuItem*>(e))
+		{
+			if (i->isActive())
+			{
+				_currMarkedItem = i;
+				_currMarkedItem->marked = true;
+				break;
+			}
+		}
+	}
 }
 MenuEngine::MenuEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath)
 	: MenuEngine(bgPcxPath)
@@ -308,23 +322,14 @@ void MenuEngine::Logic(uint32_t elapsedTime) {
 	ScreenEngine::Logic(elapsedTime);
 
 	// check if cursor collide with any button
-	for (UIBaseElement* e : _elementsList)
-	{
-		if (isinstance<MenuItem>(e) && e->GetRect().intersects(_cursor->GetRect()))
-		{
-			_currMarkedItem = (MenuItem*)e;
-			if (!_currMarkedItem->isActive())
-				_currMarkedItem = nullptr;
+	for (UIBaseElement* e : _elementsList) {
+		if (isinstance<MenuItem>(e) && e->GetRect().intersects(_cursor->GetRect())) {
+			if (((MenuItem*)e)->isActive()) {
+				_currMarkedItem->marked = false;
+				_currMarkedItem = (MenuItem*)e;
+				_currMarkedItem->marked = true;
+			}
 			break;
-		}
-	}
-
-	for (UIBaseElement* e : _elementsList)
-	{
-		if (isinstance<MenuItem>(e))
-		{
-			if (MenuItem* itm = (MenuItem*)e)
-				itm->marked = (itm == _currMarkedItem);
 		}
 	}
 }
@@ -345,6 +350,8 @@ void MenuEngine::OnKeyUp(int key)
 	}
 	else if (key == VK_UP || key == VK_DOWN)
 	{
+		MenuItem* prev = _currMarkedItem;
+
 		if (_currMarkedItem)
 		{
 			auto it = find(_elementsList.begin(), _elementsList.end(), _currMarkedItem);
@@ -383,22 +390,25 @@ void MenuEngine::OnKeyUp(int key)
 				_currMarkedItem = itm;
 			}
 		}
-		else 
+		else
 		{
+			// TODO: search using loop and isActive (not indexes)
 			if (key == VK_DOWN)
 				_currMarkedItem = (MenuItem*)_elementsList[2];
 			else if (key == VK_UP)
 				_currMarkedItem = (MenuItem*)_elementsList[_elementsList.size() - 1];
 		}
 
-		_currMarkedItem->marked = true;
+		if (_currMarkedItem != prev) {
+			if (prev) prev->marked = false;
+			_currMarkedItem->marked = true;
+		}
 	}
 	else if (key == VK_LEFT || key == VK_RIGHT)
 	{
-		if (_currMarkedItem && isinstance<MenuSlider>(_currMarkedItem))
+		if (isinstance<MenuSlider>(_currMarkedItem))
 		{
-			MenuSlider* slider = (MenuSlider*)_currMarkedItem;
-			slider->moveSlider(key == VK_RIGHT ? 1 : -1);
+			((MenuSlider*)_currMarkedItem)->moveSlider(key == VK_RIGHT ? 1 : -1);
 		}
 	}
 }

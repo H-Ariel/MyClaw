@@ -89,7 +89,7 @@ void MenuSlider::moveSlider(int step)
 	_value += step;
 	if (_value > 9) _value = 9;
 	else if (_value < 0) _value = 0;
-	_thumbPosRatio.x = _posRatio.x + 0.09f + 0.025f * _value;
+	_thumbPosRatio.x = _posRatio.x + 0.09f + 0.0335f * _value; // TODO: find perfect factors (offset=0.09f, rate=0.0335f)
 
 	_onMove(this, _value);
 }

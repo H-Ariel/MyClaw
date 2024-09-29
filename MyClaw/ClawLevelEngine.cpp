@@ -210,7 +210,6 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			if (player->isFinishLevel())
 			{
 				changeEngine<LevelEndEngine>(_fields->_wwd->levelNumber, player->getCollectedTreasures());
-				AssetsManager::clearLevelAssets(_fields->_wwd->levelNumber); // TODO: move into LevelEndEngine ?
 			}
 			else if (!player->hasLives())
 			{
@@ -363,18 +362,6 @@ void ClawLevelEngine::OnKeyUp(int key)
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_saveWindowScale = WindowManager::getWindowScale();
 		changeEngine<MenuEngine>(_fields);
-		break;
-
-	case VK_ADD: // zoom in
-		WindowManager::setWindowScale(WindowManager::getWindowScale() + 0.5f);
-		break;
-
-	case VK_SUBTRACT: // zoom out
-		WindowManager::setWindowScale(WindowManager::getWindowScale() - 0.5f);
-		break;
-
-	case VK_DIVIDE:
-		WindowManager::setDefaultWindowScale();
 		break;
 
 	default:

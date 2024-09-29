@@ -30,35 +30,20 @@ static const pair<Item::Type, const char*> treasuresData[NUM_OF_TREASURES] = {
 	{ type_Treasure_Coins,		"STATES/BOOTY/IMAGES/TREASURE/COINS/001.PID" }
 };
 
-static const char* const scorenumbersPaths[] = {
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/000.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/001.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/002.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/003.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/004.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/005.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/006.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/007.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/008.PID",
-	"STATES/BOOTY/IMAGES/SCORENUMBERS/009.PID"
-};
+char ScoreNumberPath[] = "STATES/BOOTY/IMAGES/SCORENUMBERS/00#.PID"; // base path for score numbers. # should be digit to display.
 
 
-static string getBGImgPath(int l, int img)
+static string getBGImgPath(int img)
 {
 	char path[30];
 	sprintf(path, "STATES/BOOTY/SCREENS/%03d.PCX", img);
 	return path;
 }
 
-static string getBGImgPath1(int l) { return getBGImgPath(l, l * 2 - 1); }
-static string getBGImgPath2(int l) { return getBGImgPath(l, l * 2); }
-
-
 // TODO: draw cool animation of map/gem before showing score
 
 LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures)
-	: ScreenEngine(getBGImgPath1(lvlNum)), _lvlNum(lvlNum), _state(Start)
+	: ScreenEngine(getBGImgPath(lvlNum * 2 - 1)), _lvlNum(lvlNum), _state(Start)
 {
 	LogFile::log(LogFile::Info, "end level %d", lvlNum);
 
@@ -72,6 +57,7 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 	}
 
 	clearClawLevelEngineFields(); // clear level data (if player enter menu from level)
+	AssetsManager::clearLevelAssets(_lvlNum);
 
 	for (auto& i : collectedTreasures)
 	{
@@ -158,14 +144,15 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 	case DrawScore:
 		delete _bgImg;
 		_elementsList.clear();
-		_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(getBGImgPath2(_lvlNum)));
+		_elementsList.push_back(_bgImg = DBG_NEW MenuBackgroundImage(getBGImgPath(_lvlNum * 2)));
 		_state += 1;
+
+		y = -0.38f;
 
 		// draw all treasures and their points
 		for (i = 0; i < NUM_OF_TREASURES; i++)
 		{
 			x = -0.18f;
-			y = (-230 + 60 * i) / 600.f; // TODO: find perfect proportions
 
 			// draw current treasures
 			_elementsList.push_back(DBG_NEW MenuItem(treasuresData[i].second, -0.25f, y, _bgImg, this));
@@ -177,9 +164,12 @@ void LevelEndEngine::Logic(uint32_t elapsedTime)
 
 			for (j = 0; j < 3; j++)
 			{
-				_elementsList.push_back(DBG_NEW MenuItem(scorenumbersPaths[digits[j]], x, y, _bgImg, this));
+				ScoreNumberPath[35] = digits[j] + '0';
+				_elementsList.push_back(DBG_NEW MenuItem(ScoreNumberPath, x, y, _bgImg, this));
 				x += 0.02f;
 			}
+
+			y += 0.1f;
 
 			// TODO: now it <IMG> <amount>. need continue to: <IMG> <amount> OF <total> X<score> = <total_treasure_score>
 		}

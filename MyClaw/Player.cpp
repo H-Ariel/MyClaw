@@ -177,8 +177,6 @@ void Player::Logic(uint32_t elapsedTime)
 		if (_leftPressed) position.x -= elapsedTime;
 		if (_rightPressed) position.x += elapsedTime;
 
-		// TODO: set ani to fly and upside down
-
 		_ani->position = position;
 		_ani->Logic(elapsedTime);
 

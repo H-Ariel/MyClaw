@@ -30,6 +30,9 @@ public:
 		BgMscSlowDown,
 		BgMscNormal,
 		MultiTeasures,
+		IncResolution,
+		DecResolution,
+		DefaultResolution
 	};
 
 	CheatsManager();

@@ -1,6 +1,7 @@
 #include "CheatsManager.h"
 #include "ActionPlane.h"
 #include "Objects/Item.h"
+#include "GameEngine/WindowManager.h"
 
 
 #define CHEATS_PREFIX "MP" // Monolith Production (the original game) prefix
@@ -37,7 +38,10 @@ const vector<tuple<int, const char*, const char*>> CheatsManager::cheatsKeys({
 	{ BgMscSpeedUp	, "MAESTRO"	, "Time to speed things up!" },
 	{ BgMscSlowDown	, "LANGSAM"	, "Ready to slow things down?" },
 	{ BgMscNormal	, "NORMALMUSIC", "Back to normal..." },
-	{ MultiTeasures	, "AHGOLD"	, MODE_CHANGE_MSG } // gives more treasures at crates
+	{ MultiTeasures	, "AHGOLD"	, MODE_CHANGE_MSG }, // gives more treasures at crates
+	{ IncResolution	, "INCVID", "Resolution increased" },
+	{ DecResolution	, "DECVID", "Resolution decreased" },
+	{ DefaultResolution, "DEFVID", "Default resolution" }
 });
 
 
@@ -89,6 +93,10 @@ void CheatsManager::addKey(int key)
 		break;
 	case SuperJump:		_superJump = !_superJump; break;
 	case MultiTeasures: _multiTreasures = !_multiTreasures; break;
+
+	case IncResolution: WindowManager::setWindowScale(WindowManager::getWindowScale() + 0.5); break;
+	case DecResolution: WindowManager::setWindowScale(WindowManager::getWindowScale() - 0.5); break;
+	case DefaultResolution: WindowManager::setDefaultWindowScale(); break;
 
 	default: break;
 	}

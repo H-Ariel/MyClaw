@@ -1,6 +1,6 @@
 + check why memory usage is too high. maybe there are objects which not free
 + better threads-pool in AudioManager (threads' count according to CPUs' count,
-  and should snc with other threads in code if needed)
+  and should sync with other threads in code if needed)
 
 + handle setting (low details, sound volume, etc.)
 

@@ -3,6 +3,7 @@
 #include "ScreenEngine.h"
 
 
+// TODO: try not use this class (we have HirarchicalMenu::HelpScreen)
 class HelpScreenEngine : public ScreenEngine
 {
 public:
