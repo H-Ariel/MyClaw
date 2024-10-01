@@ -12,7 +12,7 @@ class RezFile
 public:
 	RezFile(RezDirectory* parent, ifstream* ownerFileStream);
 
-	vector<uint8_t> getFileData() const;
+	DynamicArray<uint8_t> getFileData() const;
 	shared_ptr<BufferReader> getBufferReader() const;
 	string getFullPath() const;
 

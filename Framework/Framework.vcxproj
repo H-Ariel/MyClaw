@@ -150,6 +150,7 @@
     <ClInclude Include="BaseBuffer.h" />
     <ClInclude Include="BufferReader.h" />
     <ClInclude Include="BufferWriter.h" />
+    <ClInclude Include="DynamicArray.hpp" />
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="LogFile.h" />

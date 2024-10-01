@@ -9,7 +9,7 @@
 class MidiPlayer : public IAudioPlayer 
 {
 public:
-	MidiPlayer(const string& key, const vector<uint8_t>& midiData);
+	MidiPlayer(const string& key, const DynamicArray<uint8_t>& midiData);
 	~MidiPlayer() override;
 
 	void play(bool infinite) override; // play the MIDI file asynchronously

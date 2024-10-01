@@ -13,13 +13,7 @@ public:
 	ScreenEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath);
 	~ScreenEngine();
 
-	static void setIngameMenu();
-	static void setMainMenu();
-	static void clearClawLevelEngineFields();
-
 protected:
-	virtual void backToMenu();
-
 	static shared_ptr<ClawLevelEngineFields> _clawLevelEngineFields;
 
 	MenuBackgroundImage* _bgImg;

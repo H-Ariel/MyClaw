@@ -4,11 +4,11 @@
 MenuData::MenuData(shared_ptr<BufferReader> menuFileStream) {
 	menuFileStream->skip(4);
 
-	name = menuFileStream->ReadString(menuFileStream->read<uint8_t>());
+	name = menuFileStream->readString(menuFileStream->read<uint8_t>());
 
 	int numOfImages = 2;
 	for (int i = 0; i < numOfImages; i++) {
-		images.push_back(menuFileStream->ReadString(menuFileStream->read<uint8_t>()));
+		images.push_back(menuFileStream->readString(menuFileStream->read<uint8_t>()));
 
 		const uint8_t* p = menuFileStream->getCData() + menuFileStream->getIndex();
 		if (p[1] == 0)

@@ -25,7 +25,7 @@ int MidiPlayer::_objCount = 0;
 LARGE_INTEGER MidiPlayer::PerformanceFrequency = {};
 
 
-MidiPlayer::MidiPlayer(const string& key, const vector<uint8_t>& midiData)
+MidiPlayer::MidiPlayer(const string& key, const DynamicArray<uint8_t>& midiData)
 	: IAudioPlayer(key, midiData), track({}), PPQN_CLOCK(0), ticks(0), _thread(nullptr)
 {
 	if (_objCount++ == 0)

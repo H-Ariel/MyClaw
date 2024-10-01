@@ -2,7 +2,6 @@
 #include "ActionPlane.h"
 #include "CheatsManager.h"
 #include "GameEngine/WindowManager.h"
-#include "Menu/HelpScreenEngine.h"
 #include "Menu/LevelEndEngine.h"
 #include "Menu/MenuEngine.h"
 
@@ -307,7 +306,6 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		if (_gameOverTimeCounter <= 0)
 		{
 			_gameOverTimeCounter = 0;
-			ScreenEngine::clearClawLevelEngineFields();
 			MenuEngine::setMainMenu();
 			changeEngine<MenuEngine>();
 		}
@@ -344,8 +342,6 @@ void ClawLevelEngine::Draw()
 
 void ClawLevelEngine::OnKeyUp(int key)
 {
-	if (key == 0xFF) return; // `Fn` key
-
 	BasePlaneObject::cheats->addKey(key);
 
 	switch (key)
@@ -354,13 +350,15 @@ void ClawLevelEngine::OnKeyUp(int key)
 		AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_saveWindowScale = WindowManager::getWindowScale();
-		changeEngine<HelpScreenEngine>(_fields);
+		MenuEngine::setHelpScreen();
+		changeEngine<MenuEngine>(_fields);
 		break;
 
 	case VK_ESCAPE: // open pause menu
 		AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_saveWindowScale = WindowManager::getWindowScale();
+		MenuEngine::setIngameMenu();
 		changeEngine<MenuEngine>(_fields);
 		break;
 

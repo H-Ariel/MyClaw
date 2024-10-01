@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Framework/Framework.h"
+#include "Framework/DynamicArray.hpp"
 
 
 struct MidiFile
 {
-	vector<uint8_t> data;
+	DynamicArray<uint8_t> data;
 
-	MidiFile(const vector<uint8_t>& xmiData);
+	MidiFile(const DynamicArray<uint8_t>& xmiData);
 };

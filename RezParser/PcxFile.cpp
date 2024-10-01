@@ -46,7 +46,7 @@ PcxFile::PcxFile(shared_ptr<BufferReader> pcxReader)
 
 	width = endX - startX + 1;
 	height = endY - startY + 1;
-	colors.resize((size_t)width * height);
+	colors = DynamicArray<ColorRGBA>((size_t)width * height);
 	maxXPadding = bytesPerLine * 8 / bpp;
 
 

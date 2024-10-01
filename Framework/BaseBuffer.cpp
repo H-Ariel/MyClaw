@@ -5,7 +5,7 @@ BaseBuffer::BaseBuffer()
 	: _data(nullptr), _size(0), _idx(0), _allocated(false) 
 {
 }
-BaseBuffer::BaseBuffer(const vector<uint8_t>& buffer) 
+BaseBuffer::BaseBuffer(const DynamicArray<uint8_t>& buffer)
 	: BaseBuffer(buffer.data(), buffer.size()) 
 {
 }

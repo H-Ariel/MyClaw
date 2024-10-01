@@ -6,7 +6,7 @@
 class BufferReader : public BaseBuffer
 {
 public:
-	BufferReader(const vector<uint8_t>& buffer);
+	BufferReader(const DynamicArray<uint8_t>& buffer);
 	BufferReader(const void* data, size_t size, bool alloc = true);
 	BufferReader(ifstream* ifs, size_t size); // initialize from existing file. make sure you set the offset before call this method.
 
@@ -18,10 +18,10 @@ public:
 	template <class T>
 	T read();
 
-	string ReadString(size_t len);
-	string ReadNullTerminatedString();
+	string readString(size_t len);
+	string readString(); // read null-terminated string
 
-	vector<uint8_t> ReadVector(size_t n, bool alwaysRead = false); // read `n` bytes. if `alwaysRead` is `false`, it will throw exception if it can't read `n` bytes.
+	DynamicArray<uint8_t> readBytes(size_t n, bool alwaysRead = false); // read `n` bytes. if `alwaysRead` is `false`, it will throw exception if it can't read `n` bytes.
 };
 
 

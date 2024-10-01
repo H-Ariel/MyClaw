@@ -122,8 +122,6 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::EndLife:
 			onClick = [&](MenuItem*) {
 				BasePlaneObject::player->endLife();
-				clearMenusStack();
-				_currMenu = &HierarchicalMenu::InGameMenu;
 				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
 			};
 			break;
@@ -131,9 +129,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MenuItem*) {
 				AssetsManager::clearLevelAssets(_clawLevelEngineFields->_wwd->levelNumber);
-				clearMenusStack();
-				_currMenu = &HierarchicalMenu::MainMenu;
-				_clawLevelEngineFields.reset();
+				setMainMenu();
 				changeEngine<MenuEngine>();
 				BasePlaneObject::player = nullptr; // do not recycle the player in new game
 			};
@@ -323,7 +319,7 @@ void MenuEngine::Logic(uint32_t elapsedTime) {
 
 	// check if cursor collide with any button
 	for (UIBaseElement* e : _elementsList) {
-		if (isinstance<MenuItem>(e) && e->GetRect().intersects(_cursor->GetRect())) {
+		if (isinstance<MenuItem>(e) &&(_cursor&& e->GetRect().intersects(_cursor->GetRect()))) {
 			if (((MenuItem*)e)->isActive()) {
 				_currMarkedItem->marked = false;
 				_currMarkedItem = (MenuItem*)e;
@@ -335,28 +331,34 @@ void MenuEngine::Logic(uint32_t elapsedTime) {
 }
 void MenuEngine::OnKeyUp(int key)
 {
-	if (key == VK_ESCAPE)
+	if (_currMenu == &HierarchicalMenu::HelpScreen) {
+		backToGame();
+		return;
+	}
+
+	switch (key)
 	{
+	case VK_ESCAPE:
 		if (_currMenu == &HierarchicalMenu::MainMenu) // from main-menu to quit-menu
 			menuIn(&HierarchicalMenu::MainMenu.subMenus[7]);
 		else if (_currMenu == &HierarchicalMenu::InGameMenu) // from in-game-menu back to game
 			backToGame();
 		else
 			menuOut(); // back to previous menu
-	}
-	else if (key == VK_RETURN && _currMarkedItem)
-	{
-		_currMarkedItem->onClick(MouseButtons::Left);
-	}
-	else if (key == VK_UP || key == VK_DOWN)
-	{
+		break;
+
+	case VK_RETURN:
+		if (_currMarkedItem)
+			_currMarkedItem->onClick(MouseButtons::Left);
+		break;
+
+	case VK_UP:
+	case VK_DOWN: {
 		MenuItem* prev = _currMarkedItem;
 
-		if (_currMarkedItem)
-		{
+		if (_currMarkedItem) {
 			auto it = find(_elementsList.begin(), _elementsList.end(), _currMarkedItem);
-			if (it != _elementsList.end()) // if _currMarkedItem is null, it is not in the list
-			{
+			if (it != _elementsList.end()) { // if _currMarkedItem is null, it is not in the list
 				/*
 				The elements list is like this:
 				- background image
@@ -372,15 +374,13 @@ void MenuEngine::OnKeyUp(int key)
 				const size_t maxIdx = _elementsList.size() - 2;
 				size_t idx = it - _elementsList.begin();
 
-				if (key == VK_UP)
-				{
+				if (key == VK_UP) {
 					do {
 						itm = (MenuItem*)(idx == minIdx ? _elementsList[maxIdx] : _elementsList[idx - 1]);
 						idx = (idx == minIdx ? maxIdx : idx - 1);
 					} while (!itm->isActive());
 				}
-				else if (key == VK_DOWN)
-				{
+				else if (key == VK_DOWN) {
 					do {
 						itm = (MenuItem*)(idx == maxIdx ? _elementsList[minIdx] : _elementsList[idx + 1]);
 						idx = (idx == maxIdx ? minIdx : idx + 1);
@@ -390,8 +390,7 @@ void MenuEngine::OnKeyUp(int key)
 				_currMarkedItem = itm;
 			}
 		}
-		else
-		{
+		else {
 			// TODO: search using loop and isActive (not indexes)
 			if (key == VK_DOWN)
 				_currMarkedItem = (MenuItem*)_elementsList[2];
@@ -403,13 +402,16 @@ void MenuEngine::OnKeyUp(int key)
 			if (prev) prev->marked = false;
 			_currMarkedItem->marked = true;
 		}
-	}
-	else if (key == VK_LEFT || key == VK_RIGHT)
-	{
+
+	}	break;
+
+	case VK_LEFT:
+	case VK_RIGHT:
 		if (isinstance<MenuSlider>(_currMarkedItem))
-		{
 			((MenuSlider*)_currMarkedItem)->moveSlider(key == VK_RIGHT ? 1 : -1);
-		}
+		break;
+
+	default: break;
 	}
 }
 
@@ -438,4 +440,21 @@ void MenuEngine::backToGame()
 	clearMenusStack();
 	_currMenu = &HierarchicalMenu::InGameMenu;
 	changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
+}
+
+void MenuEngine::setMainMenu()
+{
+	_currMenu = &HierarchicalMenu::MainMenu;
+	clearMenusStack();
+	_clawLevelEngineFields.reset();
+}
+void MenuEngine::setIngameMenu()
+{
+	_currMenu = &HierarchicalMenu::InGameMenu;
+	clearMenusStack();
+}
+void MenuEngine::setHelpScreen()
+{
+	_currMenu = &HierarchicalMenu::HelpScreen;
+	clearMenusStack();
 }

@@ -37,10 +37,10 @@ WwdPlane::WwdPlane()
 
 void WwdPlane::ReadPlaneTiles(BufferReader& inputStream)
 {
-	tiles.resize(tilesOnAxisY);
-	for (vector<int32_t>& vec : tiles)
+	tiles = DynamicArray<DynamicArray<int32_t>>(tilesOnAxisY);
+	for (DynamicArray<int32_t>& vec : tiles)
 	{
-		vec.resize(tilesOnAxisX);
+		vec = DynamicArray<int32_t>(tilesOnAxisX);
 		for (int32_t& i : vec)
 		{
 			inputStream.read(i);
@@ -51,7 +51,7 @@ void WwdPlane::ReadPlaneTiles(BufferReader& inputStream)
 void WwdPlane::ReadPlaneImageSets(BufferReader& inputStream)
 {
 	for (string& s : imageSets)
-		s = inputStream.ReadNullTerminatedString();
+		s = inputStream.readString();
 }
 void WwdPlane::ReadPlaneObjects(BufferReader& inputStream)
 {
@@ -113,10 +113,10 @@ void WwdPlane::ReadPlaneObjects(BufferReader& inputStream)
 		inputStream.read(obj.moveResX);
 		inputStream.read(obj.moveResY);
 
-		obj.name = inputStream.ReadString(nameLength);
-		obj.logic = inputStream.ReadString(logicLength);
-		obj.imageSet = inputStream.ReadString(imageSetLength);
-		obj.animation = inputStream.ReadString(animationLength);
+		obj.name = inputStream.readString(nameLength);
+		obj.logic = inputStream.readString(logicLength);
+		obj.imageSet = inputStream.readString(imageSetLength);
+		obj.animation = inputStream.readString(animationLength);
 	}
 }
 
@@ -145,12 +145,12 @@ WapWwd::WapWwd(shared_ptr<BufferReader> wwdReader, int levelNumber)
 	wwdReader->skip(4);
 	wwdReader->read(flags);
 	wwdReader->skip(4);
-	levelName = wwdReader->ReadString(64);
+	levelName = wwdReader->readString(64);
 	wwdReader->read(author);
 	wwdReader->read(birth);
 	wwdReader->read(rezFile);
-	imageDirectoryPath = wwdReader->ReadString(128);
-	rezPalettePath = wwdReader->ReadString(128);
+	imageDirectoryPath = wwdReader->readString(128);
+	rezPalettePath = wwdReader->readString(128);
 	wwdReader->read(startX);
 	wwdReader->read(startY);
 	wwdReader->skip(4);
@@ -161,19 +161,18 @@ WapWwd::WapWwd(shared_ptr<BufferReader> wwdReader, int levelNumber)
 	wwdReader->skip(8);
 	wwdReader->read(launchApp);
 
-	for (int8_t i = 0; i < 4; imageSet[i++] = wwdReader->ReadString(128));
-	for (int8_t i = 0; i < 4; prefix[i++] = wwdReader->ReadString(32));
+	for (int8_t i = 0; i < 4; imageSet[i++] = wwdReader->readString(128));
+	for (int8_t i = 0; i < 4; prefix[i++] = wwdReader->readString(32));
 
 	if (!(flags & WwdFlag_Compress))
 		throw Exception("WWD file is not compressed");
 
-	vector<uint8_t> cdata = wwdReader->getData();
+	DynamicArray<uint8_t> cdata = wwdReader->getData();
 	uint8_t* data = cdata.data();
-	uint32_t length = (uint32_t)cdata.size();
 
 	// Compressed WWD file payload info
 	const uint8_t* compressedMainBlock = data + planesOffset;
-	uint32_t compressedMainBlockSize = length - planesOffset;
+	uint32_t compressedMainBlockSize = (uint32_t)cdata.size() - planesOffset;
 
 	// Uncompressed WWD file payload info
 	uint32_t decompressedMainBlockVectorLength = planesOffset + mainBlockLength;
@@ -189,7 +188,7 @@ WapWwd::WapWwd(shared_ptr<BufferReader> wwdReader, int levelNumber)
 
 	// read level informations
 	wwdFileStreamInflated.setIndex(planesOffset);
-	planes.resize(numPlanes);
+	planes = DynamicArray<WwdPlane>(numPlanes);
 	ReadPlanes(wwdFileStreamInflated);
 	wwdFileStreamInflated.setIndex(tileDescriptionsOffset);
 	ReadTileDescriptions(wwdFileStreamInflated);
@@ -210,7 +209,7 @@ void WapWwd::ReadPlanes(BufferReader& inputStream)
 		inputStream.skip(8);
 		inputStream.read(pln.flags);
 		inputStream.skip(4);
-		pln.name = inputStream.ReadString(64);
+		pln.name = inputStream.readString(64);
 		inputStream.read(pln.pixelWidth);
 		inputStream.read(pln.pixelHeight);
 		inputStream.read(pln.tilePixelWidth);
@@ -228,8 +227,8 @@ void WapWwd::ReadPlanes(BufferReader& inputStream)
 		inputStream.read(objectsOffset);
 		inputStream.read(pln.coordZ);
 
-		pln.imageSets.resize(imageSetsCount);
-		pln.objects.resize(objectsCount);
+		pln.imageSets = DynamicArray<string>(imageSetsCount);
+		pln.objects = DynamicArray<WwdObject>(objectsCount);
 
 		currIdx = inputStream.getIndex() + 12; // save current index and skip junk values
 
@@ -252,7 +251,7 @@ void WapWwd::ReadTileDescriptions(BufferReader& inputStream)
 	inputStream.read(tileDescriptionsCount);
 	inputStream.skip(20);
 
-	tileDescriptions.resize(tileDescriptionsCount);
+	tileDescriptions = DynamicArray<WwdTileDescription>(tileDescriptionsCount);
 
 	for (WwdTileDescription& desc : tileDescriptions)
 	{

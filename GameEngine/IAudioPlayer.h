@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Framework/Framework.h"
+#include "Framework/DynamicArray.hpp"
 
 
 class IAudioPlayer
 {
 public:
-	IAudioPlayer(const string& key, const vector<uint8_t>& soundData)
+	IAudioPlayer(const string& key, const DynamicArray<uint8_t>& soundData)
 		: _key(key), _soundData(soundData), _isPlaying(false) {}
 	virtual ~IAudioPlayer() {}
 
@@ -20,6 +21,6 @@ public:
 
 protected:
 	const string _key;
-	vector<uint8_t> _soundData;
+	DynamicArray<uint8_t> _soundData;
 	bool _isPlaying;
 };

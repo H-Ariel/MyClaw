@@ -40,12 +40,12 @@ RezFile::RezFile(RezDirectory* parent, ifstream* ownerFileStream)
 {
 	memset(extension, 0, sizeof(extension));
 }
-vector<uint8_t> RezFile::getFileData() const
+DynamicArray<uint8_t> RezFile::getFileData() const
 {
 	if (ownerFileStream == nullptr)
-		return vector<uint8_t>();
+		return DynamicArray<uint8_t>();
 
-	vector<uint8_t> vec(size);
+	DynamicArray<uint8_t> vec(size);
 	ownerFileStream->seekg(offset, ios::beg);
 	ownerFileStream->read((char*)vec.data(), size);
 	return vec;

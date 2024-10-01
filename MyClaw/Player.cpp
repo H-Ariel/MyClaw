@@ -171,6 +171,17 @@ Player::~Player() {
 
 void Player::Logic(uint32_t elapsedTime)
 {
+	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
+	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
+	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
+	else if (_currPowerup != Item::None)
+	{
+		_powerupLeftTime = 0;
+		_currPowerup = Item::None;
+		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
+	}
+	if (_damageRest > 0) _damageRest -= elapsedTime;
+
 	if (cheats->isFlying()) {
 		if (_upPressed) position.y -= elapsedTime;
 		if (_downPressed) position.y += elapsedTime;
@@ -230,6 +241,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_zPressed = false;
 	}
 
+	/*
 	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
 	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
 	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
@@ -239,6 +251,7 @@ void Player::Logic(uint32_t elapsedTime)
 		_currPowerup = Item::None;
 		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	}
+	*/
 
 	float speedX = SpeedX_Normal, speedYClimb = SpeedY_Climb;
 
@@ -252,7 +265,7 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_raisedPowderKeg)
 		speedX = SpeedX_LiftPowderKeg;
 
-	_damageRest -= elapsedTime;
+//	_damageRest -= elapsedTime;
 	if (checkForHurts() || _health <= 0)
 	{
 		if (_health <= 0)

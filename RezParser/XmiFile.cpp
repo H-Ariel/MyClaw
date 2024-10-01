@@ -97,7 +97,7 @@ private:
 };
 
 
-MidiFile::MidiFile(const vector<uint8_t>& xmiFileData)
+MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 {
 	NewBufferReader input(xmiFileData.data(), xmiFileData.size());
 	NewBufferWriter output;

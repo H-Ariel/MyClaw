@@ -1,4 +1,5 @@
 #include "LevelLoadingEngine.h"
+#include "MenuEngine.h"
 #include "../ClawLevelEngine.h"
 
 
@@ -13,9 +14,8 @@ void LevelLoadingEngine::Logic(uint32_t elapsedTime)
 {
 	_bgImg->Logic(elapsedTime);
 	_totalTime += elapsedTime;
-	if (_totalTime > 100) {
+	if (_totalTime > 100) { // wait 100ms
 		changeEngine<ClawLevelEngine>(_level, _checkpoint);
-		setIngameMenu();
-		clearClawLevelEngineFields();
+		_clawLevelEngineFields.reset();
 	}
 }

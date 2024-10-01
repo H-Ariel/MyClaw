@@ -1,4 +1,4 @@
-#include "MenuEngine.h"
+#include "ScreenEngine.h"
 #include "GameEngine/WindowManager.h"
 
 
@@ -27,30 +27,4 @@ ScreenEngine::ScreenEngine(shared_ptr<ClawLevelEngineFields> fields, const strin
 ScreenEngine::~ScreenEngine()
 {
 	for (UIBaseElement* i : _elementsList) delete i;
-}
-void ScreenEngine::backToMenu()
-{
-	if (MenuEngine::_menusStack.empty())
-		MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
-	else
-	{
-		MenuEngine::_currMenu = MenuEngine::_menusStack.top();
-		MenuEngine::_menusStack.pop();
-	}
-	changeEngine<MenuEngine>();
-}
-
-void ScreenEngine::setIngameMenu()
-{
-	MenuEngine::_currMenu = &HierarchicalMenu::InGameMenu;
-	MenuEngine::clearMenusStack();
-}
-void ScreenEngine::setMainMenu()
-{
-	MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
-	MenuEngine::clearMenusStack();
-}
-void ScreenEngine::clearClawLevelEngineFields()
-{
-	_clawLevelEngineFields.reset();
 }

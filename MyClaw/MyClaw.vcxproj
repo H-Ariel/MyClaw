@@ -204,7 +204,6 @@
     <ClCompile Include="LevelPlane.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu\CreditsEngine.cpp" />
-    <ClCompile Include="Menu\HelpScreenEngine.cpp" />
     <ClCompile Include="Menu\HierarchicalMenu.cpp" />
     <ClCompile Include="Menu\LevelEndEngine.cpp" />
     <ClCompile Include="Menu\LevelLoadingEngine.cpp" />
@@ -284,7 +283,6 @@
     <ClInclude Include="LevelHUD.h" />
     <ClInclude Include="LevelPlane.h" />
     <ClInclude Include="Menu\CreditsEngine.h" />
-    <ClInclude Include="Menu\HelpScreenEngine.h" />
     <ClInclude Include="Menu\HierarchicalMenu.h" />
     <ClInclude Include="Menu\LevelEndEngine.h" />
     <ClInclude Include="Menu\LevelLoadingEngine.h" />

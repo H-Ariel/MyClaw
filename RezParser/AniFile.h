@@ -16,5 +16,5 @@ struct WapAni
 	WapAni(shared_ptr<BufferReader> aniFileStream);
 
 	string imageSetPath;
-	vector<Frame> animationFrames;
+	DynamicArray<Frame> animationFrames;
 };

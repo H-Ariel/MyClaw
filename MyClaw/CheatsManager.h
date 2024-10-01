@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Framework/Framework.h"
+#include "Framework/DynamicArray.hpp"
 
 
 class CheatsManager
@@ -37,7 +38,7 @@ public:
 
 	CheatsManager();
 
-	void addKey(int key);
+	void addKey(int key); // add key to the cheat sequence. if the sequence is correct, cheat will be activated
 
 	bool isGodMode() const { return _god; }
 	bool isEasyMode() const { return _easy; }
@@ -50,7 +51,7 @@ private:
 	int getCheatType();
 	void addPowerup(int8_t powerupType);
 
-	static const vector<tuple<int, const char*, const char*>> cheatsKeys; // cheat keys list
+	static const tuple<int, const char*, const char*> cheatsKeys[]; // cheat keys list
 	vector<char> keys; // keys pressed
 	bool _god, _easy, _superStrong, _flying, _superJump, _multiTreasures;
 };

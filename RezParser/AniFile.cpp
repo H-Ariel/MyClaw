@@ -20,11 +20,13 @@ WapAni::WapAni(shared_ptr<BufferReader> aniFileStream)
 	if (animationFramesCount == 0 || (animationFramesCount * 20 + imageSetPathLength) > size)
 		throw Exception("Invalid ANI file");
 
-	imageSetPath = aniFileStream->ReadString(imageSetPathLength);
+	imageSetPath = aniFileStream->readString(imageSetPathLength);
 
 	/********************** ANI ANIMATION FRAMES **********************/
 
 	uint16_t triggeredEventFlag;
+
+	animationFrames = DynamicArray<Frame>(animationFramesCount);
 
 	// Load all animation frames, one by one
 	for (i = 0; i < animationFramesCount; i++)
@@ -40,9 +42,9 @@ WapAni::WapAni(shared_ptr<BufferReader> aniFileStream)
 
 		if (triggeredEventFlag == 2)
 		{
-			animFrame.eventFilePath = aniFileStream->ReadNullTerminatedString();
+			animFrame.eventFilePath = aniFileStream->readString();
 		}
 
-		animationFrames.push_back(animFrame);
+		animationFrames[i] = animFrame;
 	}
 }

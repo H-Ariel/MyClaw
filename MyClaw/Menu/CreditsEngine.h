@@ -16,6 +16,8 @@ public:
 	void OnResize() override;
 
 private:
+	void backToMenu();
+
 	UITextElement* _creditsTextElement;
 	float _startY, _endY;
 };

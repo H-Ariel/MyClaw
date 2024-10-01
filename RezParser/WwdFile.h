@@ -170,9 +170,9 @@ public:
 	float movementPercentX, movementPercentY;
 	uint32_t fillColor;
 	int32_t coordZ;
-	vector<vector<int32_t>> tiles; // tiles[y][x] = id
-	vector<string> imageSets;
-	vector<WwdObject> objects;
+	DynamicArray<DynamicArray<int32_t>> tiles; // tiles[y][x] = id
+	DynamicArray<string> imageSets;
+	DynamicArray<WwdObject> objects;
 
 private:
 	void ReadPlaneTiles(BufferReader& inputStream);
@@ -191,8 +191,8 @@ public:
 	string imageDirectoryPath;
 	string rezPalettePath;
 	string imageSet[4], prefix[4]; // imageSet and prefix are kind of dictionary: prefix[i] will be replaced by imageSet[i] in object's imageSet field
-	vector<WwdPlane> planes;
-	vector<WwdTileDescription> tileDescriptions;
+	DynamicArray<WwdPlane> planes;
+	DynamicArray<WwdTileDescription> tileDescriptions;
 	int32_t startX, startY;
 	const int levelNumber; // not used in WapWwd, but useful when loading the game
 

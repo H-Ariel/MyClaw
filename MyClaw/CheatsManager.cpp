@@ -17,7 +17,7 @@
 // The list of cheats, format: { type, keys, message }
 // NOTE: make sure cheat-code contains only uppercase letters
 // AH - my own cheats. it means Ariel Halili (me) :)
-const vector<tuple<int, const char*, const char*>> CheatsManager::cheatsKeys({
+const tuple<int, const char*, const char*> CheatsManager::cheatsKeys[] = {
 	{ FireSword		, "HOTSTUFF", "Fire sword rules..." },
 	{ IceSword		, "PENGUIN"	, "Ice sword rules..." },
 	{ LightningSword, "FRANKLIN", "Lightning sword rules..." },
@@ -42,7 +42,7 @@ const vector<tuple<int, const char*, const char*>> CheatsManager::cheatsKeys({
 	{ IncResolution	, "INCVID", "Resolution increased" },
 	{ DecResolution	, "DECVID", "Resolution decreased" },
 	{ DefaultResolution, "DEFVID", "Default resolution" }
-});
+};
 
 
 CheatsManager::CheatsManager()
@@ -94,8 +94,8 @@ void CheatsManager::addKey(int key)
 	case SuperJump:		_superJump = !_superJump; break;
 	case MultiTeasures: _multiTreasures = !_multiTreasures; break;
 
-	case IncResolution: WindowManager::setWindowScale(WindowManager::getWindowScale() + 0.5); break;
-	case DecResolution: WindowManager::setWindowScale(WindowManager::getWindowScale() - 0.5); break;
+	case IncResolution: WindowManager::setWindowScale(WindowManager::getWindowScale() + 0.5f); break;
+	case DecResolution: WindowManager::setWindowScale(WindowManager::getWindowScale() - 0.5f); break;
 	case DefaultResolution: WindowManager::setDefaultWindowScale(); break;
 
 	default: break;

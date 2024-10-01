@@ -2,7 +2,7 @@
 #include "Framework/BufferReader.h"
 
 
-WapPid::WapPid(const vector<uint8_t>& data, WapPal* palette)
+WapPid::WapPid(const DynamicArray<uint8_t>& data, WapPal* palette)
 {
 	uint32_t x, y, i;
 	size_t size = data.size();
@@ -29,7 +29,7 @@ WapPid::WapPid(const vector<uint8_t>& data, WapPal* palette)
 	{
 		uint32_t paletteOffset = uint32_t(size - WapPal::WAP_PALETTE_SIZE_BYTES);
 		const uint8_t* paletteData = &(data[paletteOffset]);
-		imagePalette = DBG_NEW WapPal(vector<uint8_t>(paletteData, paletteData + WapPal::WAP_PALETTE_SIZE_BYTES));
+		imagePalette = DBG_NEW WapPal(DynamicArray<uint8_t>(paletteData, WapPal::WAP_PALETTE_SIZE_BYTES));
 	}
 	else
 	{
@@ -44,7 +44,7 @@ WapPid::WapPid(const vector<uint8_t>& data, WapPal* palette)
 
 	/********************** PID PIXELS **********************/
 
-	colors.resize(width * height);
+	colors = DynamicArray<ColorRGBA>(width * height, {});
 
 	x = 0;
 	y = 0;
@@ -115,7 +115,7 @@ WapPid::WapPid(const vector<uint8_t>& data, WapPal* palette)
 		}
 	}
 
-	// If we created new palette, destroy it
+	// if we created new palette, destroy it
 	if (flags & PidFlag_EmbeddedPalette)
 		delete imagePalette;
 }

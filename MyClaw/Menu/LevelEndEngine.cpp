@@ -56,7 +56,7 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 		SavedDataManager::instance.saveGame(data);
 	}
 
-	clearClawLevelEngineFields(); // clear level data (if player enter menu from level)
+	_clawLevelEngineFields.reset(); // clear level data (if player enter menu from level)
 	AssetsManager::clearLevelAssets(_lvlNum);
 
 	for (auto& i : collectedTreasures)

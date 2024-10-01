@@ -1,7 +1,7 @@
 #include "BufferReader.h"
 
 
-BufferReader::BufferReader(const vector<uint8_t>& buffer)
+BufferReader::BufferReader(const DynamicArray<uint8_t>& buffer)
 	: BaseBuffer(buffer)
 {
 }
@@ -17,7 +17,7 @@ BufferReader::BufferReader(ifstream* ifs, size_t size)
 	_allocated = true;
 }
 
-string BufferReader::ReadString(size_t len)
+string BufferReader::readString(size_t len)
 {
 	if (_idx + len > _size)
 		throw Exception("unable to read data (reached to end of buffer)");
@@ -30,7 +30,7 @@ string BufferReader::ReadString(size_t len)
 	delete[] tmp;
 	return str;
 }
-string BufferReader::ReadNullTerminatedString()
+string BufferReader::readString()
 {
 	string str;
 	char c;
@@ -39,7 +39,7 @@ string BufferReader::ReadNullTerminatedString()
 	return str;
 }
 
-vector<uint8_t> BufferReader::ReadVector(size_t n, bool alwaysRead)
+DynamicArray<uint8_t> BufferReader::readBytes(size_t n, bool alwaysRead)
 {
 	if (_idx + n > _size)
 	{
@@ -52,7 +52,7 @@ vector<uint8_t> BufferReader::ReadVector(size_t n, bool alwaysRead)
 			throw Exception("unable to read data (reached to end of buffer)");
 	}
 
-	vector<uint8_t> vec(n);
+	DynamicArray<uint8_t> vec(n);
 	memcpy(vec.data(), _data + _idx, n);
 	_idx += n;
 	return vec;

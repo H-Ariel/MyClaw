@@ -11,7 +11,7 @@ public:
 	static void Finalize();
 
 	static void addWavPlayer(const string& key, shared_ptr<BufferReader> wavReader);
-	static void addMidiPlayer(const string& key, const vector<uint8_t>& midi);
+	static void addMidiPlayer(const string& key, const DynamicArray<uint8_t>& midi);
 
 	static uint32_t playWav(const string& key, bool infinite);
 	static uint32_t playMidi(const string& key, bool infinite);
@@ -39,7 +39,7 @@ private:
 
 
 	map<uint32_t, shared_ptr<IAudioPlayer>> _audioPlayers; // [key]=audio-player
-	map<string, tuple<WAVEFORMATEX, vector<uint8_t>>> _audioDataCache; // [key]=(fmt, data) | if its MIDI data, fmt is empty
+	map<string, tuple<WAVEFORMATEX, DynamicArray<uint8_t>>> _audioDataCache; // [key]=(fmt, data) | if its MIDI data, fmt is empty
 	queue<pair<shared_ptr<IAudioPlayer>, bool>> audioQueue; // (player, infinite)
 	mutex audioQueueMutex; // mutex for audioQueue
 

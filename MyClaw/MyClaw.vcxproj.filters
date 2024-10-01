@@ -148,9 +148,6 @@
     <ClCompile Include="Menu\CreditsEngine.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menu\HelpScreenEngine.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
     <ClCompile Include="Menu\HierarchicalMenu.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
@@ -343,9 +340,6 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Menu\CreditsEngine.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu\HelpScreenEngine.h">
       <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="Menu\HierarchicalMenu.h">

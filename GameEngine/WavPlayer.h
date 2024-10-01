@@ -6,7 +6,7 @@
 class WavPlayer : public IAudioPlayer
 {
 public:
-	WavPlayer(const string& key, const WAVEFORMATEX& fmt, const vector<uint8_t>& wavSoundData);
+	WavPlayer(const string& key, const WAVEFORMATEX& fmt, const DynamicArray<uint8_t>& wavSoundData);
 	~WavPlayer() override;
 
 	void play(bool infinite) override; // start sound the WAV file

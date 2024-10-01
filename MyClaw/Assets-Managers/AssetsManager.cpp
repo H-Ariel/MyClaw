@@ -322,7 +322,7 @@ void AssetsManager::loadPidPalette(const string& palPath)
 string AssetsManager::getCreditsText()
 {
 	const RezFile* file = instance->_rezArchive.getFile("STATES/CREDITS/CREDITS.TXT");
-	vector<uint8_t> data = file->getFileData();
+	DynamicArray<uint8_t> data = file->getFileData();
 	return string((char*)data.data(), data.size());
 }
 

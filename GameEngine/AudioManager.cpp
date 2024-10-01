@@ -65,7 +65,7 @@ void AudioManager::addWavPlayer(const string& key_, shared_ptr<BufferReader> wav
 	{
 		WAVEFORMATEX fmt = {};
 		uint32_t soundDataLength = 0;
-		vector<uint8_t> wavSoundData;
+		DynamicArray<uint8_t> wavSoundData;
 
 		fmt.cbSize = sizeof(WAVEFORMATEX);
 		wavReader->skip(20);
@@ -77,14 +77,14 @@ void AudioManager::addWavPlayer(const string& key_, shared_ptr<BufferReader> wav
 		wavReader->read(fmt.wBitsPerSample);
 		wavReader->skip(4);
 		wavReader->read(soundDataLength);
-		wavSoundData = wavReader->ReadVector(soundDataLength, true);
+		wavSoundData = wavReader->readBytes(soundDataLength, true);
 
 		soundDataLength = min(soundDataLength, (uint32_t)wavSoundData.size());
 
 		instance->_audioDataCache[key] = { fmt, wavSoundData };
 	}
 }
-void AudioManager::addMidiPlayer(const string& key, const vector<uint8_t>& midi)
+void AudioManager::addMidiPlayer(const string& key, const DynamicArray<uint8_t>& midi)
 {
 	if (instance->_audioDataCache.count(key) == 0)
 		instance->_audioDataCache[key] = { {}, midi };

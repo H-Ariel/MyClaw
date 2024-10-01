@@ -1,5 +1,6 @@
 #include "CreditsEngine.h"
 #include "../Assets-Managers/AssetsManager.h"
+#include "MenuEngine.h"
 
 
 CreditsEngine::CreditsEngine()
@@ -38,3 +39,9 @@ void CreditsEngine::Logic(uint32_t elapsedTime)
 void CreditsEngine::OnKeyUp(int key) { backToMenu(); }
 void CreditsEngine::OnMouseButtonUp(MouseButtons btn) { backToMenu(); }
 void CreditsEngine::OnResize() { backToMenu(); }
+
+void CreditsEngine::backToMenu()
+{
+	MenuEngine::setMainMenu();
+	changeEngine<MenuEngine>();
+}

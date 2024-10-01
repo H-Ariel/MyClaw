@@ -1,6 +1,7 @@
 #pragma once
 
 #include "PalFile.h"
+#include "Framework/DynamicArray.hpp"
 
 
 enum PidFlags
@@ -17,10 +18,10 @@ enum PidFlags
 
 struct WapPid
 {
-	WapPid(const vector<uint8_t>& data, WapPal* palette);
+	WapPid(const DynamicArray<uint8_t>& data, WapPal* palette);
 
 
-	vector<ColorRGBA> colors;
+	DynamicArray<ColorRGBA> colors;
 	uint32_t flags;
 	uint32_t width, height;
 	int32_t offsetX, offsetY;

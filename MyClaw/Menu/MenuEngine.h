@@ -19,6 +19,10 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	void OnKeyUp(int key) override;
 
+	static void setMainMenu();
+	static void setIngameMenu();
+	static void setHelpScreen();
+
 protected:
 	static stack<const HierarchicalMenu*> _menusStack;
 	static const HierarchicalMenu* _currMenu;
