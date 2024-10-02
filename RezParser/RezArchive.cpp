@@ -46,14 +46,14 @@ DynamicArray<uint8_t> RezFile::getFileData() const
 		return DynamicArray<uint8_t>();
 
 	DynamicArray<uint8_t> vec(size);
-	ownerFileStream->seekg(offset, ios::beg);
+	ownerFileStream->seekg(offset);
 	ownerFileStream->read((char*)vec.data(), size);
 	return vec;
 }
-shared_ptr<BufferReader> RezFile::getBufferReader() const
+shared_ptr<Buffer> RezFile::getFileReader() const
 {
 	ownerFileStream->seekg(offset);
-	return make_shared<BufferReader>(ownerFileStream, size);
+	return make_shared<Buffer>(ownerFileStream, size);
 }
 string RezFile::getFullPath() const
 {
@@ -188,7 +188,7 @@ void RezArchive::readDirectory(RezDirectory* parent, int32_t dirOffset, int32_t 
 		bytesRead = 0;
 
 		// Determine whether next element is file or another directory
-		fileStream->seekg(currentOffset, ios::beg);
+		fileStream->seekg(currentOffset);
 		FileRead(isDirectoryFlag, fileStream);
 
 		if (isDirectoryFlag)

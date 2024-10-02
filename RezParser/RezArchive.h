@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Framework/BufferReader.h"
+#include "Framework/Buffer.h"
 
 
 class RezArchive;
@@ -13,7 +13,7 @@ public:
 	RezFile(RezDirectory* parent, ifstream* ownerFileStream);
 
 	DynamicArray<uint8_t> getFileData() const;
-	shared_ptr<BufferReader> getBufferReader() const;
+	shared_ptr<Buffer> getFileReader() const;
 	string getFullPath() const;
 
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IAudioPlayer.h"
-#include "Framework/BufferReader.h"
+#include "Framework/Buffer.h"
 
 
 class AudioManager
@@ -10,7 +10,7 @@ public:
 	static void Initialize();
 	static void Finalize();
 
-	static void addWavPlayer(const string& key, shared_ptr<BufferReader> wavReader);
+	static void addWavPlayer(const string& key, shared_ptr<Buffer> wavReader);
 	static void addMidiPlayer(const string& key, const DynamicArray<uint8_t>& midi);
 
 	static uint32_t playWav(const string& key, bool infinite);

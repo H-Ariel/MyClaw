@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Framework/BufferReader.h"
+#include "Framework/Buffer.h"
 
 
 struct WapAni
@@ -13,7 +13,7 @@ struct WapAni
 		string eventFilePath; // sound file path
 	};
 
-	WapAni(shared_ptr<BufferReader> aniFileStream);
+	WapAni(shared_ptr<Buffer> aniFileStream);
 
 	string imageSetPath;
 	DynamicArray<Frame> animationFrames;

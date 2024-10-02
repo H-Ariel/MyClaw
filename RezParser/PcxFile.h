@@ -1,12 +1,12 @@
 #pragma once
 
 #include "PalFile.h"
-#include "Framework/BufferReader.h"
+#include "Framework/Buffer.h"
 
 
 struct PcxFile
 {
-	PcxFile(shared_ptr<BufferReader> pcxReader);
+	PcxFile(shared_ptr<Buffer> pcxReader);
 
 	DynamicArray<ColorRGBA> colors;
 	WapPal palette; // store pallette from PCX file

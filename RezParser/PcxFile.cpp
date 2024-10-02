@@ -1,7 +1,7 @@
 #include "PcxFile.h"
 
 
-PcxFile::PcxFile(shared_ptr<BufferReader> pcxReader)
+PcxFile::PcxFile(shared_ptr<Buffer> pcxReader)
 {
 	// based on https://github.com/freudi74/mfimage (I copied only what I need)
 

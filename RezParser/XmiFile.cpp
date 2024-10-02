@@ -1,6 +1,5 @@
 #include "XmiFile.h"
-#include "Framework/BufferReader.h"
-#include "Framework/BufferWriter.h"
+#include "Framework/Buffer.h"
 
 
 struct MidiToken
@@ -30,11 +29,11 @@ public:
 };
 
 
-class NewBufferReader : public BufferReader
+class NewBufferReader : public Buffer
 {
 public:
-	NewBufferReader(const uint8_t data[], size_t size)
-		: BufferReader(data, size, false) {}
+	NewBufferReader(const DynamicArray<uint8_t>& arr)
+		: Buffer(arr) {}
 
 	void scanTo(const void* data, size_t dataSize)
 	{
@@ -69,7 +68,7 @@ public:
 	}
 };
 
-class NewBufferWriter : public BufferWriter
+class NewBufferWriter : public Buffer
 {
 public:
 	void writeBigEndianUInt16(uint16_t iValue) { write(_byteSwap(iValue)); }
@@ -99,7 +98,7 @@ private:
 
 MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 {
-	NewBufferReader input(xmiFileData.data(), xmiFileData.size());
+	NewBufferReader input(xmiFileData);
 	NewBufferWriter output;
 
 	MidiTokensList tokensList;

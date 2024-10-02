@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Framework/BufferReader.h"
+#include "Framework/Buffer.h"
 
 
 struct MenuData
 {
-	MenuData(shared_ptr<BufferReader> menuFileStream);
+	MenuData(shared_ptr<Buffer> menuFileStream);
 
 	string name;
 	vector<string> images;

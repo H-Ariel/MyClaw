@@ -64,4 +64,5 @@ private:
 	RezArchive _rezArchive;
 	AnimationsManager* _animationsManager;
 	BackgroundMusicType _lastType; // last played background music type
+	bool _savePcxPalette;
 };

@@ -11,7 +11,7 @@ enum WwdFlags
 
 const uint32_t EXPECTED_HEADER_SIZE = 1524;
 
-static void ReadRect(BufferReader& stream, WwdRect& rect)
+static void ReadRect(Buffer& stream, WwdRect& rect)
 {
 	stream.read(rect.left);
 	stream.read(rect.top);
@@ -35,7 +35,7 @@ WwdPlane::WwdPlane()
 {
 }
 
-void WwdPlane::ReadPlaneTiles(BufferReader& inputStream)
+void WwdPlane::ReadPlaneTiles(Buffer& inputStream)
 {
 	tiles = DynamicArray<DynamicArray<int32_t>>(tilesOnAxisY);
 	for (DynamicArray<int32_t>& vec : tiles)
@@ -48,12 +48,12 @@ void WwdPlane::ReadPlaneTiles(BufferReader& inputStream)
 		}
 	}
 }
-void WwdPlane::ReadPlaneImageSets(BufferReader& inputStream)
+void WwdPlane::ReadPlaneImageSets(Buffer& inputStream)
 {
 	for (string& s : imageSets)
 		s = inputStream.readString();
 }
-void WwdPlane::ReadPlaneObjects(BufferReader& inputStream)
+void WwdPlane::ReadPlaneObjects(Buffer& inputStream)
 {
 	uint32_t nameLength, logicLength, imageSetLength, animationLength;
 
@@ -120,7 +120,7 @@ void WwdPlane::ReadPlaneObjects(BufferReader& inputStream)
 	}
 }
 
-WapWwd::WapWwd(shared_ptr<BufferReader> wwdReader, int levelNumber)
+WapWwd::WapWwd(shared_ptr<Buffer> wwdReader, int levelNumber)
 	: levelNumber(levelNumber)
 {
 	uint32_t wwdSignature;
@@ -184,7 +184,7 @@ WapWwd::WapWwd(shared_ptr<BufferReader> wwdReader, int levelNumber)
 	mz_uncompress(decompressedMainBlock, mainBlockLength, compressedMainBlock, compressedMainBlockSize);
 
 	// Create new file stream from inflated WWD file payload
-	BufferReader wwdFileStreamInflated(decompressedMainBlockVector, decompressedMainBlockVectorLength, false);
+	Buffer wwdFileStreamInflated(decompressedMainBlockVector, decompressedMainBlockVectorLength, false);
 
 	// read level informations
 	wwdFileStreamInflated.setIndex(planesOffset);
@@ -198,7 +198,7 @@ WapWwd::WapWwd(shared_ptr<BufferReader> wwdReader, int levelNumber)
 	if (flags & WwdFlag_UseZCoords)
 		sort(planes.begin(), planes.end(), [](const WwdPlane& a, const WwdPlane& b) { return a.coordZ < b.coordZ; });
 }
-void WapWwd::ReadPlanes(BufferReader& inputStream)
+void WapWwd::ReadPlanes(Buffer& inputStream)
 {
 	uint32_t imageSetsOffset, objectsOffset;
 	uint32_t imageSetsCount, objectsCount, tilesOffset;
@@ -243,7 +243,7 @@ void WapWwd::ReadPlanes(BufferReader& inputStream)
 		inputStream.setIndex(currIdx); // restore current index
 	}
 }
-void WapWwd::ReadTileDescriptions(BufferReader& inputStream)
+void WapWwd::ReadTileDescriptions(Buffer& inputStream)
 {
 	uint32_t tileDescriptionsCount;
 

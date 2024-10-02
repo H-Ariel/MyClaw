@@ -1,7 +1,7 @@
 #include "AniFile.h"
 
 
-WapAni::WapAni(shared_ptr<BufferReader> aniFileStream)
+WapAni::WapAni(shared_ptr<Buffer> aniFileStream)
 {
 	size_t size = aniFileStream->getSize();
 	uint32_t i;

@@ -149,7 +149,7 @@ const uint32_t AssetsManager::INVALID_AUDIOPLAYER_ID = AudioManager::INVALID_ID;
 
 
 AssetsManager::AssetsManager()
-	: _rezArchive("CLAW.REZ")
+	: _rezArchive("CLAW.REZ"), _savePcxPalette(false)
 {
 	_animationsManager = DBG_NEW AnimationsManager(&_rezArchive);
 	_lastType = AssetsManager::BackgroundMusicType::None;
@@ -199,11 +199,12 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 			}
 			else if (endsWith(path, ".PCX"))
 			{
-				PcxFile pcx(instance->_rezArchive.getFile(path)->getBufferReader());
+				PcxFile pcx(instance->_rezArchive.getFile(path)->getFileReader());
 				img = WindowManager::createImage(path, pcx.colors.data(),
 					pcx.width, pcx.height, 0, 0);
 				// pcx files saves their palette and the palette is used for images at score screen
-				instance->_palette = pcx.palette;
+				if (instance->_savePcxPalette)
+					instance->_palette = pcx.palette;
 			}
 			else throw Exception("invalid extension");
 		}
@@ -282,7 +283,7 @@ shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)
 {
 	char path[25];
 	sprintf(path, "LEVEL%d/WORLDS/WORLD.WWD", levelNumber);
-	shared_ptr<WapWwd> wwd = make_shared<WapWwd>(instance->_rezArchive.getFile(path)->getBufferReader(), levelNumber);
+	shared_ptr<WapWwd> wwd = make_shared<WapWwd>(instance->_rezArchive.getFile(path)->getFileReader(), levelNumber);
 
 	// initialize level palette
 	loadPidPalette(wwd->rezPalettePath);
@@ -313,6 +314,8 @@ shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)
 	MidiFile level(instance->_rezArchive.getFile(PathManager::getBackgroundMusicFilePath("LEVEL_PLAY"))->getFileData());
 	AudioManager::addMidiPlayer("LEVEL", level.data);
 
+	instance->_savePcxPalette = false;
+
 	return wwd;
 }
 void AssetsManager::loadPidPalette(const string& palPath)
@@ -326,18 +329,13 @@ string AssetsManager::getCreditsText()
 	return string((char*)data.data(), data.size());
 }
 
-#ifndef _DEBUG // if debug - no sounds
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
 {
 	uint32_t id = AudioManager::playWav(wavFilePath, infinite);
 
 	if (id == AudioManager::INVALID_ID)
 	{
-		// load WAV to audio manager
-		shared_ptr<BufferReader> reader = instance->_rezArchive.getFile(wavFilePath)->getBufferReader();
-		AudioManager::addWavPlayer(wavFilePath, reader);
-
-		// play WAV
+		AudioManager::addWavPlayer(wavFilePath, instance->_rezArchive.getFile(wavFilePath)->getFileReader());
 		id = AudioManager::playWav(wavFilePath, infinite);
 	}
 
@@ -349,19 +347,11 @@ void AssetsManager::stopWavFile(uint32_t wavId)
 	AudioManager::stop(wavId);
 	AudioManager::remove(wavId);
 }
-#else
-uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
-{
-	return INVALID_AUDIOPLAYER_ID;
-}
-void AssetsManager::stopWavFile(uint32_t wavId) {}
-#endif
 uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 {
 	return AudioManager::getDuration(wavFileKey);
 }
 
-#ifndef _DEBUG // if debug - no background music
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
 	if (instance->_lastType == type)
@@ -392,10 +382,6 @@ void AssetsManager::stopBackgroundMusic()
 
 	instance->_lastType = BackgroundMusicType::None; // no background music
 }
-#else
-void AssetsManager::startBackgroundMusic(BackgroundMusicType type) {}
-void AssetsManager::stopBackgroundMusic() {}
-#endif
 
 void AssetsManager::callLogics(uint32_t elapsedTime)
 {
@@ -417,6 +403,8 @@ void AssetsManager::clearLevelAssets(int lvl)
 		AudioManager::remove(instance->bgMusics[BackgroundMusicType::Level]);
 		instance->bgMusics[BackgroundMusicType::Level] = INVALID_AUDIOPLAYER_ID;
 		PathManager::resetPaths();
+
+		instance->_savePcxPalette = true; // game over screen uses the palette of the PCX images
 	}
 }
 
@@ -430,7 +418,7 @@ void AssetsManager::loadWavDir(const string& path)
 		}
 		for (auto& [filename, file] : dir->rezFiles)
 		{
-			AudioManager::addWavPlayer(file->getFullPath(), file->getBufferReader());
+			AudioManager::addWavPlayer(file->getFullPath(), file->getFileReader());
 		}
 	}
 }

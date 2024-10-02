@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Framework/BufferReader.h"
+#include "Framework/Buffer.h"
 
 
 #define TILE_SIZE 64 // width and height of tile in pixels (by default)
@@ -175,9 +175,9 @@ public:
 	DynamicArray<WwdObject> objects;
 
 private:
-	void ReadPlaneTiles(BufferReader& inputStream);
-	void ReadPlaneImageSets(BufferReader& inputStream);
-	void ReadPlaneObjects(BufferReader& inputStream);
+	void ReadPlaneTiles(Buffer& inputStream);
+	void ReadPlaneImageSets(Buffer& inputStream);
+	void ReadPlaneObjects(Buffer& inputStream);
 
 	friend class WapWwd;
 };
@@ -185,7 +185,7 @@ private:
 class WapWwd // Wap World Data
 {
 public:
-	WapWwd(shared_ptr<BufferReader> wwdReader, int levelNumber = 0);
+	WapWwd(shared_ptr<Buffer> wwdReader, int levelNumber = 0);
 
 	string levelName;
 	string imageDirectoryPath;
@@ -197,7 +197,7 @@ public:
 	const int levelNumber; // not used in WapWwd, but useful when loading the game
 
 private:
-	void ReadPlanes(BufferReader& inputStream);
-	void ReadTileDescriptions(BufferReader& inputStream);
+	void ReadPlanes(Buffer& inputStream);
+	void ReadTileDescriptions(Buffer& inputStream);
 	void fixTilesDescription();
 };

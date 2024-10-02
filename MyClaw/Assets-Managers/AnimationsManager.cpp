@@ -183,7 +183,7 @@ void AnimationsManager::clearAnimations(function <bool(const string&)> predicate
 
 vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const string& aniPath, const string& _imageSetPath)
 {
-	WapAni ani(_rezArchive->getFile(aniPath)->getBufferReader());
+	WapAni ani(_rezArchive->getFile(aniPath)->getFileReader());
 
 	vector<UIAnimation::FrameData*> images;
 	string imageSetPath;

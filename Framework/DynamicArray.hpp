@@ -36,7 +36,7 @@ public:
 		}
 		return *this;
 	}
-	DynamicArray<T>& operator=(DynamicArray<T>&& other) {
+	DynamicArray<T>& operator=(DynamicArray<T>&& other) noexcept {
 		if (this != &other) {
 			delete[] arr;
 			_size = other._size;

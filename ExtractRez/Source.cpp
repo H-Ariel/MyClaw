@@ -26,11 +26,11 @@ static void make_dir(const string& path)
 }
 
 
-static void saveRaw(const string& fpath, const vector<uint8_t>& data)
+static void saveRaw(const string& fpath, const DynamicArray<uint8_t>& data)
 {
 	if (FILE* file = fopen((DIR_OUT_NAME + fpath).c_str(), "wb"))
 	{
-		fwrite(data.data(), sizeof(data.back()), data.size(), file);
+		fwrite(data.data(), sizeof(data[0]), data.size(), file);
 		fclose(file);
 	}
 }
@@ -49,7 +49,7 @@ static void savePidFile(RezFile* file, WapPal* pal)
 }
 static void savePcxFile(RezFile* file)
 {
-	PcxFile pcx(file->getBufferReader());
+	PcxFile pcx(file->getFileReader());
 	vector<unsigned char> rgba = vector<unsigned char>(
 		(unsigned char*)pcx.colors.data(),
 		(unsigned char*)pcx.colors.data() + pcx.colors.size() * sizeof(pcx.colors[0])
@@ -62,7 +62,7 @@ static void saveXmiFile(RezFile* file)
 }
 static void saveAniFile(RezFile* file)
 {
-	auto b = file->getBufferReader();
+	auto b = file->getFileReader();
 	WapAni ani(b);
 
 	json j;
@@ -88,7 +88,7 @@ static void saveAniFile(RezFile* file)
 static void saveWwdFile(RezFile* file)
 {
 	json j;
-	WapWwd wwd(file->getBufferReader());
+	WapWwd wwd(file->getFileReader());
 
 	json j_properties;
 	vector<json> j_planes;
@@ -160,7 +160,7 @@ static json menuDataToJson(MenuData menuData) {
 	});
 }
 static void saveIfcFile(RezFile* file) {
-	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << menuDataToJson(MenuData(file->getBufferReader())).dump(2);
+	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << menuDataToJson(MenuData(file->getFileReader())).dump(2);
 }
 
 static set<string> notImpletedTypes;
@@ -221,8 +221,8 @@ int main()
 
 	WapPal pal(rez.getFile("LEVEL1/PALETTES/MAIN.PAL")->getFileData());
 	cout << "load CLAW" << endl; loadDirectory(rez.getDirectory("CLAW"), &pal);
-//	cout << "load GAME" << endl; loadDirectory(rez.getDirectory("GAME"), &pal);
-//	cout << "load STATES" << endl; loadDirectory(rez.getDirectory("STATES"), &pal);
+	//cout << "load GAME" << endl; loadDirectory(rez.getDirectory("GAME"), &pal);
+	//cout << "load STATES" << endl; loadDirectory(rez.getDirectory("STATES"), &pal);
 	//for (int i = 1; i <= 14; loadLevel(&rez, i++));
 
 	cout << "not impleted types:" << endl;

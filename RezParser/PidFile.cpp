@@ -1,5 +1,5 @@
 #include "PidFile.h"
-#include "Framework/BufferReader.h"
+#include "Framework/Buffer.h"
 
 
 WapPid::WapPid(const DynamicArray<uint8_t>& data, WapPal* palette)
@@ -10,7 +10,7 @@ WapPid::WapPid(const DynamicArray<uint8_t>& data, WapPal* palette)
 
 	/********************** PID HEADER/PROPERTIES **********************/
 
-	BufferReader pidFileStream(data);
+	Buffer pidFileStream(data);
 
 	pidFileStream.skip(4); // fileDesc
 	pidFileStream.read(flags);

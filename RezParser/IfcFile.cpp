@@ -1,7 +1,7 @@
 #include "IfcFile.h"
 
 
-MenuData::MenuData(shared_ptr<BufferReader> menuFileStream) {
+MenuData::MenuData(shared_ptr<Buffer> menuFileStream) {
 	menuFileStream->skip(4);
 
 	name = menuFileStream->readString(menuFileStream->read<uint8_t>());

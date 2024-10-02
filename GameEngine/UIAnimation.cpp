@@ -29,7 +29,6 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 	{
 		_images[_currImgIdx]->elapsedTime += elapsedTime;
 
-#ifndef _DEBUG // in debug mode we don't play sound
 		if (!_images[_currImgIdx]->soundKey.empty())
 		{
 			if (!_images[_currImgIdx]->soundPlayed && !_isFinishAnimation)
@@ -38,7 +37,6 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 				_images[_currImgIdx]->soundPlayed = true;
 			}
 		}
-#endif
 
 		if (_images[_currImgIdx]->elapsedTime >= _images[_currImgIdx]->duration)
 		{

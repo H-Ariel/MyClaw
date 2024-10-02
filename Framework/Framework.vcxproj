@@ -147,18 +147,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="BaseBuffer.h" />
-    <ClInclude Include="BufferReader.h" />
-    <ClInclude Include="BufferWriter.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="DynamicArray.hpp" />
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="LogFile.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseBuffer.cpp" />
-    <ClCompile Include="BufferReader.cpp" />
-    <ClCompile Include="BufferWriter.cpp" />
+    <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="LogFile.cpp" />
   </ItemGroup>
