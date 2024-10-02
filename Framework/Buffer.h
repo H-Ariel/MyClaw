@@ -12,11 +12,9 @@ public:
 	Buffer(const void* data, size_t size, bool alloc = true);
 	Buffer(ifstream* ifs, size_t size);
 	Buffer(const Buffer& buf);
-	virtual ~Buffer();
+	~Buffer();
 
 	Buffer& operator=(const Buffer& buf);
-
-	bool isEOF() const { return _idx > _size; }
 
 	void skip(int64_t n); // skip `n` bytes. if `n<0` it goes back.
 	void setIndex(int64_t newIdx);
@@ -31,13 +29,11 @@ public:
 
 	template <class T>
 	void read(T& t);
-
 	template <class T>
 	T read();
 
 	string readString(size_t len);
 	string readString(); // read null-terminated string
-
 	DynamicArray<uint8_t> readBytes(size_t n, bool readAnyway = false); // read `n` bytes. if `readAnyway` is `false`, it will throw exception if it can't read `n` bytes.
 
 

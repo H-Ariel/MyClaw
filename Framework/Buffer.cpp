@@ -82,19 +82,14 @@ Buffer& Buffer::operator=(const Buffer& buf)
 void Buffer::skip(int64_t n)
 {
 	if (n < 0 && _idx + n < 0)
-	{
 		throw Exception("invalid buffer index");
-	}
 	setIndex(_idx + n);
 }
 
 void Buffer::setIndex(int64_t newIdx)
 {
-	if (newIdx < 0) throw Exception(__FUNCTION__ ": newIdx < 0");
-
-	while (newIdx >= (int64_t)_size)
-		extend(1024);
-
+	if (newIdx < 0)
+		throw Exception(__FUNCTION__ ": newIdx < 0");
 	_idx = (size_t)newIdx;
 }
 

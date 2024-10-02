@@ -29,11 +29,15 @@ public:
 };
 
 
-class NewBufferReader : public Buffer
+// Extended Buffer for reading XMI files and writing MIDI files
+class NewBuffer : public Buffer
 {
 public:
-	NewBufferReader(const DynamicArray<uint8_t>& arr)
-		: Buffer(arr) {}
+	NewBuffer() {}
+	NewBuffer(const DynamicArray<uint8_t>& arr) : Buffer(arr) {}
+
+	bool isEOF() const { return _idx > _size; }
+	const uint8_t* getPointer() const { return _data + _idx; }
 
 	void scanTo(const void* data, size_t dataSize)
 	{
@@ -44,8 +48,6 @@ public:
 		}
 		throw Exception("data not found");
 	}
-
-	const uint8_t* getPointer() const { return _data + _idx; }
 
 	uint32_t readUIntVar()
 	{
@@ -66,11 +68,7 @@ public:
 		read(b1); read(b2); read(b3);
 		return (((b1 << 8) | b2) << 8) | b3;
 	}
-};
 
-class NewBufferWriter : public Buffer
-{
-public:
 	void writeBigEndianUInt16(uint16_t iValue) { write(_byteSwap(iValue)); }
 	void writeBigEndianUInt32(uint32_t iValue) { write(_byteSwap(iValue)); }
 	void writeUIntVar(uint32_t iValue)
@@ -98,8 +96,7 @@ private:
 
 MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 {
-	NewBufferReader input(xmiFileData);
-	NewBufferWriter output;
+	NewBuffer reader(xmiFileData), writer;
 
 	MidiTokensList tokensList;
 	MidiToken* pToken;
@@ -107,14 +104,14 @@ MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 	bool isTempoSet = false, endLoop = false;
 	uint8_t tokenType, extendedType;
 
-	input.scanTo("EVNT", 4);
-	input.skip(8);
+	reader.scanTo("EVNT", 4);
+	reader.skip(8);
 
-	while (!input.isEOF() && !endLoop)
+	while (!reader.isEOF() && !endLoop)
 	{
 		while (true)
 		{
-			input.read(tokenType);
+			reader.read(tokenType);
 
 			if (tokenType & 0x80)
 				break;
@@ -123,13 +120,13 @@ MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 		}
 
 		pToken = tokensList.append(tokenTime, tokenType);
-		pToken->buf = input.getPointer() + 1;
+		pToken->buf = reader.getPointer() + 1;
 
 		switch (tokenType & 0xF0)
 		{
 		case 0xC0:
 		case 0xD0:
-			input.read(pToken->data);
+			reader.read(pToken->data);
 			pToken->buf = nullptr;
 			break;
 
@@ -137,15 +134,15 @@ MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 		case 0xA0:
 		case 0xB0:
 		case 0xE0:
-			input.read(pToken->data);
-			input.skip(1);
+			reader.read(pToken->data);
+			reader.skip(1);
 			break;
 
 		case 0x90:
-			input.read(extendedType);
+			reader.read(extendedType);
 			pToken->data = extendedType;
-			input.skip(1);
-			pToken = tokensList.append(tokenTime + input.readUIntVar() * 3, tokenType);
+			reader.skip(1);
+			pToken = tokensList.append(tokenTime + reader.readUIntVar() * 3, tokenType);
 			pToken->data = extendedType;
 			pToken->buf = (const uint8_t*)"\0";
 			break;
@@ -154,7 +151,7 @@ MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 			extendedType = 0;
 			if (tokenType == 0xFF)
 			{
-				input.read(extendedType);
+				reader.read(extendedType);
 
 				if (extendedType == 0x2F)
 					endLoop = true;
@@ -162,24 +159,24 @@ MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 				{
 					if (!isTempoSet)
 					{
-						input.skip(1);
-						tempo = input.readBigEndianUInt24() * 3;
+						reader.skip(1);
+						tempo = reader.readBigEndianUInt24() * 3;
 						isTempoSet = true;
-						input.skip(-4);
+						reader.skip(-4);
 					}
 					else
 					{
 						tokensList.pop_back();
-						input.skip(input.readUIntVar());
+						reader.skip(reader.readUIntVar());
 						break;
 					}
 				}
 			}
 
 			pToken->data = extendedType;
-			pToken->len = input.readUIntVar();
-			pToken->buf = input.getPointer();
-			input.skip(pToken->len);
+			pToken->len = reader.readUIntVar();
+			pToken->buf = reader.getPointer();
+			reader.skip(pToken->len);
 			break;
 		}
 	}
@@ -189,46 +186,46 @@ MidiFile::MidiFile(const DynamicArray<uint8_t>& xmiFileData)
 
 	sort(tokensList.begin(), tokensList.end());
 
-	output.write("MThd\0\0\0\x06\0\0\0\x01", 12);
-	output.writeBigEndianUInt16(tempo * 3 / 25000);
-	output.write("MTrk\xBA\xAD\xF0\x0D", 8);
+	writer.write("MThd\0\0\0\x06\0\0\0\x01", 12);
+	writer.writeBigEndianUInt16(tempo * 3 / 25000);
+	writer.write("MTrk\xBA\xAD\xF0\x0D", 8);
 
 	tokenTime = 0;
 	tokenType = 0;
 
 	for (MidiToken& tok : tokensList)
 	{
-		output.writeUIntVar(tok.time - tokenTime);
+		writer.writeUIntVar(tok.time - tokenTime);
 		tokenTime = tok.time;
 		if (tok.type >= 0xF0)
 		{
-			output.write(tokenType = tok.type);
+			writer.write(tokenType = tok.type);
 			if (tokenType == 0xFF)
 			{
-				output.write(tok.data);
+				writer.write(tok.data);
 				if (tok.data == 0x2F)
 					break;
 			}
-			output.writeUIntVar(tok.len);
-			output.write(tok.buf, tok.len);
+			writer.writeUIntVar(tok.len);
+			writer.write(tok.buf, tok.len);
 		}
 		else
 		{
 			if (tok.type != tokenType)
 			{
-				output.write(tokenType = tok.type);
+				writer.write(tokenType = tok.type);
 			}
-			output.write(tok.data);
+			writer.write(tok.data);
 			if (tok.buf)
 			{
-				output.write(tok.buf, 1);
+				writer.write(tok.buf, 1);
 			}
 		}
 	}
 
-	uint32_t len = uint32_t(output.getIndex() - 22);
-	output.setIndex(18);
-	output.writeBigEndianUInt32(len);
+	uint32_t len = uint32_t(writer.getIndex() - 22);
+	writer.setIndex(18);
+	writer.writeBigEndianUInt32(len);
 
-	data = output.getData();
+	data = writer.getData();
 }

@@ -92,7 +92,7 @@ void AudioManager::addMidiPlayer(const string& key, const DynamicArray<uint8_t>&
 
 uint32_t AudioManager::playWav(const string& key, bool infinite)
 {
-	if (key.empty()||1) return INVALID_ID;
+	if (key.empty()) return INVALID_ID;
 
 	auto it = instance->_audioDataCache.find(key);
 	if (it == instance->_audioDataCache.end())
@@ -179,7 +179,7 @@ void AudioManager::setVolume(uint32_t id, int volume)
 }
 
 void AudioManager::playFromQueue() {
-#ifdef _DEBUG0
+#ifdef _DEBUG
 	return; // disable the sound in debug mode
 #endif
 
