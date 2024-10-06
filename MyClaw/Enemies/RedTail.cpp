@@ -20,7 +20,7 @@ RedTail::RedTail(const WwdObject& obj)
 	myMemCpy(_canStrike, true);
 	_aniShoot = _animations["STRIKE4"];
 	myMemCpy(_canShoot, true);
-	myMemCpy<string>(_projectileAniDir, "LEVEL_REDTAILBULLET");
+	(string&)_projectileAniDir = "LEVEL_REDTAILBULLET";
 
 	_ani = _aniWalk;
 }

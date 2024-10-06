@@ -44,7 +44,7 @@ public:
 
 	static void callLogics(uint32_t elapsedTime); // calls logics for all animations and sounds
 
-	static void clearLevelAssets(int lvl);
+	static void clearLevelAssets();
 
 
 	static const uint32_t INVALID_AUDIOPLAYER_ID;

@@ -4,44 +4,38 @@
 #include "GameEngine/WindowManager.h"
 
 
-#define CHEATS_PREFIX "MP" // Monolith Production (the original game) prefix
-#define CHEATS_PREFIX_SIZE 2
-
 #define MODE_CHANGE_MSG "%s mode is %s"
-
-
-// TODO: add more cheats
-// maybe use the original game's cheats codes
 
 
 // The list of cheats, format: { type, keys, message }
 // NOTE: make sure cheat-code contains only uppercase letters
-// AH - my own cheats. it means Ariel Halili (me) :)
+// MP - Monolith Production (the original game) prefix
+// AH - my own cheats (it means Ariel Halili (me) :) )
 const tuple<int, const char*, const char*> CheatsManager::cheatsKeys[] = {
-	{ FireSword		, "HOTSTUFF", "Fire sword rules..." },
-	{ IceSword		, "PENGUIN"	, "Ice sword rules..." },
-	{ LightningSword, "FRANKLIN", "Lightning sword rules..." },
-	{ Catnip		, "FREAK"	, "Catnip...Yummy!" },
-	{ Invisibility	, "CASPER"	, "Now you see me... now you dont!" },
-	{ Invincibility	, "VADER"	, "Sticks and stones won't break my bones..." },
-	{ FillHealth	, "APPLE"	, "Full Health" },
-	{ FillPistol	, "LOADED"	, "Full Ammo" },
-	{ FillMagic		, "GANDOLF"	, "Full Magic" },
-	{ FillDynamite	, "BLASTER"	, "Full Dynamite" },
-	{ FillLife		, "AHCAKE"	, "Full Life" },
-	{ FinishLevel	, "SCULLY"	, "Finish Level" },
-	{ GodMode		, "KFA"		, MODE_CHANGE_MSG },
-	{ EasyMode		, "EASYMODE", MODE_CHANGE_MSG },
-	{ SuperStrong	, "BUNZ"	, MODE_CHANGE_MSG },
-	{ Flying		, "FLY"		, MODE_CHANGE_MSG },
-	{ SuperJump		, "JORDAN"	, MODE_CHANGE_MSG },
-	{ BgMscSpeedUp	, "MAESTRO"	, "Time to speed things up!" },
-	{ BgMscSlowDown	, "LANGSAM"	, "Ready to slow things down?" },
-	{ BgMscNormal	, "NORMALMUSIC", "Back to normal..." },
-	{ MultiTeasures	, "AHGOLD"	, MODE_CHANGE_MSG }, // gives more treasures at crates
-	{ IncResolution	, "INCVID", "Resolution increased" },
-	{ DecResolution	, "DECVID", "Resolution decreased" },
-	{ DefaultResolution, "DEFVID", "Default resolution" }
+	{ FireSword		, "MPHOTSTUFF"	, "Fire sword rules..." },
+	{ IceSword		, "MPPENGUIN"	, "Ice sword rules..." },
+	{ LightningSword, "MPFRANKLIN"	, "Lightning sword rules..." },
+	{ Catnip		, "MPFREAK"		, "Catnip...Yummy!" },
+	{ Invisibility	, "MPCASPER"	, "Now you see me... now you dont!" },
+	{ Invincibility	, "MPVADER"		, "Sticks and stones won't break my bones..." },
+	{ FillHealth	, "MPAPPLE"		, "Full Health" },
+	{ FillPistol	, "MPLOADED"	, "Full Ammo" },
+	{ FillMagic		, "MPGANDOLF"	, "Full Magic" },
+	{ FillDynamite	, "MPBLASTER"	, "Full Dynamite" },
+	{ FillLife		, "AHCAKE"		, "Full Life" },
+	{ FinishLevel	, "MPSCULLY"	, "Finish Level" },
+	{ GodMode		, "MPKFA"		, MODE_CHANGE_MSG },
+	{ EasyMode		, "MPEASYMODE"	, MODE_CHANGE_MSG },
+	{ SuperStrong	, "MPBUNZ"		, MODE_CHANGE_MSG },
+	{ Flying		, "MPFLY"		, MODE_CHANGE_MSG },
+	{ SuperJump		, "MPJORDAN"	, MODE_CHANGE_MSG },
+	{ BgMscSpeedUp	, "MPMAESTRO"	, "Time to speed things up!" },
+	{ BgMscSlowDown	, "MPLANGSAM"	, "Ready to slow things down?" },
+	{ BgMscNormal	, "MPNORMALMUSIC", "Back to normal..." },
+	{ MultiTeasures	, "AHGOLD"		, MODE_CHANGE_MSG }, // gives more treasures at crates
+	{ IncResolution	, "MPINCVID"	, "Resolution increased" },
+	{ DecResolution	, "MPDECVID"	, "Resolution decreased" },
+	{ DefaultResolution, "MPDEFVID"	, "Default resolution" }
 };
 
 
@@ -104,16 +98,12 @@ void CheatsManager::addKey(int key)
 
 int CheatsManager::getCheatType()
 {
-	int keysSize = (int)keys.size() - CHEATS_PREFIX_SIZE;
-
-	// check if keys starts with the prefix
-	if (keysSize <= 0 || strncmp(keys.data(), CHEATS_PREFIX, CHEATS_PREFIX_SIZE))
-		return Types::None;
+	size_t keysSize = keys.size();
 
 	for (const auto& [type, cheatKey, msg] : cheatsKeys) {
 		size_t cheatKeySize = strlen(cheatKey);
 
-		if (keysSize == cheatKeySize && !strncmp(&keys[2], cheatKey, cheatKeySize)) {
+		if (keysSize == cheatKeySize && !strncmp(keys.data(), cheatKey, cheatKeySize)) {
 			keys.clear();
 			char temp[32] = {};
 			if (msg == MODE_CHANGE_MSG) {

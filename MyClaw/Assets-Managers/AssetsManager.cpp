@@ -388,18 +388,17 @@ void AssetsManager::callLogics(uint32_t elapsedTime)
 	instance->_animationsManager->callAnimationsLogic(elapsedTime);
 }
 
-void AssetsManager::clearLevelAssets(int lvl)
+void AssetsManager::clearLevelAssets()
 {
 	if (instance)
 	{
-		const string prefix = "LEVEL";// +to_string(lvl);
-		auto removeByPrefix = [&prefix](const string& key) { return startsWith(key, prefix); };
+		auto removeByLevelPrefix = [](const string& key) { return startsWith(key, "LEVEL"); };
 
-		WindowManager::clearImages(removeByPrefix);
-		instance->_animationsManager->clearAnimations(removeByPrefix);
+		WindowManager::clearImages(removeByLevelPrefix);
+		instance->_animationsManager->clearAnimations(removeByLevelPrefix);
 
 		stopBackgroundMusic();
-		AudioManager::remove(removeByPrefix);
+		AudioManager::remove(removeByLevelPrefix);
 		AudioManager::remove(instance->bgMusics[BackgroundMusicType::Level]);
 		instance->bgMusics[BackgroundMusicType::Level] = INVALID_AUDIOPLAYER_ID;
 		PathManager::resetPaths();

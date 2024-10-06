@@ -21,9 +21,7 @@ GameMainApp::~GameMainApp()
 void GameMainApp::init()
 {
 #ifdef _DEBUG
-	//_pEngine = make_shared<OpeningScreenEngine>();
 //	_pEngine = make_shared<MenuEngine>();
-//	_pEngine = make_shared<LevelLoadingEngine>(13); // TODO: code crash at LVL 13 Boss
 	_pEngine = make_shared<LevelLoadingEngine>(1);
 #else
 	_pEngine = make_shared<OpeningScreenEngine>();

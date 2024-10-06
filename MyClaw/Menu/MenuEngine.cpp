@@ -128,7 +128,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MenuItem*) {
-				AssetsManager::clearLevelAssets(_clawLevelEngineFields->_wwd->levelNumber);
+				AssetsManager::clearLevelAssets();
 				setMainMenu();
 				changeEngine<MenuEngine>();
 				BasePlaneObject::player = nullptr; // do not recycle the player in new game
