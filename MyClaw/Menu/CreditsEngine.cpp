@@ -10,7 +10,7 @@ CreditsEngine::CreditsEngine()
 	_startY = 16.3f * _bgImg->size.height;
 	_endY = -15.3f * _bgImg->size.height;
 
-	string creditsText = "Claw - Rewritten by Ariel Halili\n\n" + AssetsManager::getCreditsText();
+	string creditsText = AssetsManager::getCreditsText();
 	FontData font;
 	font.size = _bgImg->size.height / 30;
 

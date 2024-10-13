@@ -151,12 +151,10 @@
     <ClInclude Include="DynamicArray.hpp" />
     <ClInclude Include="Exception.hpp" />
     <ClInclude Include="Framework.h" />
-    <ClInclude Include="LogFile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Framework.cpp" />
-    <ClCompile Include="LogFile.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

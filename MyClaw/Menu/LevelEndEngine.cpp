@@ -45,8 +45,6 @@ static string getBGImgPath(int img)
 LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures)
 	: ScreenEngine(getBGImgPath(lvlNum * 2 - 1)), _lvlNum(lvlNum), _state(Start)
 {
-	LogFile::log(LogFile::Info, "end level %d", lvlNum);
-
 	if (_lvlNum != 14)
 	{
 		// save as checkpoint:

@@ -12,7 +12,7 @@ static void MIDI_CALL(MMRESULT mmResult)
 	{
 		char text[256] = {};
 		midiOutGetErrorTextA(mmResult, text, sizeof(text));
-		LogFile::log(LogFile::Error, "MIDI Error: %s", text);
+		LOG("[Error] MIDI Error: %s", text);
 	}
 }
 #else
@@ -205,16 +205,15 @@ start:
 
 MidiPlayer::MidiEvent MidiPlayer::getNextEvent() const
 {
-	uint32_t bytesread = 0, time = 0;
+	uint32_t time = 0;
 	uint8_t* buf = track.buf;
 	uint8_t c;
 
 	do {
-		c = buf[bytesread++];
+		c = *buf++;
 		time = (time << 7) + (c & 0x7f);
 	} while (c & 0x80);
 
-	buf += bytesread;
 
 	MidiEvent evt = {};
 	evt.absolute_time = track.absolute_time + time;

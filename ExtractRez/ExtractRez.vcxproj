@@ -151,10 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="json.hpp" />
+    <ClInclude Include="json.h" />
     <ClInclude Include="lodepng.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="json.cpp" />
     <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>

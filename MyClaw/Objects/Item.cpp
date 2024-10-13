@@ -321,7 +321,7 @@ void Item::playItemSound() const
 
 	if (path)
 	{
-		AssetsManager::playWavFile(path);
+		AssetsManager::playWavFile(path, 50);
 		if (!strcmp(path, "GAME/SOUNDS/MAPPIECE.WAV"))
 			Sleep(1520); // in case of map piece sound, wait for the sound to finish
 	}

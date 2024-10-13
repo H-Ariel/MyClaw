@@ -211,7 +211,7 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 		catch (const Exception&)
 		{
 			img = make_shared<UIBaseImage>(nullptr); // empty image
-			LogFile::log(LogFile::Warning, "a blank image has been inserted. image path: \"%s\"", path.c_str());
+			LOG("[Warning] a blank image has been inserted. image path: \"%s\"", path.c_str());
 		}
 	}
 
@@ -326,30 +326,29 @@ string AssetsManager::getCreditsText()
 {
 	const RezFile* file = instance->_rezArchive.getFile("STATES/CREDITS/CREDITS.TXT");
 	DynamicArray<uint8_t> data = file->getFileData();
-	return string((char*)data.data(), data.size());
+	return  "Claw - Rewritten by Ariel Halili\n\n" + string((char*)data.data(), data.size());
 }
 
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
 {
-	uint32_t id = AudioManager::playWav(wavFilePath, infinite);
+	uint32_t id = AudioManager::playWav(wavFilePath, infinite, volume);
 
 	if (id == AudioManager::INVALID_ID)
 	{
-		AudioManager::addWavPlayer(wavFilePath, instance->_rezArchive.getFile(wavFilePath)->getFileReader());
-		id = AudioManager::playWav(wavFilePath, infinite);
+		AudioManager::addWavPlayer(wavFilePath, instance->_rezArchive.getFile(wavFilePath)->getFileData());
+		id = AudioManager::playWav(wavFilePath, infinite, volume);
 	}
 
-	AudioManager::setVolume(id, volume);
 	return id;
 }
 void AssetsManager::stopWavFile(uint32_t wavId)
 {
-	AudioManager::stop(wavId);
-	AudioManager::remove(wavId);
+	AudioManager::stopWav(wavId);
+	AudioManager::removeWav(wavId);
 }
 uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 {
-	return AudioManager::getDuration(wavFileKey);
+	return AudioManager::getWavDuration(wavFileKey);
 }
 
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
@@ -373,12 +372,12 @@ void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 }
 void AssetsManager::stopBackgroundMusic()
 {
-	if (instance->_lastType == BackgroundMusicType::None)
+	if (!instance || instance->_lastType == BackgroundMusicType::None)
 		return;
 
 	uint32_t id = instance->bgMusics[instance->_lastType];
 	if (id != AudioManager::INVALID_ID)
-		AudioManager::stop(id);
+		AudioManager::stopMidi(id);
 
 	instance->_lastType = BackgroundMusicType::None; // no background music
 }
@@ -399,7 +398,7 @@ void AssetsManager::clearLevelAssets()
 
 		stopBackgroundMusic();
 		AudioManager::remove(removeByLevelPrefix);
-		AudioManager::remove(instance->bgMusics[BackgroundMusicType::Level]);
+		AudioManager::removeMidi(instance->bgMusics[BackgroundMusicType::Level]);
 		instance->bgMusics[BackgroundMusicType::Level] = INVALID_AUDIOPLAYER_ID;
 		PathManager::resetPaths();
 
@@ -417,7 +416,7 @@ void AssetsManager::loadWavDir(const string& path)
 		}
 		for (auto& [filename, file] : dir->rezFiles)
 		{
-			AudioManager::addWavPlayer(file->getFullPath(), file->getFileReader());
+			AudioManager::addWavPlayer(file->getFullPath(), file->getFileData());
 		}
 	}
 }

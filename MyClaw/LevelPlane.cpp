@@ -69,23 +69,16 @@ void LevelPlane::init()
 {
 	tilesImages = AssetsManager::loadPlaneTilesImages(_wwd->imageDirectoryPath + '/' + _wwdPlane->imageSets[0]);
 
-	LogFile::log(LogFile::Warning, "The AmbientSound objects are too loud so I decided to not play it");
-
 	for (WwdObject& obj : _wwdPlane->objects)
 	{
 		try
 		{
-			if (endsWith(obj.logic, "AmbientSound"))
-			{
-				continue;
-			}
-
 			updateObject(obj);
 			addObject(obj);
 		}
 		catch (const Exception& ex)
 		{
-			LogFile::log(LogFile::Error, "while reading object: %s", ex.message.c_str());
+			LOG("[Error] while reading object: %s", ex.message.c_str());
 		}
 	}
 

@@ -6,11 +6,11 @@
 #include "RezParser/XmiFile.h"
 #include "RezParser/IfcFile.h"
 #include "lodepng.h"
-#include "json.hpp"
+#include "json.h"
 
 #define DIR_OUT_NAME	"C:/claw-assets/"
 
-using nlohmann::json;
+//using nlohmann::json;
 
 
 
@@ -83,7 +83,7 @@ static void saveAniFile(RezFile* file)
 	j["animationFrames"] = j_animationFrames;
 	j["imageSetPath"] = ani.imageSetPath;
 
-	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << j.dump(2);
+	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << j.ToString();
 }
 static void saveWwdFile(RezFile* file)
 {
@@ -145,22 +145,23 @@ static void saveWwdFile(RezFile* file)
 	j["properties"] = j_properties;
 	j["planes"] = j_planes;
 
-	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << j.dump(2);
+	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << j.ToString();
 }
 static json menuDataToJson(MenuData menuData) {
 	vector<json> subMenus;
 	for (const MenuData m : menuData.subMenus)
 		subMenus.push_back(menuDataToJson(m));
 
-	return json({
-		{ "name", menuData.name },
-		{ "images", menuData.images },
-		{ "magicNumber", menuData.magicNumber },
-		{ "subMenus", subMenus }
-	});
+	json j;
+	j["name"] = menuData.name;
+	j["images"] = menuData.images;
+	j["magicNumber"] = menuData.magicNumber;
+	j["subMenus"] = subMenus;
+
+	return j;
 }
 static void saveIfcFile(RezFile* file) {
-	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << menuDataToJson(MenuData(file->getFileReader())).dump(2);
+	ofstream(DIR_OUT_NAME + file->getFullPath() + ".json") << menuDataToJson(MenuData(file->getFileReader())).ToString();
 }
 
 static set<string> notImpletedTypes;

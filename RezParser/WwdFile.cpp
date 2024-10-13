@@ -1,5 +1,4 @@
 #include "WwdFile.h"
-#include "Miniz.h"
 
 
 enum WwdFlags
@@ -9,7 +8,13 @@ enum WwdFlags
 };
 
 
-const uint32_t EXPECTED_HEADER_SIZE = 1524;
+#define EXPECTED_HEADER_SIZE 1524
+
+// This function is from Miniz but I modified it to fit my code (I
+// don't need the other functions and I matched this function with
+// the rest of the code I wrote). The implementation is in Miniz.cpp
+void mz_uncompress(uint8_t pDest[], uint32_t pDestLen, const uint8_t pSource[], uint32_t sourceLen);
+
 
 static void ReadRect(Buffer& stream, WwdRect& rect)
 {
@@ -124,7 +129,6 @@ WapWwd::WapWwd(shared_ptr<Buffer> wwdReader, int levelNumber)
 	: levelNumber(levelNumber)
 {
 	uint32_t wwdSignature;
-
 	wwdReader->read(wwdSignature);
 	// Signature holds WWD header size, if size doesnt match then it is not supported WWD file
 	if (wwdSignature != EXPECTED_HEADER_SIZE)

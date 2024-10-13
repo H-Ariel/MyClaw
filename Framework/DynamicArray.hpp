@@ -5,21 +5,21 @@ template <class T>
 class DynamicArray {
 public:
 	DynamicArray() : _size(0), arr(nullptr) {}
-	DynamicArray(size_t size) : _size(size) { arr = new T[size]; }
+	DynamicArray(size_t size) : _size(size) { arr = DBG_NEW T[size]; }
 	DynamicArray(size_t size, T defVal) : _size(size) {
-		arr = new T[size];
+		arr = DBG_NEW T[size];
 		for (size_t i = 0; i < size; arr[i++] = defVal);
 	}
 	DynamicArray(const T* data, size_t size) : _size(size) {
-		arr = new T[size];
+		arr = DBG_NEW T[size];
 		memcpy(arr, data, _size * sizeof(T));
 	}
 	DynamicArray(std::initializer_list<T> data) : _size(data.size()){
-		arr = new T[_size];
+		arr = DBG_NEW T[_size];
 		memcpy(arr, data.begin(), _size * sizeof(T));
 	}
 	DynamicArray(const DynamicArray& other) : _size(other._size) {
-		arr = new T[_size];
+		arr = DBG_NEW T[_size];
 		memcpy(arr, other.arr, _size * sizeof(T));
 	}
 	DynamicArray(DynamicArray&& other) : _size(other._size), arr(other.arr) {
@@ -31,7 +31,7 @@ public:
 		if (this != &other) {
 			delete[] arr;
 			_size = other._size;
-			arr = new T[_size];
+			arr = DBG_NEW T[_size];
 			memcpy(arr, other.arr, _size * sizeof(T));
 		}
 		return *this;

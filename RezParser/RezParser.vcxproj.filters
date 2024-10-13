@@ -43,9 +43,6 @@
     <ClInclude Include="AniFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Miniz.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PalFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>

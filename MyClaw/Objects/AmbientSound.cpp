@@ -20,7 +20,7 @@ void AmbientSound::Logic(uint32_t elapsedTime)
 	{
 		if (_isPlaying)
 		{
-			AssetsManager::stopWavFile(_wavPlayerId);
+		//	AssetsManager::stopWavFile(_wavPlayerId);
 			_isPlaying = false;
 		}
 	}
@@ -54,12 +54,7 @@ void GlobalAmbientSound::Logic(uint32_t elapsedTime)
 	{
 		AssetsManager::playWavFile(_wavPath, _volume);
 		_soundDurationMs = AssetsManager::getWavFileDuration(_wavPath);
-
-		int timeOn = getRandomInt(_minTimeOn, _maxTimeOn);
-		int soundLoops = timeOn / _soundDurationMs;
-
-		_timeOff = getRandomInt(_minTimeOff, _maxTimeOff) + soundLoops * _soundDurationMs;
-
+		_timeOff = getRandomInt(_minTimeOff, _maxTimeOff) + getRandomInt(_minTimeOn, _maxTimeOn);
 		_currentTime = 0;
 	}
 }

@@ -39,7 +39,6 @@
 #include <queue>
 
 #include "Exception.hpp"
-#include "LogFile.h"
 
 
 #pragma comment(lib, "d2d1")
@@ -50,6 +49,12 @@
 #ifndef HINST_THISCOMPONENT
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
+#endif
+
+#ifdef _DEBUG
+#define LOG printf
+#else
+#define LOG(...)
 #endif
 
 
