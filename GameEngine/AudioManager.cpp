@@ -1,8 +1,6 @@
 #include "AudioManager.h"
 #include "MidiPlayer.h"
 
-#include <SDL2/SDL.h>
-
 
 AudioManager* AudioManager::instance = nullptr;
 
@@ -11,31 +9,85 @@ static int clamp(int value, int min, int max) {
 	return value < min ? min : value > max ? max : value;
 }
 
-// Audio Mixer. for now only for WAV files in specific format.
-// TODO: use C WinApi `waveOut...` instead of SDL2 (or something which not outside-library)
-class AudioMixer {
-public:
-	AudioMixer() : volume(1) {
-		// set this_wavSpec values:
-		this_wavSpec = {};
-		this_wavSpec.freq = 44100;
-		this_wavSpec.format = AUDIO_S16;
-		this_wavSpec.channels = 1;
-		this_wavSpec.userdata = this;
-		this_wavSpec.callback = audioCallback;
+#ifdef _DEBUG
+// writes the error message in the debuggers output window
+static void WAV_CALL(MMRESULT mmResult)
+{
+	if (mmResult != MMSYSERR_NOERROR)
+	{
+		char text[256];
+		waveOutGetErrorTextA(mmResult, text, sizeof(text));
+		LOG("[Error] WAV Error: %s\n", text);
+	}
+}
+#else
+#define WAV_CALL(func) func
+#endif
 
-		if (SDL_OpenAudio(&this_wavSpec, NULL) < 0) {
-			//throw Exception("Error: Could not open audio");
-			cout << "Error: Could not open audio - " << SDL_GetError() << endl;
-			// TODO: handle errors better
+// Audio Mixer fo WAV files using WinApi
+// TODO: sometimes there is a small delay before I listen the sound
+// TODO: combine with AudioManager to 1 class
+class AudioMixer
+{
+private:
+	struct AudioData;
+
+public:
+	AudioMixer()
+		: volume(1), audioFormat({}), wavHdr({}), wavOut(nullptr),
+		running(false), t_play(nullptr), hEvent(nullptr)
+	{
+		// set audio format:
+		WAVEFORMATEX waveFormat = {};
+		waveFormat.wFormatTag = WAVE_FORMAT_PCM;
+		waveFormat.nChannels = 1;
+		waveFormat.nSamplesPerSec = 44100;
+		waveFormat.wBitsPerSample = 16;
+		waveFormat.nBlockAlign = waveFormat.nChannels * (waveFormat.wBitsPerSample / 8);
+		waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
+		waveFormat.cbSize = 0;
+		myMemCpy(audioFormat, waveFormat);
+
+		WAV_CALL(waveOutOpen(&wavOut, WAVE_MAPPER, &audioFormat, (DWORD_PTR)waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION));
+		if (!wavOut) {
+			LOG("[ERROR] Faild create wav-out\n");
+			return;
 		}
-		else {
-			SDL_PauseAudio(0);
+
+		WAV_CALL(waveOutPrepareHeader(wavOut, &wavHdr, sizeof(wavHdr)));
+
+		if (wavOut) {
+			hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+			running = true;
+			t_play = DBG_NEW thread(&AudioMixer::playAudioThread, this);
 		}
 	}
 	~AudioMixer() {
-		cleanup();	
-		SDL_CloseAudio();
+		clear();
+
+		if (wavOut)
+		{
+			running = false;
+			t_play->join();
+			delete t_play;
+
+			CloseHandle(hEvent);
+
+			WAV_CALL(waveOutReset(wavOut));
+			WAV_CALL(waveOutUnprepareHeader(wavOut, &wavHdr, sizeof(wavHdr)));
+			WAV_CALL(waveOutClose(wavOut));
+		}
+
+		wavOut = nullptr;
+		hEvent = nullptr;
+		wavHdr = {};
+	}
+
+	// clear all audios
+	void clear() {
+		for (auto& it : savedAudios)
+			clear(it.second);
+		savedAudios.clear();
 	}
 
 	// if success returns `id`, returns INVALID_ID.
@@ -43,87 +95,76 @@ public:
 		auto it = savedAudios.find(key);
 		if (it == savedAudios.end())
 		{
-			LOG("[Warning] " __FUNCTION__ ": key not found. key: %s", key.c_str());
+			LOG("[Warning] " __FUNCTION__ ": key not found. key: %s\n", key.c_str());
 			return AudioManager::INVALID_ID;
 		}
-		AudioData audioData = savedAudios[key];
-		audioData.reset();
-		audioData.volume = volume;
-		audioData.id = 0; // TODO: set real id
-		audioData.infinite = infinite;
-		audios.push_back(audioData);
-		return audioData.id;
+
+		AudioData audio = it->second;
+		audio.reset();
+		audio.volume = volume;
+		audio.id = 0; // TODO: set real id
+		audio.infinite = infinite;
+		lock_guard<mutex> guard(audiosMutex);
+		audios.push_back(audio);
+		return audio.id;
 	}
 
-	void addWavBuffer(const DynamicArray<uint8_t>& wavBuf, const string& key) {
+	void addWavBuffer(shared_ptr<Buffer> wavReader, const string& key) {
 		if (savedAudios.find(key) != savedAudios.end()) return; // already exists
 
-		AudioData audio = {};
-		Uint8* audioBuffer = nullptr;
-		Uint32 length = 0;
-		SDL_AudioSpec wavSpec;
-		SDL_RWops* rw = SDL_RWFromConstMem(wavBuf.data(), (int)wavBuf.size());
-		auto ret = SDL_LoadWAV_RW(rw, 1, &wavSpec, &audioBuffer, &length);
-		SDL_FreeRW(rw);
-		if (ret == NULL)
-		{
-			// TODO: handle errors better
-		//	throw Exception("Error: Could not load WAV data from memory");
-			cout << "ERROR at " __FUNCTION__ ": key=" << key << endl;
-			cout << "SDL_GetError() = " << SDL_GetError() << endl;
+		WAVEFORMATEX fmt = {};
+
+		wavReader->skip(20);
+		wavReader->read(fmt.wFormatTag);
+		wavReader->read(fmt.nChannels);
+		wavReader->read(fmt.nSamplesPerSec);
+		wavReader->read(fmt.nAvgBytesPerSec);
+		wavReader->read(fmt.nBlockAlign);
+		wavReader->read(fmt.wBitsPerSample);
+		wavReader->skip(4);
+		DynamicArray<uint8_t> wavSoundData = wavReader->readBytes(wavReader->read<uint32_t>(), true); // read length and then read bytes
+		DynamicArray<int16_t> convertedData = matchFormat(fmt, wavSoundData);
+		if (convertedData.size() == 0) return;
+
+		// update fields
+		fmt.nBlockAlign = fmt.nChannels * (fmt.wBitsPerSample / 8);
+		fmt.nAvgBytesPerSec = fmt.nSamplesPerSec * fmt.nBlockAlign;
+
+		// check that all wav files in the same format:
+		if (memcmp(&fmt, &audioFormat, sizeof WAVEFORMATEX) != 0) {
+			LOG("[ERROR] formats are not equals\n");
 			return;
 		}
 
-		// Convert `wavSpec` to be same as `this_wavSpec`
-		SDL_AudioCVT cvt;
-		SDL_BuildAudioCVT(&cvt, wavSpec.format, wavSpec.channels, wavSpec.freq,
-			this_wavSpec.format, this_wavSpec.channels, this_wavSpec.freq);
-		if (cvt.needed) {
-			cvt.len = length;
-			cvt.buf = (Uint8*)SDL_malloc((size_t)(cvt.len * cvt.len_mult));
-			SDL_memcpy(cvt.buf, audioBuffer, length);
-			SDL_ConvertAudio(&cvt);
-			SDL_FreeWAV(audioBuffer);
-			audio.audioBuffer = (Sint16*)cvt.buf;
-			audio.length = cvt.len_cvt / 2; // `cvt.len_cvt` contains amount of total bytes. `length` is for `audioBuffer` (16 bits (2 bytes) buffer).
-		}
-		else {
-			audio.audioBuffer = (Sint16*)audioBuffer;
-			audio.length = length;
-		}
-
-		audio.key = key;
-		savedAudios[key] = audio;
+		// save new audio
+		AudioData audioData;
+		audioData.soundBufferLength = (int)convertedData.size();
+		audioData.soundBuffer = DBG_NEW int16_t[audioData.soundBufferLength];
+		memcpy(audioData.soundBuffer, convertedData.data(), convertedData.size() * sizeof(convertedData[0]));
+		audioData.key = key;
+		savedAudios[key] = audioData;
 	}
 
+	// duartion in milliseconds
 	float getWavDuration(const string& key) {
-		auto it = savedAudios.find(key);
-		if (it != savedAudios.end()) {
-			const AudioData& audioData = it->second;
-			// Calculate duration in seconds
-			float duration = static_cast<float>(audioData.length) / (sizeof(Sint16) * this_wavSpec.freq);
-			return duration;
-		}
-		// Return -1.0 to indicate that the key was not found
-		return -1.0f;
+		return (float)savedAudios[key].soundBufferLength / audioFormat.nAvgBytesPerSec * 1000;
 	}
 
-	void stop(uint32_t id) {
-		remove(id);
-	}
+	// TODO: make sure i know what I want to do with `stop` and `remove`... :/
+	void stop(uint32_t id) { remove(id); }
 
 	void remove(uint32_t id) {
 		audios.remove_if([&](const AudioData& a) { return a.id == id; });
 	}
 
-	void remove(function<bool(const string& key)> predicate)
-	{
+	void remove(function<bool(const string& key)> predicate) {
+		lock_guard<mutex> guard(audiosMutex);
+
 		for (auto it = savedAudios.begin(); it != savedAudios.end();)
 		{
 			if (predicate(it->first)) {
-				audios.remove_if([&](const AudioData& a) { return a.audioBuffer == it->second.audioBuffer; }); // remove the buffer we freed
-
-				SDL_FreeWAV((Uint8*)it->second.audioBuffer);
+				audios.remove_if([&](const AudioData& a) { return a.soundBuffer == it->second.soundBuffer; }); // remove the buffer we freed
+				clear(it->second);
 				it = savedAudios.erase(it);
 			}
 			else
@@ -132,78 +173,162 @@ public:
 	}
 
 private:
-	struct AudioData {
-		Sint16* audioBuffer; // the audio buffer. this buffer filled by SDL at `addWavBuffer`.
-		Uint32 length;     // audio buffer's length (bytes' count) (filled as audioBuffer)
-		Sint16* currPtr;   // pointer to current data
-		Uint32 currLength; // remains bytes (matches with currPtr)
-		float volume;      // volume multiplier for this audio - 0.0 to 1.0
-		uint32_t id; // TODO: use `audioBuffer` as id ...
-		bool infinite;
-		string key; // TODO delete this. just for debug
+	void playAudioThread() {
+		int streamLen = 32768; // TODO: find perfect size so we will not have any lags
+		int16_t* stream = DBG_NEW int16_t[streamLen];
 
-		AudioData()
-			: audioBuffer(nullptr), length(0), currPtr(nullptr), 
-			currLength(0), volume(1), id(0), infinite(false) { }
+		while (running) {
+			if (audios.empty())
+				continue;
 
-		void reset() {
-			currPtr = (Sint16*)audioBuffer;
-			currLength = length;
+			// mix audio
+			int retLen = mixAudios(stream, streamLen);
+
+			// play mixed audio
+			wavHdr.lpData = (LPSTR)stream;
+			wavHdr.dwBufferLength = (DWORD)(retLen * sizeof(*stream));
+			WAV_CALL(waveOutWrite(wavOut, &wavHdr, sizeof(wavHdr)));
+
+			// Wait for playback completion by waiting for the event to be signaled
+			WaitForSingleObject(hEvent, INFINITE);
 		}
-	};
 
-	SDL_AudioSpec this_wavSpec;
-	map<string, AudioData> savedAudios; // [key]=wav
-	list<AudioData> audios;
-	float volume; // volume multiplier for all audios - 0.0 to 1.0
+		delete[] stream;
+	}
 
-
-	// callback function to mix all playing audios to one stream
-	static void audioCallback(void* userdata, Uint8* stream, int len) {
-		AudioMixer* mixer = static_cast<AudioMixer*>(userdata);
-		Sint16* output = (Sint16*)stream; // Cast stream to Sint16 for 16-bit audio
-		len /= 2; // Since each sample is now 2 bytes (16-bit)
-
+	// mixes all active audio tracks into output stream and returns the number of samples written
+	int mixAudios(int16_t* stream, int len) {
 		int* sum = DBG_NEW int[len]; // sum of voices in each index
 		for (int i = 0; i < len; sum[i++] = 0);
 
-		for (auto it = mixer->audios.begin(); it != mixer->audios.end(); ) {
+		int writtenLen = 0;
+
+		lock_guard<mutex> guard(audiosMutex);
+		for (auto it = audios.begin(); it != audios.end(); ) {
 			auto& audio = *it;
-			if (audio.currLength == 0) {
+			if (audio.currLength <= 0) {
 				if (audio.infinite)
 					audio.reset();
 				else
-					it = mixer->audios.erase(it);
+					it = audios.erase(it);
 			}
 			else {
-				Uint32 lengthToMix = min((Uint32)len, audio.currLength);
+				int lengthToMix = min(len, audio.currLength);
 
-				for (Uint32 j = 0; j < lengthToMix; j++)
+				for (int j = 0; j < lengthToMix; j++)
 					sum[j] += (int)(audio.currPtr[j] * audio.volume); // apply volume scaling
 
 				audio.currPtr += lengthToMix;
 				audio.currLength -= lengthToMix;
+
+				writtenLen = max(writtenLen, lengthToMix);
 
 				++it;
 			}
 		}
 
 		for (int i = 0; i < len; i++) {
-			int val = (int)(sum[i] * mixer->volume);
-			output[i] = (Sint16)clamp(val, INT16_MIN, INT16_MAX); // Clamp to 16-bit signed range
+			int val = (int)(sum[i] * volume);
+			stream[i] = (int16_t)clamp(val, INT16_MIN, INT16_MAX); // Clamp to 16-bit signed range
 		}
 
 		delete[] sum;
+
+		return writtenLen;
 	}
 
-	// clean all saved-audios
-	void cleanup() {
-		for (auto& it : savedAudios)
-			SDL_FreeWAV((Uint8*)it.second.audioBuffer);
-		savedAudios.clear();
+	// converts WAV sound data to 16-bit format and resamples it to match the target sample rate (44100 KHz)
+	DynamicArray<int16_t> matchFormat(WAVEFORMATEX& fmt, const DynamicArray<uint8_t>& wavSoundData) const {
+		// convert to 16-bit format
+		DynamicArray<int16_t> convertedData;
+		if (fmt.wBitsPerSample == 16) { // just change pointer type
+			convertedData = DynamicArray<int16_t>(wavSoundData.size() / 2); // same size in bytes
+			memcpy(convertedData.data(), wavSoundData.data(), wavSoundData.size());
+		}
+		else if (fmt.wBitsPerSample == 8) { // Extend
+			convertedData = DynamicArray<int16_t>(wavSoundData.size());
+			for (int i = 0; i < wavSoundData.size(); i++)
+				convertedData[i] = static_cast<int16_t>(((int)wavSoundData[i] - 0x80) << 8);
+			fmt.wBitsPerSample = 16; // update format
+		}
+		else {
+			LOG("[ERROR] " __FUNCTION__ " format not supported\n");
+			return {}; // return empty if format is unsupported
+		}
+
+		// resample if needed
+		if (fmt.nSamplesPerSec != audioFormat.nSamplesPerSec) {
+			double resampleRatio = (double)audioFormat.nSamplesPerSec / fmt.nSamplesPerSec;
+			int newSampleCount = (int)(convertedData.size() * resampleRatio);
+			DynamicArray<int16_t> resampledData(newSampleCount);
+			for (int i = 0; i < newSampleCount; i++) {
+				double originalIndex = i / resampleRatio;
+				int index1 = (int)(originalIndex);
+				int index2 = min(index1 + 1, (int)(convertedData.size()) - 1);
+				double frac = originalIndex - index1;
+
+				// linear interpolation
+				resampledData[i] = clamp(
+					(int)(convertedData[index1] * (1 - frac) + convertedData[index2] * frac),
+					INT16_MIN, INT16_MAX);
+			}
+			fmt.nSamplesPerSec = audioFormat.nSamplesPerSec; // update sample rate
+			return resampledData;
+		}
+
+		return convertedData; // return converted data
 	}
+
+	void clear(AudioData& audioData) {
+		delete[] audioData.soundBuffer;
+		//audioData.soundBuffer = nullptr;
+		//audioData.soundBufferLength = 0;
+		//audioData.reset();
+	}
+
+	static void waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
+	{
+		if (dwInstance) {
+			AudioMixer* mixer = (AudioMixer*)dwInstance;
+			if (uMsg == WOM_DONE) {
+				SetEvent(mixer->hEvent);
+			}
+		}
+	}
+
+	struct AudioData {
+		int16_t* soundBuffer;
+		int soundBufferLength;
+		int16_t* currPtr; // pointer to current data in `soundBuffer`
+		int currLength;   // remains bytes (matches with currPtr)
+		float volume;     // volume multiplier for all audios - 0.0 to 1.0
+		uint32_t id;
+		bool infinite;
+		string key; // TODO just for debug
+
+
+		AudioData()
+			: soundBuffer(nullptr), soundBufferLength(0),
+			currPtr(nullptr), currLength(0),
+			volume(1), id(0), infinite(false) { }
+
+		void reset() {
+			currPtr = soundBuffer;
+			currLength = soundBufferLength;
+		}
+	};
+
+	map<string, AudioData> savedAudios; // [key]=wav
+	list<AudioData> audios;
+	mutex audiosMutex; // mutex for `list<> audios`
+	float volume; // volume multiplier for all audios - 0.0 to 1.0
+	thread* t_play;
+	bool running;
+	const WAVEFORMATEX audioFormat;
+	WAVEHDR wavHdr;
+	HWAVEOUT wavOut;
+	HANDLE hEvent; // event to signal playback completion
 };
-
 
 AudioMixer audioMixer;
 
@@ -239,7 +364,8 @@ uint32_t AudioManager::getNewMidiId()
 
 void AudioManager::addWavPlayer(const string& key, const DynamicArray<uint8_t>& wav)
 {
-	audioMixer.addWavBuffer(wav, key);
+	// TODO: get Buffer as parameter
+	audioMixer.addWavBuffer(make_shared<Buffer>(wav), key);
 }
 void AudioManager::addMidiPlayer(const string& key, const DynamicArray<uint8_t>& midi)
 {
@@ -261,7 +387,7 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 	auto it = instance->_midiDataCache.find(key);
 	if (it == instance->_midiDataCache.end())
 	{
-		LOG("[Warning] " __FUNCTION__ ": key not found. key: %s", key.c_str());
+		LOG("[Warning] " __FUNCTION__ ": key not found. key: %s\n", key.c_str());
 		return INVALID_ID;
 	}
 

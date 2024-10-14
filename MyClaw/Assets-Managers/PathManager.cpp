@@ -177,7 +177,7 @@ string PathManager::getSoundFilePath(const string& path)
 		string newPath;
 
 		// TODO: hack - something else
-		if (imageSetMap["LEVEL"] == "LEVEL1" && path == "LEVEL_AMBIENT_ANGVIL")
+		if (imageSetMap["LEVEL"] == "LEVEL1/IMAGES" && path == "LEVEL_AMBIENT_ANGVIL")
 		{
 			newPath = "LEVEL_AMBIENT_ANVIL";
 		}

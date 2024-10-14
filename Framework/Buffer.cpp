@@ -122,7 +122,7 @@ DynamicArray<uint8_t> Buffer::readBytes(size_t n, bool readAnyway)
 	{
 		if (readAnyway)
 		{
-			LOG("[Warning] " __FUNCTION__ ": unable to read data (reached to end of buffer)");
+			LOG("[Warning] " __FUNCTION__ ": unable to read data (reached to end of buffer)\n");
 			n = _size - _idx;
 		}
 		else

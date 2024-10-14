@@ -20,7 +20,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int)
 	}
 	catch (const Exception& ex)
 	{
-		LOG("[Error] %s", ex.message.c_str());
+		LOG("[Error] %s\n", ex.message.c_str());
 	}
 
 	return 0;

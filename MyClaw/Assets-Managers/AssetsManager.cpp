@@ -211,7 +211,7 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 		catch (const Exception&)
 		{
 			img = make_shared<UIBaseImage>(nullptr); // empty image
-			LOG("[Warning] a blank image has been inserted. image path: \"%s\"", path.c_str());
+			LOG("[Warning] a blank image has been inserted. image path: \"%s\"\n", path.c_str());
 		}
 	}
 

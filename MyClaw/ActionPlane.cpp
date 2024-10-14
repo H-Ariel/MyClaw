@@ -80,7 +80,7 @@ ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane)
 	_BossStagerDelay(0), _isInBoss(false), _levelState(LevelState::Playing)
 {
 	if (_instance)
-		LOG("[Warning] ActionPlane already exists (instance of level %d)", _instance->_wwd->levelNumber);
+		LOG("[Warning] ActionPlane already exists (instance of level %d)\n", _instance->_wwd->levelNumber);
 	_instance = this;
 }
 ActionPlane::~ActionPlane()

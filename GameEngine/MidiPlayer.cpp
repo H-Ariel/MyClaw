@@ -12,7 +12,7 @@ static void MIDI_CALL(MMRESULT mmResult)
 	{
 		char text[256] = {};
 		midiOutGetErrorTextA(mmResult, text, sizeof(text));
-		LOG("[Error] MIDI Error: %s", text);
+		LOG("[Error] MIDI Error: %s\n", text);
 	}
 }
 #else

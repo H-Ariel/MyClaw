@@ -22,7 +22,7 @@ public:
 		arr = DBG_NEW T[_size];
 		memcpy(arr, other.arr, _size * sizeof(T));
 	}
-	DynamicArray(DynamicArray&& other) : _size(other._size), arr(other.arr) {
+	DynamicArray(DynamicArray&& other) noexcept : _size(other._size), arr(other.arr) {
 		other.arr = nullptr;
 	}
 	~DynamicArray() { delete[] arr; }

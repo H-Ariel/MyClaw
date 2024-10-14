@@ -78,7 +78,7 @@ void LevelPlane::init()
 		}
 		catch (const Exception& ex)
 		{
-			LOG("[Error] while reading object: %s", ex.message.c_str());
+			LOG("[Error] while reading object: %s\n", ex.message.c_str());
 		}
 	}
 
