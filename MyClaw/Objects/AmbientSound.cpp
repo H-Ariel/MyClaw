@@ -5,6 +5,7 @@
 AmbientSound::AmbientSound(const WwdObject& obj)
 	: BaseSoundObject(obj), _isPlaying(false), _wavPlayerId(AssetsManager::INVALID_AUDIOPLAYER_ID)
 {
+	throw Exception("AmbientSound");
 }
 void AmbientSound::Logic(uint32_t elapsedTime)
 {
@@ -31,6 +32,8 @@ GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj, int levelNumber)
 	_minTimeOff(obj.moveRect.right), _maxTimeOff(obj.moveRect.bottom),
 	_isLooping(obj.moveRect.left == 0), _currentTime(0), _soundDurationMs(0)
 {
+	throw Exception("GlobalAmbientSound");
+
 	_timeOff = getRandomInt(_minTimeOff, _maxTimeOff);
 
 	if (_isLooping)

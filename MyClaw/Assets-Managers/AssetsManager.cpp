@@ -353,6 +353,10 @@ uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
+#ifdef _DEBUG
+	return;
+#endif
+
 	if (instance->_lastType == type)
 		return;
 

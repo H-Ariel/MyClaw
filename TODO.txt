@@ -1,6 +1,4 @@
 + check why memory usage is too high. maybe there are objects which not free
-+ better threads-pool in AudioManager (threads' count according to CPUs' count,
-  and should sync with other threads in code if needed)
 
 + handle setting (low details, sound volume, etc.)
 
@@ -8,6 +6,7 @@
 - use trie<T> instead of map<string,T> (end of string contains value T) (should be faster and less memory)
 - move Framework, GameEngine, RezParser to DLLs (not .lib)
 
+* fix last elevators at level 13 (before boss warp)
 * the usage of Warp::DestinationWarp is bad. change it
 * fix AmbientSound objects
 * play all objects WAV file

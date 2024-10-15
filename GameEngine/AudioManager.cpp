@@ -100,9 +100,8 @@ public:
 		}
 
 		AudioData audio = it->second;
-		audio.reset();
 		audio.volume = volume;
-		audio.id = 0; // TODO: set real id
+		audio.id = 20; // TODO: set real id
 		audio.infinite = infinite;
 		lock_guard<mutex> guard(audiosMutex);
 		audios.push_back(audio);
@@ -142,6 +141,7 @@ public:
 		audioData.soundBuffer = DBG_NEW int16_t[audioData.soundBufferLength];
 		memcpy(audioData.soundBuffer, convertedData.data(), convertedData.size() * sizeof(convertedData[0]));
 		audioData.key = key;
+		audioData.reset(); // init currPtr and currLength
 		savedAudios[key] = audioData;
 	}
 
@@ -174,30 +174,42 @@ public:
 
 private:
 	void playAudioThread() {
-		int streamLen = 32768; // TODO: find perfect size so we will not have any lags
-		int16_t* stream = DBG_NEW int16_t[streamLen];
+		int activeBuffer = 0;
+		int streamLen = 16384;
+		int16_t* streams[2] = {}; // double buffers. when play one, mix the second
+		int retLen[2] = { 0, 0 };
+		streams[0] = DBG_NEW int16_t[streamLen];
+		streams[1] = DBG_NEW int16_t[streamLen];
+
+		SetEvent(hEvent);
 
 		while (running) {
-			if (audios.empty())
-				continue;
+			// mix next buffer while previous is playing
+			retLen[activeBuffer] = mixAudios(streams[activeBuffer], streamLen);
 
-			// mix audio
-			int retLen = mixAudios(stream, streamLen);
+			if (retLen[activeBuffer] != 0) {
 
-			// play mixed audio
-			wavHdr.lpData = (LPSTR)stream;
-			wavHdr.dwBufferLength = (DWORD)(retLen * sizeof(*stream));
-			WAV_CALL(waveOutWrite(wavOut, &wavHdr, sizeof(wavHdr)));
+				// wait for previous buffer to finish playing
+				WaitForSingleObject(hEvent, INFINITE);
 
-			// Wait for playback completion by waiting for the event to be signaled
-			WaitForSingleObject(hEvent, INFINITE);
+				// play new mixed buffer
+				wavHdr.lpData = (LPSTR)streams[activeBuffer];
+				wavHdr.dwBufferLength = (DWORD)(retLen[activeBuffer] * sizeof(*streams[activeBuffer]));
+				WAV_CALL(waveOutWrite(wavOut, &wavHdr, sizeof(wavHdr)));
+
+				activeBuffer = 1 - activeBuffer; // switch buffer
+			}
 		}
 
-		delete[] stream;
+		delete[] streams[0];
+		delete[] streams[1];
 	}
+
 
 	// mixes all active audio tracks into output stream and returns the number of samples written
 	int mixAudios(int16_t* stream, int len) {
+		if (audios.empty()) return 0;
+
 		int* sum = DBG_NEW int[len]; // sum of voices in each index
 		for (int i = 0; i < len; sum[i++] = 0);
 
@@ -209,22 +221,24 @@ private:
 			if (audio.currLength <= 0) {
 				if (audio.infinite)
 					audio.reset();
-				else
-					it = audios.erase(it);
+				else {
+					it = audios.erase(it); // remove finished audio from list
+					continue;
+				}
 			}
-			else {
-				int lengthToMix = min(len, audio.currLength);
 
-				for (int j = 0; j < lengthToMix; j++)
-					sum[j] += (int)(audio.currPtr[j] * audio.volume); // apply volume scaling
+			int lengthToMix = min(len, audio.currLength);
 
-				audio.currPtr += lengthToMix;
-				audio.currLength -= lengthToMix;
+			for (int j = 0; j < lengthToMix; j++)
+				sum[j] += (int)(audio.currPtr[j] * audio.volume); // apply volume scaling
 
-				writtenLen = max(writtenLen, lengthToMix);
+			audio.currPtr += lengthToMix;
+			audio.currLength -= lengthToMix;
 
-				++it;
-			}
+			if (writtenLen < lengthToMix)
+				writtenLen = lengthToMix;
+
+			++it;
 		}
 
 		for (int i = 0; i < len; i++) {
@@ -449,4 +463,3 @@ void AudioManager::setVolume(uint32_t id, int volume)
 	if (it != instance->_midiPlayers.end())
 		it->second->setVolume(volume);
 }
-
