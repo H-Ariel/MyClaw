@@ -37,8 +37,3 @@ int getRandomInt(int a, int b)
 {
 	return rand() % (b - a + 1) + a;
 }
-
-DWORD make_dword(WORD hi, WORD lo)
-{
-	return ((DWORD)hi << 16) | (DWORD)lo;
-}

@@ -19,6 +19,12 @@ static void MIDI_CALL(MMRESULT mmResult)
 #define MIDI_CALL(func) func
 #endif
 
+// make a DWORD from two WORDs
+static inline DWORD make_dword(WORD hi, WORD lo)
+{
+	return ((DWORD)hi << 16) | (DWORD)lo;
+}
+
 float MidiPlayer::MusicSpeed = 1;
 HMIDIOUT MidiPlayer::_midiOut = nullptr;
 int MidiPlayer::_objCount = 0;
@@ -26,7 +32,7 @@ LARGE_INTEGER MidiPlayer::PerformanceFrequency = {};
 
 
 MidiPlayer::MidiPlayer(const string& key, const DynamicArray<uint8_t>& midiData)
-	: IAudioPlayer(key, midiData), track({}), PPQN_CLOCK(0), ticks(0), _thread(nullptr)
+	: _key(key), _soundData(midiData), _isPlaying(false), track({}), PPQN_CLOCK(0), ticks(0), _thread(nullptr)
 {
 	if (_objCount++ == 0)
 	{

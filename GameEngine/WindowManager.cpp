@@ -6,9 +6,6 @@ TODO: save all D2D1 objects (IDWriteTextFormat) in a list and release them in `W
 and create a function to get them with my format (like ID2D1SolidColorBrush and ID2D1Bitmap)
 */
 
-// throw exception if `func` failed
-#define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
-
 
 bool operator<(ColorF a, ColorF b) { return memcmp(&a, &b, sizeof(ColorF)) < 0; }
 bool operator==(ColorF a, ColorF b) { return memcmp(&a, &b, sizeof(ColorF)) == 0; }

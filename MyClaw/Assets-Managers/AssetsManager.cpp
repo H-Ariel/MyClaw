@@ -334,7 +334,7 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 	uint32_t id = AudioManager::playWav(wavFilePath, infinite, volume);
 
 	if (id == AudioManager::INVALID_ID)
-	{
+	{ // if file not found, try load it
 		AudioManager::addWavPlayer(wavFilePath, instance->_rezArchive.getFile(wavFilePath)->getFileData());
 		id = AudioManager::playWav(wavFilePath, infinite, volume);
 	}
@@ -344,7 +344,6 @@ uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool 
 void AssetsManager::stopWavFile(uint32_t wavId)
 {
 	AudioManager::stopWav(wavId);
-	AudioManager::removeWav(wavId);
 }
 uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 {

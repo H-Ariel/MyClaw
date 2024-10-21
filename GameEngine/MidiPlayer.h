@@ -2,21 +2,24 @@
 
 #pragma once
 
-#include "IAudioPlayer.h"
+#include "Framework/Framework.h"
+#include "Framework/DynamicArray.hpp"
 
 
 // MIDI player class
-class MidiPlayer : public IAudioPlayer 
+class MidiPlayer
 {
 public:
 	MidiPlayer(const string& key, const DynamicArray<uint8_t>& midiData);
-	~MidiPlayer() override;
+	~MidiPlayer();
 
-	void play(bool infinite) override; // play the MIDI file asynchronously
-	void stop() override; // stop the MIDI player
-	void reset() override; // reset the track of current midi-player
-	void setVolume(int volume) override; // set the volume. value range is [0,100]
+	void play(bool infinite); // play the MIDI file asynchronously
+	void stop(); // stop the MIDI player
+	void reset(); // reset the track of current midi-player
+	void setVolume(int volume); // set the volume. value range is [0,100]
 
+	bool isPlaying() const { return _isPlaying; }
+	const string& getKey() const { return _key; }
 
 	static float MusicSpeed;
 
@@ -64,6 +67,10 @@ private:
 	// sleep for waitTime microseconds (better than Sleep() which sleeps for milliseconds)
 	static void usleep(int waitTime);
 
+
+	const string _key;
+	DynamicArray<uint8_t> _soundData;
+	bool _isPlaying;
 
 	mutex _mutex;
 	thread* _thread; // thread for playing the MIDI asynchronously

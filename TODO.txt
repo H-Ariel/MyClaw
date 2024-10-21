@@ -1,5 +1,4 @@
 + handle setting (low details, sound volume, etc.)
-+ finish the audio manager. need change the combination of MIDI and WAV
 
 + check why memory and CPU usage is too high. maybe there are objects which not free
 

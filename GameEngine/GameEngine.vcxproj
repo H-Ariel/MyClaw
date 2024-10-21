@@ -192,7 +192,6 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="BaseApp.h" />
     <ClInclude Include="BaseEngine.h" />
-    <ClInclude Include="IAudioPlayer.h" />
     <ClInclude Include="MidiPlayer.h" />
     <ClInclude Include="Rectangle2D.h" />
     <ClInclude Include="UIBaseButton.h" />

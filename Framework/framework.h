@@ -21,6 +21,7 @@
 #include <d2d1.h>
 #include <dwrite.h>
 #include <d2d1helper.h>
+#include <dsound.h>
 
 #include <iostream>
 #include <fstream>
@@ -43,6 +44,7 @@
 
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "dwrite")
+#pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "winmm.lib")
 
 
@@ -56,6 +58,9 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #else
 #define LOG(...)
 #endif
+
+// throw exception if `func` failed
+#define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
 
 
 using namespace std;
@@ -77,9 +82,6 @@ bool contains(const string& str1, const string& str2);
 // reterns a random number in range [a,b]
 float getRandomFloat(float a, float b);
 int getRandomInt(int a, int b);
-
-// make a DWORD from two WORDs
-DWORD make_dword(WORD hi, WORD lo);
 
 
 // reverses the bytes order of `t`

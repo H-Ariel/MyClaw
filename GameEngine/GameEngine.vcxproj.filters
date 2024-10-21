@@ -73,9 +73,6 @@
     <ClInclude Include="AudioManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IAudioPlayer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MidiPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>

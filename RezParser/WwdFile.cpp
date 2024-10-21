@@ -180,7 +180,7 @@ WapWwd::WapWwd(shared_ptr<Buffer> wwdReader, int levelNumber)
 
 	// Uncompressed WWD file payload info
 	uint32_t decompressedMainBlockVectorLength = planesOffset + mainBlockLength;
-	uint8_t* decompressedMainBlockVector = new uint8_t[decompressedMainBlockVectorLength];
+	uint8_t* decompressedMainBlockVector = DBG_NEW uint8_t[decompressedMainBlockVectorLength];
 	memcpy(decompressedMainBlockVector, data, planesOffset);
 	uint8_t* decompressedMainBlock = decompressedMainBlockVector + planesOffset;
 
