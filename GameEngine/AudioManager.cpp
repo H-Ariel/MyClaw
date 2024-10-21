@@ -29,7 +29,7 @@ void AudioManager::Finalize()
 
 
 AudioManager::AudioManager()
-	: wavGlobalVolume(1), running(false), t_play(nullptr), dSound(nullptr), primaryBuffer(nullptr)
+	: wavGlobalVolume(1), midiGlobalVolume(1), running(false), t_play(nullptr), dSound(nullptr), primaryBuffer(nullptr)
 {
 	// set audio format:
 	WavFormat = {};
@@ -57,10 +57,10 @@ AudioManager::AudioManager()
 }
 AudioManager::~AudioManager() {
 	// clear all wavAudios
-	{
-		lock_guard<mutex> guard(wavAudiosListMutex);
-		wavAudios.clear();
-	}
+	wavAudiosListMutex.lock();
+	wavAudios.clear();
+	wavAudiosListMutex.unlock();
+
 	for (auto& it : savedWavAudios)
 		delete[] it.second.soundBuffer;
 	savedWavAudios.clear();
@@ -153,6 +153,7 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 	uint32_t id = instance->getNewMidiId();
 	instance->_midiPlayers[id] = make_shared<MidiPlayer>(key, it->second);
 	instance->_midiPlayers[id]->play(infinite);
+	instance->_midiPlayers[id]->setVolume(instance->midiGlobalVolume);
 	return id;
 }
 
@@ -178,9 +179,8 @@ void AudioManager::setWavVolume(float volume)
 }
 void AudioManager::setMidiVolume(float volume)
 {
-	if (instance->_midiPlayers.size() > 0) {
-		instance->_midiPlayers.begin()->second->setVolume(volume); // is that correct ... ?
-	}
+	instance->midiGlobalVolume = volume;
+	MidiPlayer::setVolume(volume);
 }
 
 void AudioManager::remove(function<bool(const string& key)> predicate)
@@ -201,7 +201,6 @@ void AudioManager::remove(function<bool(const string& key)> predicate)
 			++it;
 	}
 
-	//	audioMixer->remove(predicate);
 	lock_guard<mutex> guard(instance->wavAudiosListMutex);
 
 	for (auto it = instance->savedWavAudios.begin(); it != instance->savedWavAudios.end();)
@@ -294,12 +293,11 @@ DynamicArray<int16_t> AudioManager::matchWavFormat(WAVEFORMATEX& fmt, const Dyna
 int AudioManager::mixWavAudios(int16_t* stream, int len) {
 	if (wavAudios.empty()) return 0;
 
-	int* sum = DBG_NEW int[len]; // sum of voices in each index
-	memset(sum, len * sizeof(int), 0);
+	int* sum = DBG_NEW int[len] {}; // sum of voices in each index
 
 	int writtenLen = 0;
 
-	lock_guard<mutex> guard(wavAudiosListMutex);
+	wavAudiosListMutex.lock();
 	for (auto it = wavAudios.begin(); it != wavAudios.end(); ) {
 		auto& audio = *it;
 		if (audio.currLength <= 0) {
@@ -324,6 +322,7 @@ int AudioManager::mixWavAudios(int16_t* stream, int len) {
 
 		++it;
 	}
+	wavAudiosListMutex.unlock();
 
 	for (int i = 0; i < len; i++)
 		stream[i] = (int16_t)clamp((int)(sum[i] * wavGlobalVolume), INT16_MIN, INT16_MAX); // Clamp to 16-bit signed range
@@ -342,7 +341,7 @@ void AudioManager::playWavAudioThread() {
 	int durationMs;
 
 	IDirectSoundBuffer* secondaryBuffer = nullptr;
-	
+
 	DSBUFFERDESC bufferDesc = {}; // buffer description for secondaryBuffer
 	bufferDesc.dwSize = sizeof(DSBUFFERDESC);
 	bufferDesc.lpwfxFormat = &WavFormat;
@@ -377,9 +376,9 @@ void AudioManager::playWavAudioThread() {
 
 			secondaryBuffer->SetCurrentPosition(0);
 			secondaryBuffer->Play(0, 0, 0);
-			
+
 			// calculate duration in milliseconds
-			durationMs = float(retLen) / instance->WavFormat.nSamplesPerSec * 1000;
+			durationMs = int(float(retLen) / instance->WavFormat.nSamplesPerSec * 1000);
 			std::this_thread::sleep_for(std::chrono::milliseconds(durationMs));
 		}
 	}

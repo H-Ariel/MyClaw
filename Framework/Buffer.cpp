@@ -122,11 +122,11 @@ DynamicArray<uint8_t> Buffer::readBytes(size_t n, bool readAnyway)
 	{
 		if (readAnyway)
 		{
-			LOG("[Warning] unable to read data (reached to end of buffer)\n");
+			LOG("[Warning] reached to end of buffer\n");
 			n = _size - _idx;
 		}
 		else
-			throw Exception("unable to read data (reached to end of buffer)");
+			throw Exception("reached to end of buffer");
 	}
 
 	DynamicArray<uint8_t> vec(_data + _idx, n);

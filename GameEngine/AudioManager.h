@@ -54,6 +54,7 @@ private:
 
 	map<uint32_t, shared_ptr<MidiPlayer>> _midiPlayers; // [key]=audio-player
 	map<string, DynamicArray<uint8_t>> _midiDataCache; // [key]=data
+	float midiGlobalVolume;
 
 
 	struct WavAudioData {

@@ -97,8 +97,10 @@ void MidiPlayer::reset()
 
 void MidiPlayer::setVolume(float volume)
 {
-	WORD tmp = (WORD)(volume * MIDI_VOLUME_MAX);
-	midiOutSetVolume(_midiOut, make_dword(tmp, tmp)); // TODO: make sure this is correct
+	if (_midiOut) {
+		WORD tmp = (WORD)(volume * MIDI_VOLUME_MAX);
+		midiOutSetVolume(_midiOut, make_dword(tmp, tmp)); // TODO: make sure this is correct
+	}
 }
 
 void MidiPlayer::play_sync(bool infinite)

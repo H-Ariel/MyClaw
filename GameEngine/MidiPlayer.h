@@ -16,7 +16,7 @@ public:
 	void play(bool infinite); // play the MIDI file asynchronously
 	void stop(); // stop the MIDI player
 	void reset(); // reset the track of current midi-player
-	void setVolume(float volume); // set the volume. `volume` range is [0,1]
+	static void setVolume(float volume); // set the volume. `volume` range is [0,1]
 
 	bool isPlaying() const { return _isPlaying; }
 	const string& getKey() const { return _key; }

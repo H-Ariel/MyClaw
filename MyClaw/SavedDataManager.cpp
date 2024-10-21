@@ -66,7 +66,7 @@ SavedDataManager::SavedDataManager()
 SavedDataManager::~SavedDataManager()
 {
 	// save settings
-	ofstream(SAVE_FILE_NAME, ios::binary | ios::app) 
+	fstream(SAVE_FILE_NAME, ios::binary | ios::in | ios::app) 
 		.seekp(0).write((char*)&settings, sizeof(Settings));
 }
 
