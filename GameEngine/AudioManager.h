@@ -16,13 +16,16 @@ public:
 	static void addWavPlayer(const string& key, const DynamicArray<uint8_t>& wav);
 	static void addMidiPlayer(const string& key, const DynamicArray<uint8_t>& midi);
 
-	static uint32_t playWav(const string& key, bool infinite, int volume = 100); // volume range is [0,100]
+	static uint32_t playWav(const string& key, bool infinite, float volume = 1); // volume range is [0,1]
 	static uint32_t playMidi(const string& key, bool infinite);
 
 	static void stopWav(uint32_t id);
 
 	static void stopMidi(uint32_t id);
 	static void removeMidi(uint32_t id);
+
+	static void setWavVolume(float volume); // volume range is [0,1]
+	static void setMidiVolume(float volume); // volume range is [0,1]
 
 	// remove WAV and MIDI by their key
 	static void remove(function<bool(const string& key)> predicate);

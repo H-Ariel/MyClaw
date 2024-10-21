@@ -46,6 +46,8 @@ public:
 
 	static void clearLevelAssets();
 
+	static void applySettings();
+
 
 	static const uint32_t INVALID_AUDIOPLAYER_ID;
 

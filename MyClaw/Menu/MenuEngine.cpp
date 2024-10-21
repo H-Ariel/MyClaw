@@ -173,6 +173,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			onMove = [&](MenuSlider* slider, int value) {
 				slider->setStates(value == 0);
 				SavedDataManager::instance.settings.soundVolume = value;
+				AssetsManager::applySettings();
 			};
 			break;
 
@@ -198,6 +199,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			onMove = [&](MenuSlider* slider, int value) {
 				slider->setStates(value == 0);
 				SavedDataManager::instance.settings.musicVolume = value;
+				AssetsManager::applySettings();
 			};
 			break;
 

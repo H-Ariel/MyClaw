@@ -1,7 +1,7 @@
 #include "MidiPlayer.h"
 
 
-#define MIDI_VOLUME_MAX 0x7F
+#define MIDI_VOLUME_MAX 0xFFFFu
 
 
 #ifdef _DEBUG
@@ -40,6 +40,8 @@ MidiPlayer::MidiPlayer(const string& key, const DynamicArray<uint8_t>& midiData)
 		MIDI_CALL(midiOutOpen(&_midiOut, 0, 0, 0, CALLBACK_NULL));
 		// get the performance frequency
 		QueryPerformanceFrequency(&PerformanceFrequency);
+
+		setVolume(1);
 	}
 }
 
@@ -93,10 +95,10 @@ void MidiPlayer::reset()
 	buf += sizeof(MidiTrackData) + reverseBytes(track.track->length);
 }
 
-void MidiPlayer::setVolume(int volume)
+void MidiPlayer::setVolume(float volume)
 {
-	WORD tmp = (WORD)(volume / 100.f * MIDI_VOLUME_MAX);
-	midiOutSetVolume(_midiOut, make_dword(volume, volume)); // TODO: make sure this is correct
+	WORD tmp = (WORD)(volume * MIDI_VOLUME_MAX);
+	midiOutSetVolume(_midiOut, make_dword(tmp, tmp)); // TODO: make sure this is correct
 }
 
 void MidiPlayer::play_sync(bool infinite)

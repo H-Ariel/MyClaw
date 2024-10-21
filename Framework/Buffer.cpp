@@ -6,7 +6,7 @@ Buffer::Buffer()
 {
 }
 Buffer::Buffer(const DynamicArray<uint8_t>& buffer)
-	: Buffer(buffer.data(), buffer.size()) 
+	: Buffer(buffer.data(), buffer.size())
 {
 }
 Buffer::Buffer(const void* data, size_t size, bool alloc)
@@ -89,7 +89,7 @@ void Buffer::skip(int64_t n)
 void Buffer::setIndex(int64_t newIdx)
 {
 	if (newIdx < 0)
-		throw Exception(__FUNCTION__ ": newIdx < 0");
+		throw Exception("invalid buffer index");
 	_idx = (size_t)newIdx;
 }
 
@@ -122,7 +122,7 @@ DynamicArray<uint8_t> Buffer::readBytes(size_t n, bool readAnyway)
 	{
 		if (readAnyway)
 		{
-			LOG("[Warning] " __FUNCTION__ ": unable to read data (reached to end of buffer)\n");
+			LOG("[Warning] unable to read data (reached to end of buffer)\n");
 			n = _size - _idx;
 		}
 		else

@@ -1,6 +1,6 @@
 + handle setting (low details, sound volume, etc.)
-
 + check why memory and CPU usage is too high. maybe there are objects which not free
++ There are too many `static` objects... is that good?
 
 - make sure all options works well
 - use trie<T> instead of map<string,T> (end of string contains value T) (should be faster and less memory)

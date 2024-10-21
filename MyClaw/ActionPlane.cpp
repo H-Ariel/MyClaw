@@ -80,7 +80,7 @@ ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane)
 	_BossStagerDelay(0), _isInBoss(false), _levelState(LevelState::Playing)
 {
 	if (_instance)
-		LOG("[Warning] ActionPlane already exists (instance of level %d)\n", _instance->_wwd->levelNumber);
+		LOG("[Warning] ActionPlane already exists\n");
 	_instance = this;
 }
 ActionPlane::~ActionPlane()
@@ -197,11 +197,11 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 
 #ifndef _DEBUG // when I'm debugging, I don't want to shake the screen (it's annoying)
 	const Rectangle2D playerRect = player->GetRect();
- 	auto it = find_if(_shakeRects.begin(), _shakeRects.end(), [&](const Rectangle2D& r) { return playerRect.intersects(r); });
- 	if (it != _shakeRects.end()) {
- 		_shakeTime = SHAKE_TIME;
- 		_shakeRects.erase(it);
- 	}
+	auto it = find_if(_shakeRects.begin(), _shakeRects.end(), [&](const Rectangle2D& r) { return playerRect.intersects(r); });
+	if (it != _shakeRects.end()) {
+		_shakeTime = SHAKE_TIME;
+		_shakeRects.erase(it);
+	}
 	else if (exploseShake)
 		_shakeTime = 500;
 #endif

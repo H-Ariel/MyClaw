@@ -120,18 +120,18 @@ void AudioManager::addMidiPlayer(const string& key, const DynamicArray<uint8_t>&
 		instance->_midiDataCache[key] = midi;
 }
 
-uint32_t AudioManager::playWav(const string& key, bool infinite, int volume)
+uint32_t AudioManager::playWav(const string& key, bool infinite, float volume)
 {
 	if (key.empty()) return INVALID_ID;
 
 	auto it = instance->savedWavAudios.find(key);
 	if (it == instance->savedWavAudios.end()) {
-		LOG("[Warning] " __FUNCTION__ ": key not found. key: %s\n", key.c_str());
+		LOG("[Warning] wav-key not found. key: %s\n", key.c_str());
 		return INVALID_ID;
 	}
 
 	WavAudioData audio = it->second;
-	audio.volume = volume / 100.f;
+	audio.volume = volume;
 	audio.infinite = infinite;
 	lock_guard<mutex> guard(instance->wavAudiosListMutex);
 	audio.id = instance->getNewWavId();
@@ -146,7 +146,7 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 	auto it = instance->_midiDataCache.find(key);
 	if (it == instance->_midiDataCache.end())
 	{
-		LOG("[Warning] " __FUNCTION__ ": key not found. key: %s\n", key.c_str());
+		LOG("[Warning] midi-key not found. key: %s\n", key.c_str());
 		return INVALID_ID;
 	}
 
@@ -170,6 +170,17 @@ void AudioManager::removeMidi(uint32_t id) {
 	auto it = instance->_midiPlayers.find(id);
 	if (it != instance->_midiPlayers.end())
 		instance->_midiPlayers.erase(it);
+}
+
+void AudioManager::setWavVolume(float volume)
+{
+	instance->wavGlobalVolume = volume;
+}
+void AudioManager::setMidiVolume(float volume)
+{
+	if (instance->_midiPlayers.size() > 0) {
+		instance->_midiPlayers.begin()->second->setVolume(volume); // is that correct ... ?
+	}
 }
 
 void AudioManager::remove(function<bool(const string& key)> predicate)
@@ -252,7 +263,7 @@ DynamicArray<int16_t> AudioManager::matchWavFormat(WAVEFORMATEX& fmt, const Dyna
 		fmt.wBitsPerSample = 16; // update format
 	}
 	else {
-		LOG("[ERROR] " __FUNCTION__ " format not supported\n");
+		LOG("[ERROR] wav-format not supported\n");
 		return {}; // return empty if format is unsupported
 	}
 

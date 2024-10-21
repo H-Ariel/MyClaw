@@ -5,6 +5,7 @@
 #include "RezParser/PcxFile.h"
 #include "RezParser/XmiFile.h"
 #include "RezParser/WwdFile.h"
+#include "../SavedDataManager.h"
 
 
 // check if `str` is number as string
@@ -163,6 +164,8 @@ AssetsManager::AssetsManager()
 	AudioManager::addMidiPlayer("POWERUP", powerup.data);
 	MidiFile credits(_rezArchive.getFile("STATES/CREDITS/MUSIC/PLAY.XMI")->getFileData());
 	AudioManager::addMidiPlayer("CREDITS", credits.data);
+
+	applySettings();
 }
 AssetsManager::~AssetsManager()
 {
@@ -331,12 +334,12 @@ string AssetsManager::getCreditsText()
 
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
 {
-	uint32_t id = AudioManager::playWav(wavFilePath, infinite, volume);
+	uint32_t id = AudioManager::playWav(wavFilePath, infinite, volume / 100.f);
 
 	if (id == AudioManager::INVALID_ID)
 	{ // if file not found, try load it
 		AudioManager::addWavPlayer(wavFilePath, instance->_rezArchive.getFile(wavFilePath)->getFileData());
-		id = AudioManager::playWav(wavFilePath, infinite, volume);
+		id = AudioManager::playWav(wavFilePath, infinite, volume / 100.f);
 	}
 
 	return id;
@@ -352,7 +355,7 @@ uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
-#ifdef _DEBUG
+#ifdef _DEBUG0
 	return;
 #endif
 
@@ -407,6 +410,13 @@ void AssetsManager::clearLevelAssets()
 
 		instance->_savePcxPalette = true; // game over screen uses the palette of the PCX images
 	}
+}
+
+void AssetsManager::applySettings()
+{
+	// for now just	sounds volume...
+	AudioManager::setWavVolume(SavedDataManager::instance.settings.soundVolume / 9.f);
+	AudioManager::setMidiVolume(SavedDataManager::instance.settings.musicVolume / 9.f);
 }
 
 void AssetsManager::loadWavDir(const string& path)
