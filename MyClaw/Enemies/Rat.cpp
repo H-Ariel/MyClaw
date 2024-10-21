@@ -73,7 +73,7 @@ void PunkRat::Logic(uint32_t elapsedTime)
 	if (checkForHurts())
 		return;
 
-	const shared_ptr<UIAnimation> prevAni = _ani;
+	const UIAnimation* prevAni = _ani.get();
 
 	position.x += speed.x * elapsedTime;
 	if (position.x < _minX) { stopMovingLeft(_minX - position.x); _ani = PUNKRAT_STAND; }
@@ -84,7 +84,7 @@ void PunkRat::Logic(uint32_t elapsedTime)
 		_ani = PUNKRAT_WALK;
 	}
 
-	if (_ani != prevAni)
+	if (_ani.get() != prevAni)
 	{
 		_ani->position = position;
 		_ani->reset();

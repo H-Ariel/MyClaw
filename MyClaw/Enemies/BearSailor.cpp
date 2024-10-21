@@ -29,9 +29,9 @@ BearSailor::BearSailor(const WwdObject& obj)
 
 void BearSailor::Logic(uint32_t elapsedTime)
 {
-	shared_ptr<UIAnimation> prevAni(_ani);
+	const UIAnimation* prevAni = _ani.get();
 	BaseEnemy::Logic(elapsedTime);
-	if (prevAni == ANIMATION_HUG && prevAni != _ani) // hug animation is finished
+	if (prevAni == ANIMATION_HUG.get() && prevAni != _ani.get()) // hug animation is finished
 		player->unsqueeze(); // CC is free now
 }
 

@@ -72,7 +72,7 @@ Gabriel::~Gabriel()
 	if (removeObject)
 	{
 		ActionPlane::addPlaneObject(DBG_NEW DeadGabriel(position,
-			 make_shared<UIAnimation>(
+			make_shared<UIAnimation>(
 				_animations["KILLFALL1"]->getImagesList() +
 				_animations["KILLFALL2"]->getImagesList() +
 				_animations["KILLFALL3"]->getImagesList() +
@@ -208,7 +208,7 @@ GabrielCannon::GabrielCannon(const WwdObject& obj)
 }
 void GabrielCannon::Logic(uint32_t elapsedTime)
 {
-	const shared_ptr<const UIAnimation> prevAni = _ani;
+	const UIAnimation* prevAni = _ani.get();
 
 	if (_ani->isFinishAnimation())
 	{
@@ -257,9 +257,9 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 		operateCannon = false;
 		GabrielChangeSwitch = true;
 	}
-	
 
-	if (prevAni != _ani)
+
+	if (_ani.get() != prevAni)
 	{
 		_ani->reset();
 		_ani->loopAni = false;

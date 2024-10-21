@@ -22,7 +22,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 	if (!PreLogic(elapsedTime)) return;
 
 
-	const shared_ptr<const UIAnimation> prevAni = _ani;
+	const UIAnimation* prevAni = _ani.get();
 
 	if (_hitsCuonter == 0 && _canJump)
 	{
@@ -81,7 +81,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		else speed.x = -abs(speed.x);
 	}
 
-	if (_ani != prevAni)
+	if (_ani.get() != prevAni)
 	{
 		_ani->reset();
 	}

@@ -295,7 +295,7 @@ int AudioManager::mixWavAudios(int16_t* stream, int len) {
 	if (wavAudios.empty()) return 0;
 
 	int* sum = DBG_NEW int[len]; // sum of voices in each index
-	for (int i = 0; i < len; sum[i++] = 0);
+	memset(sum, len * sizeof(int), 0);
 
 	int writtenLen = 0;
 
@@ -339,9 +339,10 @@ void AudioManager::playWavAudioThread() {
 	void* pLockedBuffer; // buffer from `Lock`
 	DWORD bufferSize; // buffer size from `Lock`
 	DWORD status;
+	int durationMs;
 
 	IDirectSoundBuffer* secondaryBuffer = nullptr;
-
+	
 	DSBUFFERDESC bufferDesc = {}; // buffer description for secondaryBuffer
 	bufferDesc.dwSize = sizeof(DSBUFFERDESC);
 	bufferDesc.lpwfxFormat = &WavFormat;
@@ -376,6 +377,10 @@ void AudioManager::playWavAudioThread() {
 
 			secondaryBuffer->SetCurrentPosition(0);
 			secondaryBuffer->Play(0, 0, 0);
+			
+			// calculate duration in milliseconds
+			durationMs = float(retLen) / instance->WavFormat.nSamplesPerSec * 1000;
+			std::this_thread::sleep_for(std::chrono::milliseconds(durationMs));
 		}
 	}
 

@@ -234,10 +234,14 @@ void MidiPlayer::usleep(int waitTime)
 {
 	if (waitTime != 0)
 	{
+		/*
 		waitTime = int(waitTime / MusicSpeed);
 		LARGE_INTEGER time1, time2;
 		QueryPerformanceCounter(&time1);
 		do QueryPerformanceCounter(&time2);
 		while ((time2.QuadPart - time1.QuadPart) * 1000000ll / PerformanceFrequency.QuadPart < waitTime);
+		*/
+
+		this_thread::sleep_for(chrono::microseconds(waitTime / 5 * 4));
 	}
 }

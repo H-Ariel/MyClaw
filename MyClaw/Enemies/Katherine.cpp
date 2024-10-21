@@ -21,7 +21,7 @@ void Katherine::Logic(uint32_t elapsedTime)
 	if (!PreLogic(elapsedTime)) return;
 
 
-	const shared_ptr<UIAnimation> prevAni = _ani;
+	const UIAnimation* prevAni = _ani.get();
 
 	if (_hitsCuonter == 0 && _canJump)
 	{
@@ -74,7 +74,7 @@ void Katherine::Logic(uint32_t elapsedTime)
 		else speed.x = abs(speed.x);
 	}
 
-	if (_ani != prevAni)
+	if (_ani.get() != prevAni)
 	{
 		_ani->reset();
 	}
