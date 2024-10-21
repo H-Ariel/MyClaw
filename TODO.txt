@@ -1,10 +1,11 @@
-+ check why memory usage is too high. maybe there are objects which not free
-
 + handle setting (low details, sound volume, etc.)
++ finish the audio manager. need change the combination of MIDI and WAV
+
++ check why memory and CPU usage is too high. maybe there are objects which not free
 
 - make sure all options works well
 - use trie<T> instead of map<string,T> (end of string contains value T) (should be faster and less memory)
-- move Framework, GameEngine, RezParser to DLLs (not .lib)
+- move Framework, GameEngine, RezParser to DLLs (not .lib) (???)
 
 * fix last elevators at level 13 (before boss warp)
 * the usage of Warp::DestinationWarp is bad. change it
@@ -16,6 +17,5 @@
 * catch and throw enemies (like a powder-keg)
 * add "ADVANCE.ANI" for enemies (before they attack)
 * fix the bosses and enemies (it doesn't feel like the game)
-* read about direct-sound and maybe use it (dsound.h)
 * find a way to run faster (threads?)
 * after throw exception make sure we free allocated memory

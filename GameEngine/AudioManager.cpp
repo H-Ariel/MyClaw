@@ -24,8 +24,14 @@ static void WAV_CALL(MMRESULT mmResult)
 #define WAV_CALL(func) func
 #endif
 
+#include "WindowManager.h"
+
+#include <dsound.h>
+
+#pragma comment(lib, "dsound.lib")
+#pragma comment(lib, "dxguid.lib")
+
 // Audio Mixer fo WAV files using WinApi
-// TODO: sometimes there is a small delay before I listen the sound
 // TODO: combine with AudioManager to 1 class
 class AudioMixer
 {
@@ -34,8 +40,8 @@ private:
 
 public:
 	AudioMixer()
-		: volume(1), audioFormat({}), wavHdr({}), wavOut(nullptr),
-		running(false), t_play(nullptr), hEvent(nullptr)
+		: volume(1), audioFormat({}), running(false), t_play(nullptr),
+		g_pDirectSound(nullptr), g_pPrimaryBuffer(nullptr)
 	{
 		// set audio format:
 		WAVEFORMATEX waveFormat = {};
@@ -48,16 +54,12 @@ public:
 		waveFormat.cbSize = 0;
 		myMemCpy(audioFormat, waveFormat);
 
-		WAV_CALL(waveOutOpen(&wavOut, WAVE_MAPPER, &audioFormat, (DWORD_PTR)waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION));
-		if (!wavOut) {
-			LOG("[ERROR] Faild create wav-out\n");
+		if (!InitializeDirectSound(WindowManager::getHwnd())) {
+			LOG("[ERROR] Failed to initialize DirectSound\n");
 			return;
 		}
 
-		WAV_CALL(waveOutPrepareHeader(wavOut, &wavHdr, sizeof(wavHdr)));
-
-		if (wavOut) {
-			hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+		if (g_pDirectSound) {
 			running = true;
 			t_play = DBG_NEW thread(&AudioMixer::playAudioThread, this);
 		}
@@ -65,22 +67,21 @@ public:
 	~AudioMixer() {
 		clear();
 
-		if (wavOut)
-		{
+		if (g_pPrimaryBuffer) {
+			g_pPrimaryBuffer->Release();
+			g_pPrimaryBuffer = nullptr;
+		}
+
+		if (g_pDirectSound) {
+			g_pDirectSound->Release();
+			g_pDirectSound = nullptr;
+		}
+
+		if (running) {
 			running = false;
 			t_play->join();
 			delete t_play;
-
-			CloseHandle(hEvent);
-
-			WAV_CALL(waveOutReset(wavOut));
-			WAV_CALL(waveOutUnprepareHeader(wavOut, &wavHdr, sizeof(wavHdr)));
-			WAV_CALL(waveOutClose(wavOut));
 		}
-
-		wavOut = nullptr;
-		hEvent = nullptr;
-		wavHdr = {};
 	}
 
 	// clear all audios
@@ -130,7 +131,7 @@ public:
 		fmt.nAvgBytesPerSec = fmt.nSamplesPerSec * fmt.nBlockAlign;
 
 		// check that all wav files in the same format:
-		if (memcmp(&fmt, &audioFormat, sizeof WAVEFORMATEX) != 0) {
+		if (memcmp(&fmt, &audioFormat, sizeof(WAVEFORMATEX)) != 0) {
 			LOG("[ERROR] formats are not equals\n");
 			return;
 		}
@@ -173,36 +174,81 @@ public:
 	}
 
 private:
-	void playAudioThread() {
-		int activeBuffer = 0;
-		int streamLen = 16384;
-		int16_t* streams[2] = {}; // double buffers. when play one, mix the second
-		int retLen[2] = { 0, 0 };
-		streams[0] = DBG_NEW int16_t[streamLen];
-		streams[1] = DBG_NEW int16_t[streamLen];
+	bool InitializeDirectSound(HWND hwnd) {
+		if (FAILED(DirectSoundCreate8(nullptr, &g_pDirectSound, nullptr))) {
+			return false;
+		}
 
-		SetEvent(hEvent);
+		if (FAILED(g_pDirectSound->SetCooperativeLevel(hwnd, DSSCL_PRIORITY))) {
+			return false;
+		}
+
+		DSBUFFERDESC bufferDesc = {};
+		bufferDesc.dwSize = sizeof(DSBUFFERDESC);
+		bufferDesc.dwFlags = DSBCAPS_PRIMARYBUFFER;
+		bufferDesc.dwBufferBytes = 0;
+		bufferDesc.lpwfxFormat = nullptr;
+
+		if (FAILED(g_pDirectSound->CreateSoundBuffer(&bufferDesc, &g_pPrimaryBuffer, nullptr))) {
+			return false;
+		}
+
+		if (FAILED(g_pPrimaryBuffer->SetFormat(&audioFormat))) {
+			return false;
+		}
+
+		return true;
+	}
+
+	void playAudioThread() {
+		int streamLen = 16384;
+		int16_t* stream = nullptr;
+		int retLen = 0;
+		stream = DBG_NEW int16_t[streamLen];
+		DWORD dwStatus = 0;
+
+		void* pLockedBuffer = nullptr;
+		DWORD bufferSize = 0;
+
+		DSBUFFERDESC bufferDesc = {};
+		bufferDesc.dwSize = sizeof(DSBUFFERDESC);
+		bufferDesc.lpwfxFormat = (LPWAVEFORMATEX)&audioFormat;
+
+		IDirectSoundBuffer* g_pSecondaryBuffer = nullptr;
 
 		while (running) {
 			// mix next buffer while previous is playing
-			retLen[activeBuffer] = mixAudios(streams[activeBuffer], streamLen);
+			retLen = mixAudios(stream, streamLen);
 
-			if (retLen[activeBuffer] != 0) {
+			if (retLen > 0) {
+				if (g_pSecondaryBuffer) {
+					// wait until the buffer has finished playing
+					do g_pSecondaryBuffer->GetStatus(&dwStatus);
+					while (dwStatus & DSBSTATUS_PLAYING);
 
-				// wait for previous buffer to finish playing
-				WaitForSingleObject(hEvent, INFINITE);
+					g_pSecondaryBuffer->Release();
+					g_pSecondaryBuffer = nullptr;
 
-				// play new mixed buffer
-				wavHdr.lpData = (LPSTR)streams[activeBuffer];
-				wavHdr.dwBufferLength = (DWORD)(retLen[activeBuffer] * sizeof(*streams[activeBuffer]));
-				WAV_CALL(waveOutWrite(wavOut, &wavHdr, sizeof(wavHdr)));
+					if (!running) return;
+				}
 
-				activeBuffer = 1 - activeBuffer; // switch buffer
+				bufferDesc.dwBufferBytes = retLen * sizeof(int16_t);
+
+				if (FAILED(g_pDirectSound->CreateSoundBuffer(&bufferDesc, &g_pSecondaryBuffer, nullptr)))
+					continue;
+
+				if (FAILED(g_pSecondaryBuffer->Lock(0, bufferDesc.dwBufferBytes, &pLockedBuffer, &bufferSize, nullptr, nullptr, 0)))
+					continue;
+
+				memcpy(pLockedBuffer, stream, bufferSize); // usually `bufferSize` equals to `bufferDesc.dwBufferBytes`, so I do not compare them
+				g_pSecondaryBuffer->Unlock(pLockedBuffer, bufferSize, nullptr, 0);
+
+				g_pSecondaryBuffer->SetCurrentPosition(0);
+				g_pSecondaryBuffer->Play(0, 0, 0);
 			}
 		}
 
-		delete[] streams[0];
-		delete[] streams[1];
+		delete[] stream;
 	}
 
 
@@ -300,16 +346,6 @@ private:
 		//audioData.reset();
 	}
 
-	static void waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
-	{
-		if (dwInstance) {
-			AudioMixer* mixer = (AudioMixer*)dwInstance;
-			if (uMsg == WOM_DONE) {
-				SetEvent(mixer->hEvent);
-			}
-		}
-	}
-
 	struct AudioData {
 		int16_t* soundBuffer;
 		int soundBufferLength;
@@ -339,25 +375,29 @@ private:
 	thread* t_play;
 	bool running;
 	const WAVEFORMATEX audioFormat;
-	WAVEHDR wavHdr;
-	HWAVEOUT wavOut;
-	HANDLE hEvent; // event to signal playback completion
+
+	IDirectSound8* g_pDirectSound;
+	IDirectSoundBuffer* g_pPrimaryBuffer;
 };
 
-AudioMixer audioMixer;
+AudioMixer* audioMixer = nullptr;
 
 
 void AudioManager::Initialize()
 {
-	if (instance == nullptr)
+	if (instance == nullptr) {
 		instance = DBG_NEW AudioManager();
+		audioMixer = DBG_NEW AudioMixer();
+	}
 }
 void AudioManager::Finalize()
 {
 	if (instance)
 	{
 		delete instance;
+		delete audioMixer;
 		instance = nullptr;
+		audioMixer = nullptr;
 	}
 }
 
@@ -379,7 +419,7 @@ uint32_t AudioManager::getNewMidiId()
 void AudioManager::addWavPlayer(const string& key, const DynamicArray<uint8_t>& wav)
 {
 	// TODO: get Buffer as parameter
-	audioMixer.addWavBuffer(make_shared<Buffer>(wav), key);
+	audioMixer->addWavBuffer(make_shared<Buffer>(wav), key);
 }
 void AudioManager::addMidiPlayer(const string& key, const DynamicArray<uint8_t>& midi)
 {
@@ -392,7 +432,7 @@ uint32_t AudioManager::playWav(const string& key, bool infinite, int volume)
 	if (key.empty()) return INVALID_ID;
 
 	// TODO: I don't realy save the new id in _audioPlayers, so audioMixer.playWav returns the same number every time
-	return audioMixer.playWav(key, volume / 100.f, infinite);
+	return audioMixer->playWav(key, volume / 100.f, infinite);
 }
 uint32_t AudioManager::playMidi(const string& key, bool infinite)
 {
@@ -413,11 +453,11 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 
 void AudioManager::stopWav(uint32_t id)
 {
-	audioMixer.stop(id);
+	audioMixer->stop(id);
 }
 void AudioManager::removeWav(uint32_t id)
 {
-	audioMixer.remove(id);
+	audioMixer->remove(id);
 }
 
 void AudioManager::stopMidi(uint32_t id) {
@@ -449,13 +489,13 @@ void AudioManager::remove(function<bool(const string& key)> predicate)
 			++it;
 	}
 
-	audioMixer.remove(predicate);
+	audioMixer->remove(predicate);
 }
 
 // returns the duration of the sound in milliseconds for WAV files
 uint32_t AudioManager::getWavDuration(const string& key)
 {
-	return (uint32_t)audioMixer.getWavDuration(key);
+	return (uint32_t)audioMixer->getWavDuration(key);
 }
 void AudioManager::setVolume(uint32_t id, int volume)
 {
