@@ -292,13 +292,7 @@ shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)
 	loadPidPalette(wwd->rezPalettePath);
 
 	// initialize level root paths
-	string imageSet[4], prefix[4];
-	for (int i = 0; i < 4; i++)
-	{
-		imageSet[i] = wwd->imageSet[i];
-		prefix[i] = wwd->prefix[i];
-	}
-	PathManager::setRoots(prefix, imageSet);
+	PathManager::setRoots(wwd->prefix, wwd->imageSet);
 
 	// set background color
 	WindowManager::setBackgroundColor(ColorF(
@@ -355,7 +349,7 @@ uint32_t AssetsManager::getWavFileDuration(const string& wavFileKey)
 
 void AssetsManager::startBackgroundMusic(BackgroundMusicType type)
 {
-#ifdef _DEBUG0
+#ifdef _DEBUG
 	return;
 #endif
 

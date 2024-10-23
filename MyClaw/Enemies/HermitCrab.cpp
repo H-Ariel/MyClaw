@@ -50,7 +50,7 @@ void HermitCrab::makeAttack(float deltaX, float deltaY)
 		obj.y = (int32_t)position.y - 24;
 		obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
 		obj.damage = 10;
-		ActionPlane::addPlaneObject(DBG_NEW CrabBomb(obj));
+		actionPlane->addPlaneObject(DBG_NEW CrabBomb(obj));
 
 		_attackRest = 1200;
 	}

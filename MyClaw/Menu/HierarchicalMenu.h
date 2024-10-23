@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Framework/Framework.h"
+#include "GameEngine/GameEngineFramework.hpp"
 
 #define MAIN_MENU_ROOT			"STATES/MENU/IMAGES/MAIN/"
 #define SINGLEPLAYER_ROOT		MAIN_MENU_ROOT "SINGLEPLAYER/"

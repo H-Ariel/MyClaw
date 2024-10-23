@@ -74,7 +74,7 @@ void RedTail::makeAttack(float deltaX, float deltaY)
 }
 bool RedTail::checkForHurts()
 {
-	for (Projectile* p : ActionPlane::getProjectiles())
+	for (Projectile* p : actionPlane->getProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{

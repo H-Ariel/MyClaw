@@ -130,8 +130,7 @@ shared_ptr<UIAnimation> AnimationsManager::createAnimationFromDirectory(const st
 		{
 			if (strcmp(file->extension, "PID") == 0)
 			{
-				shared_ptr<UIBaseImage> img = AssetsManager::loadImage(file->getFullPath());
-				images.push_back(DBG_NEW UIAnimation::FrameData(img, duration));
+				images.push_back(DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage(file->getFullPath()), duration));
 			}
 		}
 
@@ -149,8 +148,7 @@ shared_ptr<UIAnimation> AnimationsManager::createAnimationFromPidImage(const str
 {
 	if (_loadedAnimations.count(pidPath) == 0)
 	{
-		shared_ptr<UIBaseImage> img = AssetsManager::loadImage(pidPath);
-		vector<UIAnimation::FrameData*> images = { DBG_NEW UIAnimation::FrameData(img) };
+		vector<UIAnimation::FrameData*> images = { DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage(pidPath)) };
 		_loadedAnimations[pidPath] = make_shared<UIAnimation>(images);
 		_loadedAnimations[pidPath]->updateFrames = false;
 	}

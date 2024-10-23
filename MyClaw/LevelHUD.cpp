@@ -3,8 +3,8 @@
 #include "ActionPlane.h"
 
 
-LevelHUD::LevelHUD(const D2D1_POINT_2F* windowOffset)
-	: _windowOffset(windowOffset)
+LevelHUD::LevelHUD(ActionPlane* actionPlane)
+	: _actionPlane(actionPlane)
 {
 	_chest = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/TREASURECHEST");
 	_health = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/HEALTHHEART", false, 150);
@@ -26,7 +26,7 @@ LevelHUD::LevelHUD(const D2D1_POINT_2F* windowOffset)
 		_scoreNumbers[i] = AssetsManager::loadImage(imgPath);
 	}
 
-	_bossHealth = ActionPlane::getBossHealth();
+	_bossHealth = _actionPlane->getBossHealth();
 }
 
 void LevelHUD::Draw()
@@ -64,7 +64,7 @@ void LevelHUD::Draw()
 	drawNumbers(BasePlaneObject::player->getLivesAmount(), 1, _smallNumbers, posX, 81);
 	drawNumbers(BasePlaneObject::player->getScore(), 8, _scoreNumbers, 128, 20);
 
-	if (ActionPlane::isInBoss())
+	if (_actionPlane->isInBoss())
 	{
 		_bossBar->position.x = 0.5f * camSz.width;
 		_bossBar->position.y = 0.9f * camSz.height;
@@ -77,14 +77,14 @@ void LevelHUD::Draw()
 		rc.left += 18;
 		rc.right -= 18;
 		float width = rc.right - rc.left;
-		float percent = (float)ActionPlane::getBossHealth() / _bossHealth;
+		float percent = (float)_actionPlane->getBossHealth() / _bossHealth;
 		rc.right = rc.left + width * percent; // the right side decreases as the boss health decreases
 
 		WindowManager::fillRect(rc, ColorF::Red); // draw the health bar
 	}
 
 
-	WindowManager::setWindowOffset(*_windowOffset); // restore the offset
+	WindowManager::setWindowOffset(_actionPlane->position); // restore the offset
 }
 
 void LevelHUD::drawNumbers(uint32_t amount, int numOfDigits, shared_ptr<UIBaseImage> const numArr[],

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Framework/Framework.h"
-#include "Framework/DynamicArray.hpp"
+#include "GameEngine/GameEngineFramework.hpp"
+
+class ActionPlane;
 
 
 class CheatsManager
@@ -36,7 +37,7 @@ public:
 		DefaultResolution
 	};
 
-	CheatsManager();
+	CheatsManager(void (*writeMessage)(const char[]));
 
 	void addKey(int key); // add key to the cheat sequence. if the sequence is correct, cheat will be activated
 
@@ -54,4 +55,5 @@ private:
 	static const tuple<int, const char*, const char*> cheatsKeys[]; // cheat keys list
 	vector<char> keys; // keys pressed
 	bool _god, _easy, _superStrong, _flying, _superJump, _multiTreasures;
+	void (*writeMessage)(const char[]); // pointe to function to write message to screen
 };

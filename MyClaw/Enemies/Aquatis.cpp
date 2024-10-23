@@ -31,7 +31,7 @@ Aquatis::~Aquatis()
 {
 	if (removeObject)
 	{
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, ANIMATION_KILLFALL));
+		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, ANIMATION_KILLFALL));
 
 		for (AquatisTentacle* i : AquatisTentaclesList)
 			i->removeObject = true;
@@ -129,7 +129,7 @@ AquatisTentacle::~AquatisTentacle()
 	if (removeObject)
 	{
 		_killfall->reset();
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, _killfall));
+		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, _killfall));
 		AquatisTentaclesList.erase(find(AquatisTentaclesList.begin(), AquatisTentaclesList.end(), this));
 	}
 }
@@ -231,7 +231,7 @@ bool AquatisTentacle::checkForHurts()
 		if (checkForHurt(player->GetAttackRect()))
 			return true;
 
-		for (Projectile* p : ActionPlane::getProjectiles())
+		for (Projectile* p : actionPlane->getProjectiles())
 		{
 			if (isinstance<ClawProjectile>(p))
 			{
@@ -263,7 +263,7 @@ AquatisCrack::AquatisCrack(const WwdObject& obj)
 }
 void AquatisCrack::Logic(uint32_t elapsedTime)
 {
-	for (Projectile* p : ActionPlane::getProjectiles())
+	for (Projectile* p : actionPlane->getProjectiles())
 	{
 		if (p != _lastDynamite && p->isClawDynamite() &&
 			p->getDamage() && _objRc.intersects(p->GetRect()))

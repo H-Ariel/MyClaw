@@ -12,30 +12,26 @@
 #define player BasePlaneObject::player
 
 
-ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber)
-	: _mainPlanePosition(nullptr), _hud(nullptr), _saveBgColor(0), _saveWindowScale(1)
+ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber, ClawLevelEngine* clawLevelEngine)
+	: actionPlane(nullptr), _hud(nullptr), _saveBgColor(0), _saveWindowScale(1)
 {
 	_wwd = AssetsManager::loadLevel(levelNumber);
 
 	for (WwdPlane& wwdPlane : _wwd->planes)
 	{
-		shared_ptr<LevelPlane> pln;
 		if (wwdPlane.flags & WwdPlane::WwdPlaneFlags_MainPlane)
 		{
-			pln = make_shared<ActionPlane>(_wwd.get(), &wwdPlane);
-			_mainPlanePosition = &pln->position;
+			actionPlane = DBG_NEW ActionPlane(_wwd.get(), &wwdPlane, clawLevelEngine);
+			_planes.push_back(shared_ptr<ActionPlane>(actionPlane));
 		}
 		else
 		{
-			pln = make_shared<LevelPlane>(_wwd.get(), &wwdPlane);
+			_planes.push_back(make_shared<LevelPlane>(_wwd.get(), &wwdPlane));
 		}
-
-		pln->init();
-		_planes.push_back(pln);
 	}
 
-	if (!_mainPlanePosition) throw Exception("no main plane found"); // should never happen
-	_hud = DBG_NEW LevelHUD(_mainPlanePosition);
+	//if (!actionPlane) throw Exception("no main plane found"); // should never happen
+	_hud = DBG_NEW LevelHUD(actionPlane);
 }
 ClawLevelEngineFields::~ClawLevelEngineFields()
 {
@@ -45,21 +41,23 @@ ClawLevelEngineFields::~ClawLevelEngineFields()
 
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 {
+	_fields = make_shared<ClawLevelEngineFields>(levelNumber, this);
+
 	if (checkpoint != -1) // according to LevelLoadingEngine
-		ActionPlane::loadGame(levelNumber, checkpoint);
-	_fields = make_shared<ClawLevelEngineFields>(levelNumber);
+		_fields->actionPlane->loadGame(levelNumber, checkpoint);
+
 	WindowManager::setDefaultWindowScale();
 
 	init();
 
 #ifdef _DEBUG
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430 };
+	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 5775, 4347 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 9696, 772 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 5226, 4035 };
-		if (levelNumber == 1) BasePlaneObject::player->position = { 2596, 4155 };
+	//	if (levelNumber == 1) BasePlaneObject::player->position = { 2596, 4155 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 4400, 4347 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 11039, 1851 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 2567, 4388 };
@@ -170,11 +168,13 @@ void ClawLevelEngine::init()
 	_bossWarpX = 0;
 	_gameOverTimeCounter = 0;
 
-	for (shared_ptr<LevelPlane>& pln : _fields->_planes)
+	for (shared_ptr<LevelPlane>& pln : _fields->_planes) {
+		pln->init();
 		_elementsList.push_back(pln.get());
+	}
 	_elementsList.push_back(_fields->_hud);
 
-	WindowManager::setWindowOffset(*_fields->_mainPlanePosition);
+	WindowManager::setWindowOffset(_fields->actionPlane->position);
 }
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
@@ -187,7 +187,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	case States::Play:
 		BaseEngine::Logic(elapsedTime);
 		for (shared_ptr<LevelPlane>& p : _fields->_planes)
-			p->position = *_fields->_mainPlanePosition;
+			p->position = _fields->actionPlane->position;
 
 		_fields->_planes.back()->isVisible = SavedDataManager::instance.settings.frontLayer;
 
@@ -218,18 +218,6 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 					_state = States::GameOver;
 				}
 			}
-			else if (Warp::DestinationWarp)
-			{
-				_state = States::WrapClose;
-				_wrapCoverTop = WindowManager::getCameraSize().height;
-				_wrapDestination = Warp::DestinationWarp->getDestination();
-				_isBossWarp = Warp::DestinationWarp->isBossWarp();
-				_bossWarpX = Warp::DestinationWarp->position.x;
-
-				if (Warp::DestinationWarp->removeObject)
-					delete Warp::DestinationWarp; // ActionPlane didn't delete it for this case, so we need delete it here :)
-				Warp::DestinationWarp = nullptr; // reset
-			}
 		}
 		break;
 
@@ -237,7 +225,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 	case States::DeathFall:
 		player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
 		player->Logic(0); // update position of animation
-		if (player->position.y - _fields->_mainPlanePosition->y > WindowManager::getCameraSize().height)
+		if (player->position.y - _fields->actionPlane->position.y > WindowManager::getCameraSize().height)
 		{
 			player->loseLife();
 			_holeRadius = initialHoleRadius;
@@ -254,10 +242,10 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			player->backToLife();
 
 			// update position of camera (because player position changed)
-			ActionPlane::resetObjects();
+			_fields->actionPlane->resetObjects();
 			BaseEngine::Logic(elapsedTime);
 			for (shared_ptr<LevelPlane>& p : _fields->_planes)
-				p->position = *_fields->_mainPlanePosition;
+				p->position = _fields->actionPlane->position;
 
 			AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
 
@@ -280,15 +268,15 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 			player->speed = {}; // stop player
 			if (_isBossWarp)
 			{
-				ActionPlane::playerEnterToBoss(_bossWarpX);
+				_fields->actionPlane->playerEnterToBoss(_bossWarpX);
 				player->startPosition = _wrapDestination;
 			}
 			player->Logic(0); // update position of animation
 
 			// update position of camera (because player position changed)
-			ActionPlane::updatePosition();
+			_fields->actionPlane->updatePosition();
 			for (shared_ptr<LevelPlane>& p : _fields->_planes)
-				p->position = *_fields->_mainPlanePosition;
+				p->position = _fields->actionPlane->position;
 
 			_state = States::WrapOpen;
 		}
@@ -333,8 +321,8 @@ void ClawLevelEngine::Draw()
 	case States::GameOver:
 		const D2D1_SIZE_F wndSz = WindowManager::getCameraSize();
 		shared_ptr<UIBaseImage> img = AssetsManager::loadImage("GAME/IMAGES/MESSAGES/004.PID");
-		img->position.x = _fields->_mainPlanePosition->x + wndSz.width / 2;
-		img->position.y = _fields->_mainPlanePosition->y + wndSz.height / 2;
+		img->position.x = _fields->actionPlane->position.x + wndSz.width / 2;
+		img->position.y = _fields->actionPlane->position.y + wndSz.height / 2;
 		img->Draw();
 		break;
 	}
@@ -375,4 +363,13 @@ void ClawLevelEngine::OnKeyDown(int key)
 void ClawLevelEngine::OnResize()
 {
 	WindowManager::setDefaultWindowScale();
+}
+
+void ClawLevelEngine::playerEnterWrap(Warp* destinationWarp)
+{
+	_state = States::WrapClose;
+	_wrapCoverTop = WindowManager::getCameraSize().height;
+	_wrapDestination = destinationWarp->getDestination();
+	_isBossWarp = destinationWarp->isBossWarp();
+	_bossWarpX = destinationWarp->position.x;
 }

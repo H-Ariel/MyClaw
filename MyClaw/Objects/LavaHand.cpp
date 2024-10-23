@@ -22,7 +22,7 @@ void LavaHand::Logic(uint32_t elapsedTime)
 
 	if (_ani->getFrameNumber() == 10 && !_throwed)
 	{
-		ActionPlane::addPlaneObject(DBG_NEW LavahandProjectile(position, _isMirrored));
+		actionPlane->addPlaneObject(DBG_NEW LavahandProjectile(position, _isMirrored));
 		_throwed = true;
 	}
 	if (_ani->isFinishAnimation())

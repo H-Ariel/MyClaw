@@ -225,7 +225,7 @@ void LeRauxe::makeAttack(float deltaX, float deltaY)
 }
 bool LeRauxe::checkForHurts()
 {
-	for (Projectile* p : ActionPlane::getProjectiles())
+	for (Projectile* p : actionPlane->getProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{

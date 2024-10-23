@@ -39,12 +39,13 @@ const tuple<int, const char*, const char*> CheatsManager::cheatsKeys[] = {
 };
 
 
-CheatsManager::CheatsManager()
-	: _god(false), _superStrong(false), _flying(false),
+CheatsManager::CheatsManager(void (*writeMessage)(const char[]))
+	: writeMessage(writeMessage), _god(false), _superStrong(false), _flying(false),
 	_easy(false), _superJump(false), _multiTreasures(false)
 {
 #ifdef _DEBUG
 	_god = true;
+	_superStrong = true;
 	_superJump = true;
 #endif
 }
@@ -120,7 +121,8 @@ int CheatsManager::getCheatType()
 				}
 				sprintf(temp, msg, mode, status ? "off" : "on");
 			}
-			ActionPlane::writeMessage(temp[0] ? temp : msg);
+			writeMessage(temp[0] ? temp : msg);
+			
 			return type;
 		}
 	}

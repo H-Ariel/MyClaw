@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "Framework/Framework.h"
-#include "Framework/DynamicArray.hpp"
+#include "GameEngineFramework.hpp"
 
 
 // MIDI player class
@@ -18,7 +17,6 @@ public:
 	void reset(); // reset the track of current midi-player
 	static void setVolume(float volume); // set the volume. `volume` range is [0,1]
 
-	bool isPlaying() const { return _isPlaying; }
 	const string& getKey() const { return _key; }
 
 	static float MusicSpeed;

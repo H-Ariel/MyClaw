@@ -50,6 +50,7 @@
 #include "Enemies/RedTail.h"
 #include "Enemies/TigerGuard.h"
 #include "Enemies/LordOmar.h"
+#include "ClawLevelEngine.h"
 
 
 #define SHAKE_TIME 3000 // time of shaking screen (ms)
@@ -70,18 +71,13 @@
 #endif
 
 
-
-ActionPlane* ActionPlane::_instance = nullptr;
-shared_ptr<SavedDataManager::GameData> ActionPlane::_loadGameData;
-
-
-ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane)
+ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane, ClawLevelEngine* cEngine)
 	: LevelPlane(wwd, wwdPlane), _planeSize({}), _boss(nullptr), _shakeTime(0),
-	_BossStagerDelay(0), _isInBoss(false), _levelState(LevelState::Playing)
+	_BossStagerDelay(0), _isInBoss(false), _levelState(LevelState::Playing),
+	cEngine(cEngine)
 {
-	if (_instance)
-		LOG("[Warning] ActionPlane already exists\n");
-	_instance = this;
+	//if (BasePlaneObject::actionPlane) LOG("[Warning] ActionPlane already exists\n"); // should never happen
+	BasePlaneObject::actionPlane = this;
 }
 ActionPlane::~ActionPlane()
 {
@@ -93,8 +89,7 @@ ActionPlane::~ActionPlane()
 		delete i;
 
 	// because it static member and we don't want recycle objects...
-	_instance = nullptr;
-	_loadGameData = nullptr;
+	BasePlaneObject::actionPlane = nullptr;
 }
 
 void ActionPlane::Logic(uint32_t elapsedTime)
@@ -146,6 +141,12 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 			if (crate->isBreaking())
 				_objects += crate->getItems();
 		}
+		else if (isinstance<Warp>(obj) && ((Warp*)obj)->isActivated())
+		{
+			Warp* pWarp = (Warp*)obj;
+			cEngine->playerEnterWrap(pWarp);
+			pWarp->deactivateWarp();
+		}
 
 		if (_shakeTime <= 0 &&
 			(isinstance<PowderKeg>(obj) && ((PowderKeg*)obj)->isStartExplode()) ||
@@ -177,12 +178,6 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 				eraseByValue(_powderKegs, obj);
 			else if (isinstance<BaseDamageObject>(obj))
 				eraseByValue(_damageObjects, obj);
-			else if (isinstance<Warp>(obj) && obj == Warp::DestinationWarp)
-			{
-				_objects.erase(_objects.begin() + i);
-				i--; // cancel `i++`
-				continue; // we don't delete so ClawLevelEngine can use it
-			}
 
 			delete obj;
 			_objects.erase(_objects.begin() + i);
@@ -236,7 +231,7 @@ void ActionPlane::bossStagerLogic(uint32_t elapsedTime) {
 		_boss->Logic(0); // set boss' position
 		player->Logic(0); // set player's position
 #ifdef _DEBUG
-		_instance->_levelState = LevelState::Playing; // skip the boss stager
+		_levelState = LevelState::Playing; // skip the boss stager
 #else
 		_levelState = LevelState::BossStager_BossTalk;
 #endif
@@ -660,49 +655,49 @@ void ActionPlane::loadGame(int level, int checkpoint)
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 {
 	//if (obj == nullptr) return;
-	_instance->_objects.push_back(obj); // don't insert in middle because some of the object add new objects in their destructor
-	if (isinstance<Projectile>(obj)) _instance->_projectiles.push_back((Projectile*)obj);
-	else if (isinstance<BaseEnemy>(obj)) _instance->_enemies.push_back((BaseEnemy*)obj);
+	_objects.push_back(obj); // don't insert in middle because some of the object add new objects in their destructor
+	if (isinstance<Projectile>(obj)) _projectiles.push_back((Projectile*)obj);
+	else if (isinstance<BaseEnemy>(obj)) _enemies.push_back((BaseEnemy*)obj);
 }
 void ActionPlane::resetObjects()
 {
-	for (BasePlaneObject* obj : _instance->_objects)
+	for (BasePlaneObject* obj : _objects)
 		obj->Reset();
 }
 void ActionPlane::playerEnterToBoss(float bossWarpX)
 {
 	// clear all objects that we don't need in boss
-	for (auto i : _instance->_powderKegs) i->removeObject = true;
-	for (auto i : _instance->_enemies) i->removeObject = true;
-	for (auto i : _instance->_projectiles) i->removeObject = true;
-	for (auto i : _instance->_damageObjects) i->removeObject = true;
+	for (auto i : _powderKegs) i->removeObject = true;
+	for (auto i : _enemies) i->removeObject = true;
+	for (auto i : _projectiles) i->removeObject = true;
+	for (auto i : _damageObjects) i->removeObject = true;
 
 	// find all objects that we don't need in boss and remove them (the boss-warp 
 	// and boss area are in the right side of the screen so it easy to find them)
-	for (BasePlaneObject* obj : _instance->_objects)
+	for (BasePlaneObject* obj : _objects)
 	{
 		if (obj->position.x < bossWarpX)
 			obj->removeObject = true;
 	}
 
 	// move all objects that we need in boss to the objects' list
-	for (BasePlaneObject* obj : _instance->_bossObjects)
+	for (BasePlaneObject* obj : _bossObjects)
 	{
-		_instance->_objects.push_back(obj);
+		_objects.push_back(obj);
 		if (isinstance<BaseEnemy>(obj))
-			_instance->_enemies.push_back((BaseEnemy*)obj);
+			_enemies.push_back((BaseEnemy*)obj);
 		else if (isinstance<Projectile>(obj))
-			_instance->_projectiles.push_back((Projectile*)obj);
+			_projectiles.push_back((Projectile*)obj);
 		else if (isinstance<BaseDamageObject>(obj))
-			_instance->_damageObjects.push_back((BaseDamageObject*)obj);
+			_damageObjects.push_back((BaseDamageObject*)obj);
 	}
-	_instance->_bossObjects.clear();
+	_bossObjects.clear();
 
-	_instance->_isInBoss = true;
+	_isInBoss = true;
 
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Boss);
-	_instance->_BossStagerDelay = 0;
-	_instance->_levelState = LevelState::BossStager_Start;
+	_BossStagerDelay = 0;
+	_levelState = LevelState::BossStager_Start;
 }
 
 void ActionPlane::updatePosition()
@@ -710,27 +705,27 @@ void ActionPlane::updatePosition()
 	const D2D1_SIZE_F camSize = WindowManager::getCameraSize();
 	BaseCharacter* character = player.get();
 
-	if (_instance->_levelState == LevelState::BossStager_BossTalk || _instance->_levelState == LevelState::BossStager_ClawTalk)
-		character = _instance->_boss; // if we are in boss stager, we need to show the boss while s/he is talking
+	if (_levelState == LevelState::BossStager_BossTalk || _levelState == LevelState::BossStager_ClawTalk)
+		character = _boss; // if we are in boss stager, we need to show the boss while s/he is talking
 
 	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
-	_instance->position.x = character->position.x - camSize.width / 2.0f;
-	_instance->position.y = character->position.y - camSize.height / 2.0f;
+	position.x = character->position.x - camSize.width / 2.0f;
+	position.y = character->position.y - camSize.height / 2.0f;
 
-	float maxOffsetX = _instance->_planeSize.width - camSize.width;
-	float maxOffsetY = _instance->_planeSize.height - camSize.height;
+	float maxOffsetX = _planeSize.width - camSize.width;
+	float maxOffsetY = _planeSize.height - camSize.height;
 
-	if (_instance->position.x < 0) _instance->position.x = 0;
-	if (_instance->position.y < 0) _instance->position.y = 0;
-	if (_instance->position.x > maxOffsetX) _instance->position.x = maxOffsetX;
-	if (_instance->position.y > maxOffsetY) _instance->position.y = maxOffsetY;
+	if (position.x < 0) position.x = 0;
+	if (position.y < 0) position.y = 0;
+	if (position.x > maxOffsetX) position.x = maxOffsetX;
+	if (position.y > maxOffsetY) position.y = maxOffsetY;
 
-	if (_instance->_shakeTime > 0)
+	if (_shakeTime > 0)
 	{
 		// to shake the screen we just move it a little bit
 		const float shakeDelta = 5;
-		if (_instance->_shakeTime / 75 % 2) { _instance->position.x -= shakeDelta; _instance->position.y -= shakeDelta; }
-		else { _instance->position.x += shakeDelta; _instance->position.y += shakeDelta; }
+		if (_shakeTime / 75 % 2) { position.x -= shakeDelta; position.y -= shakeDelta; }
+		else { position.x += shakeDelta; position.y += shakeDelta; }
 	}
 }
 

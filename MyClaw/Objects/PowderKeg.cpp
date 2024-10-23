@@ -116,7 +116,7 @@ bool PowderKeg::shouldMakeExplos()
 		Rectangle2D thisRc = GetRect();
 		bool isClawBullet;
 
-		for (Projectile* p : ActionPlane::getProjectiles())
+		for (Projectile* p : actionPlane->getProjectiles())
 		{
 			if (
 				((isClawBullet = p->isClawBullet()) // ATTENTION: =, not ==
@@ -128,7 +128,7 @@ bool PowderKeg::shouldMakeExplos()
 				return true;
 			}
 		}
-		for (PowderKeg* p : ActionPlane::getPowderKegs())
+		for (PowderKeg* p : actionPlane->getPowderKegs())
 		{
 			if (p->_state == State::Explos && thisRc.intersects(p->GetRect()))
 			{

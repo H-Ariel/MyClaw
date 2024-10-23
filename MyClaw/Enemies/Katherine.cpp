@@ -228,7 +228,7 @@ void Katherine::makeAttack(float deltaX, float deltaY)
 }
 bool Katherine::checkForHurts()
 {
-	for (Projectile* p : ActionPlane::getProjectiles())
+	for (Projectile* p : actionPlane->getProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{

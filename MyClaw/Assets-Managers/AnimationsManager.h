@@ -1,7 +1,7 @@
 #pragma once
 
-#include "RezParser/RezArchive.h"
 #include "GameEngine/UIAnimation.h"
+#include "RezParser/RezArchive.h"
 
 
 class AnimationsManager

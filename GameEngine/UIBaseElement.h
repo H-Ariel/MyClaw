@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Framework/Framework.h"
-#include "Rectangle2D.h"
+#include "GameEngineFramework.hpp"
 
 
 class UIBaseElement

@@ -225,7 +225,7 @@ void Wolvington::makeAttack(float deltaX, float deltaY)
 			_isAttack = true;
 			_isMirrored = player->position.x < position.x;
 
-			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL_WOLVINGTONMAGIC"));
+			actionPlane->addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL_WOLVINGTONMAGIC"));
 
 			_attackRest = 1500;
 
@@ -235,7 +235,7 @@ void Wolvington::makeAttack(float deltaX, float deltaY)
 }
 bool Wolvington::checkForHurts()
 {
-	for (Projectile* p : ActionPlane::getProjectiles())
+	for (Projectile* p : actionPlane->getProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{

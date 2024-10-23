@@ -61,7 +61,7 @@ void Mercat::makeAttack(float deltaX, float deltaY)
 			obj.y = (int32_t)position.y;
 			obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
-			ActionPlane::addPlaneObject(DBG_NEW MercatTrident(obj));
+			actionPlane->addPlaneObject(DBG_NEW MercatTrident(obj));
 		}
 
 		if (strike)

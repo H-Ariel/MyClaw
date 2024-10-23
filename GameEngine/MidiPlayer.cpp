@@ -25,6 +25,15 @@ static inline DWORD make_dword(WORD hi, WORD lo)
 	return ((DWORD)hi << 16) | (DWORD)lo;
 }
 
+// reverses the bytes order of `t`
+template <class T>
+static inline T reverseBytes(T t)
+{
+	uint8_t* ptr = (uint8_t*)(&t);
+	std::reverse(ptr, ptr + sizeof(T));
+	return t;
+}
+
 float MidiPlayer::MusicSpeed = 1;
 HMIDIOUT MidiPlayer::_midiOut = nullptr;
 int MidiPlayer::_objCount = 0;
@@ -99,7 +108,7 @@ void MidiPlayer::setVolume(float volume)
 {
 	if (_midiOut) {
 		WORD tmp = (WORD)(volume * MIDI_VOLUME_MAX);
-		midiOutSetVolume(_midiOut, make_dword(tmp, tmp)); // TODO: make sure this is correct
+		midiOutSetVolume(_midiOut, make_dword(tmp, tmp));
 	}
 }
 

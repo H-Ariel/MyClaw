@@ -1,11 +1,13 @@
 #include "BasePlaneObject.h"
 #include "PhysicsManager.h"
 #include "Player.h"
+#include "ActionPlane.h"
 
 
 shared_ptr<Player> BasePlaneObject::player;
 shared_ptr<PhysicsManager> BasePlaneObject::physics;
 shared_ptr<CheatsManager> BasePlaneObject::cheats;
+ActionPlane* BasePlaneObject::actionPlane = nullptr;
 
 
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)

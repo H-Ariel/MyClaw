@@ -7,36 +7,38 @@
 #include "Objects/PowderKeg.h"
 
 
+class ClawLevelEngine;
+
+
 class ActionPlane : public LevelPlane
 {
 public:
-	ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane);
+	ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane, ClawLevelEngine* cEngine);
 	~ActionPlane();
 
 	void Logic(uint32_t elapsedTime) override;
 	void init() override;
 	void addObject(const WwdObject& obj) override;
 
-	static void loadGame(int level, int checkpoint);
-	static void addPlaneObject(BasePlaneObject* obj);
-	static void resetObjects(); // reset objects after CC die
-	static void playerEnterToBoss(float bossWarpX);
+	void addPlaneObject(BasePlaneObject* obj);
+	void writeMessage(const string& message, int timeout = 2000);
 
-	static const vector<PowderKeg*>& getPowderKegs() { return _instance->_powderKegs; }
-	static const vector<BaseEnemy*>& getEnemies() { return _instance->_enemies; }
-	static const vector<Projectile*>& getProjectiles() { return _instance->_projectiles; }
-	static const vector<BaseDamageObject*>& getDamageObjects() { return _instance->_damageObjects; }
-	static bool isInBoss() { return _instance->_isInBoss; }
-	static int getBossHealth() { return _instance->_boss ? _instance->_boss->getHealth() : 0; }
-	
-	static void writeMessage(const string& message, int timeout = 2000);
+	void loadGame(int level, int checkpoint);
+	void resetObjects(); // reset objects after CC die
+	void playerEnterToBoss(float bossWarpX);
+	void updatePosition();
 
-	static void updatePosition();
+	const vector<PowderKeg*>& getPowderKegs() const { return _powderKegs; }
+	const vector<BaseEnemy*>& getEnemies() const{ return _enemies; }
+	const vector<Projectile*>& getProjectiles() const { return _projectiles; }
+	const vector<BaseDamageObject*>& getDamageObjects() const { return _damageObjects; }
+	bool isInBoss() const { return _isInBoss; }
+	int getBossHealth() const { return _boss ? _boss->getHealth() : 0; }
 
 private:
 	void bossStagerLogic(uint32_t elapsedTime);
 
-	enum class LevelState
+	enum class LevelState : int8_t
 	{
 		Playing,
 		BossStager_Start,
@@ -55,12 +57,11 @@ private:
 	vector<BaseDamageObject*> _damageObjects;
 
 	vector<Rectangle2D> _shakeRects;
+	shared_ptr<SavedDataManager::GameData> _loadGameData;
 	D2D1_SIZE_F _planeSize;
 	BaseBoss* _boss;
 	int _shakeTime, _BossStagerDelay;
 	bool _isInBoss;
 	LevelState _levelState;
-
-	static ActionPlane* _instance;
-	static shared_ptr<SavedDataManager::GameData> _loadGameData;
+	ClawLevelEngine* cEngine;
 };

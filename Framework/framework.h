@@ -1,8 +1,13 @@
+/*
+ * This header file provides essential utilities and debugging
+ * support for the project, including many useful and necessary
+ * components for almost every file in the codebase.
+ */
+
 #pragma once
 
 #define _CRT_SECURE_NO_WARNINGS
 #define _USE_MATH_DEFINES
-#define NOMINMAX // use std::min/max instead of min/max macros
 
 
 #ifdef _DEBUG
@@ -16,16 +21,8 @@
 #endif
 
 
-#include <SDKDDKVer.h>
-#include <windows.h>
-#include <d2d1.h>
-#include <dwrite.h>
-#include <d2d1helper.h>
-#include <dsound.h>
-
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <cmath>
 #include <algorithm>
 #include <functional>
@@ -36,22 +33,9 @@
 #include <list>
 #include <map>
 #include <stack>
-#include <set>
-#include <queue>
 
 #include "Exception.hpp"
 
-
-#pragma comment(lib, "d2d1")
-#pragma comment(lib, "dwrite")
-#pragma comment(lib, "dsound.lib")
-#pragma comment(lib, "winmm.lib")
-
-
-#ifndef HINST_THISCOMPONENT
-EXTERN_C IMAGE_DOS_HEADER __ImageBase;
-#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
-#endif
 
 #ifdef _DEBUG
 #define LOG printf
@@ -59,12 +43,8 @@ EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #define LOG(...)
 #endif
 
-// throw exception if `func` failed
-#define TRY_HRESULT(func, msg) if (FAILED(func)) throw Exception(msg);
-
 
 using namespace std;
-using namespace D2D1;
 
 
 // replace '\' with '/' and remove the first '/' if exists
@@ -83,15 +63,6 @@ bool contains(const string& str1, const string& str2);
 float getRandomFloat(float a, float b);
 int getRandomInt(int a, int b);
 
-
-// reverses the bytes order of `t`
-template <class T>
-inline T reverseBytes(T t)
-{
-	uint8_t* ptr = (uint8_t*)(&t);
-	std::reverse(ptr, ptr + sizeof(T));
-	return t;
-}
 
 // check if `arr` contains `val`
 template <class ArrT, class ValT>

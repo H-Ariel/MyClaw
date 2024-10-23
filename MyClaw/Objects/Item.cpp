@@ -20,7 +20,6 @@ const initializer_list<Item::Type> Item::UpdateFramesTypes = {
 	Powerup_IceSword,
 	BossWarp,
 };
-const Warp* Warp::DestinationWarp = nullptr;
 
 
 Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
@@ -323,7 +322,7 @@ void Item::playItemSound() const
 	{
 		AssetsManager::playWavFile(path, 50);
 		if (!strcmp(path, "GAME/SOUNDS/MAPPIECE.WAV"))
-			Sleep(1520); // in case of map piece sound, wait for the sound to finish
+			Sleep(1520); // in case of map-piece sound, wait for the sound to finish
 	}
 }
 
@@ -360,7 +359,8 @@ Item* Item::getItem(const WwdObject& obj)
 
 
 Warp::Warp(const WwdObject& obj, int8_t type)
-	: Item(obj, type, true), _destination({ (float)obj.speedX, (float)obj.speedY }), _oneTimeWarp(obj.smarts == 0)
+	: Item(obj, type, true), _destination({ (float)obj.speedX, (float)obj.speedY }),
+	_oneTimeWarp(obj.smarts == 0), _activateWarp(false)
 {
 }
 void Warp::Logic(uint32_t elapsedTime)
@@ -369,6 +369,8 @@ void Warp::Logic(uint32_t elapsedTime)
 	{
 		removeObject = _oneTimeWarp;
 		playItemSound();
-		DestinationWarp = this; // set the destination warp so ClawLevelEngine can teleport the player to it
+		_activateWarp = true; // set the destination warp so ClawLevelEngine can teleport the player to it
 	}
 }
+
+// deactivate

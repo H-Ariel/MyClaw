@@ -75,7 +75,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 	else if (_shootIndex == _ani->getFrameNumber() && !_projIsOut)
 	{
 		// shoot at middle of animation
-		ActionPlane::addPlaneObject(DBG_NEW TProjectile(_projectileAni->getCopy(),
+		actionPlane->addPlaneObject(DBG_NEW TProjectile(_projectileAni->getCopy(),
 			_damage, _projSpeed, { position.x + _offset.x, position.y + _offset.y }));
 		_projIsOut = true;
 	}

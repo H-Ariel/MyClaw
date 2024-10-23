@@ -43,7 +43,7 @@ public:
 			angle += STEP_SIZE;
 		}
 
-		ActionPlane::addPlaneObject(this);
+		actionPlane->addPlaneObject(this);
 	}
 
 	void Logic(uint32_t elapsedTime) override
@@ -66,7 +66,7 @@ public:
 		}
 
 		// block claw projectiles:
-		for (Projectile* p : ActionPlane::getProjectiles())
+		for (Projectile* p : actionPlane->getProjectiles())
 		{
 			if (isinstance<ClawProjectile>(p)) // actually, there are only ClawProjectiles in this state.
 			{
@@ -131,7 +131,7 @@ LordOmar::~LordOmar()
 	if (removeObject)
 	{
 		_animations["KILLFALL3"]->mirrored = true;
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, _animations["KILLFALL3"], false));
+		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, _animations["KILLFALL3"], false));
 	}
 }
 void LordOmar::Logic(uint32_t elapsedTime)
@@ -171,7 +171,7 @@ void LordOmar::Logic(uint32_t elapsedTime)
 			}
 			else if (_ani == ANIMATION_THROW_ENERGY)
 			{
-				ActionPlane::addPlaneObject(DBG_NEW LordOmarProjectile({ position.x, position.y - 24 },
+				actionPlane->addPlaneObject(DBG_NEW LordOmarProjectile({ position.x, position.y - 24 },
 					(_state == States::Bullet_1 || _state == States::Bullet_3) ? -0.3f : 0.3f));
 				_ani->reset();
 			}
@@ -196,7 +196,7 @@ void LordOmar::Logic(uint32_t elapsedTime)
 		}
 
 		// check for projectiles:
-		for (Projectile* p : ActionPlane::getProjectiles())
+		for (Projectile* p : actionPlane->getProjectiles())
 		{
 			if (isinstance<ClawProjectile>(p))
 			{

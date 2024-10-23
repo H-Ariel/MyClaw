@@ -7,7 +7,6 @@
 - move Framework, GameEngine, RezParser to DLLs (not .lib) (???)
 
 * fix last elevators at level 13 (before boss warp)
-* the usage of Warp::DestinationWarp is bad. change it
 * play all objects WAV file
 * find perfect speeds (for CC, enemies, projectiles, etc.)
 * split all classes to h and cpp files (not 2 classes in 1 file)

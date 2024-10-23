@@ -134,8 +134,8 @@ Player::Player()
 	_finishLevel(false), _powerupSparkles(&_saveCurrRect),
 	_weaponsAmount(10, 5, 3), startPosition({})
 {
-	cheats = make_shared<CheatsManager>(); // the cheats manager is for all objects, but but actually it is for the user
-
+	// init cheats-manager here because it is for all objects, but mainly for player
+	cheats = make_shared<CheatsManager>([](const char msg[]) {actionPlane->writeMessage(msg); });
 
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_lives = 6;
@@ -163,7 +163,7 @@ Player::Player()
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/450.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/451.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/452.PID"))
-	}));
+		}));
 }
 Player::~Player() {
 	cheats = nullptr; // when reset the game, the cheats manager should be reset too
@@ -265,7 +265,7 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_raisedPowderKeg)
 		speedX = SpeedX_LiftPowderKeg;
 
-//	_damageRest -= elapsedTime;
+	//	_damageRest -= elapsedTime;
 	if (checkForHurts() || _health <= 0)
 	{
 		if (_health <= 0)
@@ -523,7 +523,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 					_weaponsAmount[_currWeapon] -= 1;
 					if (inAir) obj.y += 10;
-					ActionPlane::addPlaneObject(ClawProjectile::createNew(_currWeapon, obj));
+					actionPlane->addPlaneObject(ClawProjectile::createNew(_currWeapon, obj));
 				}
 				else
 				{
@@ -565,7 +565,7 @@ void Player::Logic(uint32_t elapsedTime)
 				else
 				{
 					// try lift powder keg
-					const vector<PowderKeg*>& powderKegs = ActionPlane::getPowderKegs();
+					const vector<PowderKeg*>& powderKegs = actionPlane->getPowderKegs();
 					auto keg = find_if(powderKegs.begin(), powderKegs.end(),
 						[&](PowderKeg* p) {
 							if (_saveCurrRect.intersects(p->GetRect()))
@@ -905,7 +905,7 @@ bool Player::collectItem(Item* item)
 	case Item::Treasure_Skull_Purple: {
 		_collectedTreasures[type] += 1;
 		int tScore = item->getTreasureScore();
-		
+
 		// each 500,000 points CC gets an extra life
 		uint32_t lastScoreForExtraLife = _score / 500000;
 		_score += tScore;
@@ -932,7 +932,7 @@ bool Player::collectItem(Item* item)
 		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, make_shared<UIAnimation>(images));
 		myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);
 
-		ActionPlane::addPlaneObject(ani);
+		actionPlane->addPlaneObject(ani);
 	}	return true;
 
 	case Item::Ammo_Deathbag:	ADD_WEAPON(pistol, 25);
@@ -1086,7 +1086,7 @@ void Player::shootSwordProjectile()
 	obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
 	obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 	obj.damage = 25;
-	ActionPlane::addPlaneObject(ClawProjectile::createNew(type, obj));
+	actionPlane->addPlaneObject(ClawProjectile::createNew(type, obj));
 }
 
 SavedDataManager::GameData Player::getGameData() const
@@ -1162,7 +1162,7 @@ bool Player::checkForHurts()
 	Rectangle2D damageRc;
 	int damage;
 
-	for (BaseEnemy* enemy : ActionPlane::getEnemies())
+	for (BaseEnemy* enemy : actionPlane->getEnemies())
 	{
 		if (enemy->isAttack())
 		{
@@ -1181,7 +1181,7 @@ bool Player::checkForHurts()
 							position.y + (damageRc.top - damageRc.bottom) / 2
 						}, AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", false, 50));
 					myMemCpy(ani->drawZ, drawZ + 1);
-					ActionPlane::addPlaneObject(ani);
+					actionPlane->addPlaneObject(ani);
 
 					return true;
 				}
@@ -1189,7 +1189,7 @@ bool Player::checkForHurts()
 		}
 	}
 
-	for (Projectile* p : ActionPlane::getProjectiles())
+	for (Projectile* p : actionPlane->getProjectiles())
 	{
 		if (isinstance<SirenProjectile>(p))
 		{
@@ -1230,7 +1230,7 @@ bool Player::checkForHurts()
 		}
 	}
 
-	for (PowderKeg* p : ActionPlane::getPowderKegs())
+	for (PowderKeg* p : actionPlane->getPowderKegs())
 	{
 		damageRc = p->GetRect();
 		if (damageRc != _lastAttackRect && (damage = p->getDamage()) > 0)
@@ -1244,7 +1244,7 @@ bool Player::checkForHurts()
 		}
 	}
 
-	for (BaseDamageObject* obj : ActionPlane::getDamageObjects())
+	for (BaseDamageObject* obj : actionPlane->getDamageObjects())
 	{
 		if ((damage = obj->getDamage()) > 0)
 			if (_saveCurrRect.intersects(obj->GetRect()))
@@ -1293,7 +1293,7 @@ bool Player::cheat(int cheatType)
 	case CheatsManager::FinishLevel:	_finishLevel = true; break;
 	case CheatsManager::Flying:
 		if (_raisedPowderKeg) return false; // CC can't fly when he lifts a keg
-		_aniName = "FLYING-CHEAT" ;
+		_aniName = "FLYING-CHEAT";
 		_ani = _animations[_aniName];
 		// cancel all actions
 		_isAttack = false;
@@ -1305,7 +1305,7 @@ bool Player::cheat(int cheatType)
 		_zPressed = false;
 		_holdAltTime = 0;
 		_damageRest = 0;
-		_leftCollision= false;
+		_leftCollision = false;
 		_rightCollision = false;
 		elevator = nullptr;
 		rope = nullptr;

@@ -1,10 +1,7 @@
 #pragma once
 
 #include "MidiPlayer.h"
-#include "Framework/Buffer.h"
-
-
-// TODO: add WAV to signatures if needed
+#include "Framework/DynamicArray.hpp"
 
 
 class AudioManager

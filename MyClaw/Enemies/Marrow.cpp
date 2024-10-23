@@ -132,7 +132,7 @@ bool Marrow::checkForHurts()
 	if (globalState != GlobalState::ClawAttackMarrow)
 		return false;
 
-	for (Projectile* p : ActionPlane::getProjectiles())
+	for (Projectile* p : actionPlane->getProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{

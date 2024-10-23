@@ -7,7 +7,7 @@
 class LevelHUD : public UIBaseElement
 {
 public:
-	LevelHUD(const D2D1_POINT_2F* windowOffset);
+	LevelHUD(ActionPlane* actionPlane);
 
 	void Draw() override;
 
@@ -19,6 +19,6 @@ private:
 	shared_ptr<UIBaseImage> _bossBar;
 	map<ClawProjectile::Types, shared_ptr<UIAnimation>> _weaponAni;
 	shared_ptr<UIBaseImage> _healthNumbers[10], _smallNumbers[10], _scoreNumbers[10];
-	const D2D1_POINT_2F* _windowOffset; // save the offset because WindowManager uses it in the drawing and HUD uses a different offset
+	ActionPlane* _actionPlane;
 	int _bossHealth;
 };

@@ -188,6 +188,7 @@
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameEngineFramework.hpp" />
     <ClInclude Include="UIAnimation.h" />
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="BaseApp.h" />

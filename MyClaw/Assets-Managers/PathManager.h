@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Framework/Framework.h"
+#include "GameEngine/GameEngineFramework.hpp"
 
 
 class PathManager
 {
 public:
-	static void setRoots(string prefix[4], string imageSet[4]);
+	static void setRoots(string prefix[], string imageSet[]);
 
 	static void resetPaths();
 

@@ -18,7 +18,7 @@ RatBomb::~RatBomb()
 {
 	if (removeObject)
 	{
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_RATBOMB_EXPLODE"));
+		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_RATBOMB_EXPLODE"));
 	}
 }
 
@@ -31,7 +31,7 @@ CrabBomb::~CrabBomb()
 {
 	if (removeObject)
 	{
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_CRABBOMB_EXPLODE", "LEVEL_CRABBOMB"));
+		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_CRABBOMB_EXPLODE", "LEVEL_CRABBOMB"));
 	}
 }
 
@@ -44,7 +44,7 @@ GabrielBomb::~GabrielBomb()
 {
 	if (removeObject)
 	{
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_GABRIELBOMB_EXPLODE", "LEVEL_GABRIELBOMB"));
+		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_GABRIELBOMB_EXPLODE", "LEVEL_GABRIELBOMB"));
 	}
 }
 void GabrielBomb::Logic(uint32_t elapsedTime)
@@ -72,7 +72,7 @@ MercatTrident::~MercatTrident()
 {
 	if (removeObject)
 	{
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_TRIDENTEXPLOSION", "LEVEL_TRIDENT_TRIDENTEXPLOSION"));
+		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_TRIDENTEXPLOSION", "LEVEL_TRIDENT_TRIDENTEXPLOSION"));
 	}
 }
 
@@ -113,7 +113,7 @@ LavahandProjectile::~LavahandProjectile()
 {
 	if (removeObject)
 	{
-		ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_DYNAMITEEXPLO"));
+		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_DYNAMITEEXPLO"));
 	}
 }
 void LavahandProjectile::Logic(uint32_t elapsedTime)

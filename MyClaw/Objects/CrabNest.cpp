@@ -46,9 +46,7 @@ void CrabNest::Logic(uint32_t elapsedTime)
 		_ani->updateFrames = true;
 
 		for (HermitCrab* c : _crabs)
-		{
-			ActionPlane::addPlaneObject(c);
-		}
+			actionPlane->addPlaneObject(c);
 
 		_crabs.clear();
 	}

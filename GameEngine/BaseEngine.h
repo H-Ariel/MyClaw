@@ -3,14 +3,6 @@
 #include "UIBaseElement.h"
 
 
-enum class MouseButtons
-{
-	Left,
-	Middle,
-	Right
-};
-
-
 class BaseEngine
 {
 public:

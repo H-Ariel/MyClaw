@@ -1,16 +1,11 @@
 #include "AudioManager.h"
-#include "MidiPlayer.h"
 #include "WindowManager.h" // get window HWND for dsound
+#include "Framework/Buffer.h"
 
 #define WAV_STREAM_LEN 16384 // buffer's size for mixing
 
 
 AudioManager* AudioManager::instance = nullptr;
-
-
-static int clamp(int value, int min, int max) {
-	return value < min ? min : value > max ? max : value;
-}
 
 
 void AudioManager::Initialize()
@@ -278,7 +273,7 @@ DynamicArray<int16_t> AudioManager::matchWavFormat(WAVEFORMATEX& fmt, const Dyna
 			double frac = originalIndex - index1;
 
 			// linear interpolation
-			resampledData[i] = clamp(
+			resampledData[i] = clamp<int>(
 				(int)(convertedData[index1] * (1 - frac) + convertedData[index2] * frac),
 				INT16_MIN, INT16_MAX);
 		}
@@ -325,7 +320,7 @@ int AudioManager::mixWavAudios(int16_t* stream, int len) {
 	wavAudiosListMutex.unlock();
 
 	for (int i = 0; i < len; i++)
-		stream[i] = (int16_t)clamp((int)(sum[i] * wavGlobalVolume), INT16_MIN, INT16_MAX); // Clamp to 16-bit signed range
+		stream[i] = (int16_t)clamp<int>((int)(sum[i] * wavGlobalVolume), INT16_MIN, INT16_MAX); // Clamp to 16-bit signed range
 
 	delete[] sum;
 

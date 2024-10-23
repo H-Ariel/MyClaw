@@ -71,7 +71,7 @@ Gabriel::~Gabriel()
 	GabrielIsAlive = false;
 	if (removeObject)
 	{
-		ActionPlane::addPlaneObject(DBG_NEW DeadGabriel(position,
+		actionPlane->addPlaneObject(DBG_NEW DeadGabriel(position,
 			make_shared<UIAnimation>(
 				_animations["KILLFALL1"]->getImagesList() +
 				_animations["KILLFALL2"]->getImagesList() +
@@ -111,7 +111,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 			for (int i = 0; i < 3; i++) // throw 3 bombs
 			{
 				obj.speedX = speedXs[i];
-				ActionPlane::addPlaneObject(DBG_NEW GabrielBomb(obj));
+				actionPlane->addPlaneObject(DBG_NEW GabrielBomb(obj));
 			}
 
 			_ani = ANIMATION_THROW_BOMBS;
@@ -128,7 +128,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		_sendPiratesTime -= elapsedTime;
 		if (_sendPiratesTime <= 0)
 		{
-			ActionPlane::addPlaneObject(DBG_NEW GabrielRedTailPirate());
+			actionPlane->addPlaneObject(DBG_NEW GabrielRedTailPirate());
 			_ani = ANIMATION_SEND_PIRATES;
 			_ani->reset();
 			_ani->loopAni = false;
@@ -252,7 +252,7 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 			obj.y += 56;
 		}
 
-		ActionPlane::addPlaneObject(DBG_NEW CannonBall(obj));
+		actionPlane->addPlaneObject(DBG_NEW CannonBall(obj));
 
 		operateCannon = false;
 		GabrielChangeSwitch = true;
@@ -351,7 +351,7 @@ void GabrielRedTailPirate::stopFalling(float collisionSize)
 		obj.minX = 42560;
 		obj.maxX = 43200;
 		obj.imageSet = "LEVEL_REDTAILPIRATE";
-		ActionPlane::addPlaneObject(DBG_NEW RedTailPirate(obj, true));
+		actionPlane->addPlaneObject(DBG_NEW RedTailPirate(obj, true));
 
 		removeObject = true;
 	}

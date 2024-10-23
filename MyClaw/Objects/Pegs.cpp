@@ -2,7 +2,7 @@
 #include "../CheatsManager.h"
 
 
-void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<UIAnimation> ani)
+static void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<UIAnimation> ani)
 {
 	// catch player between the second and third quarters
 	size_t idx = ani->getFrameNumber() * 4, framesAmount = ani->getImagesCount();

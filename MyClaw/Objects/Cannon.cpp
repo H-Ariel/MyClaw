@@ -39,7 +39,7 @@ void Cannon::Logic(uint32_t elapsedTime)
 		obj.y = (int32_t)position.y + _ballOffset;
 		obj.speedX = _shootDirection == ToRight ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 		obj.damage = 15;
-		ActionPlane::addPlaneObject(DBG_NEW CannonBall(obj));
+		actionPlane->addPlaneObject(DBG_NEW CannonBall(obj));
 	}
 
 	if (_ani == _firing && _ani->isFinishAnimation())

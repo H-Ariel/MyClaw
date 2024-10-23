@@ -5,15 +5,17 @@
 
 
 class LevelPlane;
+class ActionPlane;
+class ClawLevelEngine;
 
 struct ClawLevelEngineFields
 {
-	ClawLevelEngineFields(int levelNumber);
+	ClawLevelEngineFields(int levelNumber, ClawLevelEngine* clawLevelEngine);
 	~ClawLevelEngineFields();
 
 	shared_ptr<WapWwd> _wwd;
 	vector<shared_ptr<LevelPlane>> _planes;
-	D2D1_POINT_2F* _mainPlanePosition;
+	ActionPlane* actionPlane;
 	LevelHUD* _hud;
 	ColorF _saveBgColor;
 	float _saveWindowScale;
@@ -33,6 +35,10 @@ public:
 
 	void OnResize() override;
 
+	// the warp player will be teleported to
+	void playerEnterWrap(Warp* DestinationWarp);
+
+
 private:
 	void init(); // call this in each constructor
 
@@ -46,6 +52,7 @@ private:
 		GameOver
 	};
 
+	// TODO: try do not save fields seperate. need find better solution
 	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu
 	
 	float _holeRadius; // the radius of the hole that remains until closed

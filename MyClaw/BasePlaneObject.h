@@ -9,6 +9,7 @@
 class Player;
 class PhysicsManager;
 class CheatsManager;
+class ActionPlane;
 
 
 // the base class for all objects that are used in the game
@@ -43,6 +44,7 @@ public:
 	static shared_ptr<Player> player;
 	static shared_ptr<PhysicsManager> physics;
 	static shared_ptr<CheatsManager> cheats;
+	static ActionPlane* actionPlane;
 
 protected:
 	shared_ptr<UIAnimation> _ani;

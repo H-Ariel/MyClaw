@@ -38,7 +38,7 @@ void Crate::Logic(uint32_t elapsedTime)
 	}
 	else
 	{
-	 	const vector<Projectile*>& projectiles = ActionPlane::getProjectiles();
+	 	const vector<Projectile*>& projectiles = actionPlane->getProjectiles();
 	 	auto proj = find_if(projectiles.begin(), projectiles.end(), [&](Projectile* p) {
 	 		return (!p->isClawDynamite() || p->getDamage() != 0) && _objRc.intersects(p->GetRect());
 	 	});
@@ -51,7 +51,7 @@ void Crate::Logic(uint32_t elapsedTime)
 
 		if (!_ani->updateFrames)
 		{
-			const vector<PowderKeg*>& powderKegs = ActionPlane::getPowderKegs();
+			const vector<PowderKeg*>& powderKegs = actionPlane->getPowderKegs();
 			_ani->updateFrames = any_of(powderKegs.begin(), powderKegs.end(), [&](PowderKeg* p) {
 				return p->getDamage() > 0 && _objRc.intersects(p->GetRect());
 			});

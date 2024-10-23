@@ -90,7 +90,7 @@ BaseEnemy::~BaseEnemy()
 			Item* i = Item::getItem(obj, t);
 			i->speed.y = -0.6f;
 			i->speed.x = getRandomFloat(-0.25f, 0.25f);
-			ActionPlane::addPlaneObject(i);
+			actionPlane->addPlaneObject(i);
 		}
 
 		// add dead enemy
@@ -100,22 +100,22 @@ BaseEnemy::~BaseEnemy()
 		switch (_deathType)
 		{
 		case BaseEnemy::DeathType::FireSword:
-			ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_FIRESWORDEXPLOSION", "GAME_EXPLOS_FIRE"));
-			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
+			actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_FIRESWORDEXPLOSION", "GAME_EXPLOS_FIRE"));
+			actionPlane->addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
 			break;
 
 		case BaseEnemy::DeathType::IceSword:
-			ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_ICESWORDEXPLOSION", "GAME_EXPLOS_ICE"));
-			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["frozen"]));
+			actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_ICESWORDEXPLOSION", "GAME_EXPLOS_ICE"));
+			actionPlane->addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["frozen"]));
 			break;
 
 		case BaseEnemy::DeathType::LightningSword:
-			ActionPlane::addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_LIGHTNINGEXPLOSION", "GAME_EXPLOS_LIGHTNING"));
-			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
+			actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_LIGHTNINGEXPLOSION", "GAME_EXPLOS_LIGHTNING"));
+			actionPlane->addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
 			break;
 
 		default:
-			ActionPlane::addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _aniFallDead));
+			actionPlane->addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _aniFallDead));
 			break;
 		}
 
@@ -219,7 +219,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			obj.y = (int32_t)position.y + 10;
 			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
-			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
+			actionPlane->addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 		}
 		else if (_canShoot && deltaY < 16)
 		{
@@ -234,7 +234,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			obj.y = (int32_t)position.y - 20;
 			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
-			ActionPlane::addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
+			actionPlane->addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 		}
 	}
 }
@@ -330,7 +330,7 @@ bool BaseEnemy::checkClawHit()
 				position.y + (damageRc.top - damageRc.bottom) / 2
 			},
 			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", false, 50));
-		ActionPlane::addPlaneObject(ani);
+		actionPlane->addPlaneObject(ani);
 		return true;
 	}
 	return false;
@@ -340,7 +340,7 @@ bool BaseEnemy::checkForHurts()
 	if (checkClawHit())
 		return true;
 
-	for (Projectile* p : ActionPlane::getProjectiles())
+	for (Projectile* p : actionPlane->getProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{
@@ -364,7 +364,7 @@ bool BaseEnemy::checkForHurts()
 		}
 	}
 
-	for (PowderKeg* p : ActionPlane::getPowderKegs())
+	for (PowderKeg* p : actionPlane->getPowderKegs())
 	{
 		if (checkForHurt({ p->GetRect(), p->getDamage() }))
 		{
@@ -404,6 +404,6 @@ BaseBoss::~BaseBoss()
 		obj.minX = _gemPos.x;
 		obj.minY = _gemPos.y;
 		obj.imageSet = "LEVEL_GEM";
-		ActionPlane::addPlaneObject(DBG_NEW BossGem(obj));
+		actionPlane->addPlaneObject(DBG_NEW BossGem(obj));
 	}
 }

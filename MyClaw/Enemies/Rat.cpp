@@ -23,7 +23,7 @@ void Rat::makeAttack(float deltaX, float deltaY)
 		obj.y = (int32_t)position.y - 32;
 		obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 		obj.damage = 15;
-		ActionPlane::addPlaneObject(DBG_NEW RatBomb(obj));
+		actionPlane->addPlaneObject(DBG_NEW RatBomb(obj));
 	}
 }
 pair<Rectangle2D, int> Rat::GetAttackRect() { return {}; }
@@ -59,7 +59,7 @@ PunkRat::~PunkRat()
 	if (removeObject)
 	{
 		_cannon->_shootDirection = Cannon::NotShoot;
-		ActionPlane::addPlaneObject(_cannon);
+		actionPlane->addPlaneObject(_cannon);
 	}
 	else
 	{
