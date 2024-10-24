@@ -1,6 +1,5 @@
 #include "Katherine.h"
 #include "../ActionPlane.h"
-#include "../Player.h"
 
 
 #define ANIMATION_WALK		_animations.at("WALK")

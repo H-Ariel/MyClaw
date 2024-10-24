@@ -1,5 +1,4 @@
 #include "Rat.h"
-#include "../Player.h"
 #include "../ActionPlane.h"
 #include "../Objects/EnemyProjectile.h"
 

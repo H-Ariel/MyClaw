@@ -1,5 +1,5 @@
 #include "Stalactite.h"
-#include "../Player.h"
+#include "Player.h"
 
 
 Stalactite::Stalactite(const WwdObject& obj)

@@ -1,10 +1,8 @@
 #include "BaseEnemy.h"
-#include "ActionPlane.h"
-#include "EnemyHelp.h"
-#include "PhysicsManager.h"
-#include "Player.h"
-#include "Objects/Item.h"
-#include "Objects/EnemyProjectile.h"
+#include "EnemyTools.h"
+#include "../ActionPlane.h"
+#include "../PhysicsManager.h"
+#include "../Objects/EnemyProjectile.h"
 
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string& walkAni,

@@ -52,13 +52,13 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 
 #ifdef _DEBUG
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
-	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430 };
+	//	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 5775, 4347 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 9696, 772 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 5226, 4035 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 2596, 4155 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 4400, 4347 };
+		if (levelNumber == 1) BasePlaneObject::player->position = { 4400, 4347 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 11039, 1851 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 2567, 4388 };
 	//	if (levelNumber == 1) BasePlaneObject::player->position = { 3123, 4219 };
@@ -72,7 +72,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	//	if (levelNumber == 2) BasePlaneObject::player->position = { 4596, 3958 };
 	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
 
-	if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
+	//if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
 	//	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
 	//	if (levelNumber == 3) BasePlaneObject::player->position = { 2396, 1168 };
 	//	if (levelNumber == 3) BasePlaneObject::player->position = { 2201, 10756 };
@@ -143,9 +143,9 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	//	if (levelNumber == 14) BasePlaneObject::player->position = { 3104, 3311 };
 	//	if (levelNumber == 14) BasePlaneObject::player->position = { 31043, 2317 }; // END OF LEVEL
 	//	if (levelNumber == 14) BasePlaneObject::player->position = { 41194, 1964 }; // in boss
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 2858, 3371 };
+		if (levelNumber == 14) BasePlaneObject::player->position = { 2858, 3371 };
 	//	if (levelNumber == 14) BasePlaneObject::player->position = { 8004, 2482 };
-	if (levelNumber == 14) BasePlaneObject::player->position = { 31137, 2348 }; // GOTO BOSS
+	//	if (levelNumber == 14) BasePlaneObject::player->position = { 31137, 2348 }; // GOTO BOSS
 	//	if (levelNumber == 14) BasePlaneObject::player->position = { 7270, 4140 };
 #endif
 }

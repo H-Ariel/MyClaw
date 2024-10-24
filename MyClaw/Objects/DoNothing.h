@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BasePlaneObject.h"
+#include "BasePlaneObject.h"
 
 
 class DoNothing : public BaseStaticPlaneObject // it's also `...Candy`

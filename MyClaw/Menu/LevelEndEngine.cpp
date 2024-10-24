@@ -2,8 +2,7 @@
 #include "LevelLoadingEngine.h"
 #include "CreditsEngine.h"
 #include "MenuItem.h"
-#include "../SavedDataManager.h"
-#include "../Player.h"
+#include "../Objects/Player.h"
 
 
 #define NUM_OF_TREASURES 9

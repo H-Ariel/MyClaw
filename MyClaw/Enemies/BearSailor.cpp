@@ -1,5 +1,5 @@
 #include "BearSailor.h"
-#include "../Player.h"
+#include "../Objects/Player.h"
 
 /*
 STRIKE1 - hand up

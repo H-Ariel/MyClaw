@@ -1,5 +1,5 @@
 #include "GroundBlower.h"
-#include "../Player.h"
+#include "Player.h"
 
 
 #define BLOWHOLE_OFFSET_Y 120 // offset for the blowhole

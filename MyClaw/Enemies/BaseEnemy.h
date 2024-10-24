@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseCharacter.h"
+#include "../Objects/BaseCharacter.h"
 
 
 #define ENEMY_PATROL_SPEED 0.1f

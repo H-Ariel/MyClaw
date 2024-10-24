@@ -1,5 +1,5 @@
 #include "Seagull.h"
-#include "../Player.h"
+#include "../Objects/Player.h"
 
 
 #define ANIMATION_FLYING	_animations["FLYING"]

@@ -1,5 +1,5 @@
 #include "Rope.h"
-#include "../Player.h"
+#include "Player.h"
 #include "../CheatsManager.h"
 
 

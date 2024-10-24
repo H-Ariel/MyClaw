@@ -4,7 +4,7 @@
  * Help classes for enemies
  */
 
-#include "Objects/Item.h"
+#include "../Objects/Item.h"
 
 
 // This class is responsible for leaving the enemy from the screen

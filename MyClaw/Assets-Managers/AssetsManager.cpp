@@ -328,9 +328,13 @@ string AssetsManager::getCreditsText()
 
 uint32_t AssetsManager::playWavFile(const string& wavFilePath, int volume, bool infinite)
 {
+#ifdef _DEBUG
+	return INVALID_AUDIOPLAYER_ID;
+#endif
+
 	uint32_t id = AudioManager::playWav(wavFilePath, infinite, volume / 100.f);
 
-	if (id == AudioManager::INVALID_ID)
+	if (id == INVALID_AUDIOPLAYER_ID)
 	{ // if file not found, try load it
 		AudioManager::addWavPlayer(wavFilePath, instance->_rezArchive.getFile(wavFilePath)->getFileData());
 		id = AudioManager::playWav(wavFilePath, infinite, volume / 100.f);
@@ -376,7 +380,7 @@ void AssetsManager::stopBackgroundMusic()
 		return;
 
 	uint32_t id = instance->bgMusics[instance->_lastType];
-	if (id != AudioManager::INVALID_ID)
+	if (id != INVALID_AUDIOPLAYER_ID)
 		AudioManager::stopMidi(id);
 
 	instance->_lastType = BackgroundMusicType::None; // no background music

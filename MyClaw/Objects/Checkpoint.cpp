@@ -1,7 +1,5 @@
 #include "Checkpoint.h"
 #include "../ActionPlane.h"
-#include "../Player.h"
-#include "../SavedDataManager.h"
 
 
 Checkpoint::Checkpoint(const WwdObject& obj, int levelNumber)

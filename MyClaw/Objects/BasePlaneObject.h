@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Assets-Managers/AssetsManager.h"
+#include "../Assets-Managers/AssetsManager.h"
 
 
 #define GRAVITY 2048e-6f //(2.048f/1000)
@@ -34,6 +34,12 @@ public:
 	virtual void Draw() override;
 	virtual Rectangle2D GetRect() override;
 	virtual void Reset(); // this method is called after Captain Claw is dead. It can be used to reset the object
+	virtual void enterEasyMode(); // thats a cheat-code!
+	virtual void exitEasyMode();  // ^^^
+
+	void Delay(int timeDelay) { _timeDelay = timeDelay; } // delay object for `timeDelay` ms
+	bool isDelayed() const { return _timeDelay > 0; }
+	void decreaseTimeDelay(int ms) { _timeDelay -= ms; }
 
 	bool tryCatchPlayer(); // returns if successfully caught the player
 	bool isMirrored() const { return _isMirrored; }
@@ -49,6 +55,9 @@ public:
 protected:
 	shared_ptr<UIAnimation> _ani;
 	bool _isMirrored, _isVisible, _upsideDown;
+
+private:
+	int _timeDelay; // time to dealy in milliseconds. `private` to force use of `Delay`, `isDelayed`, and `decreaseTimeDelay`
 };
 
 

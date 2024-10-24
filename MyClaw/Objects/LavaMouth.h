@@ -10,7 +10,4 @@ public:
 
 	void Logic(uint32_t elapsedTime) override;
 	bool isDamage() const override;
-
-private:
-	int _startTimeDelay; // in milliseconds
 };

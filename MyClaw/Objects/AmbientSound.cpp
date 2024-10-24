@@ -1,5 +1,5 @@
 #include "AmbientSound.h"
-#include "../Player.h"
+#include "Player.h"
 
 
 AmbientSound::AmbientSound(const WwdObject& obj)

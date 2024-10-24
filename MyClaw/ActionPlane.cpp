@@ -67,7 +67,7 @@
 
 #ifdef _DEBUG
 #define NO_ENEMIES
-#define NO_OBSTACLES
+//#define NO_OBSTACLES
 #endif
 
 
@@ -79,6 +79,7 @@ ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane, ClawLevelEngine* cEngi
 	//if (BasePlaneObject::actionPlane) LOG("[Warning] ActionPlane already exists\n"); // should never happen
 	BasePlaneObject::actionPlane = this;
 }
+
 ActionPlane::~ActionPlane()
 {
 	eraseByValue(_objects, player.get()); // we don't want to delete the player because we save him for the next level
@@ -90,185 +91,6 @@ ActionPlane::~ActionPlane()
 
 	// because it static member and we don't want recycle objects...
 	BasePlaneObject::actionPlane = nullptr;
-}
-
-void ActionPlane::Logic(uint32_t elapsedTime)
-{
-	if (player->isFinishLevel()) return;
-
-	if (_levelState != LevelState::Playing)
-	{
-		bossStagerLogic(elapsedTime);
-		return;
-	}
-
-	if (_shakeTime > 0)
-		_shakeTime -= elapsedTime;
-	updatePosition();
-
-	sort(_objects.begin(), _objects.end(),
-		[](BasePlaneObject* a, BasePlaneObject* b) { return a->logicZ < b->logicZ; }); // for this method (`Logic`)
-
-	BasePlaneObject* obj;
-	bool exploseShake = false; // shake screen after explodes of Claw's dynamit and powder-kegs
-
-	for (size_t i = 0; i < _objects.size(); i++)
-	{
-		obj = _objects[i];
-		obj->Logic(elapsedTime);
-
-		if (obj == player.get())
-		{
-			if (!player->isInDeathAnimation())
-			{
-				physics->checkCollides(player.get());
-			}
-		}
-		else if (isinstance<BaseEnemy>(obj) || isinstance<Projectile>(obj)
-			|| (isinstance<PowderKeg>(obj) && !((PowderKeg*)obj)->isExplode())
-			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
-			|| isinstance<GabrielRedTailPirate>(obj))
-		{
-			physics->checkCollides((BaseDynamicPlaneObject*)obj);
-		}
-		else if (isinstance<StackedCrates>(obj))
-		{
-			_objects += ((StackedCrates*)obj)->getItems();
-		}
-		else if (isinstance<Crate>(obj))
-		{
-			Crate* crate = (Crate*)obj;
-			if (crate->isBreaking())
-				_objects += crate->getItems();
-		}
-		else if (isinstance<Warp>(obj) && ((Warp*)obj)->isActivated())
-		{
-			Warp* pWarp = (Warp*)obj;
-			cEngine->playerEnterWrap(pWarp);
-			pWarp->deactivateWarp();
-		}
-
-		if (_shakeTime <= 0 &&
-			(isinstance<PowderKeg>(obj) && ((PowderKeg*)obj)->isStartExplode()) ||
-			(isinstance<ClawDynamite>(obj) && ((ClawDynamite*)obj)->isStartExplode()))
-			exploseShake = true;
-
-		if (obj->removeObject)
-		{
-			if (isinstance<BaseEnemy>(obj))
-			{
-				eraseByValue(_enemies, obj);
-				if (isinstance<BaseBoss>(obj))
-				{
-					_boss = nullptr;
-					_isInBoss = false;
-				}
-			}
-			else if (isinstance<Projectile>(obj))
-			{
-				if (isinstance<Stalactite>(obj))
-				{
-					obj->removeObject = false; // we don't want to delete this object
-					continue;
-				}
-				else
-					eraseByValue(_projectiles, obj);
-			}
-			else if (isinstance<PowderKeg>(obj))
-				eraseByValue(_powderKegs, obj);
-			else if (isinstance<BaseDamageObject>(obj))
-				eraseByValue(_damageObjects, obj);
-
-			delete obj;
-			_objects.erase(_objects.begin() + i);
-			i--; // cancel `i++`
-		}
-	}
-
-	sort(_objects.begin(), _objects.end(),
-		[](BasePlaneObject* a, BasePlaneObject* b) { return a->drawZ < b->drawZ; }); // for `Draw` method
-
-	AssetsManager::callLogics(elapsedTime);
-
-#ifndef _DEBUG // when I'm debugging, I don't want to shake the screen (it's annoying)
-	const Rectangle2D playerRect = player->GetRect();
-	auto it = find_if(_shakeRects.begin(), _shakeRects.end(), [&](const Rectangle2D& r) { return playerRect.intersects(r); });
-	if (it != _shakeRects.end()) {
-		_shakeTime = SHAKE_TIME;
-		_shakeRects.erase(it);
-	}
-	else if (exploseShake)
-		_shakeTime = 500;
-#endif
-}
-
-void ActionPlane::bossStagerLogic(uint32_t elapsedTime) {
-	/*
-	The BossStager have 4 states:
-	1. update boss' and Claw's positions
-	2. The boss talks to Captain Claw
-	3. Claw talks to the Claw
-	4. Show the boss' name and play the defeat sound (boss name)
-	5. Captain Claw and Boss are fighting (normal game state)
-	*/
-
-	if (_shakeTime > 0)
-		_shakeTime -= elapsedTime;
-	updatePosition();
-
-	if (_BossStagerDelay > 0)
-	{
-		_BossStagerDelay -= elapsedTime;
-		return;
-	}
-
-	char path[64] = {};
-	D2D1_SIZE_F camSz = {};
-
-	switch (_levelState)
-	{
-	case LevelState::BossStager_Start:
-		_boss->Logic(0); // set boss' position
-		player->Logic(0); // set player's position
-#ifdef _DEBUG
-		_levelState = LevelState::Playing; // skip the boss stager
-#else
-		_levelState = LevelState::BossStager_BossTalk;
-#endif
-		break;
-
-	case LevelState::BossStager_BossTalk:
-		sprintf(path, "LEVEL%d/SOUNDS/STAGING/ENEMY.WAV", _wwd->levelNumber);
-		AssetsManager::playWavFile(path);
-		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
-		_levelState = LevelState::BossStager_ClawTalk;
-		break;
-
-	case LevelState::BossStager_ClawTalk:
-		sprintf(path, "LEVEL%d/SOUNDS/STAGING/CLAW.WAV", _wwd->levelNumber);
-		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
-		AssetsManager::playWavFile(path);
-		_levelState = LevelState::BossStager_BossName;
-		break;
-
-	case LevelState::BossStager_BossName:
-		camSz = WindowManager::getCameraSize();
-		sprintf(path, "LEVEL%d/IMAGES/BOSSNAME/001.PID", _wwd->levelNumber);
-		_objects.push_back(DBG_NEW OneTimeAnimation(
-			{ camSz.width / 2 + position.x,camSz.height / 2 + position.y },
-			AssetsManager::createAnimationFromPidImage(path), false));
-		sprintf(path, "LEVEL%d/SOUNDS/DEFEAT.WAV", _wwd->levelNumber);
-		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
-		_shakeTime = _BossStagerDelay; // shake the screen while the boss name is showing
-		AssetsManager::playWavFile(path);
-		_levelState = LevelState::BossStager_Waiting;
-		break;
-
-	case LevelState::BossStager_Waiting:
-		_objects.back()->removeObject = true; // remove the boss name
-		_levelState = LevelState::Playing;
-		break;
-	}
 }
 
 void ActionPlane::init()
@@ -308,6 +130,17 @@ void ActionPlane::init()
 	_levelState = LevelState::Playing;
 	_BossStagerDelay = 0;
 }
+
+void ActionPlane::loadGame(int level, int checkpoint)
+{
+	SavedDataManager::GameData data = SavedDataManager::instance.loadGame(level, checkpoint);
+	if (data.level == level && data.savePoint == checkpoint)
+	{
+		// success to load checkpoint
+		_loadGameData = make_shared<SavedDataManager::GameData>(data);
+	}
+}
+
 void ActionPlane::addObject(const WwdObject& obj)
 {
 	/* Objects */
@@ -643,15 +476,6 @@ void ActionPlane::addObject(const WwdObject& obj)
 	//	throw Exception("TODO: logic=" + obj.logic);
 }
 
-void ActionPlane::loadGame(int level, int checkpoint)
-{
-	SavedDataManager::GameData data = SavedDataManager::instance.loadGame(level, checkpoint);
-	if (data.level == level && data.savePoint == checkpoint)
-	{
-		// success to load checkpoint
-		_loadGameData = make_shared<SavedDataManager::GameData>(data);
-	}
-}
 void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 {
 	//if (obj == nullptr) return;
@@ -659,11 +483,242 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 	if (isinstance<Projectile>(obj)) _projectiles.push_back((Projectile*)obj);
 	else if (isinstance<BaseEnemy>(obj)) _enemies.push_back((BaseEnemy*)obj);
 }
+
+void ActionPlane::writeMessage(const string& message, int timeout)
+{
+	addPlaneObject(DBG_NEW ActionPlaneMessage(message, timeout));
+}
+
+void ActionPlane::Logic(uint32_t elapsedTime)
+{
+	if (player->isFinishLevel()) return;
+
+	if (_levelState != LevelState::Playing)
+	{
+		bossStagerLogic(elapsedTime);
+		return;
+	}
+
+	if (_shakeTime > 0)
+		_shakeTime -= elapsedTime;
+	updatePosition();
+
+	sort(_objects.begin(), _objects.end(),
+		[](BasePlaneObject* a, BasePlaneObject* b) { return a->logicZ < b->logicZ; }); // for this method (`Logic`)
+
+	BasePlaneObject* obj;
+	bool exploseShake = false; // shake screen after explodes of Claw's dynamit and powder-kegs
+
+	for (size_t i = 0; i < _objects.size(); i++)
+	{
+		obj = _objects[i];
+
+		if (obj->isDelayed()) {
+			obj->decreaseTimeDelay(elapsedTime);
+			continue;
+		}
+
+		obj->Logic(elapsedTime);
+
+		if (obj == player.get())
+		{
+			if (!player->isInDeathAnimation())
+			{
+				physics->checkCollides(player.get());
+			}
+		}
+		else if (isinstance<BaseEnemy>(obj) || isinstance<Projectile>(obj)
+			|| (isinstance<PowderKeg>(obj) && !((PowderKeg*)obj)->isExplode())
+			|| (isinstance<Item>(obj) && ((Item*)obj)->speed.y != 0)
+			|| isinstance<GabrielRedTailPirate>(obj))
+		{
+			physics->checkCollides((BaseDynamicPlaneObject*)obj);
+		}
+		else if (isinstance<StackedCrates>(obj))
+		{
+			_objects += ((StackedCrates*)obj)->getItems();
+		}
+		else if (isinstance<Crate>(obj))
+		{
+			Crate* crate = (Crate*)obj;
+			if (crate->isBreaking())
+				_objects += crate->getItems();
+		}
+		else if (isinstance<Warp>(obj) && ((Warp*)obj)->isActivated())
+		{
+			Warp* pWarp = (Warp*)obj;
+			cEngine->playerEnterWrap(pWarp);
+			pWarp->deactivateWarp();
+		}
+
+		if (_shakeTime <= 0 &&
+			(isinstance<PowderKeg>(obj) && ((PowderKeg*)obj)->isStartExplode()) ||
+			(isinstance<ClawDynamite>(obj) && ((ClawDynamite*)obj)->isStartExplode()))
+			exploseShake = true;
+
+		if (obj->removeObject)
+		{
+			if (isinstance<BaseEnemy>(obj))
+			{
+				eraseByValue(_enemies, obj);
+				if (isinstance<BaseBoss>(obj))
+				{
+					_boss = nullptr;
+					_isInBoss = false;
+				}
+			}
+			else if (isinstance<Projectile>(obj))
+			{
+				if (isinstance<Stalactite>(obj))
+				{
+					obj->removeObject = false; // we don't want to delete this object. it inherit from Projectile but we can restore it.
+					continue;
+				}
+				else
+					eraseByValue(_projectiles, obj);
+			}
+			else if (isinstance<PowderKeg>(obj))
+				eraseByValue(_powderKegs, obj);
+			else if (isinstance<BaseDamageObject>(obj))
+				eraseByValue(_damageObjects, obj);
+
+			delete obj;
+			_objects.erase(_objects.begin() + i);
+			i--; // cancel `i++`
+		}
+	}
+
+	sort(_objects.begin(), _objects.end(),
+		[](BasePlaneObject* a, BasePlaneObject* b) { return a->drawZ < b->drawZ; }); // for `Draw` method
+
+	AssetsManager::callLogics(elapsedTime);
+
+#ifndef _DEBUG // when I'm debugging, I don't want to shake the screen (it's annoying)
+	const Rectangle2D playerRect = player->GetRect();
+	auto it = find_if(_shakeRects.begin(), _shakeRects.end(), [&](const Rectangle2D& r) { return playerRect.intersects(r); });
+	if (it != _shakeRects.end()) {
+		_shakeTime = SHAKE_TIME;
+		_shakeRects.erase(it);
+	}
+	else if (exploseShake)
+		_shakeTime = 500;
+#endif
+}
+
+void ActionPlane::bossStagerLogic(uint32_t elapsedTime) {
+	/*
+	The BossStager have 4 states:
+	1. update boss' and Claw's positions
+	2. The boss talks to Captain Claw
+	3. Claw talks to the Claw
+	4. Show the boss' name and play the defeat sound (boss name)
+	5. Captain Claw and Boss are fighting (normal game state)
+	*/
+
+	if (_shakeTime > 0)
+		_shakeTime -= elapsedTime;
+	updatePosition();
+
+	if (_BossStagerDelay > 0)
+	{
+		_BossStagerDelay -= elapsedTime;
+		return;
+	}
+
+	char path[64] = {};
+	D2D1_SIZE_F camSz = {};
+
+	switch (_levelState)
+	{
+	case LevelState::BossStager_Start:
+		_boss->Logic(0); // set boss' position
+		player->Logic(0); // set player's position
+#ifdef _DEBUG
+		_levelState = LevelState::Playing; // skip the boss stager
+#else
+		_levelState = LevelState::BossStager_BossTalk;
+#endif
+		break;
+
+	case LevelState::BossStager_BossTalk:
+		sprintf(path, "LEVEL%d/SOUNDS/STAGING/ENEMY.WAV", _wwd->levelNumber);
+		AssetsManager::playWavFile(path);
+		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+		_levelState = LevelState::BossStager_ClawTalk;
+		break;
+
+	case LevelState::BossStager_ClawTalk:
+		sprintf(path, "LEVEL%d/SOUNDS/STAGING/CLAW.WAV", _wwd->levelNumber);
+		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+		AssetsManager::playWavFile(path);
+		_levelState = LevelState::BossStager_BossName;
+		break;
+
+	case LevelState::BossStager_BossName:
+		camSz = WindowManager::getCameraSize();
+		sprintf(path, "LEVEL%d/IMAGES/BOSSNAME/001.PID", _wwd->levelNumber);
+		_objects.push_back(DBG_NEW OneTimeAnimation(
+			{ camSz.width / 2 + position.x,camSz.height / 2 + position.y },
+			AssetsManager::createAnimationFromPidImage(path), false));
+		sprintf(path, "LEVEL%d/SOUNDS/DEFEAT.WAV", _wwd->levelNumber);
+		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
+		_shakeTime = _BossStagerDelay; // shake the screen while the boss name is showing
+		AssetsManager::playWavFile(path);
+		_levelState = LevelState::BossStager_Waiting;
+		break;
+
+	case LevelState::BossStager_Waiting:
+		_objects.back()->removeObject = true; // remove the boss name
+		_levelState = LevelState::Playing;
+		break;
+	}
+}
+
+void ActionPlane::updatePosition()
+{
+	const D2D1_SIZE_F camSize = WindowManager::getCameraSize();
+	BaseCharacter* character = player.get();
+
+	if (_levelState == LevelState::BossStager_BossTalk || _levelState == LevelState::BossStager_ClawTalk)
+		character = _boss; // if we are in boss stager, we need to show the boss while s/he is talking
+
+	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
+	position.x = character->position.x - camSize.width / 2.0f;
+	position.y = character->position.y - camSize.height / 2.0f;
+
+	float maxOffsetX = _planeSize.width - camSize.width;
+	float maxOffsetY = _planeSize.height - camSize.height;
+
+	if (position.x < 0) position.x = 0;
+	if (position.y < 0) position.y = 0;
+	if (position.x > maxOffsetX) position.x = maxOffsetX;
+	if (position.y > maxOffsetY) position.y = maxOffsetY;
+
+	if (_shakeTime > 0)
+	{
+		// to shake the screen we just move it a little bit
+		const float shakeDelta = 5;
+		if (_shakeTime / 75 % 2) { position.x -= shakeDelta; position.y -= shakeDelta; }
+		else { position.x += shakeDelta; position.y += shakeDelta; }
+	}
+}
+
 void ActionPlane::resetObjects()
 {
 	for (BasePlaneObject* obj : _objects)
 		obj->Reset();
 }
+
+void ActionPlane::enterEasyMode() {
+	for (BasePlaneObject* obj : _objects)
+		obj->enterEasyMode();
+}
+
+void ActionPlane::exitEasyMode() {
+	for (BasePlaneObject* obj : _objects)
+		obj->exitEasyMode();
+}
+
 void ActionPlane::playerEnterToBoss(float bossWarpX)
 {
 	// clear all objects that we don't need in boss
@@ -698,38 +753,4 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Boss);
 	_BossStagerDelay = 0;
 	_levelState = LevelState::BossStager_Start;
-}
-
-void ActionPlane::updatePosition()
-{
-	const D2D1_SIZE_F camSize = WindowManager::getCameraSize();
-	BaseCharacter* character = player.get();
-
-	if (_levelState == LevelState::BossStager_BossTalk || _levelState == LevelState::BossStager_ClawTalk)
-		character = _boss; // if we are in boss stager, we need to show the boss while s/he is talking
-
-	// change the display offset according to player position, but clamp it to the limits (the player should to be in screen center)
-	position.x = character->position.x - camSize.width / 2.0f;
-	position.y = character->position.y - camSize.height / 2.0f;
-
-	float maxOffsetX = _planeSize.width - camSize.width;
-	float maxOffsetY = _planeSize.height - camSize.height;
-
-	if (position.x < 0) position.x = 0;
-	if (position.y < 0) position.y = 0;
-	if (position.x > maxOffsetX) position.x = maxOffsetX;
-	if (position.y > maxOffsetY) position.y = maxOffsetY;
-
-	if (_shakeTime > 0)
-	{
-		// to shake the screen we just move it a little bit
-		const float shakeDelta = 5;
-		if (_shakeTime / 75 % 2) { position.x -= shakeDelta; position.y -= shakeDelta; }
-		else { position.x += shakeDelta; position.y += shakeDelta; }
-	}
-}
-
-void ActionPlane::writeMessage(const string& message, int timeout)
-{
-	addPlaneObject(DBG_NEW ActionPlaneMessage(message, timeout));
 }

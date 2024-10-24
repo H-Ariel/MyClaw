@@ -246,6 +246,7 @@ void MidiPlayer::usleep(int waitTime)
 	if (waitTime != 0)
 	{
 		/*
+		// this is the perfect solution, but it used busy-wait and my CPU does not like it...
 		waitTime = int(waitTime / MusicSpeed);
 		LARGE_INTEGER time1, time2;
 		QueryPerformanceCounter(&time1);
@@ -253,6 +254,8 @@ void MidiPlayer::usleep(int waitTime)
 		while ((time2.QuadPart - time1.QuadPart) * 1000000ll / PerformanceFrequency.QuadPart < waitTime);
 		*/
 
+		// this is the computer friendly solution :)
+		// I multiplied by 4/5 because `sleep_for` is not exact
 		this_thread::sleep_for(chrono::microseconds(waitTime / 5 * 4));
 	}
 }

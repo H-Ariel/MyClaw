@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BaseEnemy.h"
+#include "BaseEnemy.h"
 #include "../Objects/Cannon.h"
 
 

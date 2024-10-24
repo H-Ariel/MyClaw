@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BasePlaneObject.h"
+#include "BasePlaneObject.h"
 
 
 class FloorSpike : public BaseDamageObject
@@ -11,8 +11,11 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	bool isDamage() const override;
 
+	void enterEasyMode() override;
+	void exitEasyMode() override;
+
 protected:
-	int _startTimeDelay; // in milliseconds
+	const int _startTimeDelay; // in milliseconds
 };
 
 

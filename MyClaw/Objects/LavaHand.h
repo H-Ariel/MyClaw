@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BasePlaneObject.h"
+#include "BasePlaneObject.h"
 #include "GameEngine/UITextElement.h"
 
 
@@ -13,6 +13,5 @@ public:
 
 private:
 	const int _delay; // delay between two throws
-	int _timeCounter;
 	bool _throwed;
 };

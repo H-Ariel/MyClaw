@@ -1,5 +1,5 @@
 #include "SpringBoard.h"
-#include "../Player.h"
+#include "Player.h"
 
 
 SpringBoard::SpringBoard(const WwdObject& obj, int levelNumber)

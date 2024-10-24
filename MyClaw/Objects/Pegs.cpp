@@ -16,12 +16,14 @@ static void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<UIAnimation
 TogglePeg::TogglePeg(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _startTimeDelay(0)
 {
+	int startTimeDelay = 0;
+
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
 	bool isAlwaysOn = false;
 
 	if (obj.speed > 0)
 	{
-		_startTimeDelay = obj.speed;
+		startTimeDelay = obj.speed;
 	}
 	else
 	{
@@ -29,9 +31,9 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 		{
 			switch (obj.logic.back())
 			{
-			case '2': _startTimeDelay = 500; break;
-			case '3': _startTimeDelay = 1000; break;
-			case '4': _startTimeDelay = 1500; break;
+			case '2': startTimeDelay = 500; break;
+			case '3': startTimeDelay = 1000; break;
+			case '4': startTimeDelay = 1500; break;
 			}
 
 			if (obj.speedX <= 0) myMemCpy(obj.speedX, 150);
@@ -42,12 +44,15 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 		{
 			switch (obj.logic.back())
 			{
-			case '2': _startTimeDelay = 750; break;
-			case '3': _startTimeDelay = 1500; break;
-			case '4': _startTimeDelay = 2250; break;
+			case '2': startTimeDelay = 750; break;
+			case '3': startTimeDelay = 1500; break;
+			case '4': startTimeDelay = 2250; break;
 			}
 		}
 	}
+
+	myMemCpy(_startTimeDelay, startTimeDelay);
+	Delay(_startTimeDelay);
 
 	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getImagesList();
 
@@ -81,26 +86,26 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 }
 void TogglePeg::Logic(uint32_t elapsedTime)
 {
-	if (_startTimeDelay > 0)
-	{
-		_startTimeDelay -= elapsedTime;
-		return;
-	}
+	if (cheats->isEasyMode()) { // stop animation after it finished (stay at 'on' state)
+		// Checking whether we are in the second or third quarter of the frames' sequence
+		size_t idx = _ani->getFrameNumber() * 4, framesAmount = _ani->getImagesCount();
+		if (idx <= framesAmount || framesAmount * 3 <= idx)
+		{
+			if (_ani->isFinishAnimation())
+				_ani->updateFrames = false;
+			tryCatchPlayer();
+		}
 
-	if (cheats->isEasyMode()) {
- 		size_t idx = _ani->getFrameNumber() * 4, framesAmount = _ani->getImagesCount();
- 		if (idx <= framesAmount || framesAmount * 3 <= idx)
- 		{
-			if(_ani->isFinishAnimation())
-			_ani->updateFrames = false;
- 			tryCatchPlayer();
- 		}
-
-		// TODO: when enable easy-mode and then desable it, the pegs will not work
+		// TODO (?): find algorithm and use `enterEasyMode`
 	}
 
 	_ani->Logic(elapsedTime);
 	pegTryCatchPlayer(this, _ani);
+}
+void TogglePeg::enterEasyMode() { }
+void TogglePeg::exitEasyMode() {
+	_ani->updateFrames = true;
+	Delay(_startTimeDelay);
 }
 
 StartSteppingStone::StartSteppingStone(const WwdObject& obj)

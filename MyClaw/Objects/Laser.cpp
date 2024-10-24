@@ -1,5 +1,5 @@
 #include "Laser.h"
-#include "../Player.h"
+#include "Player.h"
 
 
 Laser::Laser(const WwdObject& obj)

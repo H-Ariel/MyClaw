@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasePlaneObject.h"
+#include "Objects/BasePlaneObject.h"
 #include "RezParser/WwdFile.h"
 
 

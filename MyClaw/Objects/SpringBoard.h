@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BasePlaneObject.h"
+#include "BasePlaneObject.h"
 
 
 class SpringBoard : public BaseStaticPlaneObject

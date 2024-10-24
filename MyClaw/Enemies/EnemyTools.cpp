@@ -1,6 +1,6 @@
-#include "EnemyHelp.h"
+#include "EnemyTools.h"
 #include "GameEngine/WindowManager.h"
-#include "Player.h"
+#include "../Objects/Player.h"
 
 
 #define GEM_SPEED 0.2f

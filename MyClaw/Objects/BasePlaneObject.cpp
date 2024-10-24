@@ -1,7 +1,7 @@
 #include "BasePlaneObject.h"
-#include "PhysicsManager.h"
+//#include "../PhysicsManager.h"
+//#include "../ActionPlane.h"
 #include "Player.h"
-#include "ActionPlane.h"
 
 
 shared_ptr<Player> BasePlaneObject::player;
@@ -11,7 +11,7 @@ ActionPlane* BasePlaneObject::actionPlane = nullptr;
 
 
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)
-	: UIBaseElement({ (float)obj.x, (float)obj.y }),
+	: UIBaseElement({ (float)obj.x, (float)obj.y }), _timeDelay(0),
 	logicZ(obj.z), drawZ(obj.z), removeObject(false), _ani(nullptr),
 	_isMirrored(obj.drawFlags & WwdObject::Mirror),
 	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)),
@@ -32,6 +32,8 @@ Rectangle2D BasePlaneObject::GetRect()
 	return _ani->GetRect();
 }
 void BasePlaneObject::Reset() {}
+void BasePlaneObject::enterEasyMode() {}
+void BasePlaneObject::exitEasyMode() {}
 bool BasePlaneObject::tryCatchPlayer()
 {
 	if (player->isFalling())

@@ -1,5 +1,5 @@
 #include "Elevator.h"
-#include "../Player.h"
+#include "Player.h"
 
 
 // The following classes indicate precisely the type of elevator:

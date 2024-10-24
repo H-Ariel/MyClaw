@@ -1,6 +1,5 @@
 #include "PhysicsManager.h"
-#include "Player.h"
-#include "GameEngine/WindowManager.h"
+#include "Objects/Player.h"
 #include "LevelPlane.h"
 
 

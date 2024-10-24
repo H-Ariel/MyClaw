@@ -1,11 +1,10 @@
 #include "Player.h"
-#include "ActionPlane.h"
-#include "BaseEnemy.h"
-#include "CheatsManager.h"
-#include "Objects/EnemyProjectile.h"
-#include "Objects/LavaMouth.h"
-#include "Objects/Rope.h"
-#include "Objects/Stalactite.h"
+#include "../ActionPlane.h"
+#include "../CheatsManager.h"
+#include "EnemyProjectile.h"
+#include "LavaMouth.h"
+#include "Rope.h"
+#include "Stalactite.h"
 
 
 // TODO: find perfect values (if they are still not perfect :D )
@@ -135,7 +134,7 @@ Player::Player()
 	_weaponsAmount(10, 5, 3), startPosition({})
 {
 	// init cheats-manager here because it is for all objects, but mainly for player
-	cheats = make_shared<CheatsManager>([](const char msg[]) {actionPlane->writeMessage(msg); });
+	cheats = make_shared<CheatsManager>(actionPlane);
 
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_lives = 6;

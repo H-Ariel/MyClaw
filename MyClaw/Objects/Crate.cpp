@@ -1,6 +1,5 @@
 #include "Crate.h"
 #include "EnemyProjectile.h"
-#include "../Player.h"
 #include "../ActionPlane.h"
 #include "../CheatsManager.h"
 

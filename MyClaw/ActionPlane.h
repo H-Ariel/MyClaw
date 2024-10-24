@@ -1,9 +1,8 @@
 #pragma once
 
 #include "LevelPlane.h"
-#include "Player.h"
-#include "BaseEnemy.h"
-#include "SavedDataManager.h"
+#include "Enemies/BaseEnemy.h"
+#include "Objects/Player.h"
 #include "Objects/PowderKeg.h"
 
 
@@ -16,18 +15,20 @@ public:
 	ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane, ClawLevelEngine* cEngine);
 	~ActionPlane();
 
-	void Logic(uint32_t elapsedTime) override;
 	void init() override;
+	void loadGame(int level, int checkpoint);
 	void addObject(const WwdObject& obj) override;
-
 	void addPlaneObject(BasePlaneObject* obj);
 	void writeMessage(const string& message, int timeout = 2000);
 
-	void loadGame(int level, int checkpoint);
-	void resetObjects(); // reset objects after CC die
-	void playerEnterToBoss(float bossWarpX);
+	void Logic(uint32_t elapsedTime) override;
 	void updatePosition();
 
+	void resetObjects(); // reset objects after CC die
+	void enterEasyMode(); // when easymode chaet called
+	void exitEasyMode();
+	void playerEnterToBoss(float bossWarpX);
+	
 	const vector<PowderKeg*>& getPowderKegs() const { return _powderKegs; }
 	const vector<BaseEnemy*>& getEnemies() const{ return _enemies; }
 	const vector<Projectile*>& getProjectiles() const { return _projectiles; }

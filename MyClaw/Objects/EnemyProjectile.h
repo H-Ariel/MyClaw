@@ -65,7 +65,7 @@ public:
 	void Draw() override;
 
 private:
-	int _delay; // in milliseconds
+//	int _delay; // in milliseconds
 };
 
 class LavahandProjectile : public EnemyProjectile

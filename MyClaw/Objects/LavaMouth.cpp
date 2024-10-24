@@ -2,19 +2,14 @@
 
 
 LavaMouth::LavaMouth(const WwdObject& obj)
-	: BaseDamageObject(obj, 10), _startTimeDelay(obj.speed)
+	: BaseDamageObject(obj, 10)
 {
 	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_LAVAMOUTH"), false, 50);
+	Delay(obj.speed);
 }
 
 void LavaMouth::Logic(uint32_t elapsedTime)
 {
-	if (_startTimeDelay > 0)
-	{
-		_startTimeDelay -= elapsedTime;
-		return;
-	}
-
 	_ani->Logic(elapsedTime);
 	setObjectRectangle();
 }

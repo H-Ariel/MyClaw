@@ -1,9 +1,9 @@
 #pragma once
 
 #include "BaseCharacter.h"
-#include "SavedDataManager.h"
-#include "Objects/Item.h"
-#include "Objects/ClawProjectile.h"
+#include "../SavedDataManager.h"
+#include "Item.h"
+#include "ClawProjectile.h"
 
 
 class Elevator;

@@ -1,6 +1,5 @@
 #include "CrabNest.h"
 #include "../ActionPlane.h"
-#include "../Player.h"
 
 
 CrabNest::CrabNest(const WwdObject& obj)

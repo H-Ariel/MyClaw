@@ -1,5 +1,5 @@
 #include "Chameleon.h"
-#include "../Player.h"
+#include "../Objects/Player.h"
 
 
 #define OPACITY_SPEED 0.005f

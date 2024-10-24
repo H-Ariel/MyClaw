@@ -1,6 +1,5 @@
 #include "HermitCrab.h"
 #include "../PhysicsManager.h"
-#include "../Player.h"
 #include "../ActionPlane.h"
 #include "../Objects/EnemyProjectile.h"
 

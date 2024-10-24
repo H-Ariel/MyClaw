@@ -1,5 +1,5 @@
 #include "Fish.h"
-#include "../Player.h"
+#include "../Objects/Player.h"
 
 
 #define ANIMATION_JUMP		_animations.at("JUMP")

@@ -39,8 +39,8 @@ const tuple<int, const char*, const char*> CheatsManager::cheatsKeys[] = {
 };
 
 
-CheatsManager::CheatsManager(void (*writeMessage)(const char[]))
-	: writeMessage(writeMessage), _god(false), _superStrong(false), _flying(false),
+CheatsManager::CheatsManager(ActionPlane* actionPlane)
+	: actionPlane(actionPlane), _god(false), _superStrong(false), _flying(false),
 	_easy(false), _superJump(false), _multiTreasures(false)
 {
 #ifdef _DEBUG
@@ -80,7 +80,10 @@ void CheatsManager::addKey(int key)
 		//	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
 
 	case GodMode:		_god = !_god; break;
-	case EasyMode:		_easy = !_easy; break;
+	case EasyMode:		_easy = !_easy;
+		if (_easy) actionPlane->enterEasyMode();
+		else actionPlane->exitEasyMode();
+		break;
 	case SuperStrong:	_superStrong = !_superStrong; break;
 	case Flying:
 		if (BasePlaneObject::player->cheat(type)) // try to enable flying mode
@@ -121,8 +124,8 @@ int CheatsManager::getCheatType()
 				}
 				sprintf(temp, msg, mode, status ? "off" : "on");
 			}
-			writeMessage(temp[0] ? temp : msg);
-			
+			actionPlane->writeMessage(temp[0] ? temp : msg);
+
 			return type;
 		}
 	}

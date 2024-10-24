@@ -1,23 +1,30 @@
 #include "FloorSpike.h"
+#include "../CheatsManager.h"
 
 
-// FloorSpike ctor. The purpose of `doFloorSpikeCtor` flag is to save time in children classes
+// TODO: these ctor & logic same to TogglePeg, maybe can combine them (or part of them)
+
+// FloorSpike ctor. The purpose of `doFloorSpikeCtor` flag is to save time in children classes. TODO: check obj.logic \O/
 FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
 	: BaseDamageObject(obj, 10), _startTimeDelay(0)
 {
+	int startTimeDelay = 0;
 	if (obj.speed > 0)
 	{
-		_startTimeDelay = obj.speed;
+		startTimeDelay = obj.speed;
 	}
 	else
 	{
 		switch (obj.logic.back())
 		{
-		case '2': _startTimeDelay = 750; break;
-		case '3': _startTimeDelay = 1500; break;
-		case '4': _startTimeDelay = 2250; break;
+		case '2': startTimeDelay = 750; break;
+		case '3': startTimeDelay = 1500; break;
+		case '4': startTimeDelay = 2250; break;
 		}
 	}
+
+	myMemCpy(_startTimeDelay, startTimeDelay);
+	Delay(_startTimeDelay);
 
 	if (!doFloorSpikeCtor) return;
 
@@ -34,20 +41,33 @@ FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
 }
 void FloorSpike::Logic(uint32_t elapsedTime)
 {
-	if (_startTimeDelay > 0)
-	{
-		_startTimeDelay -= elapsedTime;
-		return;
+	// this `if` block has copied from TogglePeg::Logic ... is it bad ?
+	if (cheats->isEasyMode()) { // stop animation after it finished (stay at 'off' state)
+		// Checking whether we are in the second or third quarter of the frames' sequence
+		size_t idx = _ani->getFrameNumber() * 4, framesAmount = _ani->getImagesCount();
+		if (idx <= framesAmount || framesAmount * 3 <= idx)
+		{
+			if (_ani->isFinishAnimation())
+				_ani->updateFrames = false;
+			tryCatchPlayer();
+		}
+
+		// TODO (?): find algorithm and use `enterEasyMode`
 	}
 
 	_ani->Logic(elapsedTime);
 }
 bool FloorSpike::isDamage() const
 {
+	// catch player between the second and third quarters
 	size_t idx = _ani->getFrameNumber() * 4, framesAmount = _ani->getImagesCount();
 	return (framesAmount <= idx && idx <= framesAmount * 3);
 }
-
+void FloorSpike::enterEasyMode() { }
+void FloorSpike::exitEasyMode() {
+	_ani->updateFrames = true;
+	Delay(_startTimeDelay);
+}
 
 SawBlade::SawBlade(const WwdObject& obj)
 	: FloorSpike(obj, false)

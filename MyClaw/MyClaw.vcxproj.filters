@@ -28,22 +28,10 @@
     <ClCompile Include="ActionPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BaseCharacter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseEnemy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BasePlaneObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CheatsManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ClawLevelEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EnemyHelp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameMainApp.cpp">
@@ -56,9 +44,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PhysicsManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SavedDataManager.cpp">
@@ -256,6 +241,21 @@
     <ClCompile Include="Enemies\Marrow.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Player.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\BaseEnemy.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\EnemyTools.cpp">
+      <Filter>Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\BaseCharacter.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\BasePlaneObject.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\ActionPlaneMessage.h">
@@ -426,22 +426,10 @@
     <ClInclude Include="ActionPlane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseCharacter.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseEnemy.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BasePlaneObject.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="CheatsManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="ClawLevelEngine.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EnemyHelp.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="GameMainApp.h">
@@ -454,9 +442,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsManager.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="SavedDataManager.h">
@@ -488,6 +473,21 @@
     </ClInclude>
     <ClInclude Include="Enemies\Marrow.h">
       <Filter>Enemies\Bosses</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Player.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\BaseEnemy.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\EnemyTools.h">
+      <Filter>Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\BaseCharacter.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\BasePlaneObject.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
