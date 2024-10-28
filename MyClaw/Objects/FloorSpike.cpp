@@ -43,13 +43,12 @@ void FloorSpike::Logic(uint32_t elapsedTime)
 {
 	// this `if` block has copied from TogglePeg::Logic ... is it bad ?
 	if (cheats->isEasyMode()) { // stop animation after it finished (stay at 'off' state)
-		// Checking whether we are in the second or third quarter of the frames' sequence
-		size_t idx = _ani->getFrameNumber() * 4, framesAmount = _ani->getImagesCount();
-		if (idx <= framesAmount || framesAmount * 3 <= idx)
+		// Checking whether we are in the 1st or 4th quarter of the frames' sequence
+		float progress = _ani->getFramesProgress();
+		if (progress <= 0.25f || 0.75 <= progress)
 		{
 			if (_ani->isFinishAnimation())
 				_ani->updateFrames = false;
-			tryCatchPlayer();
 		}
 
 		// TODO (?): find algorithm and use `enterEasyMode`
@@ -60,8 +59,8 @@ void FloorSpike::Logic(uint32_t elapsedTime)
 bool FloorSpike::isDamage() const
 {
 	// catch player between the second and third quarters
-	size_t idx = _ani->getFrameNumber() * 4, framesAmount = _ani->getImagesCount();
-	return (framesAmount <= idx && idx <= framesAmount * 3);
+	float progress = _ani->getFramesProgress();
+	return 0.25f <= progress && progress <= 0.75;
 }
 void FloorSpike::enterEasyMode() { }
 void FloorSpike::exitEasyMode() {
@@ -75,12 +74,13 @@ SawBlade::SawBlade(const WwdObject& obj)
 	shared_ptr<UIAnimation> spinAni = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_SPIN"));
 	vector<UIAnimation::FrameData*> appearImages = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_UP"))->getImagesList();
 	vector<UIAnimation::FrameData*> disappearImages = AssetsManager::loadAnimation(PathManager::getAnimationPath("LEVEL_SAWBLADE_DOWN"))->getImagesList();
-
 	vector<UIAnimation::FrameData*> waitImages;
-	for (int timeUp = (obj.speedX > 0) ? obj.speedX : 1500; timeUp > 0;)
+
+	int spinTotalDuration = (int)spinAni->getTotalDuration();
+
+	for (int timeUp = (obj.speedX > 0) ? obj.speedX : 1500; timeUp > 0; timeUp -= spinTotalDuration)
 	{
 		waitImages += spinAni->getImagesList();
-		timeUp -= (int)spinAni->getTotalDuration();
 	}
 	
 	myMemCpy(disappearImages.back()->duration, uint32_t((obj.speedY > 0) ? obj.speedY : 1500));

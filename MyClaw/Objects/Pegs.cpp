@@ -2,16 +2,11 @@
 #include "../CheatsManager.h"
 
 
-static void pegTryCatchPlayer(BaseStaticPlaneObject* peg, shared_ptr<UIAnimation> ani)
-{
-	// catch player between the second and third quarters
-	size_t idx = ani->getFrameNumber() * 4, framesAmount = ani->getImagesCount();
-	if (idx <= framesAmount || framesAmount * 3 <= idx)
-	{
-		peg->tryCatchPlayer();
-	}
+static bool canCatchPlayer(UIAnimation* ani) {
+	// catch player between the 1st and 4th quarters
+	float progress = ani->getFramesProgress();
+	return progress <= 0.25f || 0.75 <= progress;
 }
-
 
 TogglePeg::TogglePeg(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _startTimeDelay(0)
@@ -61,13 +56,15 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 	if (obj.smarts & 0x1)
 	{
 		isAlwaysOn = true;
+		// save only last frame
 		for_each(images.begin(), images.end() - 1, [](UIAnimation::FrameData* f) { delete f; });
 		images.erase(images.begin(), images.end() - 1);
 	}
 	else
 	{
+		// combine images in straight and reverse order for full animation
 		vector<UIAnimation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath)->getImagesList();
-		myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 1500));
+		myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 1500)); // last frame 'waits' (easy to implementation)
 		images = appearImages + images;
 	}
 
@@ -87,9 +84,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 void TogglePeg::Logic(uint32_t elapsedTime)
 {
 	if (cheats->isEasyMode()) { // stop animation after it finished (stay at 'on' state)
-		// Checking whether we are in the second or third quarter of the frames' sequence
-		size_t idx = _ani->getFrameNumber() * 4, framesAmount = _ani->getImagesCount();
-		if (idx <= framesAmount || framesAmount * 3 <= idx)
+		if (canCatchPlayer(_ani.get()))
 		{
 			if (_ani->isFinishAnimation())
 				_ani->updateFrames = false;
@@ -100,7 +95,8 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 	}
 
 	_ani->Logic(elapsedTime);
-	pegTryCatchPlayer(this, _ani);
+	if (canCatchPlayer(_ani.get()))
+		tryCatchPlayer();
 }
 void TogglePeg::enterEasyMode() { }
 void TogglePeg::exitEasyMode() {
@@ -129,7 +125,8 @@ void StartSteppingStone::Logic(uint32_t elapsedTime)
 
 	if (_ani->updateFrames)
 	{
-		pegTryCatchPlayer(this, _ani);
+		if (canCatchPlayer(_ani.get()))
+			tryCatchPlayer();
 
 		if (_ani->getFrameNumber() == 0)
 			_ani->updateFrames = false;

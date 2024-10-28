@@ -179,7 +179,7 @@ void AnimationsManager::clearAnimations(function <bool(const string&)> predicate
 	}
 }
 
-vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const string& aniPath, const string& _imageSetPath)
+vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const string& aniPath, const string& defaultImageSetPath)
 {
 	WapAni ani(_rezArchive->getFile(aniPath)->getFileReader());
 
@@ -188,8 +188,8 @@ vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const stri
 	char imgName[32];
 
 	imageSetPath = ani.imageSetPath;
-	if (!_imageSetPath.empty())
-		imageSetPath = _imageSetPath;
+	if (!defaultImageSetPath.empty())
+		imageSetPath = defaultImageSetPath;
 	imageSetPath = PathManager::getImageSetPath(imageSetPath);
 
 	if (imageSetPath.empty())

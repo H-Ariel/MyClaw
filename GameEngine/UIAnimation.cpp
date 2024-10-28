@@ -33,7 +33,9 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 		{
 			if (!_images[_currImgIdx]->soundPlayed && !_isFinishAnimation)
 			{
+#ifndef _DEBUG // cancel audio in debug mode
 				AudioManager::playWav(_images[_currImgIdx]->soundKey, false);
+#endif
 				_images[_currImgIdx]->soundPlayed = true;
 			}
 		}

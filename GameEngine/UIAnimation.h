@@ -33,6 +33,7 @@ public:
 	size_t getTotalDuration() const;
 	size_t getImagesCount() const { return _images.size(); }
 	size_t getFrameNumber() const { return _currImgIdx; }
+	float getFramesProgress() const { return (float)getFrameNumber() / getImagesCount(); } // returns frames progress ratio
 	bool isFinishAnimation() const { return _isFinishAnimation; } // return if we finish the animation loop
 	bool isPassedHalf() const { return _currImgIdx >= _images.size() / 2; }
 

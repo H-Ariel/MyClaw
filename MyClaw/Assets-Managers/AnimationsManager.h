@@ -19,7 +19,7 @@ public:
 	void clearAnimations(function <bool(const string&)> predicate);
 
 private:
-	vector<UIAnimation::FrameData*> getAnimationImages(const string& aniPath, const string& _imageSetPath);
+	vector<UIAnimation::FrameData*> getAnimationImages(const string& aniPath, const string& defaultImageSetPath);
 
 	map<string, shared_ptr<UIAnimation>> _loadedAnimations;
 	map<string, map<string, shared_ptr<UIAnimation>>> _savedAniDirs;
