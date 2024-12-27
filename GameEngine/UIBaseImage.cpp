@@ -11,7 +11,7 @@ UIBaseImage::UIBaseImage(ID2D1Bitmap* bitmap, D2D1_POINT_2F offset)
 
 void UIBaseImage::Draw()
 {
-	WindowManager::drawBitmap(_bitmap, GetRect(), mirrored, upsideDown, opacity);
+	WindowManager::drawImage(this);
 }
 
 Rectangle2D UIBaseImage::GetRect()

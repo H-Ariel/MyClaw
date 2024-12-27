@@ -160,11 +160,11 @@ void AnimationsManager::callAnimationsLogic(uint32_t elapsedTime)
 	for (auto& [name, ani] : _loadedAnimations)
 		ani->Logic(elapsedTime);
 }
-void AnimationsManager::clearAnimations(function <bool(const string&)> predicate)
+void AnimationsManager::clearAnimations(function <bool(const string&)> filter)
 {
 	for (auto i = _loadedAnimations.begin(); i != _loadedAnimations.end();)
 	{
-		if (predicate(i->first))
+		if (filter(i->first))
 			i = _loadedAnimations.erase(i);
 		else
 			++i;
@@ -172,7 +172,7 @@ void AnimationsManager::clearAnimations(function <bool(const string&)> predicate
 
 	for (auto i = _savedAniDirs.begin(); i != _savedAniDirs.end();)
 	{
-		if (predicate(i->first))
+		if (filter(i->first))
 			i = _savedAniDirs.erase(i);
 		else
 			++i;

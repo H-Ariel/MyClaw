@@ -1,6 +1,8 @@
 #pragma once
 
-// class of dynamic array (simple than std::vector)
+/// <summary>
+/// A dynamic array class with resizing, element access, and move semantics.
+/// </summary>
 template <class T>
 class DynamicArray {
 public:

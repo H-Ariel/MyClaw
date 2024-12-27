@@ -16,7 +16,7 @@ public:
 
 	void callAnimationsLogic(uint32_t elapsedTime);
 
-	void clearAnimations(function <bool(const string&)> predicate);
+	void clearAnimations(function <bool(const string&)> filter);
 
 private:
 	vector<UIAnimation::FrameData*> getAnimationImages(const string& aniPath, const string& defaultImageSetPath);

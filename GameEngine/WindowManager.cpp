@@ -162,6 +162,10 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 }
+void WindowManager::drawImage(UIBaseImage* image)
+{
+	WindowManager::drawBitmap(image->_bitmap, image->GetRect(), image->mirrored, image->upsideDown, image->opacity);
+}
 void WindowManager::drawText(const wstring& text, IDWriteTextFormat* textFormat, ColorF color, const Rectangle2D& _layoutRect)
 {
 	ID2D1SolidColorBrush* brush = getBrush(color);
@@ -287,11 +291,11 @@ shared_ptr<UIBaseImage> WindowManager::getImage(const string& key)
 		return nullptr;
 	return it->second;
 }
-void WindowManager::clearImages(function<bool(const string&)> predicate)
+void WindowManager::clearImages(function<bool(const string&)> filter)
 {
 	for (auto it = instance->images.begin(); it != instance->images.end();)
 	{
-		if (predicate(it->first))
+		if (filter(it->first))
 			it = instance->images.erase(it);
 		else
 			++it;

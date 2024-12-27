@@ -178,11 +178,11 @@ void AudioManager::setMidiVolume(float volume)
 	MidiPlayer::setVolume(volume);
 }
 
-void AudioManager::remove(function<bool(const string& key)> predicate)
+void AudioManager::remove(function<bool(const string& key)> filter)
 {
 	for (auto it = instance->_midiPlayers.begin(); it != instance->_midiPlayers.end();)
 	{
-		if (predicate(it->second->getKey()))
+		if (filter(it->second->getKey()))
 			it = instance->_midiPlayers.erase(it);
 		else
 			++it;
@@ -190,7 +190,7 @@ void AudioManager::remove(function<bool(const string& key)> predicate)
 
 	for (auto it = instance->_midiDataCache.begin(); it != instance->_midiDataCache.end();)
 	{
-		if (predicate(it->first))
+		if (filter(it->first))
 			it = instance->_midiDataCache.erase(it);
 		else
 			++it;
@@ -200,7 +200,7 @@ void AudioManager::remove(function<bool(const string& key)> predicate)
 
 	for (auto it = instance->savedWavAudios.begin(); it != instance->savedWavAudios.end();)
 	{
-		if (predicate(it->first)) {
+		if (filter(it->first)) {
 			instance->wavAudios.remove_if([&](const WavAudioData& a) { return a.soundBuffer == it->second.soundBuffer; });
 			delete[] it->second.soundBuffer;
 			it = instance->savedWavAudios.erase(it);

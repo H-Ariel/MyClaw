@@ -7,6 +7,7 @@
 #include "RezParser/IfcFile.h"
 #include "lodepng.h"
 #include "json.h"
+#include <set>
 
 #define DIR_OUT_NAME	"C:/claw-assets/"
 
