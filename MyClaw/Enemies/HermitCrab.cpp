@@ -1,6 +1,6 @@
 #include "HermitCrab.h"
+#include "../GlobalObjects.h"
 #include "../PhysicsManager.h"
-#include "../ActionPlane.h"
 #include "../Objects/EnemyProjectile.h"
 
 
@@ -42,14 +42,14 @@ void HermitCrab::makeAttack(float deltaX, float deltaY)
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 
 		WwdObject obj;
 		obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
 		obj.y = (int32_t)position.y - 24;
 		obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
 		obj.damage = 10;
-		actionPlane->addPlaneObject(DBG_NEW CrabBomb(obj));
+		GO::addObjectToActionPlane(DBG_NEW CrabBomb(obj));
 
 		_attackRest = 1200;
 	}
@@ -60,7 +60,7 @@ void HermitCrab::stopFalling(float collisionSize)
 	if (_isFromNest)
 	{
 		// find enemy range (copied from BaseEnemy)
-		auto range = physics->getEnemyRange(position, _minX, _maxX);
+		auto range = GO::physics->getEnemyRange(position, _minX, _maxX);
 		myMemCpy(_minX, range.first);
 		myMemCpy(_maxX, range.second);
 		speed.x = ENEMY_PATROL_SPEED;

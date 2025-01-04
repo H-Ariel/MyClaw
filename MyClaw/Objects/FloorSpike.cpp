@@ -1,4 +1,5 @@
 #include "FloorSpike.h"
+#include "../GlobalObjects.h"
 #include "../CheatsManager.h"
 
 
@@ -42,7 +43,7 @@ FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
 void FloorSpike::Logic(uint32_t elapsedTime)
 {
 	// this `if` block has copied from TogglePeg::Logic ... is it bad ?
-	if (cheats->isEasyMode()) { // stop animation after it finished (stay at 'off' state)
+	if (GO::cheats->isEasyMode()) { // stop animation after it finished (stay at 'off' state)
 		// Checking whether we are in the 1st or 4th quarter of the frames' sequence
 		float progress = _ani->getFramesProgress();
 		if (progress <= 0.25f || 0.75 <= progress)

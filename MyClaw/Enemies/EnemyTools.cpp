@@ -1,6 +1,7 @@
 #include "EnemyTools.h"
 #include "GameEngine/WindowManager.h"
 #include "../Objects/Player.h"
+#include "../GlobalObjects.h"
 
 
 #define GEM_SPEED 0.2f
@@ -50,9 +51,9 @@ void BossGem::Logic(uint32_t elapsedTime)
 {
 	if (speed.x == 0 && speed.y == 0)
 	{
-		if (GetRect().intersects(player->GetRect()))
+		if (GetRect().intersects(GO::getPlayerRect()))
 		{
-			player->collectItem(this);
+			GO::player->collectItem(this);
 		}
 	}
 	else

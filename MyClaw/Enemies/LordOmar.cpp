@@ -1,6 +1,7 @@
 #include "LordOmar.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "../Objects/EnemyProjectile.h"
+#include "../Objects/ClawProjectile.h"
 
 
 /*
@@ -43,7 +44,7 @@ public:
 			angle += STEP_SIZE;
 		}
 
-		actionPlane->addPlaneObject(this);
+		GO::addObjectToActionPlane(this);
 	}
 
 	void Logic(uint32_t elapsedTime) override
@@ -66,7 +67,7 @@ public:
 		}
 
 		// block claw projectiles:
-		for (Projectile* p : actionPlane->getProjectiles())
+		for (Projectile* p : GO::getActionPlaneProjectiles())
 		{
 			if (isinstance<ClawProjectile>(p)) // actually, there are only ClawProjectiles in this state.
 			{
@@ -131,7 +132,7 @@ LordOmar::~LordOmar()
 	if (removeObject)
 	{
 		_animations["KILLFALL3"]->mirrored = true;
-		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, _animations["KILLFALL3"], false));
+		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, _animations["KILLFALL3"], false));
 	}
 }
 void LordOmar::Logic(uint32_t elapsedTime)
@@ -171,7 +172,7 @@ void LordOmar::Logic(uint32_t elapsedTime)
 			}
 			else if (_ani == ANIMATION_THROW_ENERGY)
 			{
-				actionPlane->addPlaneObject(DBG_NEW LordOmarProjectile({ position.x, position.y - 24 },
+				GO::addObjectToActionPlane(DBG_NEW LordOmarProjectile({ position.x, position.y - 24 },
 					(_state == States::Bullet_1 || _state == States::Bullet_3) ? -0.3f : 0.3f));
 				_ani->reset();
 			}
@@ -196,7 +197,7 @@ void LordOmar::Logic(uint32_t elapsedTime)
 		}
 
 		// check for projectiles:
-		for (Projectile* p : actionPlane->getProjectiles())
+		for (Projectile* p : GO::getActionPlaneProjectiles())
 		{
 			if (isinstance<ClawProjectile>(p))
 			{
@@ -289,7 +290,7 @@ bool LordOmar::checkForHurts()
 	if (States::Bullet_1 <= _state && _state <= States::Bullet_4)
 	{
 		// CC can attack only in `Bullet_X` states
-		pair<Rectangle2D, int> clawAttackRect = player->GetAttackRect();
+		pair<Rectangle2D, int> clawAttackRect = GO::getPlayerAttackRect();
 		return (clawAttackRect.second > 0 && clawAttackRect.first.intersects(_saveCurrRect));
 	}
 	return false;

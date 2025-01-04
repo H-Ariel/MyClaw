@@ -1,4 +1,5 @@
 #include "GroundBlower.h"
+#include "../GlobalObjects.h"
 #include "Player.h"
 
 
@@ -24,12 +25,12 @@ void GroundBlower::Logic(uint32_t elapsedTime)
 {
 	if (_ani->getFrameNumber() == 0)
 	{
-		Rectangle2D colRc = player->GetRect().getCollision(GetRect());
+		Rectangle2D colRc = GO::GO::getPlayerRect().getCollision(GetRect());
 		if (!colRc.isEmpty())
 		{
 			// if player is falling/going to this object - catch him and blow him up
-			player->stopFalling(colRc.bottom);
-			player->jump(_force);
+			GO::player->stopFalling(colRc.bottom);
+			GO::player->jump(_force);
 		}
 	}
 }

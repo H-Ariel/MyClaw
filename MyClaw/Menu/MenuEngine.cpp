@@ -2,6 +2,7 @@
 #include "GameEngine/WindowManager.h"
 #include "../Assets-Managers/AssetsManager.h"
 #include "../ClawLevelEngine.h"
+#include "../GlobalObjects.h"
 #include "HierarchicalMenu.h"
 #include "CreditsEngine.h"
 #include "LevelLoadingEngine.h"
@@ -121,7 +122,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 
 		case HierarchicalMenu::EndLife:
 			onClick = [&](MenuItem*) {
-				BasePlaneObject::player->endLife();
+				GO::player->endLife();
 				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
 			};
 			break;
@@ -131,7 +132,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 				AssetsManager::clearLevelAssets();
 				setMainMenu();
 				changeEngine<MenuEngine>();
-				BasePlaneObject::player = nullptr; // do not recycle the player in new game
+				GO::player = nullptr; // do not recycle the player in new game
 			};
 			break;
 

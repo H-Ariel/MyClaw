@@ -1,5 +1,5 @@
 #include "LavaHand.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "../Objects/EnemyProjectile.h"
 
 
@@ -16,7 +16,7 @@ void LavaHand::Logic(uint32_t elapsedTime)
 
 	if (_ani->getFrameNumber() == 10 && !_throwed)
 	{
-		actionPlane->addPlaneObject(DBG_NEW LavahandProjectile(position, _isMirrored));
+		GO::addObjectToActionPlane(DBG_NEW LavahandProjectile(position, _isMirrored));
 		_throwed = true;
 	}
 	if (_ani->isFinishAnimation())

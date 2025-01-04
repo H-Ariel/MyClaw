@@ -1,5 +1,6 @@
 #include "LeRauxe.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
+#include "../Objects/ClawProjectile.h"
 
 
 #define ANIMATION_WALK		_animations.at("ADVANCE")
@@ -40,7 +41,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		...
 		*/
 		speed.y = -(0.64f - 75 * GRAVITY);
-		speed.x = (position.x < player->position.x) ? -0.35f : 0.35f;
+		speed.x = (position.x < GO::getPlayerPosition().x) ? -0.35f : 0.35f;
 
 		_isAttack = false;
 		_canJump = false;
@@ -73,9 +74,9 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		_isMirrored = speed.x < 0;
 	}
 	
-	if (_ani != ANIMATION_JUMPBACK && abs(player->position.x - position.x) > 64)
+	if (_ani != ANIMATION_JUMPBACK && abs(GO::getPlayerPosition().x - position.x) > 64)
 	{
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 		if (!_isMirrored) speed.x = abs(speed.x);
 		else speed.x = -abs(speed.x);
 	}
@@ -213,24 +214,24 @@ void LeRauxe::makeAttack(float deltaX, float deltaY)
 {
 	if (deltaX < 96 && deltaY < 16) // CC is close to LR
 	{
-		if (player->isDuck()) _ani = ANIMATION_STRIKE;
+		if (GO::isPlayerDuck()) _ani = ANIMATION_STRIKE;
 		else _ani = ANIMATION_STAB;
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 
 		_attackRest = 600;
 	}
 }
 bool LeRauxe::checkForHurts()
 {
-	for (Projectile* p : actionPlane->getProjectiles())
+	for (Projectile* p : GO::getActionPlaneProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{
-				if (player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+				if (GO::isPlayerDuck()) _ani = ANIMATION_BLOCKLOW;
 				else _ani = ANIMATION_BLOCKHIGH;
 				_ani->reset();
 				return false;
@@ -242,7 +243,7 @@ bool LeRauxe::checkForHurts()
 	{
 		if (_blockClaw)
 		{
-			if (player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+			if (GO::isPlayerDuck()) _ani = ANIMATION_BLOCKLOW;
 			else _ani = ANIMATION_BLOCKHIGH;
 			return false;
 		}

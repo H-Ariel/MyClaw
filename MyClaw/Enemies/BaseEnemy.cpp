@@ -1,8 +1,10 @@
 #include "BaseEnemy.h"
 #include "EnemyTools.h"
-#include "../ActionPlane.h"
 #include "../PhysicsManager.h"
+#include "../GlobalObjects.h"
 #include "../Objects/EnemyProjectile.h"
+#include "../Objects/ClawProjectile.h"
+#include "../Objects/PowderKeg.h"
 
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string& walkAni,
@@ -63,7 +65,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string&
 		if (obj.logic != "Seagull" && obj.logic != "Fish")
 		{
 			// find enemy range
-			pair<float, float> range = physics->getEnemyRange(position, _minX, _maxX);
+			pair<float, float> range = GO::physics->getEnemyRange(position, _minX, _maxX);
 			myMemCpy(_minX, range.first);
 			myMemCpy(_maxX, range.second);
 		}
@@ -88,32 +90,32 @@ BaseEnemy::~BaseEnemy()
 			Item* i = Item::getItem(obj, t);
 			i->speed.y = -0.6f;
 			i->speed.x = getRandomFloat(-0.25f, 0.25f);
-			actionPlane->addPlaneObject(i);
+			GO::addObjectToActionPlane(i);
 		}
 
 		// add dead enemy
-		obj.speedX = position.x < player->position.x ? -250 : 250;
+		obj.speedX = position.x < GO::getPlayerPosition().x ? -250 : 250;
 		obj.speedY = -500;
 		// fit enemy death animation
 		switch (_deathType)
 		{
 		case BaseEnemy::DeathType::FireSword:
-			actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_FIRESWORDEXPLOSION", "GAME_EXPLOS_FIRE"));
-			actionPlane->addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
+			GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "GAME_FIRESWORDEXPLOSION", "GAME_EXPLOS_FIRE"));
+			GO::addObjectToActionPlane(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
 			break;
 
 		case BaseEnemy::DeathType::IceSword:
-			actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_ICESWORDEXPLOSION", "GAME_EXPLOS_ICE"));
-			actionPlane->addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["frozen"]));
+			GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "GAME_ICESWORDEXPLOSION", "GAME_EXPLOS_ICE"));
+			GO::addObjectToActionPlane(DBG_NEW::EnemyFallDeath(obj, _animations["frozen"]));
 			break;
 
 		case BaseEnemy::DeathType::LightningSword:
-			actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_LIGHTNINGEXPLOSION", "GAME_EXPLOS_LIGHTNING"));
-			actionPlane->addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
+			GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "GAME_LIGHTNINGEXPLOSION", "GAME_EXPLOS_LIGHTNING"));
+			GO::addObjectToActionPlane(DBG_NEW::EnemyFallDeath(obj, _animations["burnt"]));
 			break;
 
 		default:
-			actionPlane->addPlaneObject(DBG_NEW::EnemyFallDeath(obj, _aniFallDead));
+			GO::addObjectToActionPlane(DBG_NEW::EnemyFallDeath(obj, _aniFallDead));
 			break;
 		}
 
@@ -179,7 +181,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 void BaseEnemy::makeAttack()
 {
 	if (_isStanding || doesEnemySeeClaw())
-		makeAttack(abs(player->position.x - position.x), abs(player->position.y - position.y));
+		makeAttack(abs(GO::getPlayerPosition().x - position.x), abs(GO::getPlayerPosition().y - position.y));
 }
 void BaseEnemy::makeAttack(float deltaX, float deltaY)
 {
@@ -191,33 +193,33 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+			_isMirrored = GO::getPlayerPosition().x < position.x;
 		}
-		if (_canStrikeDuck && player->isDuck())
+		if (_canStrikeDuck && GO::isPlayerDuck())
 		{
 			_ani = _aniStrikeDuck;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+			_isMirrored = GO::getPlayerPosition().x < position.x;
 		}
 	}
 	else if (deltaX < 256) // CC is far from enemy
 	{
-		if (_canShootDuck && deltaY < 128 && player->isDuck())
+		if (_canShootDuck && deltaY < 128 && GO::isPlayerDuck())
 		{
 			_ani = _aniShootDuck;
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+			_isMirrored = GO::getPlayerPosition().x < position.x;
 
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 			obj.y = (int32_t)position.y + 10;
 			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
-			actionPlane->addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
+			GO::addObjectToActionPlane(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 		}
 		else if (_canShoot && deltaY < 16)
 		{
@@ -225,14 +227,14 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+			_isMirrored = GO::getPlayerPosition().x < position.x;
 
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 			obj.y = (int32_t)position.y - 20;
 			obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
-			actionPlane->addPlaneObject(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
+			GO::addObjectToActionPlane(DBG_NEW EnemyProjectile(obj, _projectileAniDir));
 		}
 	}
 }
@@ -316,7 +318,7 @@ bool BaseEnemy::checkForHurt(const pair<Rectangle2D, int>& hurtData)
 }
 bool BaseEnemy::checkClawHit()
 {
-	pair<Rectangle2D, int> clawAttackRect = player->GetAttackRect();
+	pair<Rectangle2D, int> clawAttackRect = GO::getPlayerAttackRect();
 
 	if (checkForHurt(clawAttackRect))
 	{
@@ -328,7 +330,7 @@ bool BaseEnemy::checkClawHit()
 				position.y + (damageRc.top - damageRc.bottom) / 2
 			},
 			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", false, 50));
-		actionPlane->addPlaneObject(ani);
+		GO::addObjectToActionPlane(ani);
 		return true;
 	}
 	return false;
@@ -338,7 +340,7 @@ bool BaseEnemy::checkForHurts()
 	if (checkClawHit())
 		return true;
 
-	for (Projectile* p : actionPlane->getProjectiles())
+	for (Projectile* p : GO::getActionPlaneProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{
@@ -362,7 +364,7 @@ bool BaseEnemy::checkForHurts()
 		}
 	}
 
-	for (PowderKeg* p : actionPlane->getPowderKegs())
+	for (PowderKeg* p : GO::getActionPlanePowderKegs())
 	{
 		if (checkForHurt({ p->GetRect(), p->getDamage() }))
 		{
@@ -375,9 +377,9 @@ bool BaseEnemy::checkForHurts()
 
 bool BaseEnemy::doesEnemySeeClaw() const
 {
-	return !player->isGhost() && (
-		(!_isMirrored && player->position.x > position.x) ||
-		(_isMirrored && player->position.x < position.x)
+	return !GO::isPlayerGhost() && (
+		(!_isMirrored && GO::getPlayerPosition().x > position.x) ||
+		(_isMirrored && GO::getPlayerPosition().x < position.x)
 	);
 }
 
@@ -402,6 +404,6 @@ BaseBoss::~BaseBoss()
 		obj.minX = _gemPos.x;
 		obj.minY = _gemPos.y;
 		obj.imageSet = "LEVEL_GEM";
-		actionPlane->addPlaneObject(DBG_NEW BossGem(obj));
+		GO::addObjectToActionPlane(DBG_NEW BossGem(obj));
 	}
 }

@@ -1,5 +1,5 @@
 #include "ConveyorBelt.h"
-#include "Player.h"
+#include "../GlobalObjects.h"
 
 
 #define ANIMATION_DURATION 100 // TODO: find perfect value (calc from speed)
@@ -24,7 +24,7 @@ void ConveyorBelt::Logic(uint32_t elapsedTime)
 	if (tryCatchPlayer())
 	{
 		if (_canMoveCC)
-			player->position.x += speed * elapsedTime;
+			GO::getPlayerPosition().x += speed * elapsedTime;
 	}
 
 	_ani->Logic(elapsedTime);

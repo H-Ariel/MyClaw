@@ -6,12 +6,6 @@
 #define GRAVITY 2048e-6f //(2.048f/1000)
 
 
-class Player;
-class PhysicsManager;
-class CheatsManager;
-class ActionPlane;
-
-
 // the base class for all objects that are used in the game
 class BasePlaneObject : public UIBaseElement
 {
@@ -46,11 +40,6 @@ public:
 
 	int logicZ, drawZ;
 	bool removeObject;
-
-	static shared_ptr<Player> player;
-	static shared_ptr<PhysicsManager> physics;
-	static shared_ptr<CheatsManager> cheats;
-	static ActionPlane* actionPlane;
 
 protected:
 	shared_ptr<UIAnimation> _ani;

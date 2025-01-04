@@ -19,17 +19,17 @@ struct WwdTileDescription
 {
 	enum WwdTileTypeFlags
 	{
-		TileType_Empty = 0,
-		TileType_Single = 1,
-		TileType_Double = 2,
+		TileType_Empty = 0,  // no attributes
+		TileType_Single = 1, // one attribute
+		TileType_Double = 2, // two attributes (e.g. half block)
 	};
 	enum WwdTileAttributeFlags
 	{
-		TileAttribute_Clear,
-		TileAttribute_Solid = 1,
-		TileAttribute_Ground = 2,
-		TileAttribute_Climb = 3,
-		TileAttribute_Death = 4,
+		TileAttribute_Clear,      // empty tile, nothing t do.
+		TileAttribute_Solid  = 1, // can't move through this object.
+		TileAttribute_Ground = 2, // not solid, block from down.
+		TileAttribute_Climb  = 3, // ladder / rope. let player climb.
+		TileAttribute_Death  = 4, // remove health
 	};
 
 	uint32_t type;          // WwdTileTypeFlags
@@ -45,18 +45,18 @@ struct WwdObject
 {
 	enum AddFlags
 	{
-		AddFlag_Difficult = 1 << 0,
-		AddFlag_EyeCandy = 1 << 1,
-		AddFlag_HighDetail = 1 << 2,
+		AddFlag_Difficult   = 1 << 0,
+		AddFlag_EyeCandy    = 1 << 1,
+		AddFlag_HighDetail  = 1 << 2,
 		AddFlag_Multiplayer = 1 << 3,
 		AddFlag_ExtraMemory = 1 << 4,
-		AddFlag_FastCpu = 1 << 5
+		AddFlag_FastCpu     = 1 << 5
 	};
 	enum DynamicFlags
 	{
-		DynamicFlag_NoHit = 1 << 0,
-		DynamicFlag_AlwaysActive = 1 << 1,
-		DynamicFlag_Safe = 1 << 2,
+		DynamicFlag_NoHit         = 1 << 0,
+		DynamicFlag_AlwaysActive  = 1 << 1,
+		DynamicFlag_Safe          = 1 << 2,
 		DynamicFlag_AutoHitDamage = 1 << 3
 	};
 	enum DrawFlags
@@ -64,49 +64,49 @@ struct WwdObject
 		NoDraw = 1 << 0,
 		Mirror = 1 << 1,
 		Invert = 1 << 2,
-		Flash = 1 << 3,
+		Flash  = 1 << 3,
 	};
 	enum UserFlags
 	{
-		UserFlag_1 = 1 << 0,
-		UserFlag_2 = 1 << 1,
-		UserFlag_3 = 1 << 2,
-		UserFlag_4 = 1 << 3,
-		UserFlag_5 = 1 << 4,
-		UserFlag_6 = 1 << 5,
-		UserFlag_7 = 1 << 6,
-		UserFlag_8 = 1 << 7,
-		UserFlag_9 = 1 << 8,
+		UserFlag_1  = 1 << 0,
+		UserFlag_2  = 1 << 1,
+		UserFlag_3  = 1 << 2,
+		UserFlag_4  = 1 << 3,
+		UserFlag_5  = 1 << 4,
+		UserFlag_6  = 1 << 5,
+		UserFlag_7  = 1 << 6,
+		UserFlag_8  = 1 << 7,
+		UserFlag_9  = 1 << 8,
 		UserFlag_10 = 1 << 9,
 		UserFlag_11 = 1 << 10,
 		UserFlag_12 = 1 << 11,
 	};
 	enum DirectionFlags
 	{
-		Direction_BottomLeft = 1,
-		Direction_Down = 2,
+		Direction_BottomLeft  = 1,
+		Direction_Down        = 2,
 		Direction_BottomRight = 3,
-		Direction_Left = 4,
-		Direction_NoMove = 5,
-		Direction_Right = 6,
-		Direction_TopLeft = 7,
-		Direction_Up = 8,
-		Direction_TopRight = 9
+		Direction_Left        = 4,
+		Direction_NoMove      = 5,
+		Direction_Right       = 6,
+		Direction_TopLeft     = 7,
+		Direction_Up          = 8,
+		Direction_TopRight    = 9
 	};
 	enum TypeFlags
 	{
 		Type_Generic = 1 << 0,
-		Type_Player = 1 << 1,
-		Type_Enemy = 1 << 2,
+		Type_Player  = 1 << 1,
+		Type_Enemy   = 1 << 2,
 		Type_Powerup = 1 << 3,
-		Type_Shot = 1 << 4,
-		Type_Pshot = 1 << 5,
-		Type_Eshot = 1 << 6,
+		Type_Shot    = 1 << 4,
+		Type_Pshot   = 1 << 5,
+		Type_Eshot   = 1 << 6,
 		Type_Special = 1 << 7,
-		Type_User1 = 1 << 8,
-		Type_User2 = 1 << 9,
-		Type_User3 = 1 << 10,
-		Type_User4 = 1 << 11,
+		Type_User1   = 1 << 8,
+		Type_User2   = 1 << 9,
+		Type_User3   = 1 << 10,
+		Type_User4   = 1 << 11,
 	};
 
 	WwdObject();

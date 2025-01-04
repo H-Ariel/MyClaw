@@ -1,13 +1,6 @@
 #include "BasePlaneObject.h"
-//#include "../PhysicsManager.h"
-//#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "Player.h"
-
-
-shared_ptr<Player> BasePlaneObject::player;
-shared_ptr<PhysicsManager> BasePlaneObject::physics;
-shared_ptr<CheatsManager> BasePlaneObject::cheats;
-ActionPlane* BasePlaneObject::actionPlane = nullptr;
 
 
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)
@@ -36,14 +29,14 @@ void BasePlaneObject::enterEasyMode() {}
 void BasePlaneObject::exitEasyMode() {}
 bool BasePlaneObject::tryCatchPlayer()
 {
-	if (player->isFalling())
+	if (GO::player->isFalling())
 	{
-		Rectangle2D colRc = player->GetRect().getCollision(GetRect());
+		Rectangle2D colRc = GO::GO::getPlayerRect().getCollision(GetRect());
 		float smallestBottom = colRc.getSmallest().bottom;
 		if ((colRc.right > 0 || colRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
 		{
 			// if player is falling/going to this object - catch him
-			player->stopFalling(colRc.bottom);
+			GO::player->stopFalling(colRc.bottom);
 			return true;
 		}
 	}

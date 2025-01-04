@@ -2,6 +2,7 @@
 #include "ActionPlane.h"
 #include "Objects/Item.h"
 #include "GameEngine/WindowManager.h"
+#include "GlobalObjects.h"
 
 
 #define MODE_CHANGE_MSG "%s mode is %s"
@@ -74,7 +75,7 @@ void CheatsManager::addKey(int key)
 	case FillMagic:
 	case FillDynamite:
 	case FillLife:
-	case FinishLevel:	BasePlaneObject::player->cheat(type); break;
+	case FinishLevel:	GO::player->cheat(type); break;
 		//	case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
 		//	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
 		//	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
@@ -86,7 +87,7 @@ void CheatsManager::addKey(int key)
 		break;
 	case SuperStrong:	_superStrong = !_superStrong; break;
 	case Flying:
-		if (BasePlaneObject::player->cheat(type)) // try to enable flying mode
+		if (GO::player->cheat(type)) // try to enable flying mode
 			_flying = !_flying;
 		break;
 	case SuperJump:		_superJump = !_superJump; break;
@@ -136,10 +137,10 @@ int CheatsManager::getCheatType()
 void CheatsManager::addPowerup(int8_t powerupType)
 {
 	WwdObject obj;
-	obj.smarts = 30000;
+	obj.smarts = 30000; // 30 seconds
 	Item* item = Item::getItem(obj, powerupType);
-	item->position = BasePlaneObject::player->position;
-	BasePlaneObject::player->collectItem(item);
+	item->position = GO::GO::getPlayerPosition();
+	GO::player->collectItem(item);
 	item->playItemSound();
 	delete item;
 }

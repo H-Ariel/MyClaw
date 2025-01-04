@@ -1,5 +1,5 @@
 #include "Chameleon.h"
-#include "../Objects/Player.h"
+#include "../GlobalObjects.h"
 
 
 #define OPACITY_SPEED 0.005f
@@ -73,7 +73,7 @@ void Chameleon::makeAttack(float deltaX, float deltaY)
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 	}
 }
 bool Chameleon::checkForHurts()

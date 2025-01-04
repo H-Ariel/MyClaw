@@ -1,6 +1,6 @@
 #include "Cannon.h"
 #include "EnemyProjectile.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 
 
 Cannon::Cannon(const WwdObject& obj)
@@ -23,10 +23,10 @@ void Cannon::Logic(uint32_t elapsedTime)
 {
 	_timeCounter += elapsedTime;
 
-	if ((_shootDirection == ToLeft && position.x > player->position.x ||
-		_shootDirection == ToRight && position.x < player->position.x)
-		&& abs(position.x - player->position.x) <= 512
-		&& abs(position.y - player->position.y) <= 256
+	if ((_shootDirection == ToLeft && position.x > GO::getPlayerPosition().x ||
+		_shootDirection == ToRight && position.x < GO::getPlayerPosition().x)
+		&& abs(position.x - GO::getPlayerPosition().x) <= 512
+		&& abs(position.y - GO::getPlayerPosition().y) <= 256
 		&& _ani != _firing && _timeCounter >= 2000) // shoot new bullet each 2 seconds
 	{
 		_ani = _firing;
@@ -38,7 +38,7 @@ void Cannon::Logic(uint32_t elapsedTime)
 		obj.y = (int32_t)position.y + _ballOffset;
 		obj.speedX = _shootDirection == ToRight ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 		obj.damage = 15;
-		actionPlane->addPlaneObject(DBG_NEW CannonBall(obj));
+		GO::addObjectToActionPlane(DBG_NEW CannonBall(obj));
 	}
 
 	if (_ani == _firing && _ani->isFinishAnimation())

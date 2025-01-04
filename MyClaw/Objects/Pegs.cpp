@@ -1,4 +1,5 @@
 #include "Pegs.h"
+#include "../GlobalObjects.h"
 #include "../CheatsManager.h"
 
 
@@ -83,7 +84,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 }
 void TogglePeg::Logic(uint32_t elapsedTime)
 {
-	if (cheats->isEasyMode()) { // stop animation after it finished (stay at 'on' state)
+	if (GO::cheats->isEasyMode()) { // stop animation after it finished (stay at 'on' state)
 		if (canCatchPlayer(_ani.get()))
 		{
 			if (_ani->isFinishAnimation())
@@ -156,7 +157,7 @@ void CrumblingPeg::Logic(uint32_t elapsedTime)
 		return; // the object is not used
 
 	if (!_ani->isPassedHalf() && tryCatchPlayer())
-		_ani->updateFrames = !cheats->isEasyMode();
+		_ani->updateFrames = !GO::cheats->isEasyMode();
 
 	_ani->Logic(elapsedTime);
 }

@@ -1,5 +1,5 @@
 #include "Seagull.h"
-#include "../Objects/Player.h"
+#include "../GlobalObjects.h"
 
 
 #define ANIMATION_FLYING	_animations["FLYING"]
@@ -31,8 +31,8 @@ void Seagull::Logic(uint32_t elapsedTime)
 
 		// if CC close to enemy - dive and attack
 		if (_attackRest <= 0 && doesEnemySeeClaw() &&
-			(_minX <= player->position.x && player->position.x <= _maxX) &&
-			(_minY <= player->position.y && player->position.y <= _maxY))
+			(_minX <= GO::getPlayerPosition().x && GO::getPlayerPosition().x <= _maxX) &&
+			(_minY <= GO::getPlayerPosition().y && GO::getPlayerPosition().y <= _maxY))
 		{
 			_isAttack = true;
 			speed.x = _isMirrored ? -0.3f : 0.3f;
@@ -42,7 +42,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 	}
 	else if (_ani == ANIMATION_DIVE)
 	{
-		if (position.y >= player->position.y)
+		if (position.y >= GO::getPlayerPosition().y)
 		{
 			_isAttack = false;
 			speed.y = -speed.y;

@@ -1,10 +1,15 @@
 #include "Player.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "../CheatsManager.h"
 #include "EnemyProjectile.h"
 #include "LavaMouth.h"
 #include "Rope.h"
 #include "Stalactite.h"
+#include "PowderKeg.h"
+#include "../Enemies/BaseEnemy.h"
+
+
+#define cheats GO::cheats
 
 
 // TODO: find perfect values (if they are still not perfect :D )
@@ -105,7 +110,8 @@ void Player::PowerupSparkles::Draw() {
 
 
 Player::WeaponsAmount::WeaponsAmount(int pistol, int magic, int dynamite)
-	: pistol(pistol), magic(magic), dynamite(dynamite) {}
+	: pistol(pistol), magic(magic), dynamite(dynamite) {
+}
 int& Player::WeaponsAmount::operator[](ClawProjectile::Types type)
 {
 	switch (type)
@@ -134,7 +140,8 @@ Player::Player()
 	_weaponsAmount(10, 5, 3), startPosition({})
 {
 	// init cheats-manager here because it is for all objects, but mainly for player
-	cheats = make_shared<CheatsManager>(actionPlane);
+	// TODO: move to ActionPlane ?
+	cheats = make_shared<CheatsManager>(GO::actionPlane);
 
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_lives = 6;
@@ -522,7 +529,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 					_weaponsAmount[_currWeapon] -= 1;
 					if (inAir) obj.y += 10;
-					actionPlane->addPlaneObject(ClawProjectile::createNew(_currWeapon, obj));
+					GO::addObjectToActionPlane(ClawProjectile::createNew(_currWeapon, obj));
 				}
 				else
 				{
@@ -564,7 +571,7 @@ void Player::Logic(uint32_t elapsedTime)
 				else
 				{
 					// try lift powder keg
-					const vector<PowderKeg*>& powderKegs = actionPlane->getPowderKegs();
+					const vector<PowderKeg*>& powderKegs = GO::getActionPlanePowderKegs();
 					auto keg = find_if(powderKegs.begin(), powderKegs.end(),
 						[&](PowderKeg* p) {
 							if (_saveCurrRect.intersects(p->GetRect()))
@@ -931,7 +938,7 @@ bool Player::collectItem(Item* item)
 		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, make_shared<UIAnimation>(images));
 		myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);
 
-		actionPlane->addPlaneObject(ani);
+		GO::addObjectToActionPlane(ani);
 	}	return true;
 
 	case Item::Ammo_Deathbag:	ADD_WEAPON(pistol, 25);
@@ -1085,7 +1092,7 @@ void Player::shootSwordProjectile()
 	obj.y = int32_t(atkRc.top + atkRc.bottom) / 2;
 	obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 	obj.damage = 25;
-	actionPlane->addPlaneObject(ClawProjectile::createNew(type, obj));
+	GO::addObjectToActionPlane(ClawProjectile::createNew(type, obj));
 }
 
 SavedDataManager::GameData Player::getGameData() const
@@ -1161,7 +1168,7 @@ bool Player::checkForHurts()
 	Rectangle2D damageRc;
 	int damage;
 
-	for (BaseEnemy* enemy : actionPlane->getEnemies())
+	for (BaseEnemy* enemy : GO::getActionPlaneEnemies())
 	{
 		if (enemy->isAttack())
 		{
@@ -1180,7 +1187,7 @@ bool Player::checkForHurts()
 							position.y + (damageRc.top - damageRc.bottom) / 2
 						}, AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", false, 50));
 					myMemCpy(ani->drawZ, drawZ + 1);
-					actionPlane->addPlaneObject(ani);
+					GO::addObjectToActionPlane(ani);
 
 					return true;
 				}
@@ -1188,7 +1195,7 @@ bool Player::checkForHurts()
 		}
 	}
 
-	for (Projectile* p : actionPlane->getProjectiles())
+	for (Projectile* p : GO::getActionPlaneProjectiles())
 	{
 		if (isinstance<SirenProjectile>(p))
 		{
@@ -1229,7 +1236,7 @@ bool Player::checkForHurts()
 		}
 	}
 
-	for (PowderKeg* p : actionPlane->getPowderKegs())
+	for (PowderKeg* p : GO::getActionPlanePowderKegs())
 	{
 		damageRc = p->GetRect();
 		if (damageRc != _lastAttackRect && (damage = p->getDamage()) > 0)
@@ -1243,7 +1250,7 @@ bool Player::checkForHurts()
 		}
 	}
 
-	for (BaseDamageObject* obj : actionPlane->getDamageObjects())
+	for (BaseDamageObject* obj : GO::getActionPlaneDamageObjects())
 	{
 		if ((damage = obj->getDamage()) > 0)
 			if (_saveCurrRect.intersects(obj->GetRect()))

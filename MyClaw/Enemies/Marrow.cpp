@@ -1,5 +1,6 @@
 #include "Marrow.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
+#include "../Objects/ClawProjectile.h"
 
 
 #define MARROW_ANIMATION_BLOCK			_animations["BLOCK"]
@@ -123,7 +124,7 @@ void Marrow::makeAttack(float deltaX, float deltaY)
 		_ani = _animations["STRIKE2"]; // knife attack
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 	}
 }
 bool Marrow::checkForHurts()
@@ -131,7 +132,7 @@ bool Marrow::checkForHurts()
 	if (globalState != GlobalState::ClawAttackMarrow)
 		return false;
 
-	for (Projectile* p : actionPlane->getProjectiles())
+	for (Projectile* p : GO::getActionPlaneProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{
@@ -218,7 +219,7 @@ void MarrowParrot::Logic(uint32_t elapsedTime)
 			position.x = _flyRect.right;
 			speed = { 0, PARROT_SPEED };
 		}
-		else if (player->isTakeDamage()) // if player is hurt, parrot returns to Marrow
+		else if (GO::isPlayerTakeDamage()) // if player is hurt, parrot returns to Marrow
 		{
 			speed = { 0, -PARROT_SPEED };
 		}
@@ -278,7 +279,7 @@ bool MarrowParrot::checkForHurts()
 {
 	int health = _health; // save health value
 
-	if (_isAttack && checkForHurt(player->GetAttackRect()))
+	if (_isAttack && checkForHurt(GO::getPlayerAttackRect()))
 	{
 		_hitsCounter += 1;
 		speed = { 0, -PARROT_SPEED };

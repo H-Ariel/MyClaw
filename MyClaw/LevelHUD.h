@@ -3,6 +3,9 @@
 #include "Objects/Player.h"
 
 
+class ActionPlane;
+
+
 // Level Head-Up Display
 class LevelHUD : public UIBaseElement
 {

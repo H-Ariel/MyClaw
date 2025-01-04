@@ -1,7 +1,8 @@
 #include "Crate.h"
 #include "EnemyProjectile.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "../CheatsManager.h"
+#include "PowderKeg.h"
 
 #define CRATE_HEIGHT 43
 
@@ -31,13 +32,13 @@ void Crate::Logic(uint32_t elapsedTime)
 	_ani->Logic(elapsedTime);
 
 
-	if (player->isAttack() && _objRc.intersects(player->GetAttackRect().first))
+	if (GO::isPlayerAttack() && _objRc.intersects(GO::getPlayerAttackRect().first))
 	{
 		_ani->updateFrames = true;
 	}
 	else
 	{
-	 	const vector<Projectile*>& projectiles = actionPlane->getProjectiles();
+	 	const vector<Projectile*>& projectiles = GO::getActionPlaneProjectiles();
 	 	auto proj = find_if(projectiles.begin(), projectiles.end(), [&](Projectile* p) {
 	 		return (!p->isClawDynamite() || p->getDamage() != 0) && _objRc.intersects(p->GetRect());
 	 	});
@@ -50,7 +51,7 @@ void Crate::Logic(uint32_t elapsedTime)
 
 		if (!_ani->updateFrames)
 		{
-			const vector<PowderKeg*>& powderKegs = actionPlane->getPowderKegs();
+			const vector<PowderKeg*>& powderKegs = GO::getActionPlanePowderKegs();
 			_ani->updateFrames = any_of(powderKegs.begin(), powderKegs.end(), [&](PowderKeg* p) {
 				return p->getDamage() > 0 && _objRc.intersects(p->GetRect());
 			});
@@ -74,12 +75,12 @@ vector<BasePlaneObject*> Crate::getItems()
 		{
 			Item* i = Item::getItem(newObj, t);
 			i->speed.y = -0.6f;
-			if (cheats->isMultiTreasures())
+			if (GO::cheats->isMultiTreasures())
 				i->speed.x = getRandomFloat(-0.25f, 0.25f); // treasures are scattered around
 			items.push_back(i);
 		}
 
-		if (!cheats->isMultiTreasures())
+		if (!GO::cheats->isMultiTreasures())
 			_itemsTypes.clear(); // do not collect them again
 	}
 

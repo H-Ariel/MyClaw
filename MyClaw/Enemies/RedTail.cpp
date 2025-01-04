@@ -1,5 +1,6 @@
 #include "RedTail.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
+#include "../Objects/ClawProjectile.h"
 
 
 #define ANIMATION_BLOCK _animations["BLOCK"]
@@ -73,7 +74,7 @@ void RedTail::makeAttack(float deltaX, float deltaY)
 }
 bool RedTail::checkForHurts()
 {
-	for (Projectile* p : actionPlane->getProjectiles())
+	for (Projectile* p : GO::getActionPlaneProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{
@@ -128,8 +129,8 @@ void RedTailWind::Logic(uint32_t elapsedTime)
 	if (_windTimeCounter > 0)
 	{
 		_windTimeCounter -= elapsedTime;
-		if (player->position.x > 37122) // make sure player do not pass the spikes
-			player->position.x -= 0.1f * elapsedTime;
+		if (GO::getPlayerPosition().x > 37122) // make sure player do not pass the spikes
+			GO::getPlayerPosition().x -= 0.1f * elapsedTime;
 		if (_windSoundId == AssetsManager::INVALID_AUDIOPLAYER_ID)
 		{
 			_windSoundId = AssetsManager::playWavFile("LEVEL13/SOUNDS/REDTAIL/WINDWHISTLING.WAV", 50);

@@ -1,5 +1,5 @@
 #include "CrabNest.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 
 
 CrabNest::CrabNest(const WwdObject& obj)
@@ -40,12 +40,12 @@ CrabNest::~CrabNest()
 
 void CrabNest::Logic(uint32_t elapsedTime)
 {
-	if (_crabs.size() > 0 && player->GetRect().intersects(_objRc))
+	if (_crabs.size() > 0 && GO::getPlayerRect().intersects(_objRc))
 	{
 		_ani->updateFrames = true;
 
 		for (HermitCrab* c : _crabs)
-			actionPlane->addPlaneObject(c);
+			GO::addObjectToActionPlane(c);
 
 		_crabs.clear();
 	}

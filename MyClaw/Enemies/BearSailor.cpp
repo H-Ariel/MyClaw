@@ -1,5 +1,5 @@
 #include "BearSailor.h"
-#include "../Objects/Player.h"
+#include "../GlobalObjects.h"
 
 /*
 STRIKE1 - hand up
@@ -32,7 +32,7 @@ void BearSailor::Logic(uint32_t elapsedTime)
 	const UIAnimation* prevAni = _ani.get();
 	BaseEnemy::Logic(elapsedTime);
 	if (prevAni == ANIMATION_HUG.get() && prevAni != _ani.get()) // hug animation is finished
-		player->unsqueeze(); // CC is free now
+		GO::unsqueezePlayer(); // CC is free now
 }
 
 void BearSailor::makeAttack(float deltaX, float deltaY)
@@ -45,8 +45,8 @@ void BearSailor::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
-			player->squeeze({ position.x + (_isMirrored ? -48 : 48), position.y - 8 }, !_isMirrored);
+			_isMirrored = GO::getPlayerPosition().x < position.x;
+			GO::squeezePlayer({ position.x + (_isMirrored ? -48 : 48), position.y - 8 }, !_isMirrored);
 			_attackRest = 1000;
 		}
 		else if (deltaX < 96) // CC is little far from enemy
@@ -55,7 +55,7 @@ void BearSailor::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+			_isMirrored = GO::getPlayerPosition().x < position.x;
 		}
 	}
 }

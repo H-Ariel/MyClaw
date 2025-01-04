@@ -1,5 +1,5 @@
 #include "Stalactite.h"
-#include "Player.h"
+#include "../GlobalObjects.h"
 
 
 Stalactite::Stalactite(const WwdObject& obj)
@@ -23,7 +23,7 @@ void Stalactite::Logic(uint32_t elapsedTime)
 
 	if (speed.y == 0)
 	{
-		if (_activityArea.intersects(player->GetRect()))
+		if (_activityArea.intersects(GO::getPlayerRect()))
 			speed.y = 0.25f;
 	}
 	else

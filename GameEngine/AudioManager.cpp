@@ -72,9 +72,8 @@ AudioManager::~AudioManager() {
 
 void AudioManager::addWavPlayer(const string& key, const DynamicArray<uint8_t>& wavFile)
 {
-	//	audioMixer->addWavBuffer(make_shared<Buffer>(wav), key);
-
-	if (instance->savedWavAudios.find(key) != instance->savedWavAudios.end()) return; // already exists
+	if (instance->savedWavAudios.find(key) != instance->savedWavAudios.end())
+		return; // already exists
 
 	Buffer wavReader(wavFile);
 
@@ -148,7 +147,7 @@ uint32_t AudioManager::playMidi(const string& key, bool infinite)
 	uint32_t id = instance->getNewMidiId();
 	instance->_midiPlayers[id] = make_shared<MidiPlayer>(key, it->second);
 	instance->_midiPlayers[id]->play(infinite);
-	instance->_midiPlayers[id]->setVolume(instance->midiGlobalVolume);
+	MidiPlayer::setVolume(instance->midiGlobalVolume);
 	return id;
 }
 

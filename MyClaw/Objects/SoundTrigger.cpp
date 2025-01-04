@@ -1,4 +1,5 @@
 #include "SoundTrigger.h"
+#include "../GlobalObjects.h"
 #include "Player.h"
 
 
@@ -28,7 +29,7 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 {
 	if (!_isInCollision)
 	{
-		if (player->GetRect().intersects(_objRc))
+		if (GO::getPlayerRect().intersects(_objRc))
 		{
 			_isInCollision = true;
 			if (_timesCounter == -1 || _timesCounter > 0)
@@ -42,14 +43,14 @@ void SoundTrigger::Logic(uint32_t elapsedTime)
 
 				if (_isClawDialog)
 				{
-					player->activateDialog(AssetsManager::getWavFileDuration(_wavPath));
+					GO::player->activateDialog(AssetsManager::getWavFileDuration(_wavPath));
 				}
 			}
 		}
 	}
 	else
 	{
-		_isInCollision = player->GetRect().intersects(_objRc);
+		_isInCollision = GO::getPlayerRect().intersects(_objRc);
 	}
 }
 void SoundTrigger::Reset()

@@ -1,10 +1,11 @@
 #include "PhysicsManager.h"
+#include "GlobalObjects.h"
 #include "Objects/Player.h"
 #include "LevelPlane.h"
 
 
-#define _checkCollides_define1(x) if (cumulatedCollision.x == 0) cumulatedCollision.x = collisions[collisionsNumber].x;
-#define _checkCollides_define2(x) if (cumulatedCollision.x != 0) for (cumulatedCollision.x = 0, i = 0; i < collisionsNumber; cumulatedCollision.x = fmax(cumulatedCollision.x, collisions[i++].x));
+#define SAVE_MAX(a, b) if (a < b) a = (b)
+#define SAVE_MIN(a, b) if (a > b) a = (b)
 
 
 PhysicsManager::PhysicsManager(WapWwd* wwd, const LevelPlane* plane)
@@ -149,29 +150,24 @@ void PhysicsManager::move(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) con
 void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj) const
 {
 	const Rectangle2D objRc = obj->GetRect();
-	Rectangle2D collisions[9];
 	Rectangle2D cumulatedCollision, tileRc, collisionRc;
-	uint32_t collisionsNumber = 0, i = 0;
 	const bool isPlayer = isinstance<Player>(obj);
 
 	auto _addCollision = [&]() { // add `collisionRect` to the `cumulatedCollision`
 		if (!collisionRc.isEmpty())
 		{
-			// add this collision to the list
-			collisions[collisionsNumber] = collisionRc;
-			collisions[collisionsNumber].keepSmallest();
 			// add the collision details to the cummulated collision
-			_checkCollides_define1(top);
-			_checkCollides_define1(bottom);
-			_checkCollides_define1(left);
-			_checkCollides_define1(right);
-			collisionsNumber++;
+			collisionRc.keepSmallest();
+			SAVE_MAX(cumulatedCollision.top, collisionRc.top);
+			SAVE_MAX(cumulatedCollision.bottom, collisionRc.bottom);
+			SAVE_MAX(cumulatedCollision.left, collisionRc.left);
+			SAVE_MAX(cumulatedCollision.right, collisionRc.right);
 		}
 	};
 	auto _onGround = [&]() {
 		float smallestBottom = collisionRc.getSmallest().bottom;
 		// when object is falling or when CC climb down and arrive to the ground
-		if ((obj->isFalling() || (isPlayer && BasePlaneObject::player->isClimbing())) &&
+		if ((obj->isFalling() || (isPlayer && GO::player->isClimbing())) &&
 			(collisionRc.right > 0 || collisionRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
 		{
 			_addCollision();
@@ -181,18 +177,18 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj) const
 		// check if object is at the top of the ladder, so it should stay here (and not fall)
 		bool isOnLadderTop = collisionRc.bottom < 32;
 		if (isPlayer)
-			isOnLadderTop = !BasePlaneObject::player->isClimbing() && isOnLadderTop;
+			isOnLadderTop = !GO::player->isClimbing() && isOnLadderTop;
 
 		if (isOnLadderTop)
 			_onGround(); // ladder top behaves like ground
 
 		if (isPlayer) // let Captain Claw climb
 		{
-			BasePlaneObject::player->setLadderFlags(isOnLadderTop);
-			if (BasePlaneObject::player->isClimbing())
+			GO::player->setLadderFlags(isOnLadderTop);
+			if (GO::player->isClimbing())
 			{
 				// set the player position on the ladder easily for the user
-				BasePlaneObject::player->position.x = (tileRc.left + tileRc.right) / 2;
+				GO::GO::getPlayerPosition().x = (tileRc.left + tileRc.right) / 2;
 			}
 		}
 	};
@@ -213,13 +209,6 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj) const
 		}
 	}
 
-	// whichever side collides the most, that side is taken into consideration
-	cumulatedCollision.keepLargest();
-	_checkCollides_define2(top);
-	_checkCollides_define2(bottom);
-	_checkCollides_define2(left);
-	_checkCollides_define2(right);
-
 	if (cumulatedCollision.top > 0) obj->bounceTop();
 	else if (cumulatedCollision.bottom > 0) obj->stopFalling(cumulatedCollision.bottom);
 	else if (cumulatedCollision.left > 0) obj->stopMovingLeft(cumulatedCollision.left);
@@ -239,8 +228,8 @@ pair<float, float> PhysicsManager::getEnemyRange(D2D1_POINT_2F enemyPos, const f
 
 			if (minX != 0 && maxX != 0)
 			{
-				left = max(left, minX);
-				right = min(right, maxX);
+				SAVE_MAX(left, minX);
+				SAVE_MIN(right, maxX);
 			}
 
 			return { left, right };

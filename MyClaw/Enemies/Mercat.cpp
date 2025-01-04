@@ -1,5 +1,5 @@
 #include "Mercat.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "../Objects/EnemyProjectile.h"
 
 // TODO: jump back when CC try to attack
@@ -60,7 +60,7 @@ void Mercat::makeAttack(float deltaX, float deltaY)
 			obj.y = (int32_t)position.y;
 			obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
-			actionPlane->addPlaneObject(DBG_NEW MercatTrident(obj));
+			GO::addObjectToActionPlane(DBG_NEW MercatTrident(obj));
 		}
 
 		if (strike)
@@ -69,7 +69,7 @@ void Mercat::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+			_isMirrored = GO::getPlayerPosition().x < position.x;
 
 			_attackRest = 2500;
 		}

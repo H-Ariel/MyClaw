@@ -198,6 +198,7 @@
     <ClCompile Include="Enemies\TownGuard.cpp" />
     <ClCompile Include="Enemies\Wolvington.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
+    <ClCompile Include="GlobalObjects.cpp" />
     <ClCompile Include="LevelHUD.cpp" />
     <ClCompile Include="LevelPlane.cpp" />
     <ClCompile Include="main.cpp" />
@@ -278,6 +279,7 @@
     <ClInclude Include="Enemies\TownGuard.h" />
     <ClInclude Include="Enemies\Wolvington.h" />
     <ClInclude Include="GameMainApp.h" />
+    <ClInclude Include="GlobalObjects.h" />
     <ClInclude Include="LevelHUD.h" />
     <ClInclude Include="LevelPlane.h" />
     <ClInclude Include="Menu\CreditsEngine.h" />

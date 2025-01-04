@@ -1,5 +1,5 @@
 #include "AmbientSound.h"
-#include "Player.h"
+#include "../GlobalObjects.h"
 
 
 AmbientSound::AmbientSound(const WwdObject& obj)
@@ -8,7 +8,7 @@ AmbientSound::AmbientSound(const WwdObject& obj)
 }
 void AmbientSound::Logic(uint32_t elapsedTime)
 {
-	if (player->GetRect().intersects(_objRc))
+	if (GO::getPlayerRect().intersects(_objRc))
 	{
 		if (!_isPlaying)
 		{

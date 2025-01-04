@@ -1,4 +1,5 @@
 #include "SpringBoard.h"
+#include "../GlobalObjects.h"
 #include "Player.h"
 
 
@@ -43,7 +44,7 @@ void SpringBoard::Logic(uint32_t elapsedTime)
 	{
 		_ani = _spring;
 		_ani->reset();
-		player->jump(_force);
+		GO::player->jump(_force);
 	}
 
 	if (_ani == _spring)

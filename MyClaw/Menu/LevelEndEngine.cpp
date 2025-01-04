@@ -2,6 +2,7 @@
 #include "LevelLoadingEngine.h"
 #include "CreditsEngine.h"
 #include "MenuItem.h"
+#include "../GlobalObjects.h"
 #include "../Objects/Player.h"
 
 
@@ -47,7 +48,7 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 	if (_lvlNum != 14)
 	{
 		// save as checkpoint:
-		SavedDataManager::GameData data = BasePlaneObject::player->getGameData();
+		SavedDataManager::GameData data = GO::player->getGameData();
 		data.level = _lvlNum + 1;
 		data.savePoint = SavedDataManager::SavePoints::Start;
 		SavedDataManager::instance.saveGame(data);

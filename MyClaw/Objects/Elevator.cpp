@@ -1,4 +1,5 @@
 #include "Elevator.h"
+#include "../GlobalObjects.h"
 #include "Player.h"
 
 
@@ -145,19 +146,19 @@ void Elevator::mainLogic(uint32_t elapsedTime) // logic for every elevator
 	position.x += deltaX;
 	position.y += deltaY;
 
-	if (player->elevator == this)
+	if (GO::player->elevator == this)
 	{
-		const Rectangle2D thisRc = GetRect(), playerRc = player->GetRect();
+		const Rectangle2D thisRc = GetRect(), playerRc = GO::GO::getPlayerRect();
 
 		// if no collision - disable the 'elevator mode' for player
 		if (playerRc.right < thisRc.left || thisRc.right < playerRc.left)
 		{
-			player->elevator = nullptr;
+			GO::player->elevator = nullptr;
 		}
 		else
 		{
-			player->position.x += deltaX;
-			player->position.y = position.y + _offsetY;
+			GO::getPlayerPosition().x += deltaX;
+			GO::getPlayerPosition().y = position.y + _offsetY;
 		}
 	}
 	else
@@ -183,7 +184,7 @@ bool Elevator::tryCatchPlayer()
 {
 	if (BaseDynamicPlaneObject::tryCatchPlayer())
 	{
-		player->elevator = this;
+		GO::player->elevator = this;
 		return true;
 	}
 	return false;
@@ -211,7 +212,7 @@ StartElevator::StartElevator(const WwdObject& obj)
 }
 void StartElevator::Logic(uint32_t elapsedTime)
 {
-	if (player->elevator != this)
+	if (GO::player->elevator != this)
 		_operateElevator = tryCatchPlayer(); // if CC left the elevator it will not keep moving (until he comes up again)
 	if (_operateElevator)
 		Elevator::Logic(elapsedTime);

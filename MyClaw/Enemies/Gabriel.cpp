@@ -1,6 +1,6 @@
 #include "Gabriel.h"
 #include "RedTailPirate.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "../Objects/EnemyProjectile.h"
 
 
@@ -70,7 +70,7 @@ Gabriel::~Gabriel()
 	GabrielIsAlive = false;
 	if (removeObject)
 	{
-		actionPlane->addPlaneObject(DBG_NEW DeadGabriel(position,
+		GO::addObjectToActionPlane(DBG_NEW DeadGabriel(position,
 			make_shared<UIAnimation>(
 				_animations["KILLFALL1"]->getImagesList() +
 				_animations["KILLFALL2"]->getImagesList() +
@@ -110,7 +110,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 			for (int i = 0; i < 3; i++) // throw 3 bombs
 			{
 				obj.speedX = speedXs[i];
-				actionPlane->addPlaneObject(DBG_NEW GabrielBomb(obj));
+				GO::addObjectToActionPlane(DBG_NEW GabrielBomb(obj));
 			}
 
 			_ani = ANIMATION_THROW_BOMBS;
@@ -127,7 +127,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		_sendPiratesTime -= elapsedTime;
 		if (_sendPiratesTime <= 0)
 		{
-			actionPlane->addPlaneObject(DBG_NEW GabrielRedTailPirate());
+			GO::addObjectToActionPlane(DBG_NEW GabrielRedTailPirate());
 			_ani = ANIMATION_SEND_PIRATES;
 			_ani->reset();
 			_ani->loopAni = false;
@@ -251,7 +251,7 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 			obj.y += 56;
 		}
 
-		actionPlane->addPlaneObject(DBG_NEW CannonBall(obj));
+		GO::addObjectToActionPlane(DBG_NEW CannonBall(obj));
 
 		operateCannon = false;
 		GabrielChangeSwitch = true;
@@ -308,7 +308,7 @@ void GabrielCannonButton::Logic(uint32_t elapsedTime)
 	{
 		_ani = _idle;
 	}
-	else if (player->GetRect().intersects(_objRc) || player->GetAttackRect().first.intersects(_objRc))
+	else if (GO::getPlayerRect().intersects(_objRc) || GO::getPlayerAttackRect().first.intersects(_objRc))
 	{
 		_ani = _pressed;
 		riseCannon = true;
@@ -350,7 +350,7 @@ void GabrielRedTailPirate::stopFalling(float collisionSize)
 		obj.minX = 42560;
 		obj.maxX = 43200;
 		obj.imageSet = "LEVEL_REDTAILPIRATE";
-		actionPlane->addPlaneObject(DBG_NEW RedTailPirate(obj, true));
+		GO::addObjectToActionPlane(DBG_NEW RedTailPirate(obj, true));
 
 		removeObject = true;
 	}

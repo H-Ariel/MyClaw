@@ -1,6 +1,7 @@
 #include "Wolvington.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "../Objects/EnemyProjectile.h"
+#include "../Objects/ClawProjectile.h"
 
 
 #define ANIMATION_WALK		_animations.at("FASTADVANCE")
@@ -29,7 +30,7 @@ void Wolvington::Logic(uint32_t elapsedTime)
 		_ani = ANIMATION_JUMPBACK;
 
 		speed.y = -(0.64f - 75 * GRAVITY); // see LeRauex ...
-		speed.x = (position.x < player->position.x) ? -0.35f : 0.35f;
+		speed.x = (position.x < GO::getPlayerPosition().x) ? -0.35f : 0.35f;
 
 		_isAttack = false;
 		_canJump = false;
@@ -61,9 +62,9 @@ void Wolvington::Logic(uint32_t elapsedTime)
 		_isMirrored = speed.x < 0;
 	}
 
-	if (_ani != ANIMATION_JUMPBACK && abs(player->position.x - position.x) > 64)
+	if (_ani != ANIMATION_JUMPBACK && abs(GO::getPlayerPosition().x - position.x) > 64)
 	{
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 		if (!_isMirrored) speed.x = abs(speed.x);
 		else speed.x = -abs(speed.x);
 	}
@@ -193,11 +194,11 @@ void Wolvington::makeAttack(float deltaX, float deltaY)
 {
 	if (deltaX < 64) // CC is close to W
 	{
-		if (player->isDuck()) _ani = ANIMATION_STRIKE1;
+		if (GO::isPlayerDuck()) _ani = ANIMATION_STRIKE1;
 		else _ani = ANIMATION_STRIKE2;
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 
 		_attackRest = 700;
 
@@ -213,7 +214,7 @@ void Wolvington::makeAttack(float deltaX, float deltaY)
 			obj.speedX = (!_isMirrored) ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 20;
 
-			if (player->isDuck()) {
+			if (GO::isPlayerDuck()) {
 				_ani = ANIMATION_STRIKE4;
 				obj.y += 30;
 			}
@@ -222,9 +223,9 @@ void Wolvington::makeAttack(float deltaX, float deltaY)
 
 			_ani->reset();
 			_isAttack = true;
-			_isMirrored = player->position.x < position.x;
+			_isMirrored = GO::getPlayerPosition().x < position.x;
 
-			actionPlane->addPlaneObject(DBG_NEW EnemyProjectile(obj, "LEVEL_WOLVINGTONMAGIC"));
+			GO::addObjectToActionPlane(DBG_NEW EnemyProjectile(obj, "LEVEL_WOLVINGTONMAGIC"));
 
 			_attackRest = 1500;
 
@@ -234,7 +235,7 @@ void Wolvington::makeAttack(float deltaX, float deltaY)
 }
 bool Wolvington::checkForHurts()
 {
-	for (Projectile* p : actionPlane->getProjectiles())
+	for (Projectile* p : GO::getActionPlaneProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{

@@ -1,6 +1,7 @@
 #include "ClawLevelEngine.h"
 #include "ActionPlane.h"
 #include "CheatsManager.h"
+#include "GlobalObjects.h"
 #include "GameEngine/WindowManager.h"
 #include "Menu/LevelEndEngine.h"
 #include "Menu/MenuEngine.h"
@@ -9,7 +10,7 @@
 #define SCREEN_SPEED 0.5f // speed of the screen when CC is died or teleported
 #define CC_FALLDEATH_SPEED 0.7f // speed of CC when he falls out the window
 
-#define player BasePlaneObject::player
+#define player GO::player
 
 
 ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber, ClawLevelEngine* clawLevelEngine)
@@ -51,102 +52,102 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	init();
 
 #ifdef _DEBUG
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 3586, 4859 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 8537, 4430 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 17485, 1500 }; // END OF LEVEL
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 5775, 4347 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 9696, 772 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 5226, 4035 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 2596, 4155 };
-		if (levelNumber == 1) BasePlaneObject::player->position = { 4400, 4347 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 11039, 1851 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 2567, 4388 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 3123, 4219 };
-	//	if (levelNumber == 1) BasePlaneObject::player->position = { 9841, 4612 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 3586, 4859 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 8537, 4430 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 17485, 1500 }; // END OF LEVEL
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 5775, 4347 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 9696, 772 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 5226, 4035 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 2596, 4155 };
+		if (levelNumber == 1) GO::GO::getPlayerPosition() = { 4400, 4347 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 11039, 1851 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 2567, 4388 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 3123, 4219 };
+	//	if (levelNumber == 1) GO::GO::getPlayerPosition() = { 9841, 4612 };
 
-	//	if (levelNumber == 2) BasePlaneObject::player->position = { 9196, 3958 };
-	//	if (levelNumber == 2) BasePlaneObject::player->position = { 16734, 1542 };
-	//	if (levelNumber == 2) BasePlaneObject::player->position = { 10881, 3382 };
-	//	if (levelNumber == 2) BasePlaneObject::player->position = { 593, 4086 };
-	//	if (levelNumber == 2) BasePlaneObject::player->position = { 17044, 3062 };
-	//	if (levelNumber == 2) BasePlaneObject::player->position = { 4596, 3958 };
-	if (levelNumber == 2) BasePlaneObject::player->position = { 20070, 2092 }; // END OF LEVEL
+	//	if (levelNumber == 2) GO::GO::getPlayerPosition() = { 9196, 3958 };
+	//	if (levelNumber == 2) GO::GO::getPlayerPosition() = { 16734, 1542 };
+	//	if (levelNumber == 2) GO::GO::getPlayerPosition() = { 10881, 3382 };
+	//	if (levelNumber == 2) GO::GO::getPlayerPosition() = { 593, 4086 };
+	//	if (levelNumber == 2) GO::GO::getPlayerPosition() = { 17044, 3062 };
+	//	if (levelNumber == 2) GO::GO::getPlayerPosition() = { 4596, 3958 };
+	if (levelNumber == 2) GO::GO::getPlayerPosition() = { 20070, 2092 }; // END OF LEVEL
 
-	//if (levelNumber == 3) BasePlaneObject::player->position = { 23072, 6141 }; // ALMOST END OF LEVEL
-	//	if (levelNumber == 3) BasePlaneObject::player->position = { 6080, 6224 };
-	//	if (levelNumber == 3) BasePlaneObject::player->position = { 2396, 1168 };
-	//	if (levelNumber == 3) BasePlaneObject::player->position = { 2201, 10756 };
-	//	if (levelNumber == 3) BasePlaneObject::player->position = { 9693, 8528 };
-	//	if (levelNumber == 3) BasePlaneObject::player->position = { 12289, 8144 };
-	//	if (levelNumber == 3) BasePlaneObject::player->position = { 11054, 8720 };
+	//if (levelNumber == 3) GO::GO::getPlayerPosition() = { 23072, 6141 }; // ALMOST END OF LEVEL
+	//	if (levelNumber == 3) GO::GO::getPlayerPosition() = { 6080, 6224 };
+	//	if (levelNumber == 3) GO::GO::getPlayerPosition() = { 2396, 1168 };
+	//	if (levelNumber == 3) GO::GO::getPlayerPosition() = { 2201, 10756 };
+	//	if (levelNumber == 3) GO::GO::getPlayerPosition() = { 9693, 8528 };
+	//	if (levelNumber == 3) GO::GO::getPlayerPosition() = { 12289, 8144 };
+	//	if (levelNumber == 3) GO::GO::getPlayerPosition() = { 11054, 8720 };
 
-	//	if (levelNumber == 4) BasePlaneObject::player->position = { 3127, 5024 };
-	//	if (levelNumber == 4) BasePlaneObject::player->position = { 3902, 4192 };
-	//	if (levelNumber == 4) BasePlaneObject::player->position = { 14500, 1464 }; // ALMOST END OF LEVEL
-	if (levelNumber == 4) BasePlaneObject::player->position = { 16010, 1464 }; // END OF LEVEL
-	//	if (levelNumber == 4) BasePlaneObject::player->position = { 3902, 4192 };
-	//	if (levelNumber == 4) BasePlaneObject::player->position = { 3909, 4832 };
+	//	if (levelNumber == 4) GO::GO::getPlayerPosition() = { 3127, 5024 };
+	//	if (levelNumber == 4) GO::GO::getPlayerPosition() = { 3902, 4192 };
+	//	if (levelNumber == 4) GO::GO::getPlayerPosition() = { 14500, 1464 }; // ALMOST END OF LEVEL
+	if (levelNumber == 4) GO::GO::getPlayerPosition() = { 16010, 1464 }; // END OF LEVEL
+	//	if (levelNumber == 4) GO::GO::getPlayerPosition() = { 3902, 4192 };
+	//	if (levelNumber == 4) GO::GO::getPlayerPosition() = { 3909, 4832 };
 
-	if (levelNumber == 5) BasePlaneObject::player->position = { 9981, 3616 };
-	//	if (levelNumber == 5) BasePlaneObject::player->position = { 2620, 2848 };
-	//	if (levelNumber == 5) BasePlaneObject::player->position = { 7189, 3488 };
-	//	if (levelNumber == 5) BasePlaneObject::player->position = { 19041, 4511 };
-	//	if (levelNumber == 5) BasePlaneObject::player->position = { 6726, 2806 };
+	if (levelNumber == 5) GO::GO::getPlayerPosition() = { 9981, 3616 };
+	//	if (levelNumber == 5) GO::GO::getPlayerPosition() = { 2620, 2848 };
+	//	if (levelNumber == 5) GO::GO::getPlayerPosition() = { 7189, 3488 };
+	//	if (levelNumber == 5) GO::GO::getPlayerPosition() = { 19041, 4511 };
+	//	if (levelNumber == 5) GO::GO::getPlayerPosition() = { 6726, 2806 };
 
-	//	if (levelNumber == 6) BasePlaneObject::player->position = { 2676, 5878 };
-	//	if (levelNumber == 6) BasePlaneObject::player->position = { 2036, 5878 };
-	if (levelNumber == 6) BasePlaneObject::player->position = { 30685, 4179 }; // END OF LEVEL
+	//	if (levelNumber == 6) GO::GO::getPlayerPosition() = { 2676, 5878 };
+	//	if (levelNumber == 6) GO::GO::getPlayerPosition() = { 2036, 5878 };
+	if (levelNumber == 6) GO::GO::getPlayerPosition() = { 30685, 4179 }; // END OF LEVEL
 
-	//	if (levelNumber == 7) BasePlaneObject::player->position = { 3428, 7254 };
-	//	if (levelNumber == 7) BasePlaneObject::player->position = { 10203, 7388 };
-	//	if (levelNumber == 7) BasePlaneObject::player->position = { 12316, 7388 };
-	//	if (levelNumber == 7) BasePlaneObject::player->position = { 15419, 7388 };
-	if (levelNumber == 7) BasePlaneObject::player->position = { 25856, 6876 };
-	//	if (levelNumber == 7) BasePlaneObject::player->position = { 25210, 7196 };
+	//	if (levelNumber == 7) GO::GO::getPlayerPosition() = { 3428, 7254 };
+	//	if (levelNumber == 7) GO::GO::getPlayerPosition() = { 10203, 7388 };
+	//	if (levelNumber == 7) GO::GO::getPlayerPosition() = { 12316, 7388 };
+	//	if (levelNumber == 7) GO::GO::getPlayerPosition() = { 15419, 7388 };
+	if (levelNumber == 7) GO::GO::getPlayerPosition() = { 25856, 6876 };
+	//	if (levelNumber == 7) GO::GO::getPlayerPosition() = { 25210, 7196 };
 
-	//	if (levelNumber == 8) BasePlaneObject::player->position = { 4466, 5039 };
-	//	if (levelNumber == 8) BasePlaneObject::player->position = { 6160, 5232 };
-	if (levelNumber == 8) BasePlaneObject::player->position = { 31535, 5267 }; // END OF LEVEL
-	//	if (levelNumber == 8) BasePlaneObject::player->position = { 9225, 5533 };
-	//	if (levelNumber == 8) BasePlaneObject::player->position = { 7153, 5725 };
+	//	if (levelNumber == 8) GO::GO::getPlayerPosition() = { 4466, 5039 };
+	//	if (levelNumber == 8) GO::GO::getPlayerPosition() = { 6160, 5232 };
+	if (levelNumber == 8) GO::GO::getPlayerPosition() = { 31535, 5267 }; // END OF LEVEL
+	//	if (levelNumber == 8) GO::GO::getPlayerPosition() = { 9225, 5533 };
+	//	if (levelNumber == 8) GO::GO::getPlayerPosition() = { 7153, 5725 };
 
-	//	if (levelNumber == 9) BasePlaneObject::player->position = { 5210, 7776 };
-	//	if (levelNumber == 9) BasePlaneObject::player->position = { 4220, 6484 };
-	if (levelNumber == 9) BasePlaneObject::player->position = { 4699, 6548 };
-	//	if (levelNumber == 9) BasePlaneObject::player->position = { 8375, 6046};
-	//	if (levelNumber == 9) BasePlaneObject::player->position = { 7828, 7772 };
-	//	if (levelNumber == 9) BasePlaneObject::player->position = { 1609, 7252 };
-	//	if (levelNumber == 9) BasePlaneObject::player->position = { 4800, 6590 };
-	//	if (levelNumber == 9) BasePlaneObject::player->position = { 4639, 5972 };
-	//	if (levelNumber == 9) BasePlaneObject::player->position = { 6756-32, 7640 };
+	//	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 5210, 7776 };
+	//	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 4220, 6484 };
+	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 4699, 6548 };
+	//	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 8375, 6046};
+	//	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 7828, 7772 };
+	//	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 1609, 7252 };
+	//	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 4800, 6590 };
+	//	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 4639, 5972 };
+	//	if (levelNumber == 9) GO::GO::getPlayerPosition() = { 6756-32, 7640 };
 
-	if (levelNumber == 10) BasePlaneObject::player->position = { 32368, 7769 }; // END OF LEVEL
+	if (levelNumber == 10) GO::GO::getPlayerPosition() = { 32368, 7769 }; // END OF LEVEL
 
-	//	if (levelNumber == 11) BasePlaneObject::player->position = { 5116, 1360 };
-	//	if (levelNumber == 11) BasePlaneObject::player->position = { 3616, 1486 };
-	//	if (levelNumber == 11) BasePlaneObject::player->position = { 13350, 1119 };
-	//	if (levelNumber == 11) BasePlaneObject::player->position = { 6837, 1360 };
-	if (levelNumber == 11) BasePlaneObject::player->position = { 6067, 1452 };
+	//	if (levelNumber == 11) GO::GO::getPlayerPosition() = { 5116, 1360 };
+	//	if (levelNumber == 11) GO::GO::getPlayerPosition() = { 3616, 1486 };
+	//	if (levelNumber == 11) GO::GO::getPlayerPosition() = { 13350, 1119 };
+	//	if (levelNumber == 11) GO::GO::getPlayerPosition() = { 6837, 1360 };
+	if (levelNumber == 11) GO::GO::getPlayerPosition() = { 6067, 1452 };
 
-	//	if (levelNumber == 12) BasePlaneObject::player->position = { 7456, 2962 };
-	//	if (levelNumber == 12) BasePlaneObject::player->position = { 5986, 3091 };
-	//	if (levelNumber == 12) BasePlaneObject::player->position = { 11454, 3159 };
-	//	if (levelNumber == 12) BasePlaneObject::player->position = { 5839, 3608 };
-	if (levelNumber == 12) BasePlaneObject::player->position = { 36324, 2072 }; // END OF LEVEL
+	//	if (levelNumber == 12) GO::GO::getPlayerPosition() = { 7456, 2962 };
+	//	if (levelNumber == 12) GO::GO::getPlayerPosition() = { 5986, 3091 };
+	//	if (levelNumber == 12) GO::GO::getPlayerPosition() = { 11454, 3159 };
+	//	if (levelNumber == 12) GO::GO::getPlayerPosition() = { 5839, 3608 };
+	if (levelNumber == 12) GO::GO::getPlayerPosition() = { 36324, 2072 }; // END OF LEVEL
 
-	//	if (levelNumber == 13) BasePlaneObject::player->position = { 18159, 2543 };
-	if (levelNumber == 13) BasePlaneObject::player->position = { 32938, 2267 }; // END OF LEVEL
-	//	if (levelNumber == 13) BasePlaneObject::player->position = { 33002, 2267 }; // GOTO BOSS
+	//	if (levelNumber == 13) GO::GO::getPlayerPosition() = { 18159, 2543 };
+	if (levelNumber == 13) GO::GO::getPlayerPosition() = { 32938, 2267 }; // END OF LEVEL
+	//	if (levelNumber == 13) GO::GO::getPlayerPosition() = { 33002, 2267 }; // GOTO BOSS
 
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 22852, 2421 };
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 22477, 2244 };
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 3104, 3311 };
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 31043, 2317 }; // END OF LEVEL
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 41194, 1964 }; // in boss
-		if (levelNumber == 14) BasePlaneObject::player->position = { 2858, 3371 };
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 8004, 2482 };
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 31137, 2348 }; // GOTO BOSS
-	//	if (levelNumber == 14) BasePlaneObject::player->position = { 7270, 4140 };
+	//	if (levelNumber == 14) GO::GO::getPlayerPosition() = { 22852, 2421 };
+	//	if (levelNumber == 14) GO::GO::getPlayerPosition() = { 22477, 2244 };
+	//	if (levelNumber == 14) GO::GO::getPlayerPosition() = { 3104, 3311 };
+	//	if (levelNumber == 14) GO::GO::getPlayerPosition() = { 31043, 2317 }; // END OF LEVEL
+	//	if (levelNumber == 14) GO::GO::getPlayerPosition() = { 41194, 1964 }; // in boss
+		if (levelNumber == 14) GO::GO::getPlayerPosition() = { 2858, 3371 };
+	//	if (levelNumber == 14) GO::GO::getPlayerPosition() = { 8004, 2482 };
+	//	if (levelNumber == 14) GO::GO::getPlayerPosition() = { 31137, 2348 }; // GOTO BOSS
+	//	if (levelNumber == 14) GO::GO::getPlayerPosition() = { 7270, 4140 };
 #endif
 }
 ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
@@ -223,9 +224,9 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 
 
 	case States::DeathFall:
-		player->position.y += CC_FALLDEATH_SPEED * elapsedTime;
+		GO::getPlayerPosition().y += CC_FALLDEATH_SPEED * elapsedTime;
 		player->Logic(0); // update position of animation
-		if (player->position.y - _fields->actionPlane->position.y > WindowManager::getCameraSize().height)
+		if (GO::getPlayerPosition().y - _fields->actionPlane->position.y > WindowManager::getCameraSize().height)
 		{
 			player->loseLife();
 			_holeRadius = initialHoleRadius;
@@ -264,7 +265,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
 		if (_wrapCoverTop <= 0)
 		{
-			player->position = _wrapDestination;
+			GO::getPlayerPosition() = _wrapDestination;
 			player->speed = {}; // stop player
 			if (_isBossWarp)
 			{
@@ -310,7 +311,7 @@ void ClawLevelEngine::Draw()
 	{
 	case States::DeathClose:
 	case States::DeathOpen:
-		WindowManager::drawHole(player->position, _holeRadius);
+		WindowManager::drawHole(GO::getPlayerPosition(), _holeRadius);
 		break;
 
 	case States::WrapClose:
@@ -330,7 +331,7 @@ void ClawLevelEngine::Draw()
 
 void ClawLevelEngine::OnKeyUp(int key)
 {
-	BasePlaneObject::cheats->addKey(key);
+	GO::cheats->addKey(key);
 
 	switch (key)
 	{

@@ -1,5 +1,5 @@
 #include "Fish.h"
-#include "../Objects/Player.h"
+#include "../GlobalObjects.h"
 
 
 #define ANIMATION_JUMP		_animations.at("JUMP")
@@ -83,6 +83,6 @@ void Fish::makeAttack(float deltaX, float deltaY)
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 	}
 }

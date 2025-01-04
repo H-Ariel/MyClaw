@@ -1,5 +1,5 @@
 #include "TProjectilesShooter.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "EnemyProjectile.h"
 
 
@@ -57,7 +57,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 	if (_restTime > 0)
 		_restTime -= elapsedTime;
 
-	if (_restTime <= 0 && _objRc.intersects(player->GetRect()))
+	if (_restTime <= 0 && _objRc.intersects(GO::getPlayerRect()))
 	{
 		_ani->updateFrames = true;
 	}
@@ -74,7 +74,7 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 	else if (_shootIndex == _ani->getFrameNumber() && !_projIsOut)
 	{
 		// shoot at middle of animation
-		actionPlane->addPlaneObject(DBG_NEW TProjectile(_projectileAni->getCopy(),
+		GO::addObjectToActionPlane(DBG_NEW TProjectile(_projectileAni->getCopy(),
 			_damage, _projSpeed, { position.x + _offset.x, position.y + _offset.y }));
 		_projIsOut = true;
 	}

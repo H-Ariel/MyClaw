@@ -1,4 +1,5 @@
 #include "ActionPlane.h"
+#include "GlobalObjects.h"
 #include "PhysicsManager.h"
 #include "GameEngine/WindowManager.h"
 #include "Objects/ActionPlaneMessage.h"
@@ -20,7 +21,6 @@
 #include "Objects/CrabNest.h"
 #include "Objects/TProjectilesShooter.h"
 #include "Objects/FloorSpike.h"
-#include "Objects/GooVent.h"
 #include "Objects/Laser.h"
 #include "Objects/Stalactite.h"
 #include "Objects/LavaMouth.h"
@@ -55,8 +55,8 @@
 
 #define SHAKE_TIME 3000 // time of shaking screen (ms)
 
-#define player	BasePlaneObject::player
-#define physics	BasePlaneObject::physics
+#define player	GO::player
+#define physics	GO::physics
 
 #define eraseByValue(vec, val) vec.erase(find(vec.begin(), vec.end(), val))
 
@@ -77,7 +77,7 @@ ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane, ClawLevelEngine* cEngi
 	cEngine(cEngine)
 {
 	//if (BasePlaneObject::actionPlane) LOG("[Warning] ActionPlane already exists\n"); // should never happen
-	BasePlaneObject::actionPlane = this;
+	GO::actionPlane = this;
 }
 
 ActionPlane::~ActionPlane()
@@ -90,7 +90,7 @@ ActionPlane::~ActionPlane()
 		delete i;
 
 	// because it static member and we don't want recycle objects...
-	BasePlaneObject::actionPlane = nullptr;
+	GO::actionPlane = nullptr;
 }
 
 void ActionPlane::init()

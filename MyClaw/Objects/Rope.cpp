@@ -1,5 +1,6 @@
 #include "Rope.h"
 #include "Player.h"
+#include "../GlobalObjects.h"
 #include "../CheatsManager.h"
 
 
@@ -48,23 +49,23 @@ void Rope::Logic(uint32_t elapsedTime)
 	_edgePos.x = position.x + offset.x;
 	_edgePos.y = position.y + offset.y;
 
-	if (!player->isJumping() && player->GetRect().intersects(GetRect()) && !cheats->isFlying())
+	if (!GO::player->isJumping() && GO::getPlayerRect().intersects(GetRect()) && !GO::cheats->isFlying())
 	{
-		player->rope = this;
+		GO::player->rope = this;
 	}
 
-	if (player->rope == this)
+	if (GO::player->rope == this)
 	{
-		player->position.x = _edgePos.x;
-		player->position.y = _edgePos.y;
+		GO::getPlayerPosition().x = _edgePos.x;
+		GO::getPlayerPosition().y = _edgePos.y;
 
-		if (player->isMirrored())
+		if (GO::player->isMirrored())
 		{
-			player->position.x -= 2 * RECT_OFFSET;
+			GO::getPlayerPosition().x -= 2 * RECT_OFFSET;
 		}
 		else
 		{
-			player->position.x += 2 * RECT_OFFSET;
+			GO::getPlayerPosition().x += 2 * RECT_OFFSET;
 		}
 	}
 }

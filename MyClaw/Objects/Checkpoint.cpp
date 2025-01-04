@@ -1,4 +1,5 @@
 #include "Checkpoint.h"
+#include "../GlobalObjects.h"
 #include "../ActionPlane.h"
 
 
@@ -21,20 +22,20 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 	{
 	case States::Down:
 		// check if Claw touch the flag
-		if (_objRc.intersects(player->GetRect()))
+		if (_objRc.intersects(GO::getPlayerRect()))
 		{
 			_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/CHECKPOINT/RISE.ANI", _imageSetPath);
 			_state = States::Rise;
-			player->startPosition = position;
+			GO::player->startPosition = position;
 
 			if (_superCheckpoint && !_isSaved)
 			{
-				SavedDataManager::GameData data = player->getGameData();
+				SavedDataManager::GameData data = GO::player->getGameData();
 				data.level = _levelNumber;
 				data.savePoint = (SavedDataManager::SavePoints)_superCheckpoint;
 				SavedDataManager::instance.saveGame(data);
 				_isSaved = true;
-				actionPlane->writeMessage("Your game has been saved");
+				GO::actionPlane->writeMessage("Your game has been saved");
 			}
 		}
 		break;

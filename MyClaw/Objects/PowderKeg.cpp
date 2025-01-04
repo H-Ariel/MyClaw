@@ -1,6 +1,6 @@
 #include "PowderKeg.h"
 #include "Projectile.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 
 
 PowderKeg::PowderKeg(const WwdObject& obj)
@@ -115,7 +115,7 @@ bool PowderKeg::shouldMakeExplos()
 		Rectangle2D thisRc = GetRect();
 		bool isClawBullet;
 
-		for (Projectile* p : actionPlane->getProjectiles())
+		for (Projectile* p : GO::getActionPlaneProjectiles())
 		{
 			if (
 				((isClawBullet = p->isClawBullet()) // ATTENTION: =, not ==
@@ -127,7 +127,7 @@ bool PowderKeg::shouldMakeExplos()
 				return true;
 			}
 		}
-		for (PowderKeg* p : actionPlane->getPowderKegs())
+		for (PowderKeg* p : GO::getActionPlanePowderKegs())
 		{
 			if (p->_state == State::Explos && thisRc.intersects(p->GetRect()))
 			{

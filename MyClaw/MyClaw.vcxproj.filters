@@ -256,6 +256,9 @@
     <ClCompile Include="Objects\BasePlaneObject.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\ActionPlaneMessage.h">
@@ -488,6 +491,9 @@
     </ClInclude>
     <ClInclude Include="Objects\BasePlaneObject.h">
       <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalObjects.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

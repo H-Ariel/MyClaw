@@ -1,5 +1,5 @@
 #include "EnemyProjectile.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 
 
 EnemyProjectile::EnemyProjectile(const WwdObject& obj, const string& projectileAniDir)
@@ -18,7 +18,7 @@ RatBomb::~RatBomb()
 {
 	if (removeObject)
 	{
-		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_RATBOMB_EXPLODE"));
+		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "LEVEL_RATBOMB_EXPLODE"));
 	}
 }
 
@@ -31,7 +31,7 @@ CrabBomb::~CrabBomb()
 {
 	if (removeObject)
 	{
-		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_CRABBOMB_EXPLODE", "LEVEL_CRABBOMB"));
+		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "LEVEL_CRABBOMB_EXPLODE", "LEVEL_CRABBOMB"));
 	}
 }
 
@@ -44,7 +44,7 @@ GabrielBomb::~GabrielBomb()
 {
 	if (removeObject)
 	{
-		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_GABRIELBOMB_EXPLODE", "LEVEL_GABRIELBOMB"));
+		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "LEVEL_GABRIELBOMB_EXPLODE", "LEVEL_GABRIELBOMB"));
 	}
 }
 void GabrielBomb::Logic(uint32_t elapsedTime)
@@ -72,7 +72,7 @@ MercatTrident::~MercatTrident()
 {
 	if (removeObject)
 	{
-		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "LEVEL_TRIDENTEXPLOSION", "LEVEL_TRIDENT_TRIDENTEXPLOSION"));
+		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "LEVEL_TRIDENTEXPLOSION", "LEVEL_TRIDENT_TRIDENTEXPLOSION"));
 	}
 }
 
@@ -107,7 +107,7 @@ LavahandProjectile::~LavahandProjectile()
 {
 	if (removeObject)
 	{
-		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, "GAME_DYNAMITEEXPLO"));
+		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "GAME_DYNAMITEEXPLO"));
 	}
 }
 void LavahandProjectile::Logic(uint32_t elapsedTime)

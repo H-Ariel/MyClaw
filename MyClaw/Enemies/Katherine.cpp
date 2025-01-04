@@ -1,5 +1,6 @@
 #include "Katherine.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
+#include "../Objects/ClawProjectile.h"
 
 
 #define ANIMATION_WALK		_animations.at("WALK")
@@ -66,9 +67,9 @@ void Katherine::Logic(uint32_t elapsedTime)
 			_isMirrored = speed.x < 0;
 	}
 
-	if (_ani != ANIMATION_FLIP && abs(player->position.x - position.x) > 64)
+	if (_ani != ANIMATION_FLIP && abs(GO::getPlayerPosition().x - position.x) > 64)
 	{
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 		if (_isMirrored) speed.x = -abs(speed.x);
 		else speed.x = abs(speed.x);
 	}
@@ -211,7 +212,7 @@ void Katherine::makeAttack(float deltaX, float deltaY)
 		_ani = ANIMATION_STRIKE2;
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 
 		_attackRest = 800;
 	}
@@ -220,20 +221,20 @@ void Katherine::makeAttack(float deltaX, float deltaY)
 		_ani = ANIMATION_STRIKE1;
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 
 		_attackRest = 1200;
 	}
 }
 bool Katherine::checkForHurts()
 {
-	for (Projectile* p : actionPlane->getProjectiles())
+	for (Projectile* p :GO::getActionPlaneProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{
 			if (_saveCurrRect.intersects(p->GetRect()))
 			{
-				if (player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+				if (GO::isPlayerDuck()) _ani = ANIMATION_BLOCKLOW;
 				else _ani = ANIMATION_BLOCKHIGH;
 				_ani->reset();
 				return false;
@@ -245,7 +246,7 @@ bool Katherine::checkForHurts()
 	{
 		if (_blockClaw)
 		{
-			if (player->isDuck()) _ani = ANIMATION_BLOCKLOW;
+			if (GO::isPlayerDuck()) _ani = ANIMATION_BLOCKLOW;
 			else _ani = ANIMATION_BLOCKHIGH;
 			return false;
 		}

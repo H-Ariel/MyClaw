@@ -1,6 +1,7 @@
 #include "LevelHUD.h"
 #include "GameEngine/WindowManager.h"
 #include "ActionPlane.h"
+#include "GlobalObjects.h"
 
 
 LevelHUD::LevelHUD(ActionPlane* actionPlane)
@@ -42,7 +43,7 @@ void LevelHUD::Draw()
 	rc = _health->GetRect();
 	_health->position = { camSz.width - 32, 20 };
 	_health->Draw();
-	shared_ptr<UIAnimation> ani = _weaponAni[BasePlaneObject::player->getCurrentWeapon()];
+	shared_ptr<UIAnimation> ani = _weaponAni[GO::player->getCurrentWeapon()];
 	rc = ani->GetRect();
 	ani->position = { camSz.width - (rc.right - rc.left) / 2, 50 };
 	ani->Draw();
@@ -50,7 +51,7 @@ void LevelHUD::Draw()
 	_lives->position = { camSz.width - 18, 80 };
 	_lives->Draw();
 
-	float powerupLeftTime = BasePlaneObject::player->getPowerupLeftTime() / 1000.f;
+	float powerupLeftTime = GO::player->getPowerupLeftTime() / 1000.f;
 	if (powerupLeftTime > 0)
 	{
 		_stopwatch->position = { 20, 20 + 30 };
@@ -59,10 +60,10 @@ void LevelHUD::Draw()
 	}
 
 	float posX = camSz.width - 32;
-	drawNumbers(BasePlaneObject::player->getHealth(), 3, _healthNumbers, posX, 17);
-	drawNumbers(BasePlaneObject::player->getWeaponAmount(), 2, _smallNumbers, posX, 52);
-	drawNumbers(BasePlaneObject::player->getLivesAmount(), 1, _smallNumbers, posX, 81);
-	drawNumbers(BasePlaneObject::player->getScore(), 8, _scoreNumbers, 128, 20);
+	drawNumbers(GO::player->getHealth(), 3, _healthNumbers, posX, 17);
+	drawNumbers(GO::player->getWeaponAmount(), 2, _smallNumbers, posX, 52);
+	drawNumbers(GO::player->getLivesAmount(), 1, _smallNumbers, posX, 81);
+	drawNumbers(GO::player->getScore(), 8, _scoreNumbers, 128, 20);
 
 	if (_actionPlane->isInBoss())
 	{

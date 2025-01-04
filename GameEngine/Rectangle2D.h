@@ -6,9 +6,13 @@
 class Rectangle2D : public D2D1_RECT_F
 {
 public:
-	Rectangle2D();
-	Rectangle2D(D2D1_RECT_F rect);
-	Rectangle2D(float left, float top, float right, float bottom);
+	Rectangle2D()
+		: D2D1_RECT_F{ 0, 0, 0, 0 } {}
+	Rectangle2D(D2D1_RECT_F rect)
+		: D2D1_RECT_F{ rect.left, rect.top, rect.right, rect.bottom } {}
+	Rectangle2D(float left, float top, float right, float bottom)
+		: D2D1_RECT_F{ left, top, right, bottom } {}
+
 
 	Rectangle2D getCollision(const Rectangle2D& other) const;
 	void keepSmallest(); // save only the smallest value. the other becaome to 0.

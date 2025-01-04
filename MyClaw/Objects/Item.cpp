@@ -1,5 +1,5 @@
-#include "Item.h"
-#include "../ActionPlane.h"
+#include "Player.h"
+#include "../GlobalObjects.h"
 
 
 const initializer_list<Item::Type> Item::UpdateFramesTypes = {
@@ -76,9 +76,9 @@ void Item::Logic(uint32_t elapsedTime)
 
 		if (!_respawning || _delayBeforeRespawn <= 0)
 		{
-			if (GetRect().intersects(player->GetRect()))
+			if (GetRect().intersects(GO::getPlayerRect()))
 			{
-				if (player->collectItem(this))
+				if (GO::player->collectItem(this))
 				{
 					playItemSound();
 					removeObject = !_respawning;
@@ -364,7 +364,7 @@ Warp::Warp(const WwdObject& obj, int8_t type)
 }
 void Warp::Logic(uint32_t elapsedTime)
 {
-	if (GetRect().intersects(player->GetRect()))
+	if (GetRect().intersects(GO::getPlayerRect()))
 	{
 		removeObject = _oneTimeWarp;
 		playItemSound();

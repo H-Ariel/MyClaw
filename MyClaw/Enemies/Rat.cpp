@@ -1,5 +1,5 @@
 #include "Rat.h"
-#include "../ActionPlane.h"
+#include "../GlobalObjects.h"
 #include "../Objects/EnemyProjectile.h"
 
 
@@ -15,14 +15,14 @@ void Rat::makeAttack(float deltaX, float deltaY)
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;
-		_isMirrored = player->position.x < position.x;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
 
 		WwdObject obj;
 		obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
 		obj.y = (int32_t)position.y - 32;
 		obj.speedX = !_isMirrored ? DEFAULT_PROJECTILE_SPEED : -DEFAULT_PROJECTILE_SPEED;
 		obj.damage = 15;
-		actionPlane->addPlaneObject(DBG_NEW RatBomb(obj));
+		GO::addObjectToActionPlane(DBG_NEW RatBomb(obj));
 	}
 }
 pair<Rectangle2D, int> Rat::GetAttackRect() { return {}; }
@@ -58,7 +58,7 @@ PunkRat::~PunkRat()
 	if (removeObject)
 	{
 		_cannon->_shootDirection = Cannon::NotShoot;
-		actionPlane->addPlaneObject(_cannon);
+		GO::addObjectToActionPlane(_cannon);
 	}
 	else
 	{

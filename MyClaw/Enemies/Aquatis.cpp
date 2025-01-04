@@ -1,6 +1,6 @@
 #include "Aquatis.h"
-#include "../ActionPlane.h"
-#include "../Objects/Item.h"
+#include "../GlobalObjects.h"
+#include "../Objects/ClawProjectile.h"
 
 
 #define ANIMATION_HITHIGH	_animations["HITHIGH"]
@@ -30,7 +30,7 @@ Aquatis::~Aquatis()
 {
 	if (removeObject)
 	{
-		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, ANIMATION_KILLFALL));
+		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, ANIMATION_KILLFALL));
 
 		for (AquatisTentacle* i : AquatisTentaclesList)
 			i->removeObject = true;
@@ -128,7 +128,7 @@ AquatisTentacle::~AquatisTentacle()
 	if (removeObject)
 	{
 		_killfall->reset();
-		actionPlane->addPlaneObject(DBG_NEW OneTimeAnimation(position, _killfall));
+		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, _killfall));
 		AquatisTentaclesList.erase(find(AquatisTentaclesList.begin(), AquatisTentaclesList.end(), this));
 	}
 }
@@ -165,7 +165,7 @@ void AquatisTentacle::Logic(uint32_t elapsedTime)
 			_ani = _idle;
 			_ani->reset();
 			_squeezeRestTime = 1000;
-			player->unsqueeze();
+			GO::unsqueezePlayer();
 		}
 		else if (_ani == _respawn || _ani == _slap)
 		{
@@ -176,7 +176,7 @@ void AquatisTentacle::Logic(uint32_t elapsedTime)
 
 	if (_ani == _idle)
 	{
-		float distance = position.x - player->position.x - 37;
+		float distance = position.x - GO::getPlayerPosition().x - 37;
 		if (-55 <= distance && distance < 40)
 		{
 			_ani = _slap;
@@ -187,12 +187,12 @@ void AquatisTentacle::Logic(uint32_t elapsedTime)
 		{
 			if (_squeezeRestTime <= 0)
 			{
-				if (_ani != _squeeze && !player->isSqueezed())
+				if (_ani != _squeeze && !GO::isPlayerSqueezed())
 				{
 					_ani = _squeeze;
 					_ani->reset();
 					_ani->loopAni = false;
-					player->squeeze({ position.x + 40, position.y - 80 });
+					GO::squeezePlayer({ position.x + 40, position.y - 80 });
 				}
 			}
 			else
@@ -227,10 +227,10 @@ bool AquatisTentacle::checkForHurts()
 
 	if (_ani == _idle || _ani == _slap)
 	{
-		if (checkForHurt(player->GetAttackRect()))
+		if (checkForHurt(GO::getPlayerAttackRect()))
 			return true;
 
-		for (Projectile* p : actionPlane->getProjectiles())
+		for (Projectile* p : GO::getActionPlaneProjectiles())
 		{
 			if (isinstance<ClawProjectile>(p))
 			{
@@ -262,7 +262,7 @@ AquatisCrack::AquatisCrack(const WwdObject& obj)
 }
 void AquatisCrack::Logic(uint32_t elapsedTime)
 {
-	for (Projectile* p : actionPlane->getProjectiles())
+	for (Projectile* p : GO::getActionPlaneProjectiles())
 	{
 		if (p != _lastDynamite && p->isClawDynamite() &&
 			p->getDamage() && _objRc.intersects(p->GetRect()))
