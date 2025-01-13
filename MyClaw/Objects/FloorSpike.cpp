@@ -92,7 +92,7 @@ SawBlade::SawBlade(const WwdObject& obj)
 }
 bool SawBlade::isDamage() const
 {
-	size_t idx = _ani->getFrameNumber(), framesAmount = _ani->getImagesCount();
+	size_t idx = _ani->getFrameNumber(), framesAmount = _ani->getFramesCount();
 	return idx != 0 && idx != framesAmount - 1;
 }
 

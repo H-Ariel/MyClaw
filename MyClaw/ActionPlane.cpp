@@ -118,7 +118,7 @@ void ActionPlane::init()
 	}
 
 	LevelPlane::init();
-	ConveyorBelt::GlobalInit(); // must be after LevelPlane::init()
+	initConveyorBelts(); // must be after LevelPlane::init()
 
 	if (_loadGameData)
 	{
@@ -129,6 +129,23 @@ void ActionPlane::init()
 
 	_levelState = LevelState::Playing;
 	_BossStagerDelay = 0;
+}
+// This function order the belts' animation frames (as sequence for long belts)
+void ActionPlane::initConveyorBelts() {
+	vector<ConveyorBelt*> pConveyorBelts;
+
+	// insert sorted by X position (left to right) beacuse we need to know if there is a belt on the left
+	for (BasePlaneObject* obj : _objects) {
+		if (ConveyorBelt* belt = dynamic_cast<ConveyorBelt*>(obj)) {
+			pConveyorBelts.insert(lower_bound(pConveyorBelts.begin(), pConveyorBelts.end(), belt,
+				[](ConveyorBelt* a, ConveyorBelt* b) { return a->position.x < b->position.x; }), belt);
+		}
+	}
+
+	// update belts' animation frames
+	map<int, map<int, int>> belts; // [y][x] = ani frame number
+	for (ConveyorBelt* b : pConveyorBelts)
+		b->orderAnimation(belts);
 }
 
 void ActionPlane::loadGame(int level, int checkpoint)

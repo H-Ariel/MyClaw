@@ -42,22 +42,26 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 
 		if (_images[_currImgIdx]->elapsedTime >= _images[_currImgIdx]->duration)
 		{
-			_images[_currImgIdx]->soundPlayed = false;
-			_images[_currImgIdx]->elapsedTime = 0;
-			_isFinishAnimation = (_currImgIdx == _images.size() - 1);
-
-			if (_isFinishAnimation)
-			{
-				if (loopAni)
-				{
-					_currImgIdx = 0;
-				}
-			}
-			else
-			{
-				_currImgIdx += 1;
-			}
+			advanceFrame();
 		}
+	}
+}
+void UIAnimation::advanceFrame()
+{
+	_images[_currImgIdx]->soundPlayed = false;
+	_images[_currImgIdx]->elapsedTime = 0;
+	_isFinishAnimation = (_currImgIdx == _images.size() - 1);
+
+	if (_isFinishAnimation)
+	{
+		if (loopAni)
+		{
+			_currImgIdx = 0;
+		}
+	}
+	else
+	{
+		_currImgIdx += 1; // we do not need use modulo because the check of `_isFinishAnimation`
 	}
 }
 void UIAnimation::Draw()

@@ -27,13 +27,14 @@ public:
 	Rectangle2D GetRect() override;
 
 	void reset(); // reset to the first frame
+	void advanceFrame();
 
 	shared_ptr<UIAnimation> getCopy() const { return make_shared<UIAnimation>(getImagesList()); }
 	vector<FrameData*> getImagesList() const; // return a copy of the images list. WARNING: you should release that memory
 	size_t getTotalDuration() const;
-	size_t getImagesCount() const { return _images.size(); }
+	size_t getFramesCount() const { return _images.size(); }
 	size_t getFrameNumber() const { return _currImgIdx; }
-	float getFramesProgress() const { return (float)getFrameNumber() / getImagesCount(); } // returns frames progress ratio
+	float getFramesProgress() const { return (float)getFrameNumber() / getFramesCount(); } // returns frames progress ratio
 	bool isFinishAnimation() const { return _isFinishAnimation; } // return if we finish the animation loop
 	bool isPassedHalf() const { return _currImgIdx >= _images.size() / 2; }
 
