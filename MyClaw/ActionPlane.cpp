@@ -67,7 +67,7 @@
 
 #ifdef _DEBUG
 #define NO_ENEMIES
-//#define NO_OBSTACLES
+#define NO_OBSTACLES
 #endif
 
 
@@ -147,9 +147,38 @@ void ActionPlane::initConveyorBelts() {
 	}
 
 	// update belts' animation frames
-	int i = 0;
-	for (ConveyorBelt* b : pConveyorBelts)
-		b->orderAnimation(i++);
+//	int i = 0;
+//	for (ConveyorBelt* b : pConveyorBelts)
+//		b->orderAnimation(i++);
+
+	//for (ConveyorBelt* b : pConveyorBelts)
+	//	printf("(%3f, %3f)\t", b->position.x, b->position.y);
+
+
+	if (pConveyorBelts.empty())
+		return;
+
+	auto it = pConveyorBelts.begin();
+	ConveyorBelt* prevBelt = *it;
+	++it;
+
+	while (it != pConveyorBelts.end()) {
+		ConveyorBelt* curr = *it;
+
+		while (curr->position.y == prevBelt->position.y &&
+			prevBelt->GetRect().right + 1 == curr->GetRect().left)
+		{
+			if (prevBelt->hasSameMovement(curr)) {
+				prevBelt->extend(curr);
+				curr->removeObject = true; // we do not need it anymore
+			}
+
+			++it;
+			curr = *it;
+		}
+		prevBelt = *it;
+		++it;
+	}
 }
 
 void ActionPlane::loadGame(int level, int checkpoint)

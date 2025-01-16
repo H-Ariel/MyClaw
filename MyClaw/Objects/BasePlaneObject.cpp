@@ -31,7 +31,7 @@ bool BasePlaneObject::tryCatchPlayer()
 {
 	if (GO::player->isFalling())
 	{
-		Rectangle2D colRc = GO::GO::getPlayerRect().getCollision(GetRect());
+		Rectangle2D colRc = GO::getPlayerRect().getCollision(GetRect());
 		float smallestBottom = colRc.getSmallest().bottom;
 		if ((colRc.right > 0 || colRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
 		{

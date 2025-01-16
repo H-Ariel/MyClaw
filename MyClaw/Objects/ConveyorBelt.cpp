@@ -7,7 +7,7 @@
 
 
 ConveyorBelt::ConveyorBelt(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), speed(obj.speed / 1000.f),
+	: BaseStaticPlaneObject(obj), _speed(obj.speed / 1000.f),
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
 	logicZ = DefaultZCoord::Characters + 1;
@@ -15,43 +15,57 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj)
 	if (_canMoveCC) logicZ -= 1; // handle the belts that can move CC first
 	myMemCpy(_objRc, Rectangle2D((float)obj.moveRect.left, (float)obj.moveRect.top,
 		(float)obj.moveRect.right, (float)obj.moveRect.bottom)); // I calc `moveRect` in `LevelPlane::updateObject`
-}
 
-// TODO: maybe combine each row of belts to one ln belt... this will save lot of troubles
+	_animations.push_back(_ani);
+}
 
 void ConveyorBelt::Logic(uint32_t elapsedTime)
 {
-	auto b = [&]() { // changes for `tryCatchPlayer` to found perfect logic
-		//if (GO::player->isFalling())
-		{
-			Rectangle2D colRc = GO::GO::getPlayerRect().getCollision(GetRect());
-			float smallestBottom = colRc.getSmallest().bottom;
-			if ((colRc.right > 0 || colRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
-			{
-				// if player is falling/going to this object - catch him
-				//GO::player->stopFalling(colRc.bottom);
-				return true;
-			}
-		}
-		return false;
-	};
-
-	//if (tryCatchPlayer())
-	if (b())
+	Rectangle2D colRc = GO::getPlayerRect().getCollision(GetRect());
+	float smallestBottom = colRc.getSmallest().bottom;
+	if ((colRc.right > 0 || colRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
 	{
-		if (_canMoveCC)
-			GO::getPlayerPosition().x += speed * elapsedTime;
+		// if player is falling/going to this object - catch him
+		GO::player->conveyorBelt = this;
 	}
 
-	_ani->Logic(elapsedTime);
+	for (auto& a : _animations)
+		a->Logic(elapsedTime);
 }
 
-// This function order the belts' animation frames (as sequence for long
-// belts). `n` indicate the frame-number for each belt so we get sequence
-// for long belts (it comes as refrence from the ActionPlane)
-void ConveyorBelt::orderAnimation(int n) {
+void ConveyorBelt::Draw()
+{
+	D2D1_POINT_2F pos = position;
+	for (auto& a : _animations)
+	{
+		a->position = pos;
+		a->Draw();
+		pos.x += TILE_SIZE;
+	}
+}
+
+bool ConveyorBelt::hasSameMovement(ConveyorBelt* belt) const
+{
+	return this->_canMoveCC == belt->_canMoveCC && this->_speed == belt->_speed;
+}
+
+void ConveyorBelt::extend(ConveyorBelt* belt)
+{
+	myMemCpy(_objRc, Rectangle2D(
+		min(_objRc.left, belt->_objRc.left),
+		min(_objRc.top, belt->_objRc.top),
+		max(_objRc.right, belt->_objRc.right),
+		max(_objRc.bottom, belt->_objRc.bottom)
+	));
+
+	_animations.push_back(belt->_ani);
+
 	int framesCount = (int)_ani->getFramesCount();
-	n = n % framesCount; // keep modulo to repeat animation for sequence
-	if (speed > 0) n = framesCount - n; // reverse animation if needed
-	for (; n > 0; n--) _ani->advanceFrame(); // get to the right frame
+	int n = _animations.size() % framesCount; // keep modulo to repeat animation for sequence
+
+	if (_speed > 0)
+		n = framesCount - n; // reverse animation if needed
+
+	for (; n > 0; n--) // get to the right frame
+		_animations.back()->advanceFrame();
 }

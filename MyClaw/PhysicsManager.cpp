@@ -188,7 +188,7 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj) const
 			if (GO::player->isClimbing())
 			{
 				// set the player position on the ladder easily for the user
-				GO::GO::getPlayerPosition().x = (tileRc.left + tileRc.right) / 2;
+				GO::getPlayerPosition().x = (tileRc.left + tileRc.right) / 2;
 			}
 		}
 	};

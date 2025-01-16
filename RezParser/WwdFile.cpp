@@ -283,7 +283,7 @@ void WapWwd::ReadTileDescriptions(Buffer& inputStream)
  * In level 2 it's necessary to change the tiles for tower-cannons
    so the buullets will not collide with solid tiles.
  * In level 8 it's necessary to change the tiles for death blocks.
- * In levels 5, 9, and 11 it's necessary to change the tiles to
+ * In levels 5, and 11 it's necessary to change the tiles to
    cancel the groud-collision of the player with these tiles.
  * In level 14 it's necessary to change the tiles to cancel the
    groud-collision of projectiles with these tiles (and also to avoid
@@ -310,16 +310,6 @@ void WapWwd::fixTilesDescription()
 				for (size_t i = 703; i < 720; pln.tiles[90][i++] = 184); // set death tiles behind Gabriel's ship
 				break;
 			}
-	}
-	else if (levelNumber == 9)
-	{
-	//	tileDescriptions[103].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	//	tileDescriptions[104].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	//	tileDescriptions[105].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	//	tileDescriptions[106].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	//	tileDescriptions[107].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	//	tileDescriptions[108].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-	//	tileDescriptions[159].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 11)
 	{

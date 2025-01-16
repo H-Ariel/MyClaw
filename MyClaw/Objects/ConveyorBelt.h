@@ -1,21 +1,23 @@
 #pragma once
 
 #include "BasePlaneObject.h"
-#include "GameEngine/WindowManager.h"
+
 
 class ConveyorBelt : public BaseStaticPlaneObject
 {
 public:
 	ConveyorBelt(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
-	void Draw() override {
-		BaseStaticPlaneObject::Draw();
-		WindowManager::drawRect(GetRect(), ColorF::Red,3);
-	}
 
-	void orderAnimation(int n);
+	void Draw() override;
+
+	bool hasSameMovement(ConveyorBelt* belt) const;
+	void extend(ConveyorBelt* belt);
+
+	float getSpeed() const { return _canMoveCC ? _speed : 0; }
 
 private:
-	float speed;
+	vector<shared_ptr<UIAnimation>> _animations; // list of animation for whole belt (sequence)
+	const float _speed;
 	const bool _canMoveCC;
 };

@@ -22,7 +22,7 @@ void GameMainApp::init()
 {
 #ifdef _DEBUG
 //	_pEngine = make_shared<MenuEngine>();
-	_pEngine = make_shared<LevelLoadingEngine>(9);
+	_pEngine = make_shared<LevelLoadingEngine>(3);
 #else
 	_pEngine = make_shared<OpeningScreenEngine>();
 #endif

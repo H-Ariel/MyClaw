@@ -9,6 +9,7 @@
 class Elevator;
 class PowderKeg;
 class Rope;
+class ConveyorBelt;
 class PowerupSparkle;
 
 
@@ -79,6 +80,7 @@ public:
 	D2D1_POINT_2F startPosition;
 	Elevator* elevator; // stores the elevator he is standing on (if any)
 	Rope* rope; // stores the rope he is holding (if any)
+	ConveyorBelt* conveyorBelt; // stores the belt he is standing on (if any)
 
 
 private:

@@ -148,7 +148,7 @@ void Elevator::mainLogic(uint32_t elapsedTime) // logic for every elevator
 
 	if (GO::player->elevator == this)
 	{
-		const Rectangle2D thisRc = GetRect(), playerRc = GO::GO::getPlayerRect();
+		const Rectangle2D thisRc = GetRect(), playerRc = GO::getPlayerRect();
 
 		// if no collision - disable the 'elevator mode' for player
 		if (playerRc.right < thisRc.left || thisRc.right < playerRc.left)

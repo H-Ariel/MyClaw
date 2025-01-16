@@ -4,6 +4,7 @@
 #include "EnemyProjectile.h"
 #include "LavaMouth.h"
 #include "Rope.h"
+#include "ConveyorBelt.h"
 #include "Stalactite.h"
 #include "PowderKeg.h"
 #include "../Enemies/BaseEnemy.h"
@@ -335,6 +336,9 @@ void Player::Logic(uint32_t elapsedTime)
 	else if (goRight) speed.x = speedX;
 	else speed.x = 0;
 
+	if (conveyorBelt)
+		speed.x += conveyorBelt->getSpeed();
+
 	if (inAir && _raisedPowderKeg)
 	{
 		_raisedPowderKeg->fall();
@@ -352,6 +356,7 @@ void Player::Logic(uint32_t elapsedTime)
 			speed.y = -speedYClimb;
 			_isOnLadder = true;
 			elevator = nullptr;
+			conveyorBelt = nullptr;
 		}
 		else if (climbDown)
 		{
@@ -366,6 +371,7 @@ void Player::Logic(uint32_t elapsedTime)
 				speed.y = speedYClimb;
 				_isOnLadder = true;
 				elevator = nullptr;
+				conveyorBelt = nullptr;
 			}
 		}
 		else if (_isOnLadder)
@@ -374,7 +380,7 @@ void Player::Logic(uint32_t elapsedTime)
 		}
 		else
 		{
-			if (elevator == nullptr)
+			if (!elevator)
 			{
 				speed.y += GRAVITY * elapsedTime;
 			}
@@ -837,6 +843,7 @@ void Player::stopMovingLeft(float collisionSize)
 		_leftCollision = true;
 	}
 	elevator = nullptr;
+	conveyorBelt = nullptr;
 }
 void Player::stopMovingRight(float collisionSize)
 {
@@ -850,6 +857,7 @@ void Player::stopMovingRight(float collisionSize)
 		_rightCollision = true;
 	}
 	elevator = nullptr;
+	conveyorBelt = nullptr;
 }
 void Player::whenTouchDeath()
 {
@@ -862,6 +870,7 @@ void Player::jump(float force)
 
 	elevator = nullptr;
 	rope = nullptr;
+	conveyorBelt = nullptr;
 
 	speed.y = -force;
 }
@@ -1027,6 +1036,7 @@ void Player::backToLife()
 	_isAttack = false;
 	elevator = nullptr;
 	rope = nullptr;
+	conveyorBelt = nullptr;
 	_health = 100;
 	if (!cheats->isFlying()) {
 		_aniName = "STAND";
@@ -1317,6 +1327,7 @@ bool Player::cheat(int cheatType)
 		_rightCollision = false;
 		elevator = nullptr;
 		rope = nullptr;
+		conveyorBelt = nullptr;
 		break;
 	}
 
