@@ -19,7 +19,7 @@ public:
 	};
 
 
-	UIAnimation(const vector<FrameData*>& images);
+	UIAnimation(const vector<FrameData*>& frames);
 	~UIAnimation() override;
 
 	void Logic(uint32_t elapsedTime) override;
@@ -29,14 +29,14 @@ public:
 	void reset(); // reset to the first frame
 	void advanceFrame();
 
-	shared_ptr<UIAnimation> getCopy() const { return make_shared<UIAnimation>(getImagesList()); }
-	vector<FrameData*> getImagesList() const; // return a copy of the images list. WARNING: you should release that memory
+	shared_ptr<UIAnimation> getCopy() const { return make_shared<UIAnimation>(getFramesList()); }
+	vector<FrameData*> getFramesList() const; // return a copy of the frames list. WARNING: you should release that memory
 	size_t getTotalDuration() const;
-	size_t getFramesCount() const { return _images.size(); }
-	size_t getFrameNumber() const { return _currImgIdx; }
+	size_t getFramesCount() const { return _frames.size(); }
+	size_t getFrameNumber() const { return _currFrameIdx; }
 	float getFramesProgress() const { return (float)getFrameNumber() / getFramesCount(); } // returns frames progress ratio
 	bool isFinishAnimation() const { return _isFinishAnimation; } // return if we finish the animation loop
-	bool isPassedHalf() const { return _currImgIdx >= _images.size() / 2; }
+	bool isPassedHalf() const { return _currFrameIdx >= _frames.size() / 2; }
 
 
 	float opacity; // value between 0 (transparent) and 1 (opaque)
@@ -48,7 +48,7 @@ public:
 private:
 	void updateImageData() const; // position, mirrored, etc.
 
-	vector<FrameData*> _images;
-	size_t _currImgIdx;
+	vector<FrameData*> _frames;
+	size_t _currFrameIdx;
 	bool _isFinishAnimation;
 };

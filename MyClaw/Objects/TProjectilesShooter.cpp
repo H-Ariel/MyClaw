@@ -45,7 +45,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 
 	vector<UIAnimation::FrameData*> newImgs;
 	newImgs.push_back(DBG_NEW UIAnimation::FrameData(make_shared<UIBaseImage>(nullptr))); // insert empty image at end
-	newImgs += AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getImagesList();
+	newImgs += AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
 	_ani = make_shared<UIAnimation>(newImgs);
 	_ani->updateFrames = false;
 

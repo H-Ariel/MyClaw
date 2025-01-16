@@ -70,7 +70,7 @@ map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirect
 			{
 				if (startsWith(i->first, "STAND") || startsWith(i->first, "IDLE"))
 				{
-					for (UIAnimation::FrameData* f : i->second->getImagesList())
+					for (UIAnimation::FrameData* f : i->second->getFramesList())
 					{
 						if (f->duration == 0)
 							myMemCpy(f->duration, 500U);
@@ -91,7 +91,7 @@ map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirect
 			{
 				if (startsWith(i->first, "DIVE"))
 				{
-					for (UIAnimation::FrameData* f : i->second->getImagesList())
+					for (UIAnimation::FrameData* f : i->second->getFramesList())
 					{
 						if (f->duration == 0)
 							myMemCpy(f->duration, 500U);

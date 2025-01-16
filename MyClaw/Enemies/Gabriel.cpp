@@ -72,10 +72,10 @@ Gabriel::~Gabriel()
 	{
 		GO::addObjectToActionPlane(DBG_NEW DeadGabriel(position,
 			make_shared<UIAnimation>(
-				_animations["KILLFALL1"]->getImagesList() +
-				_animations["KILLFALL2"]->getImagesList() +
-				_animations["KILLFALL3"]->getImagesList() +
-				_animations["KILLFALL4"]->getImagesList()
+				_animations["KILLFALL1"]->getFramesList() +
+				_animations["KILLFALL2"]->getFramesList() +
+				_animations["KILLFALL3"]->getFramesList() +
+				_animations["KILLFALL4"]->getFramesList()
 			),
 			(int)_animations["KILLFALL1"]->getTotalDuration()));
 	}

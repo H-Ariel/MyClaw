@@ -483,53 +483,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 				if (_weaponsAmount[_currWeapon] > 0)
 				{
-					WwdObject obj;
-					obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
-					obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
-
-					switch (_currWeapon)
-					{
-					case ClawProjectile::Types::Pistol:
-						obj.y = (int32_t)(position.y - (duck ? -12 : 16));
-						obj.damage = 8;
-						break;
-
-					case ClawProjectile::Types::Magic:
-						obj.y = (int32_t)(position.y + (duck ? 18 : -6));
-						obj.damage = 25;
-						break;
-
-					case ClawProjectile::Types::Dynamite:
-						// find and calculate perfect speed (don't forget `if (_holdAltTime < 1000) ...`
-
-						obj.x = (int32_t)position.x;
-						obj.y = (int32_t)position.y;
-						obj.damage = 15;
-
-						if (inAir)
-						{
-							obj.speedX = _isMirrored ? -MAX_DYNAMITE_SPEED_X : MAX_DYNAMITE_SPEED_X;
-							obj.speedY = -MAX_DYNAMITE_SPEED_Y / 2;
-						}
-						else
-						{
-							int f = obj.speedX * _holdAltTime / 1000;
-							if (_isMirrored)
-								obj.speedX = max(f, -MAX_DYNAMITE_SPEED_X);
-							else
-								obj.speedX = min(f, MAX_DYNAMITE_SPEED_X);
-							obj.speedY = min(obj.speedY, -MAX_DYNAMITE_SPEED_Y) * _holdAltTime / 1000;
-						}
-
-						break;
-
-					default:
-						throw Exception("no more weapons...");
-					}
-
-					_weaponsAmount[_currWeapon] -= 1;
-					if (inAir) obj.y += 10;
-					GO::addObjectToActionPlane(ClawProjectile::createNew(_currWeapon, obj));
+					useWeapon(duck, inAir);
 				}
 				else
 				{
@@ -595,8 +549,6 @@ void Player::Logic(uint32_t elapsedTime)
 
 		if (_raisedPowderKeg)
 		{
-			//if (isStanding())
-			//	speed.y = 0;
 			_raisedPowderKeg->position.x = position.x;
 			_raisedPowderKeg->position.y = position.y - 104;
 		}
@@ -808,6 +760,56 @@ void Player::calcAttackRect()
 		|| cheats->isSuperStrong()) ? 1000 : damage }; // 1000 so CC defeats even the strongest bosses
 }
 
+void Player::useWeapon(bool duck, bool inAir)
+{
+	WwdObject obj;
+	obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
+	obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
+
+	switch (_currWeapon)
+	{
+	case ClawProjectile::Types::Pistol:
+		obj.y = (int32_t)(position.y - (duck ? -12 : 16));
+		obj.damage = 8;
+		break;
+
+	case ClawProjectile::Types::Magic:
+		obj.y = (int32_t)(position.y + (duck ? 18 : -6));
+		obj.damage = 25;
+		break;
+
+	case ClawProjectile::Types::Dynamite:
+		// find and calculate perfect speed (don't forget `if (_holdAltTime < 1000) ...`
+
+		obj.x = (int32_t)position.x;
+		obj.y = (int32_t)position.y;
+		obj.damage = 15;
+
+		if (inAir)
+		{
+			obj.speedX = _isMirrored ? -MAX_DYNAMITE_SPEED_X : MAX_DYNAMITE_SPEED_X;
+			obj.speedY = -MAX_DYNAMITE_SPEED_Y / 2;
+		}
+		else
+		{
+			int f = obj.speedX * _holdAltTime / 1000;
+			if (_isMirrored)
+				obj.speedX = max(f, -MAX_DYNAMITE_SPEED_X);
+			else
+				obj.speedX = min(f, MAX_DYNAMITE_SPEED_X);
+			obj.speedY = min(obj.speedY, -MAX_DYNAMITE_SPEED_Y) * _holdAltTime / 1000;
+		}
+
+		break;
+
+	default: throw Exception("no more weapons..."); // should never happen
+	}
+
+	_weaponsAmount[_currWeapon] -= 1;
+	if (inAir) obj.y += 10;
+	GO::addObjectToActionPlane(ClawProjectile::createNew(_currWeapon, obj));
+}
+
 void Player::stopFalling(float collisionSize)
 {
 	if (cheats->isFlying()) return;
@@ -933,7 +935,7 @@ bool Player::collectItem(Item* item)
 		case 25000: i = 9; break;
 		}
 
-		vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getImagesList();
+		vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getFramesList();
 		myMemCpy(images[0]->duration, 1000U);
 		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, make_shared<UIAnimation>(images));
 		myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);

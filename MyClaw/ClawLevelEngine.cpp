@@ -29,6 +29,7 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber, ClawLevelEngine* c
 		{
 			_planes.push_back(make_shared<LevelPlane>(_wwd.get(), &wwdPlane));
 		}
+		_planes.back()->init();
 	}
 
 	//if (!actionPlane) throw Exception("no main plane found"); // should never happen
@@ -169,10 +170,8 @@ void ClawLevelEngine::init()
 	_bossWarpX = 0;
 	_gameOverTimeCounter = 0;
 
-	for (shared_ptr<LevelPlane>& pln : _fields->_planes) {
-		pln->init();
+	for (shared_ptr<LevelPlane>& pln : _fields->_planes)
 		_elementsList.push_back(pln.get());
-	}
 	_elementsList.push_back(_fields->_hud);
 
 	WindowManager::setWindowOffset(_fields->actionPlane->position);

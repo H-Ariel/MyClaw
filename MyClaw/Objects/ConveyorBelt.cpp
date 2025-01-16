@@ -1,5 +1,6 @@
 #include "ConveyorBelt.h"
 #include "../GlobalObjects.h"
+#include "Player.h"
 
 
 #define ANIMATION_DURATION 100 // TODO: find perfect value (calc from speed)
@@ -16,9 +17,27 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj)
 		(float)obj.moveRect.right, (float)obj.moveRect.bottom)); // I calc `moveRect` in `LevelPlane::updateObject`
 }
 
+// TODO: maybe combine each row of belts to one ln belt... this will save lot of troubles
+
 void ConveyorBelt::Logic(uint32_t elapsedTime)
 {
-	if (tryCatchPlayer())
+	auto b = [&]() { // changes for `tryCatchPlayer` to found perfect logic
+		//if (GO::player->isFalling())
+		{
+			Rectangle2D colRc = GO::GO::getPlayerRect().getCollision(GetRect());
+			float smallestBottom = colRc.getSmallest().bottom;
+			if ((colRc.right > 0 || colRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
+			{
+				// if player is falling/going to this object - catch him
+				//GO::player->stopFalling(colRc.bottom);
+				return true;
+			}
+		}
+		return false;
+	};
+
+	//if (tryCatchPlayer())
+	if (b())
 	{
 		if (_canMoveCC)
 			GO::getPlayerPosition().x += speed * elapsedTime;
@@ -27,20 +46,12 @@ void ConveyorBelt::Logic(uint32_t elapsedTime)
 	_ani->Logic(elapsedTime);
 }
 
-// This function order the belts' animation frames (as sequence for long belts)
-// The `belts` map contains the frame-number for each belt so we get sequence for long belts.
-// (it comes as refrence from the ActionPlane)
-void ConveyorBelt::orderAnimation(map<int, map<int, int>>& belts) {
+// This function order the belts' animation frames (as sequence for long
+// belts). `n` indicate the frame-number for each belt so we get sequence
+// for long belts (it comes as refrence from the ActionPlane)
+void ConveyorBelt::orderAnimation(int n) {
 	int framesCount = (int)_ani->getFramesCount();
-	int x = (int)position.x / TILE_SIZE, y = (int)position.y / TILE_SIZE;
-
-	// check if we have a belt on the left
-	if (belts[y].count(x - 1) == 0)
-		belts[y][x - 1] = 0; // dafault value
-
-	int n = belts[y][x - 1] + 1; // get the value of left belt plus 1
-	belts[y][x] = n;
-	if (n > framesCount) n = n % framesCount; // loop animation
-	if (speed > 0) n = framesCount - n; // reverse animation
+	n = n % framesCount; // keep modulo to repeat animation for sequence
+	if (speed > 0) n = framesCount - n; // reverse animation if needed
 	for (; n > 0; n--) _ani->advanceFrame(); // get to the right frame
 }

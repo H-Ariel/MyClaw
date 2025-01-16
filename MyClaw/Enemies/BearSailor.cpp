@@ -20,7 +20,7 @@ BearSailor::BearSailor(const WwdObject& obj)
 	// hug animation is too short, so we need to repeat it 3 times
 	vector<UIAnimation::FrameData*> images;
 	for (int i = 0; i < 3; i++)
-		for (UIAnimation::FrameData* frame : ANIMATION_HUG->getImagesList())
+		for (UIAnimation::FrameData* frame : ANIMATION_HUG->getFramesList())
 			images.push_back(frame);
 	ANIMATION_HUG = make_shared<UIAnimation>(images);
 

@@ -92,6 +92,10 @@ static void fixPidOffset(const string& pidPath, int32_t& offsetX, int32_t& offse
 		offsetX -= 2;
 		offsetY -= 1;
 	}
+	// conveyor-belt's animation
+	else if (startsWith(pidPath, "LEVEL9/IMAGES/CONVEY")) {
+		offsetY -= 3;
+	}
 	// shooters from level 14
 	else if (pidPath == "LEVEL14/IMAGES/SHOOTERS/LAUNCHLEFT/002.PID")
 	{

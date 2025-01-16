@@ -10,14 +10,14 @@ UIAnimation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t durati
 }
 
 
-UIAnimation::UIAnimation(const vector<FrameData*>& images)
-	: _images(images)
+UIAnimation::UIAnimation(const vector<FrameData*>& frames)
+	: _frames(frames)
 {
 	reset();
 }
 UIAnimation::~UIAnimation()
 {
-	for (FrameData* i : _images)
+	for (FrameData* i : _frames)
 	{
 		delete i;
 	}
@@ -27,20 +27,20 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 {
 	if (updateFrames)
 	{
-		_images[_currImgIdx]->elapsedTime += elapsedTime;
+		_frames[_currFrameIdx]->elapsedTime += elapsedTime;
 
-		if (!_images[_currImgIdx]->soundKey.empty())
+		if (!_frames[_currFrameIdx]->soundKey.empty())
 		{
-			if (!_images[_currImgIdx]->soundPlayed && !_isFinishAnimation)
+			if (!_frames[_currFrameIdx]->soundPlayed && !_isFinishAnimation)
 			{
 #ifndef _DEBUG // cancel audio in debug mode
-				AudioManager::playWav(_images[_currImgIdx]->soundKey, false);
+				AudioManager::playWav(_frames[_currFrameIdx]->soundKey, false);
 #endif
-				_images[_currImgIdx]->soundPlayed = true;
+				_frames[_currFrameIdx]->soundPlayed = true;
 			}
 		}
 
-		if (_images[_currImgIdx]->elapsedTime >= _images[_currImgIdx]->duration)
+		if (_frames[_currFrameIdx]->elapsedTime >= _frames[_currFrameIdx]->duration)
 		{
 			advanceFrame();
 		}
@@ -48,67 +48,67 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 }
 void UIAnimation::advanceFrame()
 {
-	_images[_currImgIdx]->soundPlayed = false;
-	_images[_currImgIdx]->elapsedTime = 0;
-	_isFinishAnimation = (_currImgIdx == _images.size() - 1);
+	_frames[_currFrameIdx]->soundPlayed = false;
+	_frames[_currFrameIdx]->elapsedTime = 0;
+	_isFinishAnimation = (_currFrameIdx == _frames.size() - 1);
 
 	if (_isFinishAnimation)
 	{
 		if (loopAni)
 		{
-			_currImgIdx = 0;
+			_currFrameIdx = 0;
 		}
 	}
 	else
 	{
-		_currImgIdx += 1; // we do not need use modulo because the check of `_isFinishAnimation`
+		_currFrameIdx += 1; // we do not need use modulo because the check of `_isFinishAnimation`
 	}
 }
 void UIAnimation::Draw()
 {
 	updateImageData();
-	_images[_currImgIdx]->image->Draw();
+	_frames[_currFrameIdx]->image->Draw();
 }
 Rectangle2D UIAnimation::GetRect()
 {
 	updateImageData();
-	return _images[_currImgIdx]->image->GetRect();
+	return _frames[_currFrameIdx]->image->GetRect();
 }
 
 void UIAnimation::updateImageData() const
 {
-	_images[_currImgIdx]->image->position = position;
-	_images[_currImgIdx]->image->mirrored = mirrored;
-	_images[_currImgIdx]->image->upsideDown = upsideDown;
-	_images[_currImgIdx]->image->opacity = opacity;
+	_frames[_currFrameIdx]->image->position = position;
+	_frames[_currFrameIdx]->image->mirrored = mirrored;
+	_frames[_currFrameIdx]->image->upsideDown = upsideDown;
+	_frames[_currFrameIdx]->image->opacity = opacity;
 }
 void UIAnimation::reset()
 {
-	_currImgIdx = 0;
+	_currFrameIdx = 0;
 	_isFinishAnimation = false;
 	mirrored = false;
 	upsideDown = false;
 	updateFrames = true;
 	loopAni = true;
 	opacity = 1;
-	for (FrameData* i : _images)
+	for (FrameData* i : _frames)
 	{
 		i->elapsedTime = 0;
 		i->soundPlayed = false;
 	}
 }
 
-vector<UIAnimation::FrameData*> UIAnimation::getImagesList() const
+vector<UIAnimation::FrameData*> UIAnimation::getFramesList() const
 {
-	vector<FrameData*> newImages;
-	for (FrameData* i : _images)
-		newImages.push_back(DBG_NEW FrameData(i->image->getCopy(), i->duration, i->soundKey));
-	return newImages;
+	vector<FrameData*> newFrames;
+	for (FrameData* i : _frames)
+		newFrames.push_back(DBG_NEW FrameData(i->image->getCopy(), i->duration, i->soundKey));
+	return newFrames;
 }
 size_t UIAnimation::getTotalDuration() const
 {
 	size_t totalDuration = 0;
-	for (FrameData* i : _images)
+	for (FrameData* i : _frames)
 		totalDuration += i->duration;
 	return totalDuration;
 }

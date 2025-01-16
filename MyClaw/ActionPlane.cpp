@@ -134,18 +134,22 @@ void ActionPlane::init()
 void ActionPlane::initConveyorBelts() {
 	vector<ConveyorBelt*> pConveyorBelts;
 
-	// insert sorted by X position (left to right) beacuse we need to know if there is a belt on the left
+	// insert belts in sorted order
 	for (BasePlaneObject* obj : _objects) {
 		if (ConveyorBelt* belt = dynamic_cast<ConveyorBelt*>(obj)) {
 			pConveyorBelts.insert(lower_bound(pConveyorBelts.begin(), pConveyorBelts.end(), belt,
-				[](ConveyorBelt* a, ConveyorBelt* b) { return a->position.x < b->position.x; }), belt);
+				[](ConveyorBelt* a, ConveyorBelt* b) {
+					// ensure belts are sorted first by Y (top to bottom) and then by X (left to right) for accurate adjacency checks
+					return a->position.y < b->position.y ||
+						(a->position.y == b->position.y && a->position.x < b->position.x);
+				}), belt);
 		}
 	}
 
 	// update belts' animation frames
-	map<int, map<int, int>> belts; // [y][x] = ani frame number
+	int i = 0;
 	for (ConveyorBelt* b : pConveyorBelts)
-		b->orderAnimation(belts);
+		b->orderAnimation(i++);
 }
 
 void ActionPlane::loadGame(int level, int checkpoint)

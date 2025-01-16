@@ -313,13 +313,13 @@ void WapWwd::fixTilesDescription()
 	}
 	else if (levelNumber == 9)
 	{
-		tileDescriptions[103].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tileDescriptions[104].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tileDescriptions[105].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tileDescriptions[106].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tileDescriptions[107].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tileDescriptions[108].insideAttrib = WwdTileDescription::TileAttribute_Clear;
-		tileDescriptions[159].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	//	tileDescriptions[103].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	//	tileDescriptions[104].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	//	tileDescriptions[105].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	//	tileDescriptions[106].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	//	tileDescriptions[107].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	//	tileDescriptions[108].insideAttrib = WwdTileDescription::TileAttribute_Clear;
+	//	tileDescriptions[159].insideAttrib = WwdTileDescription::TileAttribute_Clear;
 	}
 	else if (levelNumber == 11)
 	{

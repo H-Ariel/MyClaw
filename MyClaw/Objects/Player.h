@@ -107,6 +107,7 @@ private:
 		int operator[](ClawProjectile::Types type) const;
 	};
 
+	void useWeapon(bool duck, bool inAir);
 	void jump();
 	bool checkForHurts() override; // check for hits from enemies, projectiles, and exploding powder kegs
 	bool isWeaponAnimation() const;
