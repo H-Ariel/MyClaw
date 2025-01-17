@@ -37,7 +37,7 @@ public:
 	int getBossHealth() const { return _boss ? _boss->getHealth() : 0; }
 
 private:
-	void initConveyorBelts();
+	void joinConveyorBelts();
 	void bossStagerLogic(uint32_t elapsedTime);
 
 	enum class LevelState : int8_t

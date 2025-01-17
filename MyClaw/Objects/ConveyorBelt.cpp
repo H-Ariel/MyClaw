@@ -49,6 +49,7 @@ bool ConveyorBelt::hasSameMovement(ConveyorBelt* belt) const
 	return this->_canMoveCC == belt->_canMoveCC && this->_speed == belt->_speed;
 }
 
+// This function connects two belts into one long belt (used in `ActionPlane::joinConveyorBelts`)
 void ConveyorBelt::extend(ConveyorBelt* belt)
 {
 	myMemCpy(_objRc, Rectangle2D(

@@ -7,6 +7,9 @@
 #define SAVE_MAX(a, b) if (a < b) a = (b)
 #define SAVE_MIN(a, b) if (a > b) a = (b)
 
+constexpr float COLLISION_THRESHOLD = 2.0f;
+constexpr float LADDER_TOP_THRESHOLD = 32.0f;
+
 
 PhysicsManager::PhysicsManager(WapWwd* wwd, const LevelPlane* plane)
 {
@@ -33,9 +36,9 @@ PhysicsManager::PhysicsManager(WapWwd* wwd, const LevelPlane* plane)
 			pair<Rectangle2D, uint32_t>& last = _rects.back();
 
 			if (last.second == curr.second &&
-				abs(last.first.top - curr.first.top) <= 2 &&
-				abs(last.first.bottom - curr.first.bottom) <= 2 &&
-				abs(last.first.right - curr.first.left) <= 2)
+				abs(last.first.top - curr.first.top) <= COLLISION_THRESHOLD &&
+				abs(last.first.bottom - curr.first.bottom) <= COLLISION_THRESHOLD &&
+				abs(last.first.right - curr.first.left) <= COLLISION_THRESHOLD)
 			{
 				last.first = Rectangle2D(last.first.left, last.first.top, curr.first.right, last.first.bottom);
 			}
@@ -99,9 +102,9 @@ PhysicsManager::PhysicsManager(WapWwd* wwd, const LevelPlane* plane)
 		for (j = i + 1; j < _rects.size(); j++)
 		{
 			if (_rects[i].second == _rects[j].second &&
-				abs(_rects[i].first.top - _rects[j].first.top) <= 2 &&
-				abs(_rects[i].first.bottom - _rects[j].first.bottom) <= 2 &&
-				abs(_rects[i].first.right - _rects[j].first.left) <= 2)
+				abs(_rects[i].first.top - _rects[j].first.top) <= COLLISION_THRESHOLD &&
+				abs(_rects[i].first.bottom - _rects[j].first.bottom) <= COLLISION_THRESHOLD &&
+				abs(_rects[i].first.right - _rects[j].first.left) <= COLLISION_THRESHOLD)
 			{
 				_rects[i].first = Rectangle2D(_rects[i].first.left, _rects[i].first.top, _rects[j].first.right, _rects[i].first.bottom);
 				_rects.erase(_rects.begin() + j);
@@ -137,7 +140,7 @@ void PhysicsManager::moveX(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) co
 void PhysicsManager::moveY(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const
 {
 	obj->position.y += obj->speed.y * elapsedTime;
-	if (obj->speed.y > 1.5f) obj->speed.y = 1.5f;
+	SAVE_MIN(obj->speed.y, MAX_Y_SPEED);
 	checkCollides(obj);
 }
 void PhysicsManager::move(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const
@@ -175,7 +178,7 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj) const
 	};
 	auto _onLadder = [&]() {
 		// check if object is at the top of the ladder, so it should stay here (and not fall)
-		bool isOnLadderTop = collisionRc.bottom < 32;
+		bool isOnLadderTop = collisionRc.bottom < LADDER_TOP_THRESHOLD;
 		if (isPlayer)
 			isOnLadderTop = !GO::player->isClimbing() && isOnLadderTop;
 
@@ -210,9 +213,9 @@ void PhysicsManager::checkCollides(BaseDynamicPlaneObject* obj) const
 	}
 
 	if (cumulatedCollision.top > 0) obj->bounceTop();
-	else if (cumulatedCollision.bottom > 0) obj->stopFalling(cumulatedCollision.bottom);
-	else if (cumulatedCollision.left > 0) obj->stopMovingLeft(cumulatedCollision.left);
-	else if (cumulatedCollision.right > 0) obj->stopMovingRight(cumulatedCollision.right);
+	if (cumulatedCollision.bottom > 0) obj->stopFalling(cumulatedCollision.bottom);
+	if (cumulatedCollision.left > 0) obj->stopMovingLeft(cumulatedCollision.left);
+	if (cumulatedCollision.right > 0) obj->stopMovingRight(cumulatedCollision.right);
 }
 
 pair<float, float> PhysicsManager::getEnemyRange(D2D1_POINT_2F enemyPos, const float minX, const float maxX) const

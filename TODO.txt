@@ -1,6 +1,7 @@
 + handle setting (low details, etc.)
 + check why memory and CPU usage is too high. maybe there are objects which not free
 + There are too many `static` objects... is that good?
++ use `constexpr` instead of `#define` where possible
 
 - make sure all options works well
 - use trie<T> instead of map<string,T> (end of string contains value T) (should be faster and less memory)

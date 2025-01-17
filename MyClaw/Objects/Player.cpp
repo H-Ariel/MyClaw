@@ -22,7 +22,7 @@
 #define SpeedY_SuperClimb		0.412f
 #define SpeedY_RegularJump		0.800f
 #define SpeedY_SuperJump		0.920f
-#define SpeedY_MAX				1.500f
+#define SpeedY_MAX				MAX_Y_SPEED
 
 #ifdef _DEBUG // move fast in debug mode
 #undef SpeedX_Normal

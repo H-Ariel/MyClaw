@@ -118,7 +118,7 @@ void ActionPlane::init()
 	}
 
 	LevelPlane::init();
-	initConveyorBelts(); // must be after LevelPlane::init()
+	joinConveyorBelts(); // must be after LevelPlane::init()
 
 	if (_loadGameData)
 	{
@@ -130,8 +130,8 @@ void ActionPlane::init()
 	_levelState = LevelState::Playing;
 	_BossStagerDelay = 0;
 }
-// This function order the belts' animation frames (as sequence for long belts)
-void ActionPlane::initConveyorBelts() {
+// This function joins belts into a long belt (saves memory and calculations).
+void ActionPlane::joinConveyorBelts() {
 	vector<ConveyorBelt*> pConveyorBelts;
 
 	// insert belts in sorted order
@@ -146,18 +146,10 @@ void ActionPlane::initConveyorBelts() {
 		}
 	}
 
-	// update belts' animation frames
-//	int i = 0;
-//	for (ConveyorBelt* b : pConveyorBelts)
-//		b->orderAnimation(i++);
-
-	//for (ConveyorBelt* b : pConveyorBelts)
-	//	printf("(%3f, %3f)\t", b->position.x, b->position.y);
-
-
 	if (pConveyorBelts.empty())
 		return;
 
+	// join belts that are next to each other into one
 	auto it = pConveyorBelts.begin();
 	ConveyorBelt* prevBelt = *it;
 	++it;
