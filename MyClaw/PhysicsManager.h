@@ -1,15 +1,12 @@
 #pragma once
 
-#include "Objects/BasePlaneObject.h"
-#include "RezParser/WwdFile.h"
-
-class LevelPlane;
+#include "QuadTree.h"
 
 
 class PhysicsManager
 {
 public:
-	PhysicsManager(WapWwd* wwd, const LevelPlane* plane);
+	PhysicsManager(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions);
 
 	void moveX(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const;
 	void moveY(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const;
@@ -19,4 +16,6 @@ public:
 
 private:
 	vector<pair<Rectangle2D, uint32_t>> _rects; // { rc, WwdTileDescription::WwdTileAttributeFlags }
+
+	QuadTree quadTree; // quad-tree for efficient collision checking
 };

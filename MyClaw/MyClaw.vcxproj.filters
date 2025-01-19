@@ -259,6 +259,9 @@
     <ClCompile Include="GlobalObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="QuadTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\ActionPlaneMessage.h">
@@ -493,6 +496,9 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="GlobalObjects.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadTree.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

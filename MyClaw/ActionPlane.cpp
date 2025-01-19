@@ -66,7 +66,7 @@
 #define ADD_BOSS(p) { _boss = DBG_NEW p; _bossObjects.push_back(_boss); }
 
 #ifdef _DEBUG
-#define NO_ENEMIES
+//#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -101,7 +101,7 @@ void ActionPlane::init()
 	_planeSize.height = (float)TILE_SIZE * _wwdPlane->tilesOnAxisY;
 
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
-	physics = make_shared<PhysicsManager>(_wwd, this); // must be after WWD map loaded and before objects added
+	physics = make_shared<PhysicsManager>(_wwdPlane->tiles, _wwd->tileDescriptions); // must be after WWD map loaded and before objects added
 
 	// player's initializtion must be before LevelPlane::readPlaneObjects() because some of objects need player
 	if (player && player->hasLives()) // if we have player from previous level, we don't need to create new one

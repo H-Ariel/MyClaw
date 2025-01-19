@@ -1,9 +1,15 @@
 #include "Rectangle2D.h"
 
 
+bool Rectangle2D::intersects(const Rectangle2D& other) const {
+	return top < other.bottom
+		&& bottom > other.top
+		&& left < other.right
+		&& right > other.left;
+}
 Rectangle2D Rectangle2D::getCollision(const Rectangle2D& other) const
 {
-	D2D1_RECT_F collision = {};
+	Rectangle2D collision = {};
 
 	if (top < other.bottom && bottom > other.top && left < other.right && right > other.left)
 	{
@@ -68,6 +74,17 @@ void Rectangle2D::keepLargest()
 		bottom = 0;
 		left = 0;
 	}
+}
+
+Rectangle2D Rectangle2D::getSmallest() const {
+	Rectangle2D copy(*this);
+	copy.keepSmallest();
+	return copy;
+}
+Rectangle2D Rectangle2D::getLargest() const {
+	Rectangle2D copy(*this);
+	copy.keepLargest();
+	return copy;
 }
 
 bool Rectangle2D::operator==(const Rectangle2D& other) const

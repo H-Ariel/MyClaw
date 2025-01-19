@@ -22,8 +22,4 @@ protected:
 	WapWwd* _wwd;
 	WwdPlane* _wwdPlane;
 	int maxTileIdxX, maxTileIdxY;
-
-
-	friend class WapWorld;
-	friend class PhysicsManager;
 };
