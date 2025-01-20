@@ -1,27 +1,32 @@
-#include "QuadTree.h"
-#include "GlobalObjects.h"
-#include "Objects/Player.h"
+﻿#include "QuadTree.h"
+#include "../GlobalObjects.h"
+#include "../Objects/Player.h"
 
 
 #define SAVE_MAX(a, b) if (a < b) a = (b)
 #define SAVE_MIN(a, b) if (a > b) a = (b)
+
+// used in `buildTree`
+#define MAKE_SUB_TREE(rect, out) \
+	tmp = DBG_NEW QuadTree(rect); \
+	if (tmp->buildTree(tilesMap, tileDescriptions, recLevel + 1)) out = tmp; \
+	else delete tmp;
 
 constexpr float COLLISION_THRESHOLD = 1.0f;
 constexpr float LADDER_TOP_THRESHOLD = 32.0f;
 constexpr int MAX_TREE_DEPTH = 3;
 
 
-QuadTree::QuadTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions)
-	: QuadTree(tilesMap, tileDescriptions, Rectangle2D(0, 0, (float)tilesMap[0].size()* TILE_SIZE,
-		(float)tilesMap.size()* TILE_SIZE), 0)
+QuadTree::QuadTree(Rectangle2D bounds)
+	: _topLeft(nullptr), _topRight(nullptr), _bottomLeft(nullptr),
+	_bottomRight(nullptr), _bounds(bounds)
 {
 }
-QuadTree::QuadTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions,
-	Rectangle2D bounds, int recLevel)
+QuadTree::QuadTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions)
 	: _topLeft(nullptr), _topRight(nullptr), _bottomLeft(nullptr), _bottomRight(nullptr),
-	_bounds(bounds)
+	_bounds(Rectangle2D(0, 0, (float)tilesMap[0].size() * TILE_SIZE, (float)tilesMap.size() * TILE_SIZE))
 {
-	buildTree(tilesMap, tileDescriptions, recLevel);
+	buildTree(tilesMap, tileDescriptions, 0);
 }
 QuadTree::~QuadTree() {
 	delete _topLeft;
@@ -52,20 +57,17 @@ void QuadTree::checkCollides(BaseDynamicPlaneObject* obj, const Rectangle2D& obj
 
 	// find collisons
 
-	Rectangle2D cumulatedCollision, tileRc, collisionRc;
+	Rectangle2D cumulatedCollision, collisionRc;
 	const bool isPlayer = isinstance<Player>(obj);
 
 	auto _addCollision = [&]() { // add `collisionRect` to the `cumulatedCollision`
-		if (!collisionRc.isEmpty())
-		{
-			// add the collision details to the cummulated collision
-			collisionRc.keepSmallest();
-			SAVE_MAX(cumulatedCollision.top, collisionRc.top);
-			SAVE_MAX(cumulatedCollision.bottom, collisionRc.bottom);
-			SAVE_MAX(cumulatedCollision.left, collisionRc.left);
-			SAVE_MAX(cumulatedCollision.right, collisionRc.right);
-		}
-		};
+		// add the collision details to the cummulated collision
+		collisionRc.keepSmallest();
+		SAVE_MAX(cumulatedCollision.top, collisionRc.top);
+		SAVE_MAX(cumulatedCollision.bottom, collisionRc.bottom);
+		SAVE_MAX(cumulatedCollision.left, collisionRc.left);
+		SAVE_MAX(cumulatedCollision.right, collisionRc.right);
+	};
 	auto _onGround = [&]() {
 		float smallestBottom = collisionRc.getSmallest().bottom;
 		// when object is falling or when CC climb down and arrive to the ground
@@ -74,8 +76,8 @@ void QuadTree::checkCollides(BaseDynamicPlaneObject* obj, const Rectangle2D& obj
 		{
 			_addCollision();
 		}
-		};
-	auto _onLadder = [&]() {
+	};
+	auto _onLadder = [&](const Rectangle2D& tileRc) {
 		// check if object is at the top of the ladder, so it should stay here (and not fall)
 		bool isOnLadderTop = collisionRc.bottom < LADDER_TOP_THRESHOLD;
 		if (isPlayer)
@@ -93,19 +95,18 @@ void QuadTree::checkCollides(BaseDynamicPlaneObject* obj, const Rectangle2D& obj
 				GO::getPlayerPosition().x = (tileRc.left + tileRc.right) / 2;
 			}
 		}
-		};
+	};
 
 	for (const auto& [rect, type] : _rects)
 	{
-		tileRc = rect;
-		collisionRc = objRc.getCollision(tileRc);
-		if (!collisionRc.isEmpty())
+		if (objRc.intersects(rect))
 		{
+			collisionRc = objRc.getCollision(rect);
 			switch (type)
 			{
 			case WwdTileDescription::TileAttribute_Solid: _addCollision(); break;
 			case WwdTileDescription::TileAttribute_Ground: _onGround(); break;
-			case WwdTileDescription::TileAttribute_Climb: _onLadder(); break;
+			case WwdTileDescription::TileAttribute_Climb: _onLadder(rect); break;
 			case WwdTileDescription::TileAttribute_Death: obj->whenTouchDeath(); break;
 			}
 		}
@@ -149,63 +150,46 @@ pair<float, float> QuadTree::getEnemyRange(D2D1_POINT_2F enemyPos, const float m
 
 		return { nleft, nright };
 	}
+	else {
+		Rectangle2D enemyRect(enemyPos.x, enemyPos.y, enemyPos.x, enemyPos.y + 80);
 
-	Rectangle2D enemyRect(enemyPos.x, enemyPos.y, enemyPos.x, enemyPos.y + 80);
-
-	for (const auto& [rect, type] : _rects)
-	{
-		if ((type == WwdTileDescription::TileAttribute_Solid || type == WwdTileDescription::TileAttribute_Ground)
-			&& rect.intersects(enemyRect)) // if enemy walk on solid/ground he has the same bounds
+		for (const auto& [rect, type] : _rects)
 		{
-			float left = rect.left + 32, right = rect.right - 32;
-
-			if (minX != 0 && maxX != 0)
+			if ((type == WwdTileDescription::TileAttribute_Solid || type == WwdTileDescription::TileAttribute_Ground)
+				&& rect.intersects(enemyRect)) // if enemy walk on solid/ground he has the same bounds
 			{
-				SAVE_MAX(left, minX);
-				SAVE_MIN(right, maxX);
+				float left = rect.left + 32, right = rect.right - 32;
+
+				if (minX != 0 && maxX != 0)
+				{
+					SAVE_MAX(left, minX);
+					SAVE_MIN(right, maxX);
+				}
+
+				return { left, right };
 			}
-
-			return { left, right };
 		}
-	}
 
-	return { enemyPos.x - 32, enemyPos.x + 32 };
+		return { enemyPos.x - 32, enemyPos.x + 32 };
+	}
 }
 
-void QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions, int recLevel) {
-	if (recLevel < MAX_TREE_DEPTH)
-	{
-		// find all quads. if quad has no sub-rectangles in it - delete this quads
+bool QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions, int recLevel) {
+	if (recLevel < MAX_TREE_DEPTH) {
+		// find all quads. if quad has no sub-rectangles in it - delete this quads.
 
 		float centerX = (_bounds.left + _bounds.right) / 2;
 		float centerY = (_bounds.top + _bounds.bottom) / 2;
+		QuadTree* tmp;
 
-		_topLeft = DBG_NEW QuadTree(tilesMap, tileDescriptions, Rectangle2D(_bounds.left, _bounds.top, centerX, centerY), recLevel + 1);
-		if (!_topLeft->hasRects()) {
-			delete _topLeft;
-			_topLeft = nullptr;
-		}
+		MAKE_SUB_TREE(Rectangle2D(_bounds.left, _bounds.top, centerX, centerY), _topLeft);
+		MAKE_SUB_TREE(Rectangle2D(centerX, _bounds.top, _bounds.right, centerY), _topRight);
+		MAKE_SUB_TREE(Rectangle2D(_bounds.left, centerY, centerX, _bounds.bottom), _bottomLeft);
+		MAKE_SUB_TREE(Rectangle2D(centerX, centerY, _bounds.right, _bounds.bottom), _bottomRight);
 
-		_topRight = DBG_NEW QuadTree(tilesMap, tileDescriptions, Rectangle2D(centerX, _bounds.top, _bounds.right, centerY), recLevel + 1);
-		if (!_topRight->hasRects()) {
-			delete _topRight;
-			_topRight = nullptr;
-		}
-
-		_bottomLeft = DBG_NEW QuadTree(tilesMap, tileDescriptions, Rectangle2D(_bounds.left, centerY, centerX, _bounds.bottom), recLevel + 1);
-		if (!_bottomLeft->hasRects()) {
-			delete _bottomLeft;
-			_bottomLeft = nullptr;
-		}
-
-		_bottomRight = DBG_NEW QuadTree(tilesMap, tileDescriptions, Rectangle2D(centerX, centerY, _bounds.right, _bounds.bottom), recLevel + 1);
-		if (!_bottomRight->hasRects()) {
-			delete _bottomRight;
-			_bottomRight = nullptr;
-		}
+		return _topLeft || _topRight || _bottomLeft || _bottomRight;
 	}
-	else
-	{
+	else {
 		// fill quad with match rectangles:
 		// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
@@ -219,10 +203,8 @@ void QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, co
 		uint32_t i, j;
 		float x1, x2, y1, y2;
 
-		for (i = startY; i < endY; i++)
-		{
-			for (j = startX; j < endX; j++)
-			{
+		for (i = startY; i < endY; i++) {
+			for (j = startX; j < endX; j++) {
 				if (tilesMap[i][j] == EMPTY_TILE) tileDesc = {};
 				else tileDesc = tileDescriptions[tilesMap[i][j]];
 
@@ -269,10 +251,8 @@ void QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, co
 		// TODO !!! find better merge algorithm
 
 		// this loop combines rectangles that are next to each other (according to x axis)
-		for (i = 0; i < _rects.size(); i++)
-		{
-			for (j = i + 1; j < _rects.size(); j++)
-			{
+		for (i = 0; i < _rects.size(); i++) {
+			for (j = i + 1; j < _rects.size(); j++) {
 				if (_rects[i].second == _rects[j].second &&
 					abs(_rects[i].first.top - _rects[j].first.top) <= COLLISION_THRESHOLD &&
 					abs(_rects[i].first.bottom - _rects[j].first.bottom) <= COLLISION_THRESHOLD &&
@@ -286,10 +266,8 @@ void QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, co
 		}
 
 		// this loop combines rectangles that are next to each other (according to y axis)
-		for (i = 0; i < _rects.size(); i++)
-		{
-			for (j = i + 1; j < _rects.size(); j++)
-			{
+		for (i = 0; i < _rects.size(); i++) {
+			for (j = i + 1; j < _rects.size(); j++) {
 				if (_rects[i].second == _rects[j].second &&
 					abs(_rects[i].first.left - _rects[j].first.left) <= COLLISION_THRESHOLD &&
 					abs(_rects[i].first.right - _rects[j].first.right) <= COLLISION_THRESHOLD &&
@@ -302,8 +280,10 @@ void QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, co
 			}
 		}
 	}
+
+	return !_rects.empty();
 }
-// add rectangle to list if it is not clear and not empty rectangle
+
 void QuadTree::addRect(const Rectangle2D& rc, uint32_t attr) {
 	if (attr != WwdTileDescription::TileAttribute_Clear && rc.left != rc.right && rc.top != rc.bottom)
 	{
@@ -311,17 +291,8 @@ void QuadTree::addRect(const Rectangle2D& rc, uint32_t attr) {
 	}
 }
 
-// returns true if this tree or one of his children contains rectangles (so it is not empty)
-bool QuadTree::hasRects() const {
-	return !_rects.empty()
-		|| (_topLeft && _topLeft->hasRects())
-		|| (_topRight && _topRight->hasRects())
-		|| (_bottomLeft && _bottomLeft->hasRects())
-		|| (_bottomRight && _bottomRight->hasRects());
-}
-
 /*
-void QuadTree::print(string t = "") { // TODO delete this func
+void QuadTree::print(string t) { // TODO delete this func
 	printf("%s{ %.2f, %.2f, %.2f, %.2f }\n", t.c_str(), _bounds.left, _bounds.top, _bounds.right, _bounds.bottom);
 
 	if (isLeaf()) {

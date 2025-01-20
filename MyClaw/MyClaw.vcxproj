@@ -241,8 +241,8 @@
     <ClCompile Include="Objects\Stalactite.cpp" />
     <ClCompile Include="Objects\Statue.cpp" />
     <ClCompile Include="Objects\TProjectilesShooter.cpp" />
-    <ClCompile Include="PhysicsManager.cpp" />
-    <ClCompile Include="QuadTree.cpp" />
+    <ClCompile Include="Physics\PhysicsManager.cpp" />
+    <ClCompile Include="Physics\QuadTree.cpp" />
     <ClCompile Include="SavedDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -322,8 +322,8 @@
     <ClInclude Include="Objects\Stalactite.h" />
     <ClInclude Include="Objects\Statue.h" />
     <ClInclude Include="Objects\TProjectilesShooter.h" />
-    <ClInclude Include="PhysicsManager.h" />
-    <ClInclude Include="QuadTree.h" />
+    <ClInclude Include="Physics\PhysicsManager.h" />
+    <ClInclude Include="Physics\QuadTree.h" />
     <ClInclude Include="SavedDataManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

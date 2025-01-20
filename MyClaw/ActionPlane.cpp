@@ -1,6 +1,6 @@
 #include "ActionPlane.h"
 #include "GlobalObjects.h"
-#include "PhysicsManager.h"
+#include "Physics/PhysicsManager.h"
 #include "GameEngine/WindowManager.h"
 #include "Objects/ActionPlaneMessage.h"
 #include "Objects/Checkpoint.h"
