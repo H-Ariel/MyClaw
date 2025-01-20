@@ -33,7 +33,7 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 				SavedDataManager::GameData data = GO::player->getGameData();
 				data.level = _levelNumber;
 				data.savePoint = (SavedDataManager::SavePoints)_superCheckpoint;
-				SavedDataManager::instance.saveGame(data);
+				SavedDataManager::saveGame(data);
 				_isSaved = true;
 				GO::actionPlane->writeMessage("Your game has been saved");
 			}

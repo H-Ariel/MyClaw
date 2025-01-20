@@ -51,7 +51,7 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 		SavedDataManager::GameData data = GO::player->getGameData();
 		data.level = _lvlNum + 1;
 		data.savePoint = SavedDataManager::SavePoints::Start;
-		SavedDataManager::instance.saveGame(data);
+		SavedDataManager::saveGame(data);
 	}
 
 	_clawLevelEngineFields.reset(); // clear level data (if player enter menu from level)

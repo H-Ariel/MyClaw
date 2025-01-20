@@ -5,17 +5,20 @@
 #ifdef _DEBUG
 #include "Menu/LevelLoadingEngine.h"
 #include "Menu/MenuEngine.h"
-#endif 
+#endif
+#include "SavedDataManager.h"
 
 
 GameMainApp::GameMainApp()
 	: BaseApp(WndProc, L"Claw")
 {
+	SavedDataManager::Initialize();
 	AssetsManager::Initialize();
 }
 GameMainApp::~GameMainApp()
 {
 	AssetsManager::Finalize();
+	SavedDataManager::Finalize();
 }
 
 void GameMainApp::init()

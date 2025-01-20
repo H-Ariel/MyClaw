@@ -6,10 +6,26 @@ File format:
  + SettingsData
  + GameData ( 14 levels * 3 save-points )
 */
-#define SAVE_FILE_NAME "Claw.dat"
+
+constexpr const char* SAVE_FILE_NAME = "Claw.dat";
+constexpr int MAX_LEVEL = 14;
+constexpr int CHECKPOINTS_COUNT = 3;
 
 
-SavedDataManager SavedDataManager::instance;
+SavedDataManager::Settings SavedDataManager::settings;
+
+
+template<typename T>
+std::istream& operator>>(std::istream& stream, T& obj) {
+	stream.read(reinterpret_cast<char*>(&obj), sizeof(T));
+	return stream;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& stream, const T& obj) {
+	stream.write(reinterpret_cast<const char*>(&obj), sizeof(T));
+	return stream;
+}
 
 
 static inline bool doesFileExists()
@@ -18,13 +34,11 @@ static inline bool doesFileExists()
 }
 static inline int getOffset(int level, int savePoint)
 {
-	int offset = (level - 1) * 3 + savePoint;
+	int offset = (level - 1) * CHECKPOINTS_COUNT + savePoint;
 	return offset * sizeof(SavedDataManager::GameData) + sizeof(SavedDataManager::Settings);
 }
 
-
-SavedDataManager::SavedDataManager()
-{
+void SavedDataManager::Initialize() {
 	if (!doesFileExists()) // initialize the file with default values
 	{
 		ofstream file(SAVE_FILE_NAME, ios::binary);
@@ -38,12 +52,12 @@ SavedDataManager::SavedDataManager()
 		settings.voice = true;
 		settings.ambient = true;
 		settings.musicVolume = 9;
-		file.write((char*)&settings, sizeof(Settings));
+		file << settings;
 
 		GameData data = {};
-		const int n = 14 * 3; // 14 levels, 3 save points per level
+		const int n = MAX_LEVEL * CHECKPOINTS_COUNT;
 		for (int i = 0; i < n; i++)
-			file.write((char*)&data, sizeof(GameData));
+			file << data;
 
 		file.close();
 
@@ -60,27 +74,24 @@ SavedDataManager::SavedDataManager()
 	}
 
 	// load settings
-	ifstream(SAVE_FILE_NAME, ios::binary)
-		.read((char*)&settings, sizeof(Settings));
+	ifstream(SAVE_FILE_NAME, ios::binary) >> settings;
 }
-SavedDataManager::~SavedDataManager()
-{
+void SavedDataManager::Finalize() {
 	// save settings
-	fstream(SAVE_FILE_NAME, ios::binary | ios::in | ios::app) 
-		.seekp(0).write((char*)&settings, sizeof(Settings));
+	fstream(SAVE_FILE_NAME, ios::binary | ios::in | ios::out)
+		.seekp(0) << settings;
 }
 
 void SavedDataManager::saveGame(const GameData& data)
 {
-	if (data.level < 1 || 14 < data.level) return;
+	if (data.level < 1 || MAX_LEVEL < data.level) return;
 
 	fstream(SAVE_FILE_NAME, ios::binary | ios::in | ios::out)
-		.seekp(getOffset(data.level, data.savePoint))
-		.write((char*)&data, sizeof(GameData));
+		.seekp(getOffset(data.level, data.savePoint)) << data;
 }
 bool SavedDataManager::canLoadGame(int level, int savePoint)
 {
-	if (level < 1 || 14 < level) return false;
+	if (level < 1 || MAX_LEVEL < level) return false;
 	if (!doesFileExists()) return false;
 
 	GameData data = loadGame(level, savePoint);
@@ -88,9 +99,8 @@ bool SavedDataManager::canLoadGame(int level, int savePoint)
 }
 SavedDataManager::GameData SavedDataManager::loadGame(int level, int savePoint)
 {
-	GameData data = {};
+	GameData data;
 	ifstream(SAVE_FILE_NAME, ios::binary)
-		.seekg(getOffset(level, savePoint))
-		.read((char*)&data, sizeof(GameData));
+		.seekg(getOffset(level, savePoint)) >> data;
 	return data;
 }

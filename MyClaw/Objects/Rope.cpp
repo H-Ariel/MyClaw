@@ -18,7 +18,7 @@ void Rope::Logic(uint32_t elapsedTime)
 {
 	// the edge position is where CC catch the rope (and where it ends in animation's frame)
 	Rectangle2D aniRc = BasePlaneObject::GetRect();
-	int n = _ani->getFrameNumber();
+	int n = (int)_ani->getFrameNumber();
 	float progress = _ani->getFramesProgress();
 	if (n == 29 || n == 30 || n == 88 || n == 89)
 		_edgePos.x = (aniRc.left + aniRc.right) / 2; // for these frames rope ends in middle

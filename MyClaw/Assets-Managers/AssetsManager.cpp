@@ -417,8 +417,8 @@ void AssetsManager::clearLevelAssets()
 void AssetsManager::applySettings()
 {
 	// for now just	sounds volume...
-	AudioManager::setWavVolume(SavedDataManager::instance.settings.soundVolume / 9.f);
-	AudioManager::setMidiVolume(SavedDataManager::instance.settings.musicVolume / 9.f);
+	AudioManager::setWavVolume(SavedDataManager::settings.soundVolume / 9.f);
+	AudioManager::setMidiVolume(SavedDataManager::settings.musicVolume / 9.f);
 }
 
 void AssetsManager::loadWavDir(const string& path)

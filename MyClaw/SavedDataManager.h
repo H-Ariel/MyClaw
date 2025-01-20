@@ -41,17 +41,12 @@ public:
 	};
 #pragma pack(pop)
 
-	~SavedDataManager();
+	static void Initialize();
+	static void Finalize();
 
-	void saveGame(const GameData& data);
-	bool canLoadGame(int level, int savePoint);
-	GameData loadGame(int level, int savePoint);
+	static void saveGame(const GameData& data);
+	static bool canLoadGame(int level, int savePoint);
+	static GameData loadGame(int level, int savePoint);
 
-
-	static SavedDataManager instance;
-
-	Settings settings;
-
-private:
-	SavedDataManager();
+	static Settings settings;
 };

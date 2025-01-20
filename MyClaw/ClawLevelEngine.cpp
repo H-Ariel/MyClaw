@@ -190,7 +190,7 @@ void ClawLevelEngine::Logic(uint32_t elapsedTime)
 		for (shared_ptr<LevelPlane>& p : _fields->_planes)
 			p->position = _fields->actionPlane->position;
 
-		_fields->_planes.back()->isVisible = SavedDataManager::instance.settings.frontLayer;
+		_fields->_planes.back()->isVisible = SavedDataManager::settings.frontLayer; // hide/display front plane
 
 		if (player->isFinishDeathAnimation() && player->hasLives())
 		{

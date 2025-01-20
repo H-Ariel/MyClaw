@@ -1,6 +1,8 @@
 #include "BaseApp.h"
 #include "WindowManager.h"
 #include "AudioManager.h"
+#include <thread>
+#include <chrono>
 
 
 #define WINDOW_CLASS_NAME L"MyGameWindow"
@@ -41,6 +43,9 @@ void BaseApp::run()
 	uint32_t framesTime = 0, frames = 0;
 #endif
 
+	const int targetFPS = 60;
+	const auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);
+
 	_runApp = true;
 
 	while (_runApp && _pEngine && !_pEngine->stopEngine)
@@ -54,6 +59,9 @@ void BaseApp::run()
 		frames++;
 		if (framesTime > 1000)
 		{
+			if (frames > targetFPS) // fit to 60 fps
+				std::this_thread::sleep_for((frames - targetFPS) * frameDuration);
+
 			sprintf(fpsText, "%d FPS", frames);
 			WindowManager::setTitle(fpsText);
 			frames = 0;
