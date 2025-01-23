@@ -140,10 +140,6 @@ Player::Player()
 	_finishLevel(false), _powerupSparkles(&_saveCurrRect),
 	_weaponsAmount(10, 5, 3), startPosition({})
 {
-	// init cheats-manager here because it is for all objects, but mainly for player
-	// TODO: move to ActionPlane ?
-	cheats = make_shared<CheatsManager>(GO::actionPlane);
-
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_lives = 6;
 	_score = 0;
@@ -1309,6 +1305,13 @@ bool Player::cheat(int cheatType)
 	case CheatsManager::FillMagic:		_weaponsAmount.magic = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FillDynamite:	_weaponsAmount.dynamite = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FinishLevel:	_finishLevel = true; break;
+	case CheatsManager::GodMode:
+		_lives = MAX_LIVES_AMOUNT;
+		_health = MAX_HEALTH_AMOUNT;
+		_weaponsAmount.pistol = MAX_WEAPON_AMOUNT;
+		_weaponsAmount.magic = MAX_WEAPON_AMOUNT;
+		_weaponsAmount.dynamite = MAX_WEAPON_AMOUNT;
+		break;
 	case CheatsManager::Flying:
 		if (_raisedPowderKeg) return false; // CC can't fly when he lifts a keg
 		_aniName = "FLYING-CHEAT";

@@ -133,6 +133,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 				setMainMenu();
 				changeEngine<MenuEngine>();
 				GO::player = nullptr; // do not recycle the player in new game
+				GO::cheats = nullptr; // ^^^
 			};
 			break;
 
@@ -394,11 +395,10 @@ void MenuEngine::OnKeyUp(int key)
 			}
 		}
 		else {
-			// TODO: search using loop and isActive (not indexes)
 			if (key == VK_DOWN)
-				_currMarkedItem = (MenuItem*)_elementsList[2];
+				_currMarkedItem = (MenuItem*)_elementsList[2]; // mark first button
 			else if (key == VK_UP)
-				_currMarkedItem = (MenuItem*)_elementsList[_elementsList.size() - 1];
+				_currMarkedItem = (MenuItem*)_elementsList[_elementsList.size() - 1]; // mark last button
 		}
 
 		if (_currMarkedItem != prev) {

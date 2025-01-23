@@ -11,7 +11,7 @@ Rectangle2D Rectangle2D::getCollision(const Rectangle2D& other) const
 {
 	Rectangle2D collision = {};
 
-	if (top < other.bottom && bottom > other.top && left < other.right && right > other.left)
+	if (this->intersects(other))
 	{
 		collision.top = other.bottom - top;
 		collision.bottom = bottom - other.top;

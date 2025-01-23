@@ -17,6 +17,10 @@ constexpr float LADDER_TOP_THRESHOLD = 32.0f;
 constexpr int MAX_TREE_DEPTH = 3;
 
 
+// save the tiles map. used to check if ladder is finish at quad bound.
+const DynamicArray<DynamicArray<int32_t>>* p_tilesMap = nullptr;
+
+
 QuadTree::QuadTree(Rectangle2D bounds)
 	: _topLeft(nullptr), _topRight(nullptr), _bottomLeft(nullptr),
 	_bottomRight(nullptr), _bounds(bounds)
@@ -26,6 +30,8 @@ QuadTree::QuadTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const Dy
 	: _topLeft(nullptr), _topRight(nullptr), _bottomLeft(nullptr), _bottomRight(nullptr),
 	_bounds(Rectangle2D(0, 0, (float)tilesMap[0].size() * TILE_SIZE, (float)tilesMap.size() * TILE_SIZE))
 {
+	p_tilesMap = &tilesMap;
+
 	buildTree(tilesMap, tileDescriptions, 0);
 }
 QuadTree::~QuadTree() {
@@ -79,7 +85,17 @@ void QuadTree::checkCollides(BaseDynamicPlaneObject* obj, const Rectangle2D& obj
 	};
 	auto _onLadder = [&](const Rectangle2D& tileRc) {
 		// check if object is at the top of the ladder, so it should stay here (and not fall)
-		bool isOnLadderTop = collisionRc.bottom < LADDER_TOP_THRESHOLD;
+		
+		// find ladder-top using tiles-map for case ladder starts at one quad and ends at other quad
+		bool isOnLadderTop = false;
+		int x = (int)((objRc.left + objRc.right) / 2) / TILE_SIZE;
+		int y = (int)(objRc.bottom) / TILE_SIZE;
+		if ((*p_tilesMap)[y][x] == WwdTileDescription::TileAttribute_Climb)
+		{
+			if ((*p_tilesMap)[y - 1][x] != WwdTileDescription::TileAttribute_Climb)
+				isOnLadderTop = true;
+		}
+
 		if (isPlayer)
 			isOnLadderTop = !GO::player->isClimbing() && isOnLadderTop;
 

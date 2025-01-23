@@ -70,6 +70,7 @@ void CheatsManager::addKey(int key)
 	case Catnip:			addPowerup(Item::Type::Powerup_Catnip_White); break;
 	case Invisibility:		addPowerup(Item::Type::Powerup_Invisibility); break;
 	case Invincibility:		addPowerup(Item::Type::Powerup_Invincibility); break;
+	case GodMode:		_god = !_god; // NO BREAKE HERE!
 	case FillHealth:
 	case FillPistol:
 	case FillMagic:
@@ -80,7 +81,7 @@ void CheatsManager::addKey(int key)
 		//	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
 		//	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
 
-	case GodMode:		_god = !_god; break;
+	//case GodMode:		_god = !_god; break;
 	case EasyMode:		_easy = !_easy;
 		if (_easy) actionPlane->enterEasyMode();
 		else actionPlane->exitEasyMode();

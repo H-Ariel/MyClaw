@@ -1,5 +1,6 @@
 #include "ActionPlane.h"
 #include "GlobalObjects.h"
+#include "CheatsManager.h"
 #include "Physics/PhysicsManager.h"
 #include "GameEngine/WindowManager.h"
 #include "Objects/ActionPlaneMessage.h"
@@ -66,7 +67,7 @@
 #define ADD_BOSS(p) { _boss = DBG_NEW p; _bossObjects.push_back(_boss); }
 
 #ifdef _DEBUG
-//#define NO_ENEMIES
+#define NO_ENEMIES
 #define NO_OBSTACLES
 #endif
 
@@ -112,6 +113,8 @@ void ActionPlane::init()
 	}
 	else
 	{
+		// init cheats-manager here because it is for all objects, but mainly for player
+		GO::cheats = make_shared<CheatsManager>(GO::actionPlane);
 		player = make_shared<Player>();
 		player->position.x = player->startPosition.x = (float)_wwd->startX;
 		player->position.y = player->startPosition.y = (float)_wwd->startY;
@@ -753,7 +756,7 @@ void ActionPlane::resetObjects()
 
 void ActionPlane::enterEasyMode() {
 	for (BasePlaneObject* obj : _objects)
-		obj->enterEasyMode();
+		obj->enterEasyMode(); // TODO: make sure i am realy used this...
 }
 
 void ActionPlane::exitEasyMode() {
