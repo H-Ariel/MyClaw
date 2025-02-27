@@ -35,6 +35,7 @@ public:
 };
 
 
+// TODO: make this as long-object with sequence (like I did in ConvBelt)
 class BreakPlank : public CrumblingPeg
 {
 public:

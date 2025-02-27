@@ -119,7 +119,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 8375, 6046};
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 7828, 7772 };
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 1609, 7252 };
-	//if (levelNumber == 9) GO::getPlayerPosition() = { 4800, 6590 };
+	if (levelNumber == 9) GO::getPlayerPosition() = { 4800, 6590 };
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 4639, 5972 };
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 6756-32, 7640 };
 

@@ -1,4 +1,4 @@
-#include "WindowManager.h"
+﻿#include "WindowManager.h"
 #include "AudioManager.h"
 
 /*
@@ -130,36 +130,33 @@ void WindowManager::fillRect(Rectangle2D dst, ColorF color)
 }
 void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, bool upsideDown, float opacity)
 {
+	// TODO find way to render more efficiently - maybe save last `transformMatrix` or render all `mirrored` and `upsideDown` at once
+
 	if (!_isInScreen(dst) || bitmap == nullptr) return;
 
-	Matrix3x2F transformMatrix;
+	Matrix3x2F originalTransform;
+	instance->_renderTarget->GetTransform(&originalTransform);
 
+	// apply transformations if mirrored or upside down
 	if (mirrored || upsideDown) {
-		instance->_renderTarget->GetTransform(&transformMatrix);
+		Matrix3x2F transformMatrix = originalTransform;
 		if (mirrored) {
-			transformMatrix.dx = (dst.left + dst.right) * transformMatrix.m11; // set offset of x axis to draw mirrored
+			transformMatrix.dx = (dst.left + dst.right) * transformMatrix.m11; // set offset of X-axis to draw mirrored
 			transformMatrix.m11 = -transformMatrix.m11; // set to draw mirrored (reverse the X-axis)
 		}
 		if (upsideDown) {
-			transformMatrix.dy = (dst.top + dst.bottom) * transformMatrix.m22; // set offset of y-axis to draw upside down
+			transformMatrix.dy = (dst.top + dst.bottom) * transformMatrix.m22; // set offset of Y-axis to draw upside down
 			transformMatrix.m22 = -transformMatrix.m22; // reverse the Y-axis for upside-down
 		}
 		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 
+	// draw the bitmap
 	instance->_renderTarget->DrawBitmap(bitmap, dst, opacity);
 
-	// Reset the transformation if it was altered
+	// reset to the original transformation
 	if (mirrored || upsideDown) {
-		if (mirrored) {
-			transformMatrix.dx = 0;
-			transformMatrix.m11 = -transformMatrix.m11; // restore the X-axis
-		}
-		if (upsideDown) {
-			transformMatrix.dy = 0;
-			transformMatrix.m22 = -transformMatrix.m22; // restore the Y-axis
-		}
-		instance->_renderTarget->SetTransform(transformMatrix);
+		instance->_renderTarget->SetTransform(originalTransform);
 	}
 }
 void WindowManager::drawImage(UIBaseImage* image)
