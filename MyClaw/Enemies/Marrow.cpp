@@ -10,11 +10,12 @@
 #define MARROW_ANIMATION_HAND_DOWN		_animations["IDLE4"] // get hand down back
 
 #define PARROT_ANIMATION_STRIKE _animations["STRIKE1"]
-#define PARROT_SPEED 0.4f
+constexpr float PARROT_SPEED = 0.4f;
 
 
 enum class GlobalState : int8_t
 {
+	FirstFloorsRemove = -1, // when CC enter to boss area, this is the first time we remove floors
 	ParrotAttackClaw = 0,
 	AddFloor = 1,
 	ClawAttackMarrow = 2,
@@ -24,8 +25,7 @@ enum class GlobalState : int8_t
 
 static Marrow* _Marrow = nullptr;
 static int8_t floorCounter = 0; // use to sync floors
-static GlobalState globalState = GlobalState::ParrotAttackClaw;
-static bool firstFloorsRemove = true; // flag to say if this is the first time we remove floors (when CC enter to boss area)
+static GlobalState globalState = GlobalState::FirstFloorsRemove;
 
 
 Marrow::Marrow(const WwdObject& obj)
@@ -332,7 +332,7 @@ void MarrowFloor::Logic(uint32_t elapsedTime)
 			globalState = GlobalState::ClawAttackMarrow;
 		}
 	}
-	else if (globalState == GlobalState::ParrotTakeMarrow || firstFloorsRemove) // when parrot take Marrow, floors remove
+	else if (globalState == GlobalState::ParrotTakeMarrow || globalState == GlobalState::FirstFloorsRemove) // when parrot take Marrow, floors remove
 	{
 		position.x += _speedX * elapsedTime;
 		if (position.x < _minX)
@@ -349,7 +349,8 @@ void MarrowFloor::Logic(uint32_t elapsedTime)
 		if (floorCounter == 2)
 		{
 			floorCounter = 0;
-			firstFloorsRemove = false;
+			if (globalState == GlobalState::FirstFloorsRemove)
+				globalState = GlobalState::ParrotAttackClaw;
 		}
 	}
 }

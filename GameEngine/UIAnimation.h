@@ -36,7 +36,7 @@ public:
 	size_t getFrameNumber() const { return _currFrameIdx; }
 	float getFramesProgress() const { return (float)getFrameNumber() / getFramesCount(); } // returns frames progress ratio
 	bool isFinishAnimation() const { return _isFinishAnimation; } // return if we finish the animation loop
-	bool isPassedHalf() const { return _currFrameIdx >= _frames.size() / 2; }
+	bool isPassedHalf() const { return getFramesProgress() >= 0.5f; }
 
 
 	float opacity; // value between 0 (transparent) and 1 (opaque)

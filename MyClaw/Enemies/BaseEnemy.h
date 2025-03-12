@@ -3,7 +3,7 @@
 #include "../Objects/BaseCharacter.h"
 
 
-#define ENEMY_PATROL_SPEED 0.1f
+constexpr float ENEMY_PATROL_SPEED = 0.1f;
 
 
 class BaseEnemy : public BaseCharacter

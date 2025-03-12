@@ -1,7 +1,7 @@
 #include "MidiPlayer.h"
 
 
-#define MIDI_VOLUME_MAX 0xFFFFu
+constexpr uint32_t MIDI_VOLUME_MAX = 0xFFFFu;
 
 
 #ifdef _DEBUG

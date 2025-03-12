@@ -3,7 +3,7 @@
 #include "Player.h"
 
 
-#define BLOWHOLE_OFFSET_Y 120 // offset for the blowhole
+constexpr float BLOWHOLE_OFFSET_Y = 120;// offset for the blowhole
 
 
 GroundBlower::GroundBlower(const WwdObject& obj)

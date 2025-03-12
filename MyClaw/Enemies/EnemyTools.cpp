@@ -4,7 +4,7 @@
 #include "../GlobalObjects.h"
 
 
-#define GEM_SPEED 0.2f
+constexpr float GEM_SPEED = 0.2f;
 
 
 EnemyFallDeath::EnemyFallDeath(const WwdObject& obj, shared_ptr<UIAnimation> deadAni)

@@ -3,8 +3,8 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
-#define GRAVITY		2048e-6f  // gravity acceleration (2.048f/1000)
-#define MAX_Y_SPEED	1.500f    // max vertical speed
+constexpr float GRAVITY = 2048e-6f; // gravity acceleration (2.048f/1000)
+constexpr float MAX_Y_SPEED = 1.500f; // max vertical speed
 
 
 // the base class for all objects that are used in the game

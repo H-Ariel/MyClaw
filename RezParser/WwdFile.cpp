@@ -8,7 +8,7 @@ enum WwdFlags
 };
 
 
-#define EXPECTED_HEADER_SIZE 1524
+constexpr int EXPECTED_HEADER_SIZE = 1524;
 
 // This function is from Miniz but I modified it to fit my code (I
 // don't need the other functions and I matched this function with

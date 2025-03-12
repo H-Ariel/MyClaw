@@ -4,7 +4,7 @@
 #include "../CheatsManager.h"
 
 
-#define RECT_OFFSET 5
+constexpr float RECT_OFFSET = 5;
 
 
 Rope::Rope(const WwdObject& obj)

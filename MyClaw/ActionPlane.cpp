@@ -54,7 +54,7 @@
 #include "ClawLevelEngine.h"
 
 
-#define SHAKE_TIME 3000 // time of shaking screen (ms)
+constexpr int SHAKE_TIME = 3000; // time of shaking screen (ms)
 
 #define player	GO::player
 #define physics	GO::physics
@@ -68,7 +68,7 @@
 
 #ifdef _DEBUG
 #define NO_ENEMIES
-#define NO_OBSTACLES
+//NO_OBSTACLES
 #endif
 
 
@@ -269,12 +269,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 
 		float topOffset = (float)tileDesc.rect.top;
 
-		for (int i = 0; i < obj.width; i++)
-		{
-			_objects.push_back(DBG_NEW BreakPlank(obj, topOffset));
-			(int32_t&)obj.x += TILE_SIZE;
-			//myMemCpy(obj.x, obj.x + TILE_SIZE);
-		}
+		_objects.push_back(DBG_NEW BreakPlank(obj, topOffset));
 	}
 	else if (obj.logic == "TreasurePowerup" || obj.logic == "GlitterlessPowerup"
 		|| obj.logic == "SpecialPowerup" || obj.logic == "AmmoPowerup"

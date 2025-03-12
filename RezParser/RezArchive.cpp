@@ -1,8 +1,7 @@
 #include "RezArchive.h"
 
 
-#define DIRECTORY_SEPARATOR '/'
-
+constexpr char DIRECTORY_SEPARATOR = '/';
 
 
 template<typename T>

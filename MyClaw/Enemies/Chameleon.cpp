@@ -2,7 +2,7 @@
 #include "../GlobalObjects.h"
 
 
-#define OPACITY_SPEED 0.005f
+constexpr float OPACITY_SPEED = 0.005f;
 
 
 // it doesn't feel like the original game, but it's the best I can do for now

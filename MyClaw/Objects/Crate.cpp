@@ -4,7 +4,7 @@
 #include "../CheatsManager.h"
 #include "PowderKeg.h"
 
-#define CRATE_HEIGHT 43
+constexpr int CRATE_HEIGHT = 43;
 
 
 Crate::Crate(const WwdObject& obj)

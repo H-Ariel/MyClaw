@@ -1,6 +1,6 @@
 #include "HierarchicalMenu.h"
 
-#define INGAME_MENU_ROOT		"GAME/IMAGES/INGAMEMENU/MAIN/"
+#define INGAME_MENU_ROOT	"GAME/IMAGES/INGAMEMENU/MAIN/"
 
 
 HierarchicalMenu HierarchicalMenu::OptionsMenu(MAIN_MENU_ROOT "008.PCX", MAIN_MENU_ROOT "009.PCX", {

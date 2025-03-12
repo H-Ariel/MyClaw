@@ -18,9 +18,9 @@ static bool GabrielIsAlive = false;
 #define ANIMATION_THROW_BOMBS	_animations["STRIKE7"]
 #define ANIMATION_BLOCK			_animations["BLOCKED"]
 
-#define OPERATE_CANNON_TIME	7000
-#define THROW_BOMBS_TIME	4500
-#define SEND_PIRATES_TIME	2000
+constexpr int OPERATE_CANNON_TIME = 7000;
+constexpr int THROW_BOMBS_TIME = 4500;
+constexpr int SEND_PIRATES_TIME = 2000;
 
 
 class DeadGabriel : public OneTimeAnimation

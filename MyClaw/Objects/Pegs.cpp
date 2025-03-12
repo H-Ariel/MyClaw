@@ -99,7 +99,7 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 	if (canCatchPlayer(_ani.get()))
 		tryCatchPlayer();
 }
-void TogglePeg::enterEasyMode() { }
+void TogglePeg::enterEasyMode() {}
 void TogglePeg::exitEasyMode() {
 	_ani->updateFrames = true;
 	Delay(_startTimeDelay);
@@ -174,7 +174,54 @@ void CrumblingPeg::Reset()
 }
 
 BreakPlank::BreakPlank(const WwdObject& obj, float topOffset)
-	: CrumblingPeg(obj)
+	: BaseStaticPlaneObject(obj), _topOffset(topOffset)
 {
-	myMemCpy(_objRc.top, _objRc.top + topOffset);
+	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
+	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
+	_ani = make_shared<UIAnimation>(images);
+
+	_planks.reserve(obj.width);
+	float x = (float)obj.x;
+	for (int i = 0; i < obj.width; i++) {
+		_planks.push_back(_ani->getCopy());
+		_planks.back()->position = { x, (float)obj.y };
+		x += TILE_SIZE;
+	}
+
+	Reset();
+}
+void BreakPlank::Logic(uint32_t elapsedTime) {
+	// as soon as CC touches the plank, it begins to crumble
+	if (tryCatchPlayer()) {
+		if (activeIdx == 0) {
+			_planks[0]->updateFrames = !GO::cheats->isEasyMode();;
+		}
+	}
+
+	// executes the logic for the current animation, and when it ends runs the one after it
+	for (int i = 0; i < _planks.size(); i++) {
+		_planks[i]->Logic(elapsedTime);
+		if (i == activeIdx && _planks[i]->getFramesProgress() >= 0.3f) {
+			activeIdx += 1;
+			if (activeIdx < _planks.size())
+				_planks[activeIdx]->updateFrames = !GO::cheats->isEasyMode();
+			myMemCpy(_objRc.left, _objRc.left + TILE_SIZE);
+		}
+	}
+}
+void BreakPlank::Draw() {
+	for (auto& a : _planks)
+		a->Draw();
+}
+void BreakPlank::Reset() {
+	for (auto& a : _planks) {
+		a->reset();
+		a->updateFrames = false;
+		a->loopAni = false;
+	}
+	activeIdx = 0;
+
+	setObjectRectangle();
+	myMemCpy(_objRc.right, _planks.back()->position.x);
+	myMemCpy(_objRc.top, _objRc.top + _topOffset);
 }

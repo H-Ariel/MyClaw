@@ -35,9 +35,17 @@ public:
 };
 
 
-// TODO: make this as long-object with sequence (like I did in ConvBelt)
-class BreakPlank : public CrumblingPeg
+class BreakPlank : public BaseStaticPlaneObject
 {
 public:
-	BreakPlank(const WwdObject& obj, float topOffset); // topOffset is the offset from the top of the image to the top of the plank
+	BreakPlank(const WwdObject& obj, float topOffset);
+
+	void Logic(uint32_t elapsedTime) override;
+	void Draw() override;
+	void Reset() override;
+
+private:
+	vector<shared_ptr<UIAnimation>> _planks;
+	int activeIdx; // index of active plank
+	float _topOffset; // the offset from the top of the image to the top of the plank
 };

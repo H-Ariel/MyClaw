@@ -3,8 +3,8 @@
 #include "EnemyProjectile.h"
 
 
-#define OFFSET_X 32.f
-#define OFFSET_Y 32.f
+constexpr float OFFSET_X = 32.f;
+constexpr float OFFSET_Y = 32.f;
 
 
 TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)

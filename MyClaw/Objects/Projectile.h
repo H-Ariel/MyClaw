@@ -2,7 +2,7 @@
 
 #include "BasePlaneObject.h"
 
-#define DEFAULT_PROJECTILE_SPEED 400
+constexpr int DEFAULT_PROJECTILE_SPEED = 400;
 
 
 class Projectile : public BaseDynamicPlaneObject

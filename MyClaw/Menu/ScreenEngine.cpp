@@ -2,7 +2,7 @@
 #include "GameEngine/WindowManager.h"
 
 
-#define DEFAULT_BG_IMAGE "STATES/MENU/SCREENS/MENU.PCX"
+constexpr auto DEFAULT_BG_IMAGE = "STATES/MENU/SCREENS/MENU.PCX";
 
 
 shared_ptr<ClawLevelEngineFields> ScreenEngine::_clawLevelEngineFields;

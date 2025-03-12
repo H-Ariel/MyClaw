@@ -7,8 +7,8 @@
 #include "Menu/MenuEngine.h"
 
 
-#define SCREEN_SPEED 0.5f // speed of the screen when CC is died or teleported
-#define CC_FALLDEATH_SPEED 0.7f // speed of CC when he falls out the window
+constexpr float SCREEN_SPEED = 0.5f; // speed of the screen when CC is died or teleported
+constexpr float CC_FALLDEATH_SPEED = 0.7f; // speed of CC when he falls out the window
 
 #define player GO::player
 
@@ -90,6 +90,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	//if (levelNumber == 4) GO::getPlayerPosition() = { 3909, 4832 };
 
 	if (levelNumber == 5) GO::getPlayerPosition() = { 9981, 3616 };
+	if (levelNumber == 5) GO::getPlayerPosition() = { 10570, 3744 };
 	//if (levelNumber == 5) GO::getPlayerPosition() = { 2620, 2848 };
 	//if (levelNumber == 5) GO::getPlayerPosition() = { 7189, 3488 };
 	//if (levelNumber == 5) GO::getPlayerPosition() = { 19041, 4511 };
@@ -119,7 +120,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 8375, 6046};
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 7828, 7772 };
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 1609, 7252 };
-	if (levelNumber == 9) GO::getPlayerPosition() = { 4800, 6590 };
+	if (levelNumber == 9) GO::getPlayerPosition() = { 4800, 6500 };
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 4639, 5972 };
 	//if (levelNumber == 9) GO::getPlayerPosition() = { 6756-32, 7640 };
 

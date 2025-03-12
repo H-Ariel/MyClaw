@@ -2,7 +2,7 @@
 #include "WindowManager.h" // get window HWND for dsound
 #include "Framework/Buffer.h"
 
-#define WAV_STREAM_LEN 16384 // buffer's size for mixing
+constexpr int WAV_STREAM_LEN = 16384; // buffer's size for mixing;
 
 
 AudioManager* AudioManager::instance = nullptr;

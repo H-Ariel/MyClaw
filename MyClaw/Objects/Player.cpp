@@ -33,9 +33,9 @@
 
 #define EXCLAMATION_MARK	_animations["exclamation-mark"] // it used when claw is speaking
 
-#define MAX_WEAPON_AMOUNT	99
-#define MAX_HEALTH_AMOUNT	100
-#define MAX_LIVES_AMOUNT	9
+constexpr int MAX_WEAPON_AMOUNT = 99;
+constexpr int MAX_HEALTH_AMOUNT = 100;
+constexpr int MAX_LIVES_AMOUNT = 9;
 
 // code blocks for `collectItem`
 
@@ -66,8 +66,8 @@
 #define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup
 
 
-static const int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
-static const int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
+constexpr int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
+constexpr int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
 
 Player::PowerupSparkles::PowerupSparkles(Rectangle2D* playerRc)

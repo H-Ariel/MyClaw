@@ -3,8 +3,8 @@
 #include "Framework/Buffer.h"
 
 
-#define TILE_SIZE 64 // width and height of tile in pixels (by default)
-#define EMPTY_TILE -1 // empty tile id
+constexpr int TILE_SIZE = 64; // width and height of tile in pixels (by default)
+constexpr int EMPTY_TILE = -1; // empty tile id
 
 
 struct WwdRect

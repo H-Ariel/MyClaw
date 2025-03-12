@@ -6,7 +6,7 @@
 #include "../Objects/Player.h"
 
 
-#define NUM_OF_TREASURES 9
+constexpr int NUM_OF_TREASURES = 9;
 #define type_Treasure_Skull		Item::Treasure_Skull_Blue
 #define type_Treasure_Crowns	Item::Treasure_Crowns_Green
 #define type_Treasure_Geckos	Item::Treasure_Geckos_Red

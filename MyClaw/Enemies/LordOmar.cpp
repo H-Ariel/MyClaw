@@ -18,11 +18,11 @@ LO fade out before he moves to the next state.
 
 
 
-#define NUM_OF_ITEMS_IN_FULL_SHIELD	11
-#define NUM_OF_ITEMS_IN_SHIELD		9
-#define SHIELD_RADIUS	96
-#define M_2PI			float(2 * M_PI)
-#define STEP_SIZE		(M_2PI / NUM_OF_ITEMS_IN_FULL_SHIELD) // the angle between each item of the shield (in radians)
+constexpr int NUM_OF_ITEMS_IN_FULL_SHIELD = 11;
+constexpr int NUM_OF_ITEMS_IN_SHIELD = 9;
+constexpr int SHIELD_RADIUS = 96;
+constexpr float M_2PI = float(2 * M_PI);
+constexpr float STEP_SIZE = (M_2PI / NUM_OF_ITEMS_IN_FULL_SHIELD); // the angle between each item of the shield (in radians)
 
 class LordOmarShield : public BaseDynamicPlaneObject
 {
@@ -118,7 +118,7 @@ private:
 #define ANIMATION_BLOCK			_animations["BLOCK"]
 #define ANIMATION_THROW_ENERGY	_animations["STRIKE3"]
 
-#define FADEOUT_SPEED 0.0025f
+constexpr float FADEOUT_SPEED = 0.0025f;
 
 
 LordOmar::LordOmar(const WwdObject& obj)

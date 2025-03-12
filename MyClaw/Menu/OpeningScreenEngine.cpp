@@ -3,7 +3,7 @@
 #include "../Assets-Managers/AssetsManager.h"
 
 
-#define OPENING_SOUND_WAV_PATH "STATES/ATTRACT/SOUNDS/TITLE.WAV"
+constexpr auto OPENING_SOUND_WAV_PATH = "STATES/ATTRACT/SOUNDS/TITLE.WAV";
 
 OpeningScreenEngine::OpeningScreenEngine()
 	: ScreenEngine("STATES/ATTRACT/SCREENS/TITLE.PCX"), _wavId(AssetsManager::INVALID_AUDIOPLAYER_ID), _totalTime(0)

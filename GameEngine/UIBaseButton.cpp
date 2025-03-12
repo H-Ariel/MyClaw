@@ -2,7 +2,7 @@
 #include "WindowManager.h"
 
 
-#define MY_BUTTON_CLASS_NAME L"my_button"
+constexpr auto MY_BUTTON_CLASS_NAME = L"my_button";
 
 
 map<HWND, UIBaseButton*> UIBaseButton::_allButtons = { { nullptr, nullptr } };

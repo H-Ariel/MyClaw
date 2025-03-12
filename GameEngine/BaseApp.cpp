@@ -5,12 +5,12 @@
 #include <chrono>
 
 
-#define WINDOW_CLASS_NAME L"MyGameWindow"
+constexpr auto WINDOW_CLASS_NAME = L"MyGameWindow";
 
 // The maximum iteration time.
 // `elapsedTime` used in `EngineBase::Logic` and its
 // overrides. safety so the game doesn't go wild.
-#define MAX_ITER_TIME 20U
+constexpr uint32_t MAX_ITER_TIME = 20U;
 
 
 BaseApp::BaseApp(WNDPROC wndproc, const TCHAR title[])

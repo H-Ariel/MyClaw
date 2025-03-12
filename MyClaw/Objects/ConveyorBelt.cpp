@@ -3,7 +3,7 @@
 #include "Player.h"
 
 
-#define ANIMATION_DURATION 100 // TODO: find perfect value (calc from speed)
+constexpr int ANIMATION_DURATION = 100; // TODO: find perfect value (calc from speed)
 
 
 ConveyorBelt::ConveyorBelt(const WwdObject& obj)
