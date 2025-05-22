@@ -12,6 +12,49 @@ constexpr float CC_FALLDEATH_SPEED = 0.7f; // speed of CC when he falls out the 
 
 #define player GO::player
 
+class PlayState : public ClawLevelEngineState {
+public:
+	PlayState(ClawLevelEngine* clawLevelEngine)
+		: ClawLevelEngineState(StateType::Play, clawLevelEngine) {}
+	void Logic(uint32_t elapsedTime) override;
+};
+class DeathFallState : public ClawLevelEngineState {
+public:
+	DeathFallState(ClawLevelEngine* clawLevelEngine)
+		: ClawLevelEngineState(StateType::DeathFall, clawLevelEngine) {}
+	void Logic(uint32_t elapsedTime) override;
+};
+class DeathCloseState : public ClawLevelEngineState {
+public:
+	DeathCloseState(ClawLevelEngine* clawLevelEngine)
+		: ClawLevelEngineState(StateType::DeathClose, clawLevelEngine) {}
+	void Logic(uint32_t elapsedTime) override;
+};
+class DeathOpenState : public ClawLevelEngineState {
+public:
+	DeathOpenState(ClawLevelEngine* clawLevelEngine)
+		: ClawLevelEngineState(StateType::DeathOpen, clawLevelEngine) {}
+	void Logic(uint32_t elapsedTime) override;
+};
+class WrapCloseState : public ClawLevelEngineState {
+public:
+	WrapCloseState(ClawLevelEngine* clawLevelEngine)
+		: ClawLevelEngineState(StateType::WrapClose, clawLevelEngine) {}
+	void Logic(uint32_t elapsedTime) override;
+};
+class WrapOpenState : public ClawLevelEngineState {
+public:
+	WrapOpenState(ClawLevelEngine* clawLevelEngine)
+		: ClawLevelEngineState(StateType::WrapOpen, clawLevelEngine) {}
+	void Logic(uint32_t elapsedTime) override;
+};
+class GameOverState : public ClawLevelEngineState {
+public:
+	GameOverState(ClawLevelEngine* clawLevelEngine)
+		: ClawLevelEngineState(StateType::GameOver, clawLevelEngine) {}
+	void Logic(uint32_t elapsedTime) override;
+};
+
 
 ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber, ClawLevelEngine* clawLevelEngine)
 	: actionPlane(nullptr), _hud(nullptr), _saveBgColor(0), _saveWindowScale(1)
@@ -161,11 +204,12 @@ ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
 
 	init();
 }
+ClawLevelEngine::~ClawLevelEngine() { delete _state; }
 
 void ClawLevelEngine::init()
 {
 	_holeRadius = 0;
-	_state = States::Play;
+	_state = DBG_NEW PlayState(this);
 	_wrapDestination = {};
 	_wrapCoverTop = 0;
 	_isBossWarp = false;
@@ -178,149 +222,45 @@ void ClawLevelEngine::init()
 
 	WindowManager::setWindowOffset(_fields->actionPlane->position);
 }
+void ClawLevelEngine::playerEnterWrap(Warp* destinationWarp)
+{
+	switchState(DBG_NEW WrapCloseState(this));
+	_wrapCoverTop = WindowManager::getCameraSize().height;
+	_wrapDestination = destinationWarp->getDestination();
+	_isBossWarp = destinationWarp->isBossWarp();
+	_bossWarpX = destinationWarp->position.x;
+}
+float ClawLevelEngine::getInitialHoleRadius() const {
+	const D2D1_SIZE_F wndRealSz = WindowManager::getRealSize();
+	const float initialHoleRadius = max(wndRealSz.width, wndRealSz.height) / 2;
+	return initialHoleRadius;
+}
+void ClawLevelEngine::switchState(ClawLevelEngineState* newState) {
+	delete _state;
+	_state = newState;
+}
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
-	const D2D1_SIZE_F wndRealSz = WindowManager::getRealSize();
-	const float initialHoleRadius = max(wndRealSz.width, wndRealSz.height) / 2;
-
-	switch (_state)
-	{
-	case States::Play:
-		BaseEngine::Logic(elapsedTime);
-		for (shared_ptr<LevelPlane>& p : _fields->_planes)
-			p->position = _fields->actionPlane->position;
-
-		_fields->_planes.back()->isVisible = SavedDataManager::settings.frontLayer; // hide/display front plane
-
-		if (player->isFinishDeathAnimation() && player->hasLives())
-		{
-			if (player->isSpikeDeath())
-			{
-				_holeRadius = initialHoleRadius;
-				AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
-				_state = States::DeathClose;
-			}
-			else //if (player->isFallDeath())
-			{
-				_state = States::DeathFall;
-			}
-		}
-		else
-		{
-			if (player->isFinishLevel())
-			{
-				changeEngine<LevelEndEngine>(_fields->_wwd->levelNumber, player->getCollectedTreasures());
-			}
-			else if (!player->hasLives())
-			{
-				if (player->isFinishDeathAnimation())
-				{
-					_gameOverTimeCounter = 1500;
-					_state = States::GameOver;
-				}
-			}
-		}
-		break;
-
-
-	case States::DeathFall:
-		GO::getPlayerPosition().y += CC_FALLDEATH_SPEED * elapsedTime;
-		player->Logic(0); // update position of animation
-		if (GO::getPlayerPosition().y - _fields->actionPlane->position.y > WindowManager::getCameraSize().height)
-		{
-			player->loseLife();
-			_holeRadius = initialHoleRadius;
-			AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
-			_state = States::DeathClose;
-		}
-		break;
-
-	case States::DeathClose:
-		_holeRadius -= SCREEN_SPEED * elapsedTime;
-		if (_holeRadius <= 0)
-		{
-			_holeRadius = 0;
-			player->backToLife();
-
-			// update position of camera (because player position changed)
-			_fields->actionPlane->resetObjects();
-			BaseEngine::Logic(elapsedTime);
-			for (shared_ptr<LevelPlane>& p : _fields->_planes)
-				p->position = _fields->actionPlane->position;
-
-			AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
-
-			_state = States::DeathOpen;
-		}
-		break;
-
-	case States::DeathOpen:
-		_holeRadius += SCREEN_SPEED * elapsedTime;
-		if (initialHoleRadius < _holeRadius)
-			_state = States::Play;
-		break;
-
-
-	case States::WrapClose:
-		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
-		if (_wrapCoverTop <= 0)
-		{
-			GO::getPlayerPosition() = _wrapDestination;
-			player->speed = {}; // stop player
-			if (_isBossWarp)
-			{
-				_fields->actionPlane->playerEnterToBoss(_bossWarpX);
-				player->startPosition = _wrapDestination;
-			}
-			player->Logic(0); // update position of animation
-
-			// update position of camera (because player position changed)
-			_fields->actionPlane->updatePosition();
-			for (shared_ptr<LevelPlane>& p : _fields->_planes)
-				p->position = _fields->actionPlane->position;
-
-			_state = States::WrapOpen;
-		}
-		break;
-
-	case States::WrapOpen:
-		_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
-		if (_wrapCoverTop < -WindowManager::getCameraSize().height)
-			_state = States::Play;
-		break;
-
-
-	case States::GameOver:
-		_gameOverTimeCounter -= elapsedTime;
-		if (_gameOverTimeCounter <= 0)
-		{
-			_gameOverTimeCounter = 0;
-			MenuEngine::setMainMenu();
-			changeEngine<MenuEngine>();
-		}
-		break;
-
-	default: break;
-	}
+	_state->Logic(elapsedTime);
 }
 void ClawLevelEngine::Draw()
 {
 	BaseEngine::Draw();
 
-	switch (_state)
+	switch (_state->getType())
 	{
-	case States::DeathClose:
-	case States::DeathOpen:
+	case ClawLevelEngineState::StateType::DeathClose:
+	case ClawLevelEngineState::StateType::DeathOpen:
 		WindowManager::drawHole(GO::getPlayerPosition(), _holeRadius);
 		break;
 
-	case States::WrapClose:
-	case States::WrapOpen:
+	case ClawLevelEngineState::StateType::WrapClose:
+	case ClawLevelEngineState::StateType::WrapOpen:
 		WindowManager::drawWrapCover(_wrapCoverTop);
 		break;
 
-	case States::GameOver:
+	case ClawLevelEngineState::StateType::GameOver:
 		const D2D1_SIZE_F wndSz = WindowManager::getCameraSize();
 		shared_ptr<UIBaseImage> img = AssetsManager::loadImage("GAME/IMAGES/MESSAGES/004.PID");
 		img->position.x = _fields->actionPlane->position.x + wndSz.width / 2;
@@ -361,17 +301,114 @@ void ClawLevelEngine::OnKeyDown(int key)
 {
 	player->keyDown(key);
 }
-
 void ClawLevelEngine::OnResize()
 {
 	WindowManager::setDefaultWindowScale();
 }
 
-void ClawLevelEngine::playerEnterWrap(Warp* destinationWarp)
-{
-	_state = States::WrapClose;
-	_wrapCoverTop = WindowManager::getCameraSize().height;
-	_wrapDestination = destinationWarp->getDestination();
-	_isBossWarp = destinationWarp->isBossWarp();
-	_bossWarpX = destinationWarp->position.x;
+
+void PlayState::Logic(uint32_t elapsedTime) {
+	_clawLevelEngine->BaseEngine::Logic(elapsedTime);
+	for (shared_ptr<LevelPlane>& p : _clawLevelEngine->_fields->_planes)
+		p->position = _clawLevelEngine->_fields->actionPlane->position;
+
+	_clawLevelEngine->_fields->_planes.back()->isVisible = SavedDataManager::settings.frontLayer; // hide/display front plane
+
+	if (player->isFinishDeathAnimation() && player->hasLives())
+	{
+		if (player->isSpikeDeath())
+		{
+			_clawLevelEngine->_holeRadius = _clawLevelEngine->getInitialHoleRadius();
+			AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
+			_clawLevelEngine->switchState(DBG_NEW DeathCloseState(_clawLevelEngine));
+		}
+		else //if (player->isFallDeath())
+		{
+			_clawLevelEngine->switchState(DBG_NEW DeathFallState(_clawLevelEngine));
+		}
+	}
+	else
+	{
+		if (player->isFinishLevel())
+		{
+			_clawLevelEngine->changeEngine<LevelEndEngine>(_clawLevelEngine->_fields->_wwd->levelNumber, player->getCollectedTreasures());
+		}
+		else if (!player->hasLives())
+		{
+			if (player->isFinishDeathAnimation())
+			{
+				_clawLevelEngine->_gameOverTimeCounter = 1500;
+				_clawLevelEngine->switchState(DBG_NEW GameOverState(_clawLevelEngine));
+			}
+		}
+	}
+}
+void DeathFallState::Logic(uint32_t elapsedTime) {
+	GO::getPlayerPosition().y += CC_FALLDEATH_SPEED * elapsedTime;
+	player->Logic(0); // update position of animation
+	if (GO::getPlayerPosition().y - _clawLevelEngine->_fields->actionPlane->position.y > WindowManager::getCameraSize().height)
+	{
+		player->loseLife();
+		_clawLevelEngine->_holeRadius = _clawLevelEngine->getInitialHoleRadius();
+		AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
+		_clawLevelEngine->switchState(DBG_NEW DeathCloseState(_clawLevelEngine));
+	}
+}
+void DeathCloseState::Logic(uint32_t elapsedTime) {
+	_clawLevelEngine->_holeRadius -= SCREEN_SPEED * elapsedTime;
+	if (_clawLevelEngine->_holeRadius <= 0)
+	{
+		_clawLevelEngine->_holeRadius = 0;
+		player->backToLife();
+
+		// update position of camera (because player position changed)
+		_clawLevelEngine->_fields->actionPlane->resetObjects();
+		_clawLevelEngine->BaseEngine::Logic(elapsedTime);
+		for (shared_ptr<LevelPlane>& p : _clawLevelEngine->_fields->_planes)
+			p->position = _clawLevelEngine->_fields->actionPlane->position;
+
+		AssetsManager::playWavFile("GAME/SOUNDS/FLAGWAVE.WAV");
+
+		_clawLevelEngine->switchState(DBG_NEW DeathOpenState(_clawLevelEngine));
+	}
+}
+void DeathOpenState::Logic(uint32_t elapsedTime) {
+	_clawLevelEngine->_holeRadius += SCREEN_SPEED * elapsedTime;
+	if (_clawLevelEngine->getInitialHoleRadius() < _clawLevelEngine->_holeRadius)
+		_clawLevelEngine->switchState(DBG_NEW PlayState(_clawLevelEngine));
+}
+void WrapCloseState::Logic(uint32_t elapsedTime) {
+	_clawLevelEngine->_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
+	if (_clawLevelEngine->_wrapCoverTop <= 0)
+	{
+		GO::getPlayerPosition() = _clawLevelEngine->_wrapDestination;
+		player->speed = {}; // stop player
+		if (_clawLevelEngine->_isBossWarp)
+		{
+			_clawLevelEngine->_fields->actionPlane->playerEnterToBoss(_clawLevelEngine->_bossWarpX);
+			player->startPosition = _clawLevelEngine->_wrapDestination;
+		}
+		player->Logic(0); // update position of animation
+
+		// update position of camera (because player position changed)
+		_clawLevelEngine->_fields->actionPlane->updatePosition();
+		for (shared_ptr<LevelPlane>& p : _clawLevelEngine->_fields->_planes)
+			p->position = _clawLevelEngine->_fields->actionPlane->position;
+
+		_clawLevelEngine->switchState(DBG_NEW WrapOpenState(_clawLevelEngine));
+	}
+}
+void WrapOpenState::Logic(uint32_t elapsedTime) {
+	_clawLevelEngine->_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
+	if (_clawLevelEngine->_wrapCoverTop < -WindowManager::getCameraSize().height)
+		_clawLevelEngine->switchState(DBG_NEW PlayState(_clawLevelEngine));
+}
+void GameOverState::Logic(uint32_t elapsedTime) {
+	_clawLevelEngine->_gameOverTimeCounter -= elapsedTime;
+	if (_clawLevelEngine->_gameOverTimeCounter <= 0)
+	{
+		_clawLevelEngine->_gameOverTimeCounter = 0;
+		MenuEngine::setMainMenu();
+		_clawLevelEngine->changeEngine<MenuEngine>();
+	}
 }

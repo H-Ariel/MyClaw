@@ -21,11 +21,37 @@ struct ClawLevelEngineFields
 	float _saveWindowScale;
 };
 
+class ClawLevelEngineState {
+public:
+	enum class StateType : int8_t {
+		Play,
+		DeathFall,
+		DeathClose,
+		DeathOpen,
+		WrapClose,
+		WrapOpen,
+		GameOver
+	};
+
+	virtual ~ClawLevelEngineState() = default;
+	virtual void Logic(uint32_t elapsedTime) = 0;
+
+	StateType getType() const { return _type; }
+
+protected:
+	ClawLevelEngineState(StateType type, ClawLevelEngine* clawLevelEngine)
+		: _type(type), _clawLevelEngine(clawLevelEngine) {}
+
+	const StateType _type;
+	ClawLevelEngine* _clawLevelEngine;
+};
+
 class ClawLevelEngine : public BaseEngine
 {
 public:
 	ClawLevelEngine(int levelNumber, int checkpoint);
 	ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields);
+	~ClawLevelEngine();
 
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
@@ -38,19 +64,14 @@ public:
 	// the warp player will be teleported to
 	void playerEnterWrap(Warp* DestinationWarp);
 
+	ClawLevelEngineState* getState() const { return _state; }
+	void switchState(ClawLevelEngineState* newState);
+
 
 private:
 	void init(); // call this in each constructor
 
-	enum class States : int8_t {
-		Play,
-		DeathFall,
-		DeathClose,
-		DeathOpen,
-		WrapClose,
-		WrapOpen,
-		GameOver
-	};
+	float getInitialHoleRadius() const;
 
 	// TODO: try do not save fields seperate. need find better solution
 	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu
@@ -64,5 +85,14 @@ private:
 
 	int _gameOverTimeCounter; // used to delay game over screen
 
-	States _state;
+	ClawLevelEngineState* _state;
+
+
+	friend class PlayState;
+	friend class DeathFallState;
+	friend class DeathCloseState;
+	friend class DeathOpenState;
+	friend class WrapCloseState;
+	friend class WrapOpenState;
+	friend class GameOverState;
 };
