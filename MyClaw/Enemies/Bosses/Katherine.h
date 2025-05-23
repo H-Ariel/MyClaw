@@ -1,12 +1,12 @@
 #pragma once
 
-#include "BaseEnemy.h"
+#include "../BaseEnemy.h"
 
 
-class Wolvington : public BaseBoss
+class Katherine : public BaseBoss
 {
 public:
-	Wolvington(const WwdObject& obj);
+	Katherine(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -21,6 +21,4 @@ private:
 	bool PreLogic(uint32_t elapsedTime) override;
 	void makeAttack(float deltaX, float deltaY) override;
 	bool checkForHurts() override;
-
-	int _magicAttackCuonter; // count the times W attack CC with magic
 };

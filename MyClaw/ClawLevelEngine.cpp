@@ -215,6 +215,7 @@ void ClawLevelEngine::init()
 	_isBossWarp = false;
 	_bossWarpX = 0;
 	_gameOverTimeCounter = 0;
+	_nextState = nullptr;
 
 	for (shared_ptr<LevelPlane>& pln : _fields->_planes)
 		_elementsList.push_back(pln.get());
@@ -236,13 +237,21 @@ float ClawLevelEngine::getInitialHoleRadius() const {
 	return initialHoleRadius;
 }
 void ClawLevelEngine::switchState(ClawLevelEngineState* newState) {
-	delete _state;
-	_state = newState;
+	//delete _state;
+	//_state = newState;
+	_nextState = newState;
 }
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)
 {
 	_state->Logic(elapsedTime);
+
+	if (_nextState)
+	{
+		delete _state;
+		_state = _nextState;
+		_nextState = nullptr;
+	}
 }
 void ClawLevelEngine::Draw()
 {

@@ -1,6 +1,6 @@
 #include "RedTail.h"
-#include "../GlobalObjects.h"
-#include "../Objects/ClawProjectile.h"
+#include "../../GlobalObjects.h"
+#include "../../Objects/ClawProjectile.h"
 
 
 #define ANIMATION_BLOCK _animations["BLOCK"]

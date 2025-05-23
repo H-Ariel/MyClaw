@@ -1,7 +1,7 @@
 #include "Gabriel.h"
-#include "RedTailPirate.h"
-#include "../GlobalObjects.h"
-#include "../Objects/EnemyProjectile.h"
+#include "../RedTailPirate.h"
+#include "../../GlobalObjects.h"
+#include "../../Objects/EnemyProjectile.h"
 
 
 static bool riseCannon = false;

@@ -1,7 +1,7 @@
 #include "Wolvington.h"
-#include "../GlobalObjects.h"
-#include "../Objects/EnemyProjectile.h"
-#include "../Objects/ClawProjectile.h"
+#include "../../GlobalObjects.h"
+#include "../../Objects/EnemyProjectile.h"
+#include "../../Objects/ClawProjectile.h"
 
 
 #define ANIMATION_WALK		_animations.at("FASTADVANCE")

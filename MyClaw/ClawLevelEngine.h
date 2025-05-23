@@ -85,7 +85,7 @@ private:
 
 	int _gameOverTimeCounter; // used to delay game over screen
 
-	ClawLevelEngineState* _state;
+	ClawLevelEngineState* _state, *_nextState;
 
 
 	friend class PlayState;

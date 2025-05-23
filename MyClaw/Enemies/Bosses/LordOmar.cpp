@@ -1,7 +1,7 @@
 #include "LordOmar.h"
-#include "../GlobalObjects.h"
-#include "../Objects/EnemyProjectile.h"
-#include "../Objects/ClawProjectile.h"
+#include "../../GlobalObjects.h"
+#include "../../Objects/EnemyProjectile.h"
+#include "../../Objects/ClawProjectile.h"
 
 
 /*

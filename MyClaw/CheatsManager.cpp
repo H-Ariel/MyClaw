@@ -46,7 +46,7 @@ CheatsManager::CheatsManager(ActionPlane* actionPlane)
 {
 #ifdef _DEBUG
 	_god = true;
-	_superStrong = true;
+//	_superStrong = true;
 	_superJump = true;
 #endif
 }

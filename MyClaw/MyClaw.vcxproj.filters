@@ -23,6 +23,9 @@
     <Filter Include="Physics">
       <UniqueIdentifier>{94fb84c1-7bad-4e6a-8554-05dcd35cbc66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Enemies\Bosses\Marrow">
+      <UniqueIdentifier>{796e721e-68f4-485d-8638-7e1ea892a533}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -217,28 +220,25 @@
     <ClCompile Include="Assets-Managers\PathManager.cpp">
       <Filter>Assets-Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Aquatis.cpp">
+    <ClCompile Include="Enemies\Bosses\Aquatis.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Gabriel.cpp">
+    <ClCompile Include="Enemies\Bosses\Gabriel.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\LordOmar.cpp">
+    <ClCompile Include="Enemies\Bosses\LordOmar.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\LeRauxe.cpp">
+    <ClCompile Include="Enemies\Bosses\LeRauxe.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Katherine.cpp">
+    <ClCompile Include="Enemies\Bosses\Katherine.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\RedTail.cpp">
+    <ClCompile Include="Enemies\Bosses\RedTail.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Wolvington.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Marrow.cpp">
+    <ClCompile Include="Enemies\Bosses\Wolvington.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Player.cpp">
@@ -264,6 +264,12 @@
     </ClCompile>
     <ClCompile Include="Physics\PhysicsManager.cpp">
       <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\Marrow\Marrow.cpp">
+      <Filter>Enemies\Bosses\Marrow</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\Marrow\MarrowStates.cpp">
+      <Filter>Enemies\Bosses\Marrow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -456,28 +462,25 @@
     <ClInclude Include="Assets-Managers\PathManager.h">
       <Filter>Assets-Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Aquatis.h">
+    <ClInclude Include="Enemies\Bosses\Aquatis.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Gabriel.h">
+    <ClInclude Include="Enemies\Bosses\Gabriel.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\LordOmar.h">
+    <ClInclude Include="Enemies\Bosses\LordOmar.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\LeRauxe.h">
+    <ClInclude Include="Enemies\Bosses\LeRauxe.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Katherine.h">
+    <ClInclude Include="Enemies\Bosses\Katherine.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\RedTail.h">
+    <ClInclude Include="Enemies\Bosses\RedTail.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Wolvington.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Marrow.h">
+    <ClInclude Include="Enemies\Bosses\Wolvington.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Player.h">
@@ -503,6 +506,12 @@
     </ClInclude>
     <ClInclude Include="Physics\PhysicsManager.h">
       <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\Marrow\Marrow.h">
+      <Filter>Enemies\Bosses\Marrow</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\Marrow\MarrowStates.h">
+      <Filter>Enemies\Bosses\Marrow</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

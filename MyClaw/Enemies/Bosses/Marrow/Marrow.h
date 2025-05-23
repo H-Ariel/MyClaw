@@ -1,35 +1,8 @@
 #pragma once
 
-#include "BaseEnemy.h"
+#include "../../BaseEnemy.h"
 
-class Marrow;
-class MarrowParrot;
-class MarrowFloor;
-
-class MarrowState {
-public:
-	enum class StateType : int8_t {
-		FirstFloorsRemove,
-		ParrotAttackClaw,
-		AddFloor,
-		ClawAttackMarrow,
-		ParrotTakeMarrow
-	};
-
-	virtual ~MarrowState() = default;
-	virtual void MarrowLogic(Marrow* marrow, uint32_t elapsedTime) = 0;
-	virtual void ParrotLogic(MarrowParrot* parrot, uint32_t elapsedTime) = 0;
-	virtual void FloorLogic(MarrowFloor* floor, uint32_t elapsedTime) = 0;
-
-	// TODO: save pointers to objects instead of func arguments?
-
-	StateType getType() const { return _type; }
-
-protected:
-	MarrowState(StateType type) : _type(type) {}
-
-	const StateType _type;
-};
+class MarrowState;
 
 
 class Marrow : public BaseBoss
@@ -43,20 +16,25 @@ public:
 	void stopMovingLeft(float collisionSize) override;
 	void stopMovingRight(float collisionSize) override;
 
-	enum class Side : int8_t { Right = 0, Left = 1 };
-	Side getSide() const { return _side; }
-
-	void ClawAttackMarrowStateLogic(uint32_t elapsedTime);
-	void ParrotTakeMarrowStateLogic(uint32_t elapsedTime);
+	bool isInLefttSide() const { return !_side; }
+	bool isInRightSide() const { return _side; }
 
 	MarrowState* getState() const { return _state; }
 	void switchState(MarrowState* newState);
 
+	static Marrow* getInstance() { return _MarrowInstance; }
+
+
 private:
 	void makeAttack(float deltaX, float deltaY) override;
 	bool checkForHurts() override;
-	Side _side;
+	bool _side; // false- Left, true- Right
 	MarrowState* _state;
+
+	static Marrow* _MarrowInstance;
+
+	friend class ClawAttackMarrowState;
+	friend class ParrotTakeMarrowState;
 };
 
 
@@ -72,16 +50,19 @@ public:
 	void stopMovingRight(float collisionSize) override;
 	void bounceTop() override;
 
-	void ParrotAttackClawStateLogic(uint32_t elapsedTime);
-	void ClawAttackMarrowStateLogic(uint32_t elapsedTime);
-	void ParrotTakeMarrowStateLogic(uint32_t elapsedTime);
+	static constexpr float PARROT_SPEED = 0.4f;
 
 
 private:
 	bool checkForHurts() override;
+
 	const Rectangle2D _flyRect;
 	const D2D1_POINT_2F _initialPosition;
 	int _hitsCounter;
+
+	friend class ParrotAttackClawState;
+	friend class ClawAttackMarrowState;
+	friend class ParrotTakeMarrowState;
 };
 
 
@@ -92,14 +73,15 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	Rectangle2D GetRect() override;
 	
-	void AddFloorStateLogic(uint32_t elapsedTime);
-	void ParrotTakeMarrowStateLogic(uint32_t elapsedTime);
-	void FirstFloorsRemoveStateLogic(uint32_t elapsedTime);
 
 private:
-	void removeFloor(uint32_t elapsedTime);
+	void moveFloor(uint32_t elapsedTime, bool updated);
 
 	const float _minX, _maxX, _speedX;
 
 	static int8_t floorCounter; // use to sync floors
+
+	friend class FirstFloorsRemoveState;
+	friend class AddFloorState;
+	friend class ParrotTakeMarrowState;
 };

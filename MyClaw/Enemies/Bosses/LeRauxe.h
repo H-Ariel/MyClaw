@@ -1,12 +1,12 @@
 #pragma once
 
-#include "BaseEnemy.h"
+#include "../BaseEnemy.h"
 
 
-class Katherine : public BaseBoss
+class LeRauxe : public BaseBoss
 {
 public:
-	Katherine(const WwdObject& obj);
+	LeRauxe(const WwdObject& obj);
 
 	void Logic(uint32_t elapsedTime) override;
 

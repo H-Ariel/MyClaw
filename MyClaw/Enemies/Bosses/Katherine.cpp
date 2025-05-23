@@ -1,23 +1,22 @@
-#include "LeRauxe.h"
-#include "../GlobalObjects.h"
-#include "../Objects/ClawProjectile.h"
+#include "Katherine.h"
+#include "../../GlobalObjects.h"
+#include "../../Objects/ClawProjectile.h"
 
 
-#define ANIMATION_WALK		_animations.at("ADVANCE")
-#define ANIMATION_STRIKE	_animations.at("STRIKE")
-#define ANIMATION_STAB		_animations.at("STAB")
+#define ANIMATION_WALK		_animations.at("WALK")
+#define ANIMATION_STRIKE1	_animations.at("STRIKE1")
+#define ANIMATION_STRIKE2	_animations.at("STRIKE2")
 #define ANIMATION_BLOCKHIGH	_animations.at("BLOCKHIGH")
 #define ANIMATION_BLOCKLOW	_animations.at("BLOCKLOW")
-#define ANIMATION_JUMPBACK	_animations.at("JUMPBACK")
+#define ANIMATION_FLIP		_animations.at("FLIP3")
 
 
-LeRauxe::LeRauxe(const WwdObject& obj)
-	: BaseBoss(obj, "KILLFALL")
+Katherine::Katherine(const WwdObject& obj)
+	: BaseBoss(obj, "FALL")
 {
-	_ani = ANIMATION_WALK;
 }
 
-void LeRauxe::Logic(uint32_t elapsedTime)
+void Katherine::Logic(uint32_t elapsedTime)
 {
 	if (!PreLogic(elapsedTime)) return;
 
@@ -26,22 +25,10 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 	if (_hitsCuonter == 0 && _canJump)
 	{
-		_ani = ANIMATION_JUMPBACK;
+		_ani = ANIMATION_FLIP;
 
-		/*
-		y = 0.5 * a * t^2 + v0 * t + y0
-		
-		v0 = ?
-		a = GRAVITY
-		y0 = 0
-		y = 96
-		t = 150
-		
-		96 = 0.5 * GRAVITY * 22500 + v0 * 150 + 0
-		...
-		*/
-		speed.y = -(0.64f - 75 * GRAVITY);
-		speed.x = (position.x < GO::getPlayerPosition().x) ? -0.35f : 0.35f;
+		speed.y = -(0.512f + GRAVITY * 125);
+		speed.x = (((position.x - _minX < _maxX - position.x) ? _maxX : _minX) - position.x) / 750;
 
 		_isAttack = false;
 		_canJump = false;
@@ -63,7 +50,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 	speed.y += GRAVITY * elapsedTime;
 	position.y += speed.y * elapsedTime;
 
-	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_JUMPBACK)
+	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_FLIP)
 	{
 		BaseBoss::makeAttack();
 	}
@@ -71,14 +58,20 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 	{
 		_ani = ANIMATION_WALK;
 		_isAttack = false;
-		_isMirrored = speed.x < 0;
+		if (speed.x == 0)
+		{
+			if (_isMirrored) speed.x = -ENEMY_PATROL_SPEED;
+			else speed.x = ENEMY_PATROL_SPEED;
+		}
+		else
+			_isMirrored = speed.x < 0;
 	}
-	
-	if (_ani != ANIMATION_JUMPBACK && abs(GO::getPlayerPosition().x - position.x) > 64)
+
+	if (_ani != ANIMATION_FLIP && abs(GO::getPlayerPosition().x - position.x) > 64)
 	{
 		_isMirrored = GO::getPlayerPosition().x < position.x;
-		if (!_isMirrored) speed.x = abs(speed.x);
-		else speed.x = -abs(speed.x);
+		if (_isMirrored) speed.x = -abs(speed.x);
+		else speed.x = abs(speed.x);
 	}
 
 	if (_ani.get() != prevAni)
@@ -89,50 +82,53 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 
 	PostLogic(elapsedTime);
 }
-Rectangle2D LeRauxe::GetRect()
-{
-	_saveCurrRect.left = -7.f + 15 * _isMirrored;
-	_saveCurrRect.right = _saveCurrRect.left + 50;
-	_saveCurrRect.top = 5;
-	_saveCurrRect.bottom = 115;
-
-	_saveCurrRect = setRectByCenter(_saveCurrRect);
-	return _saveCurrRect;
-}
-pair<Rectangle2D, int> LeRauxe::GetAttackRect()
+Rectangle2D Katherine::GetRect()
 {
 	Rectangle2D rc;
 
-	if (_ani == ANIMATION_STRIKE)
+	rc.left = -7.f + 15 * _isMirrored;
+	rc.right = rc.left + 50;
+	rc.top = 5;
+	rc.bottom = 115;
+
+	_saveCurrRect = setRectByCenter(rc);
+
+	return _saveCurrRect;
+}
+pair<Rectangle2D, int> Katherine::GetAttackRect()
+{
+	Rectangle2D rc;
+
+	if (_ani == ANIMATION_STRIKE1)
 	{
-		rc.top = 60;
-		rc.bottom = 80;
+		rc.top = 50;
+		rc.bottom = 70;
 
 		if (_isMirrored)
 		{
-			rc.left = -80;
-			rc.right = 0;
+			rc.left = -148;
+			rc.right = -128;
 		}
 		else
 		{
-			rc.left = 50;
-			rc.right = 130;
+			rc.left = 182;
+			rc.right = 202;
 		}
 	}
-	else if (_ani == ANIMATION_STAB)
+	else if (_ani == ANIMATION_STRIKE2)
 	{
-		rc.top = 30;
-		rc.bottom = 50;
+		rc.top = 10;
+		rc.bottom = 40;
 
 		if (_isMirrored)
 		{
-			rc.left = -80;
+			rc.left = -25;
 			rc.right = 0;
 		}
 		else
 		{
 			rc.left = 50;
-			rc.right = 130;
+			rc.right = 75;
 		}
 	}
 	else return {};
@@ -140,26 +136,25 @@ pair<Rectangle2D, int> LeRauxe::GetAttackRect()
 	return { setRectByCenter(rc, _saveCurrRect), _damage };
 }
 
-void LeRauxe::stopFalling(float collisionSize)
+void Katherine::stopFalling(float collisionSize)
 {
 	speed.y = 0;
 	position.y -= collisionSize;
-	
-	if (_ani == ANIMATION_JUMPBACK)
+
+	if (_ani == ANIMATION_FLIP)
 	{
-		speed.x = ENEMY_PATROL_SPEED;
-		_isMirrored = false;
+		stopMovingLeft(0);
 		_ani = ANIMATION_WALK;
 	}
 }
-void LeRauxe::stopMovingLeft(float collisionSize)
+void Katherine::stopMovingLeft(float collisionSize)
 {
 	position.x += collisionSize;
 	speed.x = ENEMY_PATROL_SPEED;
 	speed.y = 0;
 	_isMirrored = false;
 }
-void LeRauxe::stopMovingRight(float collisionSize)
+void Katherine::stopMovingRight(float collisionSize)
 {
 	position.x -= collisionSize;
 	speed.x = -ENEMY_PATROL_SPEED;
@@ -167,14 +162,14 @@ void LeRauxe::stopMovingRight(float collisionSize)
 	_isMirrored = true;
 }
 
-bool LeRauxe::PreLogic(uint32_t elapsedTime)
+bool Katherine::PreLogic(uint32_t elapsedTime)
 {
 	if (_attackRest > 0)
 	{
 		_attackRest -= elapsedTime;
 	}
 
-	if (_ani == ANIMATION_JUMPBACK)
+	if (_ani == ANIMATION_FLIP)
 	{
 		if (_ani->isFinishAnimation())
 		{
@@ -210,22 +205,30 @@ bool LeRauxe::PreLogic(uint32_t elapsedTime)
 
 	return true;
 }
-void LeRauxe::makeAttack(float deltaX, float deltaY)
+void Katherine::makeAttack(float deltaX, float deltaY)
 {
-	if (deltaX < 96 && deltaY < 16) // CC is close to LR
+	if (deltaX < 48 && deltaY < 16) // CC is close to K
 	{
-		if (GO::isPlayerDuck()) _ani = ANIMATION_STRIKE;
-		else _ani = ANIMATION_STAB;
+		_ani = ANIMATION_STRIKE2;
 		_ani->reset();
 		_isAttack = true;
 		_isMirrored = GO::getPlayerPosition().x < position.x;
 
-		_attackRest = 600;
+		_attackRest = 800;
+	}
+	else if (192 < deltaX && deltaX < 208 && deltaY < 24) // CC is far from K
+	{
+		_ani = ANIMATION_STRIKE1;
+		_ani->reset();
+		_isAttack = true;
+		_isMirrored = GO::getPlayerPosition().x < position.x;
+
+		_attackRest = 1200;
 	}
 }
-bool LeRauxe::checkForHurts()
+bool Katherine::checkForHurts()
 {
-	for (Projectile* p : GO::getActionPlaneProjectiles())
+	for (Projectile* p :GO::getActionPlaneProjectiles())
 	{
 		if (isinstance<ClawProjectile>(p))
 		{
