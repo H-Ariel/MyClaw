@@ -10,6 +10,7 @@
 #define ANIMATION_IDLE		_animations["IDLE1"]
 
 
+// TODO something better than al of this `static`...
 static int activateAquatisStalactite = 0;
 static vector<AquatisStalactite*> AquatisStalactitesList; // list of stalactites that can hurt Aquatis
 static vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that can hurt Aquatis

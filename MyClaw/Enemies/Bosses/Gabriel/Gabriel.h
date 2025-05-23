@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BaseEnemy.h"
+#include "../../BaseEnemy.h"
 
 
 class Gabriel : public BaseBoss
@@ -49,17 +49,4 @@ public:
 
 private:
 	shared_ptr<UIAnimation> _idle, _pressed;
-};
-
-
-// a pirate that Gabriel sends
-class GabrielRedTailPirate : public BaseDynamicPlaneObject
-{
-public:
-	GabrielRedTailPirate();
-	void Logic(uint32_t elapsedTime) override;
-	void stopFalling(float collisionSize) override;
-
-private:
-	bool _isJumping;
 };

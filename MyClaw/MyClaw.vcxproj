@@ -173,13 +173,14 @@
     <ClCompile Include="Enemies\Bosses\Aquatis.cpp" />
     <ClCompile Include="Enemies\BaseEnemy.cpp" />
     <ClCompile Include="Enemies\BearSailor.cpp" />
+    <ClCompile Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.cpp" />
     <ClCompile Include="Enemies\Bosses\Marrow\MarrowStates.cpp" />
     <ClCompile Include="Enemies\Chameleon.cpp" />
     <ClCompile Include="Enemies\CrazyHook.cpp" />
     <ClCompile Include="Enemies\CutThroat.cpp" />
     <ClCompile Include="Enemies\EnemyTools.cpp" />
     <ClCompile Include="Enemies\Fish.cpp" />
-    <ClCompile Include="Enemies\Bosses\Gabriel.cpp" />
+    <ClCompile Include="Enemies\Bosses\Gabriel\Gabriel.cpp" />
     <ClCompile Include="Enemies\HermitCrab.cpp" />
     <ClCompile Include="Enemies\Bosses\Katherine.cpp" />
     <ClCompile Include="Enemies\Bosses\LeRauxe.cpp" />
@@ -212,6 +213,7 @@
     <ClCompile Include="Menu\MenuItem.cpp" />
     <ClCompile Include="Menu\OpeningScreenEngine.cpp" />
     <ClCompile Include="Menu\ScreenEngine.cpp" />
+    <ClCompile Include="LevelObjectsFactory.cpp" />
     <ClCompile Include="Objects\ActionPlaneMessage.cpp" />
     <ClCompile Include="Objects\AmbientSound.cpp" />
     <ClCompile Include="Objects\BaseCharacter.cpp" />
@@ -256,13 +258,14 @@
     <ClInclude Include="Enemies\Bosses\Aquatis.h" />
     <ClInclude Include="Enemies\BaseEnemy.h" />
     <ClInclude Include="Enemies\BearSailor.h" />
+    <ClInclude Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.h" />
     <ClInclude Include="Enemies\Bosses\Marrow\MarrowStates.h" />
     <ClInclude Include="Enemies\Chameleon.h" />
     <ClInclude Include="Enemies\CrazyHook.h" />
     <ClInclude Include="Enemies\CutThroat.h" />
     <ClInclude Include="Enemies\EnemyTools.h" />
     <ClInclude Include="Enemies\Fish.h" />
-    <ClInclude Include="Enemies\Bosses\Gabriel.h" />
+    <ClInclude Include="Enemies\Bosses\Gabriel\Gabriel.h" />
     <ClInclude Include="Enemies\HermitCrab.h" />
     <ClInclude Include="Enemies\Bosses\Katherine.h" />
     <ClInclude Include="Enemies\Bosses\LeRauxe.h" />
@@ -294,6 +297,7 @@
     <ClInclude Include="Menu\MenuItem.h" />
     <ClInclude Include="Menu\OpeningScreenEngine.h" />
     <ClInclude Include="Menu\ScreenEngine.h" />
+    <ClInclude Include="LevelObjectsFactory.h" />
     <ClInclude Include="Objects\ActionPlaneMessage.h" />
     <ClInclude Include="Objects\AmbientSound.h" />
     <ClInclude Include="Objects\BaseCharacter.h" />

@@ -219,7 +219,7 @@ int main()
 #endif
 
 	cout << "load REZ file" << endl;
-	RezArchive rez("CLAW.REZ");
+	RezArchive rez("./Assets/CLAW.REZ");
 
 	WapPal pal(rez.getFile("LEVEL1/PALETTES/MAIN.PAL")->getFileData());
 	cout << "load CLAW" << endl; loadDirectory(rez.getDirectory("CLAW"), &pal);

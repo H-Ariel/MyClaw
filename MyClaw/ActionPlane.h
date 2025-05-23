@@ -7,6 +7,7 @@
 
 
 class ClawLevelEngine;
+class LevelObjectsFactory;
 
 
 class ActionPlane : public LevelPlane
@@ -66,4 +67,5 @@ private:
 	bool _isInBoss;
 	LevelState _levelState;
 	ClawLevelEngine* cEngine;
+	LevelObjectsFactory* _levelObjectsFactory;
 };

@@ -239,7 +239,7 @@ float ClawLevelEngine::getInitialHoleRadius() const {
 void ClawLevelEngine::switchState(ClawLevelEngineState* newState) {
 	//delete _state;
 	//_state = newState;
-	_nextState = newState;
+	_nextState = newState; // maybe current state does not finished yet, so we wait for it
 }
 
 void ClawLevelEngine::Logic(uint32_t elapsedTime)

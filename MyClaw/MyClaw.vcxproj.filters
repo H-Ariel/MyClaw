@@ -26,6 +26,9 @@
     <Filter Include="Enemies\Bosses\Marrow">
       <UniqueIdentifier>{796e721e-68f4-485d-8638-7e1ea892a533}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Enemies\Bosses\Gabriel">
+      <UniqueIdentifier>{1036710a-a9cb-4b55-8fd8-bcf138812bfe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -223,9 +226,6 @@
     <ClCompile Include="Enemies\Bosses\Aquatis.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Gabriel.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
     <ClCompile Include="Enemies\Bosses\LordOmar.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
@@ -270,6 +270,15 @@
     </ClCompile>
     <ClCompile Include="Enemies\Bosses\Marrow\MarrowStates.cpp">
       <Filter>Enemies\Bosses\Marrow</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelObjectsFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\Gabriel\Gabriel.cpp">
+      <Filter>Enemies\Bosses\Gabriel</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.cpp">
+      <Filter>Enemies\Bosses\Gabriel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -465,9 +474,6 @@
     <ClInclude Include="Enemies\Bosses\Aquatis.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Gabriel.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
     <ClInclude Include="Enemies\Bosses\LordOmar.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
@@ -512,6 +518,15 @@
     </ClInclude>
     <ClInclude Include="Enemies\Bosses\Marrow\MarrowStates.h">
       <Filter>Enemies\Bosses\Marrow</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelObjectsFactory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\Gabriel\Gabriel.h">
+      <Filter>Enemies\Bosses\Gabriel</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.h">
+      <Filter>Enemies\Bosses\Gabriel</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

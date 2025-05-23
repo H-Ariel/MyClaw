@@ -154,7 +154,7 @@ const uint32_t AssetsManager::INVALID_AUDIOPLAYER_ID = AudioManager::INVALID_ID;
 
 
 AssetsManager::AssetsManager()
-	: _rezArchive("CLAW.REZ"), _savePcxPalette(false)
+	: _rezArchive("./Assets/CLAW.REZ"), _savePcxPalette(false)
 {
 	_animationsManager = DBG_NEW AnimationsManager(&_rezArchive);
 	_lastType = AssetsManager::BackgroundMusicType::None;

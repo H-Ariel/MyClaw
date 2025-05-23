@@ -7,7 +7,7 @@ File format:
  + GameData ( 14 levels * 3 save-points )
 */
 
-constexpr const char* SAVE_FILE_NAME = "Claw.dat";
+constexpr const char* SAVE_FILE_NAME = "./Assets/Claw.dat";
 constexpr int MAX_LEVEL = 14;
 constexpr int CHECKPOINTS_COUNT = 3;
 
