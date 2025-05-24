@@ -11,6 +11,9 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	pair<Rectangle2D, int> GetAttackRect() override;
 
+	void makeHurt();
+	void changeSwitch();
+
 private:
 	bool checkForHurts() override;
 
@@ -23,9 +26,16 @@ class GabrielCannon : public BaseStaticPlaneObject
 {
 public:
 	GabrielCannon(const WwdObject& obj);
+	~GabrielCannon();
 	void Logic(uint32_t elapsedTime) override;
 
+	bool isUp() const { return _ani == _rise; }
+	void operateCannon();
+	void riseCannon();
+
 private:
+	void setAnimation(shared_ptr<UIAnimation> newAni);
+
 	shared_ptr<UIAnimation> _home, _rest, _rise, _horzfire, _vertfire;
 };
 

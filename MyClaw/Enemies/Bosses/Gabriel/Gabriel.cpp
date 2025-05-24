@@ -5,13 +5,18 @@
 #include "../../../GlobalObjects.h"
 
 
+// i try make gabriel better but i broke something... TODO fix it!
+
+static Gabriel* _Gabriel = nullptr;
+static GabrielCannon* _GabrielCannon = nullptr;
+
 // TODO something better than al of this `static`...
-static bool riseCannon = false;
-static bool cannonIsUp = false;
-static bool operateCannon = false;
-static bool GabrielChangeSwitch = false;
-static bool makeGabrielHurt = false;
-static bool GabrielIsAlive = false;
+//static bool riseCannon = false;
+//static bool cannonIsUp = false;
+//static bool operateCannon = false;
+//static bool GabrielChangeSwitch = false;
+//static bool makeGabrielHurt = false;
+//static bool GabrielIsAlive = false;
 
 
 #define ANIMATION_HITLOW		_animations["HITLOW"]
@@ -31,15 +36,16 @@ Gabriel::Gabriel(const WwdObject& obj)
 	, _throwBombsTime(THROW_BOMBS_TIME), _canThrowBombs(true)
 	, _sendPiratesTime(SEND_PIRATES_TIME), _canSendPirates(true)
 {
+	_Gabriel = this;
+
 	speed.x = 0;
 	_isMirrored = true;
 	_ani = _animations["IDLE"];
 	_health = 5; // we need hurt Gabriel only 5 times to win
-	GabrielIsAlive = true;
 }
 Gabriel::~Gabriel()
 {
-	GabrielIsAlive = false;
+	_Gabriel = nullptr;
 	if (removeObject)
 	{
 		GO::addObjectToActionPlane(DBG_NEW DeadGabriel(position,
@@ -108,6 +114,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		}
 	}
 
+	/*
 	if (GabrielChangeSwitch)
 	{
 		_ani = ANIMATION_ACTION_CANNON;
@@ -131,6 +138,7 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		_health -= 1;
 		removeObject = (_health <= 0);
 	}
+	*/
 
 	if (_ani != _animations["IDLE"] && _ani->isFinishAnimation())
 	{
@@ -160,10 +168,33 @@ bool Gabriel::checkForHurts()
 	return false;
 }
 
+void Gabriel::makeHurt()
+{
+	_ani = ANIMATION_HITLOW;
+	_ani->reset();
+	_ani->loopAni = false;
+	_isMirrored = true;
+	_health -= 1;
+	removeObject = (_health <= 0);
+}
+
+void Gabriel::changeSwitch()
+{
+	_ani = ANIMATION_ACTION_CANNON;
+	_ani->reset();
+	_ani->loopAni = false;
+	_isMirrored = false;
+	_throwBombsTime = THROW_BOMBS_TIME; // throw bombs after `THROW_BOMBS_TIME` ms
+	_canThrowBombs = true;
+	_sendPiratesTime = SEND_PIRATES_TIME; // send pirates after `SEND_PIRATES_TIME` ms
+	_canSendPirates = true;
+}
 
 GabrielCannon::GabrielCannon(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
+	_GabrielCannon = this;
+
 	string aniSet = PathManager::getAnimationSetPath(obj.imageSet);
 	string imageSet = PathManager::getImageSetPath(obj.imageSet);
 
@@ -174,26 +205,30 @@ GabrielCannon::GabrielCannon(const WwdObject& obj)
 	_vertfire = AssetsManager::loadAnimation(aniSet + "/VERTIFIRE.ANI", imageSet); // vertical fire
 
 	_ani = _home;
-
 	_ani->position = position;
+}
+GabrielCannon::~GabrielCannon()
+{
+	_GabrielCannon = nullptr;
 }
 void GabrielCannon::Logic(uint32_t elapsedTime)
 {
-	const UIAnimation* prevAni = _ani.get();
+//	const UIAnimation* prevAni = _ani.get();
 
 	if (_ani->isFinishAnimation())
 	{
 		if (_ani == _vertfire)
 		{
-			_ani = _rest;
+			setAnimation(_rest);
 		}
 		else if (_ani == _horzfire || _ani == _rest)
 		{
-			_ani = _home;
+			setAnimation(_home);
 		}
 	}
 
 
+	/*
 	if (riseCannon)
 	{
 		_ani = _rise;
@@ -236,8 +271,46 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 		_ani->loopAni = false;
 		_ani->position = position;
 	}
+	*/
 
 	_ani->Logic(elapsedTime);
+}
+
+void GabrielCannon::operateCannon()
+{
+	// shoot cannon ball
+	WwdObject obj;
+	obj.x = (int32_t)position.x;
+	obj.y = (int32_t)position.y;
+	obj.damage = 15;
+
+	if (_ani == _rise)
+	{
+		setAnimation(_vertfire);
+		obj.speedY = -DEFAULT_PROJECTILE_SPEED;
+		_Gabriel->makeHurt();
+	}
+	else
+	{
+		setAnimation(_horzfire);
+		obj.speedX = -DEFAULT_PROJECTILE_SPEED;
+		obj.y += 56;
+	}
+
+	GO::addObjectToActionPlane(DBG_NEW CannonBall(obj));
+
+	_Gabriel->changeSwitch();
+}
+void GabrielCannon::riseCannon()
+{
+	setAnimation(_rise);
+}
+
+void GabrielCannon::setAnimation(shared_ptr<UIAnimation> newAni){
+	_ani = newAni;
+	_ani->reset();
+	_ani->loopAni = false;
+	_ani->position = position;
 }
 
 
@@ -250,13 +323,14 @@ GabrielCannonSwitch::GabrielCannonSwitch(const WwdObject& obj)
 }
 void GabrielCannonSwitch::Logic(uint32_t elapsedTime)
 {
-	if (!GabrielIsAlive) return;
+	if (!_Gabriel) return;
 
 	_switchCannonTime -= elapsedTime;
 	if (_switchCannonTime <= 0) // use cannon every OPERATE_CANNON_TIME milliseconds
 	{
 		_switchCannonTime = OPERATE_CANNON_TIME;
-		operateCannon = true;
+		//operateCannon = true;
+		_GabrielCannon->operateCannon();
 		_ani->reset();
 		_ani->loopAni = false;
 	}
@@ -276,13 +350,14 @@ void GabrielCannonButton::Logic(uint32_t elapsedTime)
 {
 	_ani->Logic(elapsedTime);
 
-	if (_ani == _pressed && !cannonIsUp)
+	if (_ani == _pressed && !_GabrielCannon->isUp())
 	{
 		_ani = _idle;
 	}
 	else if (GO::getPlayerRect().intersects(_objRc) || GO::getPlayerAttackRect().first.intersects(_objRc))
 	{
 		_ani = _pressed;
-		riseCannon = true;
+		//riseCannon = true;
+		_GabrielCannon->riseCannon();
 	}
 }
