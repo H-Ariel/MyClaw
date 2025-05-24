@@ -1,7 +1,8 @@
 #include "LordOmar.h"
-#include "../../GlobalObjects.h"
-#include "../../Objects/EnemyProjectile.h"
-#include "../../Objects/ClawProjectile.h"
+#include "LordOmarShield.h"
+#include "LordOmarProjectile.h"
+#include "../../../GlobalObjects.h"
+#include "../../../Objects/ClawProjectile.h"
 
 
 /*
@@ -15,103 +16,6 @@ The order of the states:
 
 LO fade out before he moves to the next state.
 */
-
-
-
-constexpr int NUM_OF_ITEMS_IN_FULL_SHIELD = 11;
-constexpr int NUM_OF_ITEMS_IN_SHIELD = 9;
-constexpr int SHIELD_RADIUS = 96;
-constexpr float M_2PI = float(2 * M_PI);
-constexpr float STEP_SIZE = (M_2PI / NUM_OF_ITEMS_IN_FULL_SHIELD); // the angle between each item of the shield (in radians)
-
-class LordOmarShield : public BaseDynamicPlaneObject
-{
-public:
-	LordOmarShield(D2D1_POINT_2F center, const string& shieldItemImageSet, bool rotateClockwise)
-		: BaseDynamicPlaneObject({}),
-		_center(center),
-		_rotateClockwise(rotateClockwise)
-	{
-		drawZ = DefaultZCoord::Characters + 1;
-		_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(shieldItemImageSet));
-
-		// set the positions:
-		
-		float angle = 0;
-		for (int i = 0; i < NUM_OF_ITEMS_IN_SHIELD; i++)
-		{
-			_itemsAngles[i] = angle;
-			angle += STEP_SIZE;
-		}
-
-		GO::addObjectToActionPlane(this);
-	}
-
-	void Logic(uint32_t elapsedTime) override
-	{
-		_ani->Logic(elapsedTime);
-
-		// to rotate the shield we add `rotatingStep` to each angle
-		float rotatingStep = STEP_SIZE * elapsedTime / 128;
-		for (int i = 0; i < NUM_OF_ITEMS_IN_SHIELD; i++)
-		{
-			if (_rotateClockwise)
-				_itemsAngles[i] += rotatingStep;
-			else
-				_itemsAngles[i] -= rotatingStep;
-
-			// normalize the angle to be in [0, 2*PI).
-			// since `cos` and `sin` are periodic functions, I think that we don't need to normalize the angle
-			if (_itemsAngles[i] >= M_2PI) _itemsAngles[i] -= M_2PI;
-			else if (_itemsAngles[i] < 0) _itemsAngles[i] += M_2PI;
-		}
-
-		// block claw projectiles:
-		for (Projectile* p : GO::getActionPlaneProjectiles())
-		{
-			if (isinstance<ClawProjectile>(p)) // actually, there are only ClawProjectiles in this state.
-			{
-				// if the projectile collides with shield item, remove it
-				for (int i = 0; i < NUM_OF_ITEMS_IN_SHIELD; i++)
-				{
-					_ani->position = getItemPosition(i);
-					if (p->GetRect().intersects(_ani->GetRect()))
-					{
-						p->removeObject = true;
-						return;
-					}
-				}
-			}
-		}
-	}
-	void Draw() override
-	{
-		for (int i = 0; i < NUM_OF_ITEMS_IN_SHIELD; i++)
-		{
-			_ani->position = getItemPosition(i);
-			_ani->Draw();
-		}
-	}
-	bool isFalling() const override { return false; }
-	void stopFalling(float collisionSize) override {}
-	void stopMovingLeft(float collisionSize) override {}
-	void stopMovingRight(float collisionSize) override {}
-	void bounceTop() override {}
-	void whenTouchDeath() override {}
-
-private:
-	D2D1_POINT_2F getItemPosition(int i) const
-	{
-		return {
-			_center.x + SHIELD_RADIUS * cosf(_itemsAngles[i]),
-			_center.y + SHIELD_RADIUS * sinf(_itemsAngles[i])
-		};
-	}
-
-	const D2D1_POINT_2F _center;
-	float _itemsAngles[NUM_OF_ITEMS_IN_SHIELD]; // save angle (in radians) for each item of the shield
-	const bool _rotateClockwise;
-};
 
 
 #define ANIMATION_IDLE			_animations["IDLE"]

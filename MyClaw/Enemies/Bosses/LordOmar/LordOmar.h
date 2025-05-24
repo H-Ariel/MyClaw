@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../BaseEnemy.h"
+#include "../../BaseEnemy.h"
 
 
 class LordOmarShield;
+
 class LordOmar : public BaseBoss
 {
 public:

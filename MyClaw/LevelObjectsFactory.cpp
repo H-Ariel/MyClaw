@@ -44,15 +44,15 @@
 #include "Enemies/Bosses/Gabriel/Gabriel.h"
 #include "Enemies/Bosses/Marrow/Marrow.h"
 #include "Enemies/Chameleon.h"
-#include "Enemies/Bosses/Aquatis.h"
+#include "Enemies/Bosses/Aquatis/Aquatis.h"
 #include "Enemies/Bosses/RedTail.h"
 #include "Enemies/TigerGuard.h"
-#include "Enemies/Bosses/LordOmar.h"
+#include "Enemies/Bosses/LordOmar/LordOmar.h"
 
 
 #ifdef _DEBUG
-//#define NO_ENEMIES
-//NO_OBSTACLES
+#define NO_ENEMIES
+#define NO_OBSTACLES
 #endif
 
 

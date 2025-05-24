@@ -13,6 +13,7 @@ public:
 
 
 // not all of these projectiles are enemy-projectiles, but all of them can hurt CC
+// TODO split this file...
 
 
 class RatBomb : public EnemyProjectile
@@ -33,15 +34,6 @@ class CrabBomb : public EnemyProjectile
 public:
 	CrabBomb(const WwdObject& obj);
 	~CrabBomb();
-};
-
-class GabrielBomb : public EnemyProjectile
-{
-public:
-	GabrielBomb(const WwdObject& obj);
-	~GabrielBomb();
-	void Logic(uint32_t elapsedTime) override;
-	void stopFalling(float collisionSize) override;
 };
 
 class TProjectile : public EnemyProjectile
@@ -75,11 +67,4 @@ public:
 	~LavahandProjectile();
 	void Logic(uint32_t elapsedTime) override;
 	void stopFalling(float collisionSize) override;
-};
-
-class LordOmarProjectile : public EnemyProjectile
-{
-public:
-	LordOmarProjectile(D2D1_POINT_2F pos, float speedX);
-	Rectangle2D GetRect() override;
 };

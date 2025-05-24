@@ -35,31 +35,6 @@ CrabBomb::~CrabBomb()
 	}
 }
 
-GabrielBomb::GabrielBomb(const WwdObject& obj)
-	: EnemyProjectile(obj, PathManager::getAnimationPath("LEVEL_GABRIELBOMB_FALL"),
-		PathManager::getImageSetPath("LEVEL_GABRIELBOMB"))
-{
-}
-GabrielBomb::~GabrielBomb()
-{
-	if (removeObject)
-	{
-		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, "LEVEL_GABRIELBOMB_EXPLODE", "LEVEL_GABRIELBOMB"));
-	}
-}
-void GabrielBomb::Logic(uint32_t elapsedTime)
-{
-	if (!removeObject)
-		speed.y += GRAVITY * elapsedTime;
-	Projectile::Logic(elapsedTime);
-}
-void GabrielBomb::stopFalling(float collisionSize)
-{
-	position.y -= collisionSize;
-	position.y -= 32;
-	removeObject = true;
-}
-
 CannonBall::CannonBall(const WwdObject& obj)
 	: EnemyProjectile(obj, PathManager::getImageSetPath("LEVEL_CANNONBALL")) {}
 
@@ -121,13 +96,4 @@ void LavahandProjectile::stopFalling(float collisionSize)
 {
 	speed = {}; 
 	position.y -= collisionSize; 
-}
-
-LordOmarProjectile::LordOmarProjectile(D2D1_POINT_2F pos, float speedX)
-	: EnemyProjectile(AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_OMARPROJECTILE")), 20, { speedX , 0 }, pos)
-{
-}
-Rectangle2D LordOmarProjectile::GetRect()
-{
-	return Rectangle2D(position.x - 16, position.y - 16, position.x + 16, position.y + 16);
 }

@@ -18,7 +18,9 @@ constexpr int MAX_TREE_DEPTH = 3;
 
 
 // save the tiles map. used to check if ladder is finish at quad bound.
-const DynamicArray<DynamicArray<int32_t>>* p_tilesMap = nullptr;
+static const DynamicArray<DynamicArray<int32_t>>* p_tilesMap = nullptr;
+static const DynamicArray<WwdTileDescription>* p_tileDescriptions = nullptr;
+// TODO: something better with this object here... maybe create new sub-class QuadTreeNode ?
 
 
 QuadTree::QuadTree(Rectangle2D bounds)
@@ -31,6 +33,7 @@ QuadTree::QuadTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const Dy
 	_bounds(Rectangle2D(0, 0, (float)tilesMap[0].size() * TILE_SIZE, (float)tilesMap.size() * TILE_SIZE))
 {
 	p_tilesMap = &tilesMap;
+	p_tileDescriptions = &tileDescriptions;
 
 	buildTree(tilesMap, tileDescriptions, 0);
 }
@@ -90,9 +93,9 @@ void QuadTree::checkCollides(BaseDynamicPlaneObject* obj, const Rectangle2D& obj
 		bool isOnLadderTop = false;
 		int x = (int)((objRc.left + objRc.right) / 2) / TILE_SIZE;
 		int y = (int)(objRc.bottom) / TILE_SIZE;
-		if ((*p_tilesMap)[y][x] == WwdTileDescription::TileAttribute_Climb)
+		if ((*p_tileDescriptions)[(*p_tilesMap)[y][x]].insideAttrib == WwdTileDescription::TileAttribute_Climb)
 		{
-			if ((*p_tilesMap)[y - 1][x] != WwdTileDescription::TileAttribute_Climb)
+			if ((*p_tileDescriptions)[(*p_tilesMap)[y - 1][x]].insideAttrib != WwdTileDescription::TileAttribute_Climb)
 				isOnLadderTop = true;
 		}
 
@@ -306,19 +309,3 @@ void QuadTree::addRect(const Rectangle2D& rc, uint32_t attr) {
 		_rects.push_back({ rc, attr });
 	}
 }
-
-/*
-void QuadTree::print(string t) { // TODO delete this func
-	printf("%s{ %.2f, %.2f, %.2f, %.2f }\n", t.c_str(), _bounds.left, _bounds.top, _bounds.right, _bounds.bottom);
-
-	if (isLeaf()) {
-		printf("%s%s%d rects\n", t.c_str(), t.c_str(), (int)_rects.size());
-	}
-	else {
-		if (_topLeft) _topLeft->print(t + "   ");
-		if (_topRight) _topRight->print(t + "   ");
-		if (_bottomLeft) _bottomLeft->print(t + "   ");
-		if (_bottomRight) _bottomRight->print(t + "   ");
-	}
-}
-*/

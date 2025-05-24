@@ -14,7 +14,9 @@ class BaseEnemy;
 class Projectile;
 class BaseDamageObject;
 
-
+/// <summary>
+/// Static class holding global shared objects used across the game.
+/// </summary>
 class GlobalObjects
 {
 public:

@@ -1,7 +1,8 @@
 #include "Gabriel.h"
 #include "GabrielRedTailPirate.h"
+#include "GabrielBomb.h"
+#include "DeadGabriel.h"
 #include "../../../GlobalObjects.h"
-#include "../../../Objects/EnemyProjectile.h"
 
 
 // TODO something better than al of this `static`...
@@ -23,36 +24,6 @@ constexpr int OPERATE_CANNON_TIME = 7000;
 constexpr int THROW_BOMBS_TIME = 4500;
 constexpr int SEND_PIRATES_TIME = 2000;
 
-
-class DeadGabriel : public OneTimeAnimation
-{
-public:
-	DeadGabriel(D2D1_POINT_2F pos, shared_ptr<UIAnimation> ani, int firstPartDuration)
-		: OneTimeAnimation(pos, ani, false), _delay(firstPartDuration), _moved(false)
-	{
-		drawZ = DefaultZCoord::Characters + 1;
-	}
-	void Logic(uint32_t elapsedTime) override
-	{
-		if (!_moved)
-		{
-			_delay -= elapsedTime;
-			if (_delay <= 0)
-			{
-				// TODO: add flip in air before stay in this position
-				_ani->position = { 42992, 5240 };
-				_ani->mirrored = true;
-				_moved = true;
-			}
-		}
-
-		_ani->Logic(elapsedTime);
-	}
-
-private:
-	int _delay;
-	bool _moved;
-};
 
 
 Gabriel::Gabriel(const WwdObject& obj)

@@ -29,6 +29,12 @@
     <Filter Include="Enemies\Bosses\Gabriel">
       <UniqueIdentifier>{1036710a-a9cb-4b55-8fd8-bcf138812bfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Enemies\Bosses\LordOmar">
+      <UniqueIdentifier>{668b97b1-2b05-4629-9fd7-702ff0684f5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Enemies\Bosses\Aquatis">
+      <UniqueIdentifier>{62474375-471c-458e-b27f-6bdf872eda1a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -223,12 +229,6 @@
     <ClCompile Include="Assets-Managers\PathManager.cpp">
       <Filter>Assets-Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Aquatis.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="Enemies\Bosses\LordOmar.cpp">
-      <Filter>Enemies\Bosses</Filter>
-    </ClCompile>
     <ClCompile Include="Enemies\Bosses\LeRauxe.cpp">
       <Filter>Enemies\Bosses</Filter>
     </ClCompile>
@@ -279,6 +279,24 @@
     </ClCompile>
     <ClCompile Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.cpp">
       <Filter>Enemies\Bosses\Gabriel</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmar.cpp">
+      <Filter>Enemies\Bosses\LordOmar</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmarShield.cpp">
+      <Filter>Enemies\Bosses\LordOmar</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\Gabriel\DeadGabriel.cpp">
+      <Filter>Enemies\Bosses\Gabriel</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmarProjectile.cpp">
+      <Filter>Enemies\Bosses\LordOmar</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\Gabriel\GabrielBomb.cpp">
+      <Filter>Enemies\Bosses\Gabriel</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemies\Bosses\Aquatis\Aquatis.cpp">
+      <Filter>Enemies\Bosses\Aquatis</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -471,12 +489,6 @@
     <ClInclude Include="Assets-Managers\PathManager.h">
       <Filter>Assets-Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Aquatis.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
-    <ClInclude Include="Enemies\Bosses\LordOmar.h">
-      <Filter>Enemies\Bosses</Filter>
-    </ClInclude>
     <ClInclude Include="Enemies\Bosses\LeRauxe.h">
       <Filter>Enemies\Bosses</Filter>
     </ClInclude>
@@ -527,6 +539,24 @@
     </ClInclude>
     <ClInclude Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.h">
       <Filter>Enemies\Bosses\Gabriel</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmar.h">
+      <Filter>Enemies\Bosses\LordOmar</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmarShield.h">
+      <Filter>Enemies\Bosses\LordOmar</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\Gabriel\DeadGabriel.h">
+      <Filter>Enemies\Bosses\Gabriel</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmarProjectile.h">
+      <Filter>Enemies\Bosses\LordOmar</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\Gabriel\GabrielBomb.h">
+      <Filter>Enemies\Bosses\Gabriel</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemies\Bosses\Aquatis\Aquatis.h">
+      <Filter>Enemies\Bosses\Aquatis</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
