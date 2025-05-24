@@ -10,6 +10,7 @@
 #include "Objects/Checkpoint.h"
 #include "Objects/Stalactite.h"
 #include "Objects/Crate.h"
+#include "Objects/OneTimeAnimation.h"
 #include "Enemies/Bosses/Gabriel/GabrielRedTailPirate.h"
 
 

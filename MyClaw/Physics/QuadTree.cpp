@@ -8,7 +8,7 @@
 
 // used in `buildTree`
 #define MAKE_SUB_TREE(rect, out) \
-	tmp = DBG_NEW QuadTree(rect); \
+	tmp = DBG_NEW QuadTreeNode(rect); \
 	if (tmp->buildTree(tilesMap, tileDescriptions, recLevel + 1)) out = tmp; \
 	else delete tmp;
 
@@ -17,37 +17,40 @@ constexpr float LADDER_TOP_THRESHOLD = 32.0f;
 constexpr int MAX_TREE_DEPTH = 3;
 
 
-// save the tiles map. used to check if ladder is finish at quad bound.
-static const DynamicArray<DynamicArray<int32_t>>* p_tilesMap = nullptr;
-static const DynamicArray<WwdTileDescription>* p_tileDescriptions = nullptr;
-// TODO: something better with this object here... maybe create new sub-class QuadTreeNode ?
-
-
-QuadTree::QuadTree(Rectangle2D bounds)
-	: _topLeft(nullptr), _topRight(nullptr), _bottomLeft(nullptr),
-	_bottomRight(nullptr), _bounds(bounds)
+QuadTree::QuadTree(const Dynamic2DArray<int32_t>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions)
+	: _root(nullptr)
 {
-}
-QuadTree::QuadTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions)
-	: _topLeft(nullptr), _topRight(nullptr), _bottomLeft(nullptr), _bottomRight(nullptr),
-	_bounds(Rectangle2D(0, 0, (float)tilesMap[0].size() * TILE_SIZE, (float)tilesMap.size() * TILE_SIZE))
-{
-	p_tilesMap = &tilesMap;
-	p_tileDescriptions = &tileDescriptions;
-
-	buildTree(tilesMap, tileDescriptions, 0);
+	_root = DBG_NEW QuadTreeNode(
+		Rectangle2D(0, 0, (float)tilesMap[0].size() * TILE_SIZE, (float)tilesMap.size() * TILE_SIZE)
+	);
+	_root->buildTree(tilesMap, tileDescriptions, 0);
 }
 QuadTree::~QuadTree() {
+	delete _root;
+}
+
+void QuadTree::checkCollides(BaseDynamicPlaneObject* obj) const {
+	_root->checkCollides(obj, obj->GetRect());
+}
+
+pair<float, float> QuadTree::getEnemyRange(D2D1_POINT_2F enemyPos, const float minX, const float maxX) const {
+	return _root->getEnemyRange(enemyPos, minX, maxX);
+}
+
+
+QuadTree::QuadTreeNode::QuadTreeNode(Rectangle2D bounds)
+	: _topLeft(nullptr), _topRight(nullptr), _bottomLeft(nullptr), _bottomRight(nullptr),
+	_bounds(bounds), p_tilesMap(nullptr), p_tileDescriptions(nullptr)
+{
+}
+QuadTree::QuadTreeNode::~QuadTreeNode() {
 	delete _topLeft;
 	delete _topRight;
 	delete _bottomLeft;
 	delete _bottomRight;
 }
 
-void QuadTree::checkCollides(BaseDynamicPlaneObject* obj) const {
-	checkCollides(obj, obj->GetRect());
-}
-void QuadTree::checkCollides(BaseDynamicPlaneObject* obj, const Rectangle2D& objRc) const
+void QuadTree::QuadTreeNode::checkCollides(BaseDynamicPlaneObject* obj, const Rectangle2D& objRc) const
 {
 	if (!isLeaf()) {
 		// find correct quad
@@ -60,84 +63,83 @@ void QuadTree::checkCollides(BaseDynamicPlaneObject* obj, const Rectangle2D& obj
 			_bottomLeft->checkCollides(obj, objRc);
 		if (_bottomRight && objRc.intersects(_bottomRight->_bounds))
 			_bottomRight->checkCollides(obj, objRc);
-
-		return;
 	}
+	else {
+		// find collisons
 
-	// find collisons
+		Rectangle2D cumulatedCollision, collisionRc;
+		const bool isPlayer = isinstance<Player>(obj);
 
-	Rectangle2D cumulatedCollision, collisionRc;
-	const bool isPlayer = isinstance<Player>(obj);
-
-	auto _addCollision = [&]() { // add `collisionRect` to the `cumulatedCollision`
-		// add the collision details to the cummulated collision
-		collisionRc.keepSmallest();
-		SAVE_MAX(cumulatedCollision.top, collisionRc.top);
-		SAVE_MAX(cumulatedCollision.bottom, collisionRc.bottom);
-		SAVE_MAX(cumulatedCollision.left, collisionRc.left);
-		SAVE_MAX(cumulatedCollision.right, collisionRc.right);
-	};
-	auto _onGround = [&]() {
-		float smallestBottom = collisionRc.getSmallest().bottom;
-		// when object is falling or when CC climb down and arrive to the ground
-		if ((obj->isFalling() || (isPlayer && GO::player->isClimbing())) &&
-			(collisionRc.right > 0 || collisionRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
-		{
-			_addCollision();
-		}
-	};
-	auto _onLadder = [&](const Rectangle2D& tileRc) {
-		// check if object is at the top of the ladder, so it should stay here (and not fall)
-		
-		// find ladder-top using tiles-map for case ladder starts at one quad and ends at other quad
-		bool isOnLadderTop = false;
-		int x = (int)((objRc.left + objRc.right) / 2) / TILE_SIZE;
-		int y = (int)(objRc.bottom) / TILE_SIZE;
-		if ((*p_tileDescriptions)[(*p_tilesMap)[y][x]].insideAttrib == WwdTileDescription::TileAttribute_Climb)
-		{
-			if ((*p_tileDescriptions)[(*p_tilesMap)[y - 1][x]].insideAttrib != WwdTileDescription::TileAttribute_Climb)
-				isOnLadderTop = true;
-		}
-
-		if (isPlayer)
-			isOnLadderTop = !GO::player->isClimbing() && isOnLadderTop;
-
-		if (isOnLadderTop)
-			_onGround(); // ladder top behaves like ground
-
-		if (isPlayer) // let Captain Claw climb
-		{
-			GO::player->setLadderFlags(isOnLadderTop);
-			if (GO::player->isClimbing())
+		auto _addCollision = [&]() { // add `collisionRect` to the `cumulatedCollision`
+			// add the collision details to the cummulated collision
+			collisionRc.keepSmallest();
+			SAVE_MAX(cumulatedCollision.top, collisionRc.top);
+			SAVE_MAX(cumulatedCollision.bottom, collisionRc.bottom);
+			SAVE_MAX(cumulatedCollision.left, collisionRc.left);
+			SAVE_MAX(cumulatedCollision.right, collisionRc.right);
+			};
+		auto _onGround = [&]() {
+			float smallestBottom = collisionRc.getSmallest().bottom;
+			// when object is falling or when CC climb down and arrive to the ground
+			if ((obj->isFalling() || (isPlayer && GO::player->isClimbing())) &&
+				(collisionRc.right > 0 || collisionRc.left > 0) && (0 < smallestBottom && smallestBottom < 16))
 			{
-				// set the player position on the ladder easily for the user
-				GO::getPlayerPosition().x = (tileRc.left + tileRc.right) / 2;
+				_addCollision();
+			}
+			};
+		auto _onLadder = [&](const Rectangle2D& tileRc) {
+			// check if object is at the top of the ladder, so it should stay here (and not fall)
+
+			// find ladder-top using tiles-map for case ladder starts at one quad and ends at other quad
+			bool isOnLadderTop = false;
+			int x = (int)((objRc.left + objRc.right) / 2) / TILE_SIZE;
+			int y = (int)(objRc.bottom) / TILE_SIZE;
+			if ((*p_tileDescriptions)[(*p_tilesMap)[y][x]].insideAttrib == WwdTileDescription::TileAttribute_Climb)
+			{
+				if ((*p_tileDescriptions)[(*p_tilesMap)[y - 1][x]].insideAttrib != WwdTileDescription::TileAttribute_Climb)
+					isOnLadderTop = true;
+			}
+
+			if (isPlayer)
+				isOnLadderTop = !GO::player->isClimbing() && isOnLadderTop;
+
+			if (isOnLadderTop)
+				_onGround(); // ladder top behaves like ground
+
+			if (isPlayer) // let Captain Claw climb
+			{
+				GO::player->setLadderFlags(isOnLadderTop);
+				if (GO::player->isClimbing())
+				{
+					// set the player position on the ladder easily for the user
+					GO::getPlayerPosition().x = (tileRc.left + tileRc.right) / 2;
+				}
+			}
+			};
+
+		for (const auto& [rect, type] : _rects)
+		{
+			if (objRc.intersects(rect))
+			{
+				collisionRc = objRc.getCollision(rect);
+				switch (type)
+				{
+				case WwdTileDescription::TileAttribute_Solid: _addCollision(); break;
+				case WwdTileDescription::TileAttribute_Ground: _onGround(); break;
+				case WwdTileDescription::TileAttribute_Climb: _onLadder(rect); break;
+				case WwdTileDescription::TileAttribute_Death: obj->whenTouchDeath(); break;
+				}
 			}
 		}
-	};
 
-	for (const auto& [rect, type] : _rects)
-	{
-		if (objRc.intersects(rect))
-		{
-			collisionRc = objRc.getCollision(rect);
-			switch (type)
-			{
-			case WwdTileDescription::TileAttribute_Solid: _addCollision(); break;
-			case WwdTileDescription::TileAttribute_Ground: _onGround(); break;
-			case WwdTileDescription::TileAttribute_Climb: _onLadder(rect); break;
-			case WwdTileDescription::TileAttribute_Death: obj->whenTouchDeath(); break;
-			}
-		}
+		if (cumulatedCollision.top > 0) obj->bounceTop();
+		if (cumulatedCollision.bottom > 0) obj->stopFalling(cumulatedCollision.bottom);
+		if (cumulatedCollision.left > 0) obj->stopMovingLeft(cumulatedCollision.left);
+		if (cumulatedCollision.right > 0) obj->stopMovingRight(cumulatedCollision.right);
 	}
-
-	if (cumulatedCollision.top > 0) obj->bounceTop();
-	if (cumulatedCollision.bottom > 0) obj->stopFalling(cumulatedCollision.bottom);
-	if (cumulatedCollision.left > 0) obj->stopMovingLeft(cumulatedCollision.left);
-	if (cumulatedCollision.right > 0) obj->stopMovingRight(cumulatedCollision.right);
 }
 
-pair<float, float> QuadTree::getEnemyRange(D2D1_POINT_2F enemyPos, const float minX, const float maxX) const
+pair<float, float> QuadTree::QuadTreeNode::getEnemyRange(D2D1_POINT_2F enemyPos, const float minX, const float maxX) const
 {
 	if (!isLeaf()) {
 		// calculate range from all quads and combine the result
@@ -193,13 +195,13 @@ pair<float, float> QuadTree::getEnemyRange(D2D1_POINT_2F enemyPos, const float m
 	}
 }
 
-bool QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions, int recLevel) {
+bool QuadTree::QuadTreeNode::buildTree(const Dynamic2DArray<int32_t>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions, int recLevel) {
 	if (recLevel < MAX_TREE_DEPTH) {
 		// find all quads. if quad has no sub-rectangles in it - delete this quads.
 
 		float centerX = (_bounds.left + _bounds.right) / 2;
 		float centerY = (_bounds.top + _bounds.bottom) / 2;
-		QuadTree* tmp;
+		QuadTreeNode* tmp;
 
 		MAKE_SUB_TREE(Rectangle2D(_bounds.left, _bounds.top, centerX, centerY), _topLeft);
 		MAKE_SUB_TREE(Rectangle2D(centerX, _bounds.top, _bounds.right, centerY), _topRight);
@@ -209,6 +211,9 @@ bool QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, co
 		return _topLeft || _topRight || _bottomLeft || _bottomRight;
 	}
 	else {
+		p_tilesMap = &tilesMap;
+		p_tileDescriptions = &tileDescriptions;
+
 		// fill quad with match rectangles:
 		// map of all rectangles that BaseDynamicPlaneObjects can collide with 
 
@@ -303,7 +308,7 @@ bool QuadTree::buildTree(const DynamicArray<DynamicArray<int32_t>>& tilesMap, co
 	return !_rects.empty();
 }
 
-void QuadTree::addRect(const Rectangle2D& rc, uint32_t attr) {
+void QuadTree::QuadTreeNode::addRect(const Rectangle2D& rc, uint32_t attr) {
 	if (attr != WwdTileDescription::TileAttribute_Clear && rc.left != rc.right && rc.top != rc.bottom)
 	{
 		_rects.push_back({ rc, attr });

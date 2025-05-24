@@ -1,7 +1,7 @@
 #include "PhysicsManager.h"
 
 
-PhysicsManager::PhysicsManager(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions)
+PhysicsManager::PhysicsManager(const Dynamic2DArray<int32_t>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions)
 	: quadTree(tilesMap, tileDescriptions)
 {
 }

@@ -298,6 +298,9 @@
     <ClCompile Include="Enemies\Bosses\Aquatis\Aquatis.cpp">
       <Filter>Enemies\Bosses\Aquatis</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\OneTimeAnimation.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Objects\ActionPlaneMessage.h">
@@ -557,6 +560,9 @@
     </ClInclude>
     <ClInclude Include="Enemies\Bosses\Aquatis\Aquatis.h">
       <Filter>Enemies\Bosses\Aquatis</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\OneTimeAnimation.h">
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

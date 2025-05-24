@@ -5,6 +5,7 @@
 #include "../Objects/EnemyProjectile.h"
 #include "../Objects/ClawProjectile.h"
 #include "../Objects/PowderKeg.h"
+#include "../Objects/OneTimeAnimation.h"
 
 
 BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string& walkAni,

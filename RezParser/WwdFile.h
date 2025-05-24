@@ -170,7 +170,7 @@ public:
 	float movementPercentX, movementPercentY;
 	uint32_t fillColor;
 	int32_t coordZ;
-	DynamicArray<DynamicArray<int32_t>> tiles; // tiles[y][x] = id
+	Dynamic2DArray<int32_t> tiles; // tiles[y][x] = id
 	DynamicArray<string> imageSets;
 	DynamicArray<WwdObject> objects;
 

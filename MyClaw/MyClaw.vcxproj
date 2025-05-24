@@ -238,6 +238,7 @@
     <ClCompile Include="Objects\Laser.cpp" />
     <ClCompile Include="Objects\LavaHand.cpp" />
     <ClCompile Include="Objects\LavaMouth.cpp" />
+    <ClCompile Include="Objects\OneTimeAnimation.cpp" />
     <ClCompile Include="Objects\Pegs.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
     <ClCompile Include="Objects\PowderKeg.cpp" />
@@ -326,6 +327,7 @@
     <ClInclude Include="Objects\Laser.h" />
     <ClInclude Include="Objects\LavaHand.h" />
     <ClInclude Include="Objects\LavaMouth.h" />
+    <ClInclude Include="Objects\OneTimeAnimation.h" />
     <ClInclude Include="Objects\Pegs.h" />
     <ClInclude Include="Objects\Player.h" />
     <ClInclude Include="Objects\PowderKeg.h" />

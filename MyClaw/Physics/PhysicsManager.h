@@ -6,7 +6,7 @@
 class PhysicsManager
 {
 public:
-	PhysicsManager(const DynamicArray<DynamicArray<int32_t>>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions);
+	PhysicsManager(const Dynamic2DArray<int32_t>& tilesMap, const DynamicArray<WwdTileDescription>& tileDescriptions);
 
 	void moveX(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const;
 	void moveY(BaseDynamicPlaneObject* obj, uint32_t elapsedTime) const;

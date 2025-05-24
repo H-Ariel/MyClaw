@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../Objects/BasePlaneObject.h"
+#include "../../../Objects/OneTimeAnimation.h"
 
 
 class DeadGabriel : public OneTimeAnimation

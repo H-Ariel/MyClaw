@@ -71,3 +71,6 @@ private:
 	T* arr;
 	size_t _size;
 };
+
+template <class T>
+using Dynamic2DArray = DynamicArray<DynamicArray<T>>;

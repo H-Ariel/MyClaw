@@ -7,6 +7,7 @@
 #include "ConveyorBelt.h"
 #include "Stalactite.h"
 #include "PowderKeg.h"
+#include "OneTimeAnimation.h"
 #include "../Enemies/BaseEnemy.h"
 
 

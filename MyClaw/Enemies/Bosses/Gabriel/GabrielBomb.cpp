@@ -1,5 +1,6 @@
 #include "GabrielBomb.h"
 #include "../../../GlobalObjects.h"
+#include "../../../Objects/OneTimeAnimation.h"
 
 
 GabrielBomb::GabrielBomb(const WwdObject& obj)

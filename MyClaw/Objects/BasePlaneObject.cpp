@@ -102,28 +102,3 @@ BaseSoundObject::BaseSoundObject(const WwdObject& obj)
 	myMemCpy(_objRc, newRc);
 }
 void BaseSoundObject::Draw() {} // these objects are invisible so no need to draw them
-
-
-OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<UIAnimation> ani, bool removeAtEnd)
-	: BasePlaneObject({}), _removeAtEnd(removeAtEnd)
-{
-	drawZ = DefaultZCoord::Characters + 2; // always cover characters
-	_ani = ani;
-	_ani->loopAni = false;
-	_ani->position = pos;
-}
-OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, const string& aniPath, const string& imageSet, bool removeAtEnd)
-	: OneTimeAnimation(pos, AssetsManager::loadCopyAnimation(
-		PathManager::getAnimationPath(aniPath), PathManager::getImageSetPath(imageSet)), removeAtEnd)
-{
-}
-void OneTimeAnimation::Logic(uint32_t elapsedTime)
-{
-	_ani->Logic(elapsedTime);
-	if (_removeAtEnd)
-		removeObject = _ani->isFinishAnimation();
-}
-void OneTimeAnimation::Draw()
-{
-	_ani->Draw();
-}

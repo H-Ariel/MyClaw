@@ -1,6 +1,7 @@
 #include "Aquatis.h"
 #include "../../../GlobalObjects.h"
 #include "../../../Objects/ClawProjectile.h"
+#include "../../../Objects/OneTimeAnimation.h"
 
 
 #define ANIMATION_HITHIGH	_animations["HITHIGH"]

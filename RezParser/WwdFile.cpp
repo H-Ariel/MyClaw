@@ -42,7 +42,7 @@ WwdPlane::WwdPlane()
 
 void WwdPlane::ReadPlaneTiles(Buffer& inputStream)
 {
-	tiles = DynamicArray<DynamicArray<int32_t>>(tilesOnAxisY);
+	tiles = Dynamic2DArray<int32_t>(tilesOnAxisY);
 	for (DynamicArray<int32_t>& vec : tiles)
 	{
 		vec = DynamicArray<int32_t>(tilesOnAxisX);
