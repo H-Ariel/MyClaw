@@ -29,8 +29,8 @@ void GabrielRedTailPirate::Logic(uint32_t elapsedTime)
 }
 void GabrielRedTailPirate::stopFalling(float collisionSize)
 {
-	// if he stop falls after jumpingit means he arrived to
-	// CC's dock, so we swap thi object with regular enemy
+	// if he stop falls after jumping it means he arrived to
+	// CC's dock, so we swap this object with regular enemy
 	if (_isJumping)
 	{
 		WwdObject obj;
@@ -48,3 +48,6 @@ void GabrielRedTailPirate::stopFalling(float collisionSize)
 		BaseDynamicPlaneObject::stopFalling(collisionSize);
 	}
 }
+// they always run (until they jump at end of dock)
+void GabrielRedTailPirate::stopMovingLeft(float collisionSize) { }
+void GabrielRedTailPirate::stopMovingRight(float collisionSize) { }

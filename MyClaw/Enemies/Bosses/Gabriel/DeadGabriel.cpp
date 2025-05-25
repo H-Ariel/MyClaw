@@ -1,8 +1,14 @@
 #include "DeadGabriel.h"
 
 
-DeadGabriel::DeadGabriel(D2D1_POINT_2F pos, shared_ptr<UIAnimation> ani, int firstPartDuration)
-	: OneTimeAnimation(pos, ani, false), _delay(firstPartDuration), _moved(false)
+DeadGabriel::DeadGabriel(D2D1_POINT_2F pos, const map<string, shared_ptr<UIAnimation>>& gabrielAnimations)
+	: OneTimeAnimation(pos, make_shared<UIAnimation>(
+		gabrielAnimations.at("KILLFALL1")->getFramesList() +
+		gabrielAnimations.at("KILLFALL2")->getFramesList() +
+		gabrielAnimations.at("KILLFALL3")->getFramesList() +
+		gabrielAnimations.at("KILLFALL4")->getFramesList()
+	), false),
+	_delay((int)gabrielAnimations.at("KILLFALL1")->getTotalDuration()), _moved(false)
 {
 	drawZ = DefaultZCoord::Characters + 1;
 }

@@ -11,6 +11,8 @@ public:
 	GabrielRedTailPirate();
 	void Logic(uint32_t elapsedTime) override;
 	void stopFalling(float collisionSize) override;
+	void stopMovingLeft(float collisionSize);
+	void stopMovingRight(float collisionSize);
 
 private:
 	bool _isJumping;

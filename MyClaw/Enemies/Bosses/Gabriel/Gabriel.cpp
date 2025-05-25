@@ -5,18 +5,9 @@
 #include "../../../GlobalObjects.h"
 
 
-// i try make gabriel better but i broke something... TODO fix it!
-
+// TODO something better than all of this `static`...
 static Gabriel* _Gabriel = nullptr;
 static GabrielCannon* _GabrielCannon = nullptr;
-
-// TODO something better than al of this `static`...
-//static bool riseCannon = false;
-//static bool cannonIsUp = false;
-//static bool operateCannon = false;
-//static bool GabrielChangeSwitch = false;
-//static bool makeGabrielHurt = false;
-//static bool GabrielIsAlive = false;
 
 
 #define ANIMATION_HITLOW		_animations["HITLOW"]
@@ -48,14 +39,8 @@ Gabriel::~Gabriel()
 	_Gabriel = nullptr;
 	if (removeObject)
 	{
-		GO::addObjectToActionPlane(DBG_NEW DeadGabriel(position,
-			make_shared<UIAnimation>(
-				_animations["KILLFALL1"]->getFramesList() +
-				_animations["KILLFALL2"]->getFramesList() +
-				_animations["KILLFALL3"]->getFramesList() +
-				_animations["KILLFALL4"]->getFramesList()
-			),
-			(int)_animations["KILLFALL1"]->getTotalDuration()));
+		GO::addObjectToActionPlane(DBG_NEW DeadGabriel(position,_animations));
+		// TODO show gem only after DeadGabriel animation finished
 	}
 }
 void Gabriel::Logic(uint32_t elapsedTime)
@@ -114,32 +99,6 @@ void Gabriel::Logic(uint32_t elapsedTime)
 		}
 	}
 
-	/*
-	if (GabrielChangeSwitch)
-	{
-		_ani = ANIMATION_ACTION_CANNON;
-		_ani->reset();
-		_ani->loopAni = false;
-		_isMirrored = false;
-		GabrielChangeSwitch = false;
-		_throwBombsTime = THROW_BOMBS_TIME; // throw bombs after `THROW_BOMBS_TIME` ms
-		_canThrowBombs = true;
-		_sendPiratesTime = SEND_PIRATES_TIME; // send pirates after `SEND_PIRATES_TIME` ms
-		_canSendPirates = true;
-	}
-
-	if (makeGabrielHurt)
-	{
-		_ani = ANIMATION_HITLOW;
-		_ani->reset();
-		_ani->loopAni = false;
-		_isMirrored = true;
-		makeGabrielHurt = false;
-		_health -= 1;
-		removeObject = (_health <= 0);
-	}
-	*/
-
 	if (_ani != _animations["IDLE"] && _ani->isFinishAnimation())
 	{
 		_ani = _animations["IDLE"];
@@ -152,8 +111,9 @@ pair<Rectangle2D, int> Gabriel::GetAttackRect() { return {}; }
 bool Gabriel::checkForHurts()
 {
 	// Gabriel blocks all CC attacks
-
-	int health = _health;
+	// cache fields to make sure BaseEnemy::checkForHurts does not change fields
+	int healthCache = _health;
+	bool removeObjectCache = removeObject;
 
 	if (BaseEnemy::checkForHurts())
 	{
@@ -162,8 +122,8 @@ bool Gabriel::checkForHurts()
 		_ani->loopAni = false;
 	}
 
-	_health = health;
-	removeObject = false;
+	_health = healthCache;
+	removeObject = removeObjectCache;
 
 	return false;
 }
@@ -213,8 +173,6 @@ GabrielCannon::~GabrielCannon()
 }
 void GabrielCannon::Logic(uint32_t elapsedTime)
 {
-//	const UIAnimation* prevAni = _ani.get();
-
 	if (_ani->isFinishAnimation())
 	{
 		if (_ani == _vertfire)
@@ -226,52 +184,6 @@ void GabrielCannon::Logic(uint32_t elapsedTime)
 			setAnimation(_home);
 		}
 	}
-
-
-	/*
-	if (riseCannon)
-	{
-		_ani = _rise;
-		riseCannon = false;
-	}
-
-	cannonIsUp = _ani == _rise;
-
-	if (operateCannon)
-	{
-		// shoot cannon ball
-		WwdObject obj;
-		obj.x = (int32_t)position.x;
-		obj.y = (int32_t)position.y;
-		obj.damage = 15;
-
-		if (_ani == _rise)
-		{
-			_ani = _vertfire;
-			obj.speedY = -DEFAULT_PROJECTILE_SPEED;
-			makeGabrielHurt = true;
-		}
-		else
-		{
-			_ani = _horzfire;
-			obj.speedX = -DEFAULT_PROJECTILE_SPEED;
-			obj.y += 56;
-		}
-
-		GO::addObjectToActionPlane(DBG_NEW CannonBall(obj));
-
-		operateCannon = false;
-		GabrielChangeSwitch = true;
-	}
-
-
-	if (_ani.get() != prevAni)
-	{
-		_ani->reset();
-		_ani->loopAni = false;
-		_ani->position = position;
-	}
-	*/
 
 	_ani->Logic(elapsedTime);
 }
@@ -329,7 +241,6 @@ void GabrielCannonSwitch::Logic(uint32_t elapsedTime)
 	if (_switchCannonTime <= 0) // use cannon every OPERATE_CANNON_TIME milliseconds
 	{
 		_switchCannonTime = OPERATE_CANNON_TIME;
-		//operateCannon = true;
 		_GabrielCannon->operateCannon();
 		_ani->reset();
 		_ani->loopAni = false;
@@ -357,7 +268,6 @@ void GabrielCannonButton::Logic(uint32_t elapsedTime)
 	else if (GO::getPlayerRect().intersects(_objRc) || GO::getPlayerAttackRect().first.intersects(_objRc))
 	{
 		_ani = _pressed;
-		//riseCannon = true;
 		_GabrielCannon->riseCannon();
 	}
 }

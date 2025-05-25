@@ -11,7 +11,7 @@
 #define ANIMATION_IDLE		_animations["IDLE1"]
 
 
-// TODO something better than al of this `static`...
+// TODO something better than all of this `static`...
 static int activateAquatisStalactite = 0;
 static vector<AquatisStalactite*> AquatisStalactitesList; // list of stalactites that can hurt Aquatis
 static vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that can hurt Aquatis
@@ -131,7 +131,7 @@ AquatisTentacle::~AquatisTentacle()
 	{
 		_killfall->reset();
 		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, _killfall));
-		AquatisTentaclesList.erase(find(AquatisTentaclesList.begin(), AquatisTentaclesList.end(), this));
+		erase(AquatisTentaclesList, this);
 	}
 }
 void AquatisTentacle::Logic(uint32_t elapsedTime)
@@ -287,7 +287,7 @@ AquatisStalactite::AquatisStalactite(const WwdObject& obj)
 }
 AquatisStalactite::~AquatisStalactite()
 {
-	AquatisStalactitesList.erase(find(AquatisStalactitesList.begin(), AquatisStalactitesList.end(), this));
+	erase(AquatisStalactitesList, this);
 }
 void AquatisStalactite::Logic(uint32_t elapsedTime)
 {
