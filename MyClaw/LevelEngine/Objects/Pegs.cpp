@@ -99,7 +99,6 @@ void TogglePeg::Logic(uint32_t elapsedTime)
 	if (canCatchPlayer(_ani.get()))
 		tryCatchPlayer();
 }
-void TogglePeg::enterEasyMode() {}
 void TogglePeg::exitEasyMode() {
 	_ani->updateFrames = true;
 	Delay(_startTimeDelay);

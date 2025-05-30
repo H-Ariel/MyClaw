@@ -63,7 +63,6 @@ bool FloorSpike::isDamage() const
 	float progress = _ani->getFramesProgress();
 	return 0.25f <= progress && progress <= 0.75;
 }
-void FloorSpike::enterEasyMode() { }
 void FloorSpike::exitEasyMode() {
 	_ani->updateFrames = true;
 	Delay(_startTimeDelay);

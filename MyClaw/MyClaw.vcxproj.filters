@@ -5,142 +5,130 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Objects">
-      <UniqueIdentifier>{87b796eb-1bb2-4361-a4d5-c043cabab4c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Menu">
       <UniqueIdentifier>{fb7b0a3b-11c6-4fbe-85bb-639b5153db97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Enemies">
-      <UniqueIdentifier>{19966922-49b6-4d07-bb18-651a464b5668}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets-Managers">
       <UniqueIdentifier>{14ded9de-6d4c-4249-9095-c5d08cc021cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Enemies\Bosses">
+    <Filter Include="LevelEngine">
+      <UniqueIdentifier>{6e49d74a-115c-4ee1-b51c-ad86a05a4abb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelEngine\Enemies">
+      <UniqueIdentifier>{19966922-49b6-4d07-bb18-651a464b5668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelEngine\Enemies\Bosses">
       <UniqueIdentifier>{a2358142-1def-40ba-ad1d-4debfec04431}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics">
-      <UniqueIdentifier>{94fb84c1-7bad-4e6a-8554-05dcd35cbc66}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Enemies\Bosses\Marrow">
+    <Filter Include="LevelEngine\Enemies\Bosses\Marrow">
       <UniqueIdentifier>{796e721e-68f4-485d-8638-7e1ea892a533}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Enemies\Bosses\Gabriel">
+    <Filter Include="LevelEngine\Enemies\Bosses\Gabriel">
       <UniqueIdentifier>{1036710a-a9cb-4b55-8fd8-bcf138812bfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Enemies\Bosses\LordOmar">
+    <Filter Include="LevelEngine\Enemies\Bosses\LordOmar">
       <UniqueIdentifier>{668b97b1-2b05-4629-9fd7-702ff0684f5f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Enemies\Bosses\Aquatis">
+    <Filter Include="LevelEngine\Enemies\Bosses\Aquatis">
       <UniqueIdentifier>{62474375-471c-458e-b27f-6bdf872eda1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelEngine\Objects">
+      <UniqueIdentifier>{87b796eb-1bb2-4361-a4d5-c043cabab4c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelEngine\Physics">
+      <UniqueIdentifier>{94fb84c1-7bad-4e6a-8554-05dcd35cbc66}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ActionPlane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CheatsManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ClawLevelEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameMainApp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelHUD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelPlane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SavedDataManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\ActionPlaneMessage.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\ActionPlaneMessage.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\AmbientSound.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\AmbientSound.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Cannon.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Cannon.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Checkpoint.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Checkpoint.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\ClawProjectile.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\ClawProjectile.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\ConveyorBelt.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\ConveyorBelt.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\CrabNest.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\CrabNest.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Crate.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Crate.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\DoNothing.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\DoNothing.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Elevator.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Elevator.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\EnemyProjectile.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\EnemyProjectile.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\FloorSpike.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\FloorSpike.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\GooVent.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\GooVent.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\GroundBlower.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\GroundBlower.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Item.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Item.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Laser.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Laser.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\LavaHand.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\LavaHand.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\LavaMouth.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\LavaMouth.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Pegs.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Pegs.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\PowderKeg.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\PowderKeg.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Projectile.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Projectile.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Rope.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Rope.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\SoundTrigger.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\SoundTrigger.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\SpringBoard.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\SpringBoard.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Stalactite.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Stalactite.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Statue.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Statue.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\TProjectilesShooter.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\TProjectilesShooter.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Menu\CreditsEngine.cpp">
       <Filter>Menu</Filter>
@@ -169,56 +157,56 @@
     <ClCompile Include="Menu\ScreenEngine.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\BearSailor.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\BearSailor.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Chameleon.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Chameleon.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\CrazyHook.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\CrazyHook.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\CutThroat.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\CutThroat.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Fish.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Fish.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\HermitCrab.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\HermitCrab.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Mercat.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Mercat.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Officer.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Officer.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\PegLeg.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\PegLeg.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Rat.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Rat.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\RedTailPirate.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\RedTailPirate.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\RobberThief.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\RobberThief.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Seagull.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Seagull.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Siren.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Siren.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Soldier.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Soldier.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\TigerGuard.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\TigerGuard.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\TownGuard.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\TownGuard.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Assets-Managers\AnimationsManager.cpp">
       <Filter>Assets-Managers</Filter>
@@ -229,160 +217,178 @@
     <ClCompile Include="Assets-Managers\PathManager.cpp">
       <Filter>Assets-Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\LeRauxe.cpp">
-      <Filter>Enemies\Bosses</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\LeRauxe.cpp">
+      <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Katherine.cpp">
-      <Filter>Enemies\Bosses</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Katherine.cpp">
+      <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\RedTail.cpp">
-      <Filter>Enemies\Bosses</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\RedTail.cpp">
+      <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Wolvington.cpp">
-      <Filter>Enemies\Bosses</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Wolvington.cpp">
+      <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\Player.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\Player.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\BaseEnemy.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\BaseEnemy.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\EnemyTools.cpp">
-      <Filter>Enemies</Filter>
+    <ClCompile Include="LevelEngine\Enemies\EnemyTools.cpp">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\BaseCharacter.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\BaseCharacter.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\BasePlaneObject.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\Objects\BasePlaneObject.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="GlobalObjects.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="LevelEngine\Physics\QuadTree.cpp">
+      <Filter>LevelEngine\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\QuadTree.cpp">
-      <Filter>Physics</Filter>
+    <ClCompile Include="LevelEngine\Physics\PhysicsManager.cpp">
+      <Filter>LevelEngine\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\PhysicsManager.cpp">
-      <Filter>Physics</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Marrow\Marrow.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\Marrow</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Marrow\Marrow.cpp">
-      <Filter>Enemies\Bosses\Marrow</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Marrow\MarrowStates.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\Marrow</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Marrow\MarrowStates.cpp">
-      <Filter>Enemies\Bosses\Marrow</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Gabriel\Gabriel.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\Gabriel</Filter>
     </ClCompile>
-    <ClCompile Include="LevelObjectsFactory.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Gabriel\GabrielRedTailPirate.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\Gabriel</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Gabriel\Gabriel.cpp">
-      <Filter>Enemies\Bosses\Gabriel</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmar.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\LordOmar</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.cpp">
-      <Filter>Enemies\Bosses\Gabriel</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmarShield.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\LordOmar</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmar.cpp">
-      <Filter>Enemies\Bosses\LordOmar</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Gabriel\DeadGabriel.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\Gabriel</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmarShield.cpp">
-      <Filter>Enemies\Bosses\LordOmar</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmarProjectile.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\LordOmar</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Gabriel\DeadGabriel.cpp">
-      <Filter>Enemies\Bosses\Gabriel</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Gabriel\GabrielBomb.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\Gabriel</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmarProjectile.cpp">
-      <Filter>Enemies\Bosses\LordOmar</Filter>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Aquatis\Aquatis.cpp">
+      <Filter>LevelEngine\Enemies\Bosses\Aquatis</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Gabriel\GabrielBomb.cpp">
-      <Filter>Enemies\Bosses\Gabriel</Filter>
+    <ClCompile Include="LevelEngine\Objects\OneTimeAnimation.cpp">
+      <Filter>LevelEngine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Enemies\Bosses\Aquatis\Aquatis.cpp">
-      <Filter>Enemies\Bosses\Aquatis</Filter>
+    <ClCompile Include="LevelEngine\ActionPlane.cpp">
+      <Filter>LevelEngine</Filter>
     </ClCompile>
-    <ClCompile Include="Objects\OneTimeAnimation.cpp">
-      <Filter>Objects</Filter>
+    <ClCompile Include="LevelEngine\CheatsManager.cpp">
+      <Filter>LevelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEngine\ClawLevelEngine.cpp">
+      <Filter>LevelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEngine\LevelHUD.cpp">
+      <Filter>LevelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEngine\LevelObjectsFactory.cpp">
+      <Filter>LevelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEngine\LevelPlane.cpp">
+      <Filter>LevelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEngine\GlobalObjects.cpp">
+      <Filter>LevelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEngine\ClawLevelEngineState.cpp">
+      <Filter>LevelEngine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Objects\ActionPlaneMessage.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\ActionPlaneMessage.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\AmbientSound.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\AmbientSound.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Cannon.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Cannon.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Checkpoint.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Checkpoint.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\ClawProjectile.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\ClawProjectile.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\ConveyorBelt.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\ConveyorBelt.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\CrabNest.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\CrabNest.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Crate.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Crate.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\DoNothing.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\DoNothing.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Elevator.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Elevator.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\EnemyProjectile.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\EnemyProjectile.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\FloorSpike.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\FloorSpike.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\GooVent.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\GooVent.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\GroundBlower.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\GroundBlower.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Item.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Item.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Laser.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Laser.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\LavaHand.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\LavaHand.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\LavaMouth.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\LavaMouth.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Pegs.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Pegs.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\PowderKeg.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\PowderKeg.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Projectile.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Projectile.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Rope.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Rope.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\SoundTrigger.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\SoundTrigger.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\SpringBoard.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\SpringBoard.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Stalactite.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Stalactite.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Statue.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Statue.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\TProjectilesShooter.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\TProjectilesShooter.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Menu\CreditsEngine.h">
       <Filter>Menu</Filter>
@@ -411,56 +417,56 @@
     <ClInclude Include="Menu\ScreenEngine.h">
       <Filter>Menu</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\BearSailor.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\BearSailor.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Chameleon.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Chameleon.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\CrazyHook.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\CrazyHook.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\CutThroat.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\CutThroat.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Fish.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Fish.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\HermitCrab.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\HermitCrab.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Mercat.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Mercat.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Officer.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Officer.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\PegLeg.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\PegLeg.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Rat.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Rat.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\RedTailPirate.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\RedTailPirate.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\RobberThief.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\RobberThief.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Seagull.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Seagull.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Siren.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Siren.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Soldier.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Soldier.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\TigerGuard.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\TigerGuard.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\TownGuard.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\TownGuard.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="Assets-Managers\AnimationsManager.h">
       <Filter>Assets-Managers</Filter>
@@ -468,22 +474,7 @@
     <ClInclude Include="Assets-Managers\AssetsManager.h">
       <Filter>Assets-Managers</Filter>
     </ClInclude>
-    <ClInclude Include="ActionPlane.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CheatsManager.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ClawLevelEngine.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameMainApp.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelHUD.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelPlane.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="SavedDataManager.h">
@@ -492,77 +483,95 @@
     <ClInclude Include="Assets-Managers\PathManager.h">
       <Filter>Assets-Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\LeRauxe.h">
-      <Filter>Enemies\Bosses</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\LeRauxe.h">
+      <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Katherine.h">
-      <Filter>Enemies\Bosses</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Katherine.h">
+      <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\RedTail.h">
-      <Filter>Enemies\Bosses</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\RedTail.h">
+      <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Wolvington.h">
-      <Filter>Enemies\Bosses</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Wolvington.h">
+      <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\Player.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\Player.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\BaseEnemy.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\BaseEnemy.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\EnemyTools.h">
-      <Filter>Enemies</Filter>
+    <ClInclude Include="LevelEngine\Enemies\EnemyTools.h">
+      <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\BaseCharacter.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\BaseCharacter.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\BasePlaneObject.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\Objects\BasePlaneObject.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="GlobalObjects.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="LevelEngine\Physics\QuadTree.h">
+      <Filter>LevelEngine\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Physics\QuadTree.h">
-      <Filter>Physics</Filter>
+    <ClInclude Include="LevelEngine\Physics\PhysicsManager.h">
+      <Filter>LevelEngine\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Physics\PhysicsManager.h">
-      <Filter>Physics</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Marrow\Marrow.h">
+      <Filter>LevelEngine\Enemies\Bosses\Marrow</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Marrow\Marrow.h">
-      <Filter>Enemies\Bosses\Marrow</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Marrow\MarrowStates.h">
+      <Filter>LevelEngine\Enemies\Bosses\Marrow</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Marrow\MarrowStates.h">
-      <Filter>Enemies\Bosses\Marrow</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Gabriel\Gabriel.h">
+      <Filter>LevelEngine\Enemies\Bosses\Gabriel</Filter>
     </ClInclude>
-    <ClInclude Include="LevelObjectsFactory.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Gabriel\GabrielRedTailPirate.h">
+      <Filter>LevelEngine\Enemies\Bosses\Gabriel</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Gabriel\Gabriel.h">
-      <Filter>Enemies\Bosses\Gabriel</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmar.h">
+      <Filter>LevelEngine\Enemies\Bosses\LordOmar</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.h">
-      <Filter>Enemies\Bosses\Gabriel</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmarShield.h">
+      <Filter>LevelEngine\Enemies\Bosses\LordOmar</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmar.h">
-      <Filter>Enemies\Bosses\LordOmar</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Gabriel\DeadGabriel.h">
+      <Filter>LevelEngine\Enemies\Bosses\Gabriel</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmarShield.h">
-      <Filter>Enemies\Bosses\LordOmar</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmarProjectile.h">
+      <Filter>LevelEngine\Enemies\Bosses\LordOmar</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Gabriel\DeadGabriel.h">
-      <Filter>Enemies\Bosses\Gabriel</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Gabriel\GabrielBomb.h">
+      <Filter>LevelEngine\Enemies\Bosses\Gabriel</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmarProjectile.h">
-      <Filter>Enemies\Bosses\LordOmar</Filter>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Aquatis\Aquatis.h">
+      <Filter>LevelEngine\Enemies\Bosses\Aquatis</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Gabriel\GabrielBomb.h">
-      <Filter>Enemies\Bosses\Gabriel</Filter>
+    <ClInclude Include="LevelEngine\Objects\OneTimeAnimation.h">
+      <Filter>LevelEngine\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="Enemies\Bosses\Aquatis\Aquatis.h">
-      <Filter>Enemies\Bosses\Aquatis</Filter>
+    <ClInclude Include="LevelEngine\ActionPlane.h">
+      <Filter>LevelEngine</Filter>
     </ClInclude>
-    <ClInclude Include="Objects\OneTimeAnimation.h">
-      <Filter>Objects</Filter>
+    <ClInclude Include="LevelEngine\CheatsManager.h">
+      <Filter>LevelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEngine\ClawLevelEngine.h">
+      <Filter>LevelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEngine\LevelHUD.h">
+      <Filter>LevelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEngine\LevelObjectsFactory.h">
+      <Filter>LevelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEngine\LevelPlane.h">
+      <Filter>LevelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEngine\GlobalObjects.h">
+      <Filter>LevelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEngine\ClawLevelEngineState.h">
+      <Filter>LevelEngine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

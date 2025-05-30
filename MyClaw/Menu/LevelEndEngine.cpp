@@ -2,8 +2,8 @@
 #include "LevelLoadingEngine.h"
 #include "CreditsEngine.h"
 #include "MenuItem.h"
-#include "../GlobalObjects.h"
-#include "../Objects/Player.h"
+#include "LevelEngine/GlobalObjects.h"
+#include "LevelEngine/Objects/Player.h"
 
 
 constexpr int NUM_OF_TREASURES = 9;

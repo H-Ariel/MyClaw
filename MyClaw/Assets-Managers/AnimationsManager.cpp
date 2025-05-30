@@ -20,6 +20,20 @@ static inline bool isEnemyAniations(const string& dirPath)
 		endsWith(dirPath, "/ANIS/GABRIEL"));
 }
 
+static void fixAniDuration(const string& aniPath, const string& imageSetPath, int16_t imageFileId, uint16_t& duration)
+{
+	// TODO: hack - something else
+	if (startsWith(aniPath, "LEVEL2/ANIS/RAUX/BLOCK")) duration /= 2;
+	else if (startsWith(aniPath, "LEVEL6/ANIS/WOLVINGTON/BLOCK")) duration /= 2;
+	else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/HORZFIRE.ANI") duration *= 8;
+	else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/VERTIFIRE.ANI") duration *= 8;
+	else if (imageSetPath == "LEVEL8/IMAGES/GABRIELCANNON" && imageFileId == 0) imageFileId = 1;
+	else if (aniPath == "LEVEL8/ANIS/CANNONSWITCH/SWITCH.ANI") duration *= 2;
+	else if (aniPath == "LEVEL9/ANIS/SAWBLADE/SPIN.ANI") duration *= 4;
+	else if (imageSetPath == "LEVEL10/IMAGES/MARROW" && imageFileId == 0) imageFileId = 1;
+	else if (aniPath == "LEVEL14/ANIS/OMAR/HOME.ANI") duration = 250;
+}
+
 AnimationsManager::AnimationsManager(RezArchive* rezArchive) : _rezArchive(rezArchive) {}
 
 shared_ptr<UIAnimation> AnimationsManager::loadAnimation(const string& aniPath, const string& imageSetPath, bool save)
@@ -211,16 +225,7 @@ vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const stri
 			}
 		}
 
-		// TODO: hack - something else
-		if (startsWith(aniPath, "LEVEL2/ANIS/RAUX/BLOCK")) frame.duration /= 2;
-		else if (startsWith(aniPath, "LEVEL6/ANIS/WOLVINGTON/BLOCK")) frame.duration /= 2;
-		else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/HORZFIRE.ANI") frame.duration *= 8;
-		else if (aniPath == "LEVEL8/ANIS/GABRIELCANNON/VERTIFIRE.ANI") frame.duration *= 8;
-		else if (imageSetPath == "LEVEL8/IMAGES/GABRIELCANNON" && frame.imageFileId == 0) frame.imageFileId = 1;
-		else if (aniPath == "LEVEL8/ANIS/CANNONSWITCH/SWITCH.ANI") frame.duration *= 2;
-		else if (aniPath == "LEVEL9/ANIS/SAWBLADE/SPIN.ANI") frame.duration *= 4;
-		else if (imageSetPath == "LEVEL10/IMAGES/MARROW" && frame.imageFileId == 0) frame.imageFileId = 1;
-		else if (aniPath == "LEVEL14/ANIS/OMAR/HOME.ANI") frame.duration = 250;
+		fixAniDuration(aniPath, imageSetPath, frame.imageFileId, frame.duration);
 
 		sprintf(imgName, "/%03d.PID", frame.imageFileId); // according to `fixFileName` at `RezArchive.cpp`
 

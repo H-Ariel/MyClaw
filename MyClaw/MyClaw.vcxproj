@@ -94,7 +94,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -111,7 +111,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -145,7 +145,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>../</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(ProjectDir)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -164,49 +164,50 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ActionPlane.cpp" />
+    <ClCompile Include="LevelEngine\ActionPlane.cpp" />
     <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
     <ClCompile Include="Assets-Managers\AssetsManager.cpp" />
     <ClCompile Include="Assets-Managers\PathManager.cpp" />
-    <ClCompile Include="CheatsManager.cpp" />
-    <ClCompile Include="ClawLevelEngine.cpp" />
-    <ClCompile Include="Enemies\BaseEnemy.cpp" />
-    <ClCompile Include="Enemies\BearSailor.cpp" />
-    <ClCompile Include="Enemies\Bosses\Aquatis\Aquatis.cpp" />
-    <ClCompile Include="Enemies\Bosses\Gabriel\DeadGabriel.cpp" />
-    <ClCompile Include="Enemies\Bosses\Gabriel\GabrielBomb.cpp" />
-    <ClCompile Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.cpp" />
-    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmarProjectile.cpp" />
-    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmarShield.cpp" />
-    <ClCompile Include="Enemies\Bosses\Marrow\MarrowStates.cpp" />
-    <ClCompile Include="Enemies\Chameleon.cpp" />
-    <ClCompile Include="Enemies\CrazyHook.cpp" />
-    <ClCompile Include="Enemies\CutThroat.cpp" />
-    <ClCompile Include="Enemies\EnemyTools.cpp" />
-    <ClCompile Include="Enemies\Fish.cpp" />
-    <ClCompile Include="Enemies\Bosses\Gabriel\Gabriel.cpp" />
-    <ClCompile Include="Enemies\HermitCrab.cpp" />
-    <ClCompile Include="Enemies\Bosses\Katherine.cpp" />
-    <ClCompile Include="Enemies\Bosses\LeRauxe.cpp" />
-    <ClCompile Include="Enemies\Bosses\LordOmar\LordOmar.cpp" />
-    <ClCompile Include="Enemies\Bosses\Marrow\Marrow.cpp" />
-    <ClCompile Include="Enemies\Mercat.cpp" />
-    <ClCompile Include="Enemies\Officer.cpp" />
-    <ClCompile Include="Enemies\PegLeg.cpp" />
-    <ClCompile Include="Enemies\Rat.cpp" />
-    <ClCompile Include="Enemies\Bosses\RedTail.cpp" />
-    <ClCompile Include="Enemies\RedTailPirate.cpp" />
-    <ClCompile Include="Enemies\RobberThief.cpp" />
-    <ClCompile Include="Enemies\Seagull.cpp" />
-    <ClCompile Include="Enemies\Siren.cpp" />
-    <ClCompile Include="Enemies\Soldier.cpp" />
-    <ClCompile Include="Enemies\TigerGuard.cpp" />
-    <ClCompile Include="Enemies\TownGuard.cpp" />
-    <ClCompile Include="Enemies\Bosses\Wolvington.cpp" />
+    <ClCompile Include="LevelEngine\CheatsManager.cpp" />
+    <ClCompile Include="LevelEngine\ClawLevelEngine.cpp" />
+    <ClCompile Include="LevelEngine\ClawLevelEngineState.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\BaseEnemy.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\BearSailor.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Aquatis\Aquatis.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Gabriel\DeadGabriel.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Gabriel\GabrielBomb.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Gabriel\GabrielRedTailPirate.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmarProjectile.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmarShield.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Marrow\MarrowStates.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Chameleon.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\CrazyHook.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\CutThroat.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\EnemyTools.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Fish.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Gabriel\Gabriel.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\HermitCrab.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Katherine.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\LeRauxe.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmar.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Marrow\Marrow.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Mercat.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Officer.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\PegLeg.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Rat.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\RedTail.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\RedTailPirate.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\RobberThief.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Seagull.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Siren.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Soldier.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\TigerGuard.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\TownGuard.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Wolvington.cpp" />
     <ClCompile Include="GameMainApp.cpp" />
-    <ClCompile Include="GlobalObjects.cpp" />
-    <ClCompile Include="LevelHUD.cpp" />
-    <ClCompile Include="LevelPlane.cpp" />
+    <ClCompile Include="LevelEngine\GlobalObjects.cpp" />
+    <ClCompile Include="LevelEngine\LevelHUD.cpp" />
+    <ClCompile Include="LevelEngine\LevelPlane.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu\CreditsEngine.cpp" />
     <ClCompile Include="Menu\HierarchicalMenu.cpp" />
@@ -217,86 +218,87 @@
     <ClCompile Include="Menu\MenuItem.cpp" />
     <ClCompile Include="Menu\OpeningScreenEngine.cpp" />
     <ClCompile Include="Menu\ScreenEngine.cpp" />
-    <ClCompile Include="LevelObjectsFactory.cpp" />
-    <ClCompile Include="Objects\ActionPlaneMessage.cpp" />
-    <ClCompile Include="Objects\AmbientSound.cpp" />
-    <ClCompile Include="Objects\BaseCharacter.cpp" />
-    <ClCompile Include="Objects\BasePlaneObject.cpp" />
-    <ClCompile Include="Objects\Cannon.cpp" />
-    <ClCompile Include="Objects\Checkpoint.cpp" />
-    <ClCompile Include="Objects\ClawProjectile.cpp" />
-    <ClCompile Include="Objects\ConveyorBelt.cpp" />
-    <ClCompile Include="Objects\CrabNest.cpp" />
-    <ClCompile Include="Objects\Crate.cpp" />
-    <ClCompile Include="Objects\DoNothing.cpp" />
-    <ClCompile Include="Objects\Elevator.cpp" />
-    <ClCompile Include="Objects\EnemyProjectile.cpp" />
-    <ClCompile Include="Objects\FloorSpike.cpp" />
-    <ClCompile Include="Objects\GooVent.cpp" />
-    <ClCompile Include="Objects\GroundBlower.cpp" />
-    <ClCompile Include="Objects\Item.cpp" />
-    <ClCompile Include="Objects\Laser.cpp" />
-    <ClCompile Include="Objects\LavaHand.cpp" />
-    <ClCompile Include="Objects\LavaMouth.cpp" />
-    <ClCompile Include="Objects\OneTimeAnimation.cpp" />
-    <ClCompile Include="Objects\Pegs.cpp" />
-    <ClCompile Include="Objects\Player.cpp" />
-    <ClCompile Include="Objects\PowderKeg.cpp" />
-    <ClCompile Include="Objects\Projectile.cpp" />
-    <ClCompile Include="Objects\Rope.cpp" />
-    <ClCompile Include="Objects\SoundTrigger.cpp" />
-    <ClCompile Include="Objects\SpringBoard.cpp" />
-    <ClCompile Include="Objects\Stalactite.cpp" />
-    <ClCompile Include="Objects\Statue.cpp" />
-    <ClCompile Include="Objects\TProjectilesShooter.cpp" />
-    <ClCompile Include="Physics\PhysicsManager.cpp" />
-    <ClCompile Include="Physics\QuadTree.cpp" />
+    <ClCompile Include="LevelEngine\LevelObjectsFactory.cpp" />
+    <ClCompile Include="LevelEngine\Objects\ActionPlaneMessage.cpp" />
+    <ClCompile Include="LevelEngine\Objects\AmbientSound.cpp" />
+    <ClCompile Include="LevelEngine\Objects\BaseCharacter.cpp" />
+    <ClCompile Include="LevelEngine\Objects\BasePlaneObject.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Cannon.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Checkpoint.cpp" />
+    <ClCompile Include="LevelEngine\Objects\ClawProjectile.cpp" />
+    <ClCompile Include="LevelEngine\Objects\ConveyorBelt.cpp" />
+    <ClCompile Include="LevelEngine\Objects\CrabNest.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Crate.cpp" />
+    <ClCompile Include="LevelEngine\Objects\DoNothing.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Elevator.cpp" />
+    <ClCompile Include="LevelEngine\Objects\EnemyProjectile.cpp" />
+    <ClCompile Include="LevelEngine\Objects\FloorSpike.cpp" />
+    <ClCompile Include="LevelEngine\Objects\GooVent.cpp" />
+    <ClCompile Include="LevelEngine\Objects\GroundBlower.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Item.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Laser.cpp" />
+    <ClCompile Include="LevelEngine\Objects\LavaHand.cpp" />
+    <ClCompile Include="LevelEngine\Objects\LavaMouth.cpp" />
+    <ClCompile Include="LevelEngine\Objects\OneTimeAnimation.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Pegs.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Player.cpp" />
+    <ClCompile Include="LevelEngine\Objects\PowderKeg.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Projectile.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Rope.cpp" />
+    <ClCompile Include="LevelEngine\Objects\SoundTrigger.cpp" />
+    <ClCompile Include="LevelEngine\Objects\SpringBoard.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Stalactite.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Statue.cpp" />
+    <ClCompile Include="LevelEngine\Objects\TProjectilesShooter.cpp" />
+    <ClCompile Include="LevelEngine\Physics\PhysicsManager.cpp" />
+    <ClCompile Include="LevelEngine\Physics\QuadTree.cpp" />
     <ClCompile Include="SavedDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActionPlane.h" />
+    <ClInclude Include="LevelEngine\ActionPlane.h" />
     <ClInclude Include="Assets-Managers\AnimationsManager.h" />
     <ClInclude Include="Assets-Managers\AssetsManager.h" />
     <ClInclude Include="Assets-Managers\PathManager.h" />
-    <ClInclude Include="CheatsManager.h" />
-    <ClInclude Include="ClawLevelEngine.h" />
-    <ClInclude Include="Enemies\BaseEnemy.h" />
-    <ClInclude Include="Enemies\BearSailor.h" />
-    <ClInclude Include="Enemies\Bosses\Aquatis\Aquatis.h" />
-    <ClInclude Include="Enemies\Bosses\Gabriel\DeadGabriel.h" />
-    <ClInclude Include="Enemies\Bosses\Gabriel\GabrielBomb.h" />
-    <ClInclude Include="Enemies\Bosses\Gabriel\GabrielRedTailPirate.h" />
-    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmarProjectile.h" />
-    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmarShield.h" />
-    <ClInclude Include="Enemies\Bosses\Marrow\MarrowStates.h" />
-    <ClInclude Include="Enemies\Chameleon.h" />
-    <ClInclude Include="Enemies\CrazyHook.h" />
-    <ClInclude Include="Enemies\CutThroat.h" />
-    <ClInclude Include="Enemies\EnemyTools.h" />
-    <ClInclude Include="Enemies\Fish.h" />
-    <ClInclude Include="Enemies\Bosses\Gabriel\Gabriel.h" />
-    <ClInclude Include="Enemies\HermitCrab.h" />
-    <ClInclude Include="Enemies\Bosses\Katherine.h" />
-    <ClInclude Include="Enemies\Bosses\LeRauxe.h" />
-    <ClInclude Include="Enemies\Bosses\LordOmar\LordOmar.h" />
-    <ClInclude Include="Enemies\Bosses\Marrow\Marrow.h" />
-    <ClInclude Include="Enemies\Mercat.h" />
-    <ClInclude Include="Enemies\Officer.h" />
-    <ClInclude Include="Enemies\PegLeg.h" />
-    <ClInclude Include="Enemies\Rat.h" />
-    <ClInclude Include="Enemies\Bosses\RedTail.h" />
-    <ClInclude Include="Enemies\RedTailPirate.h" />
-    <ClInclude Include="Enemies\RobberThief.h" />
-    <ClInclude Include="Enemies\Seagull.h" />
-    <ClInclude Include="Enemies\Siren.h" />
-    <ClInclude Include="Enemies\Soldier.h" />
-    <ClInclude Include="Enemies\TigerGuard.h" />
-    <ClInclude Include="Enemies\TownGuard.h" />
-    <ClInclude Include="Enemies\Bosses\Wolvington.h" />
+    <ClInclude Include="LevelEngine\CheatsManager.h" />
+    <ClInclude Include="LevelEngine\ClawLevelEngine.h" />
+    <ClInclude Include="LevelEngine\ClawLevelEngineState.h" />
+    <ClInclude Include="LevelEngine\Enemies\BaseEnemy.h" />
+    <ClInclude Include="LevelEngine\Enemies\BearSailor.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Aquatis\Aquatis.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Gabriel\DeadGabriel.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Gabriel\GabrielBomb.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Gabriel\GabrielRedTailPirate.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmarProjectile.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmarShield.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Marrow\MarrowStates.h" />
+    <ClInclude Include="LevelEngine\Enemies\Chameleon.h" />
+    <ClInclude Include="LevelEngine\Enemies\CrazyHook.h" />
+    <ClInclude Include="LevelEngine\Enemies\CutThroat.h" />
+    <ClInclude Include="LevelEngine\Enemies\EnemyTools.h" />
+    <ClInclude Include="LevelEngine\Enemies\Fish.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Gabriel\Gabriel.h" />
+    <ClInclude Include="LevelEngine\Enemies\HermitCrab.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Katherine.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\LeRauxe.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\LordOmar\LordOmar.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Marrow\Marrow.h" />
+    <ClInclude Include="LevelEngine\Enemies\Mercat.h" />
+    <ClInclude Include="LevelEngine\Enemies\Officer.h" />
+    <ClInclude Include="LevelEngine\Enemies\PegLeg.h" />
+    <ClInclude Include="LevelEngine\Enemies\Rat.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\RedTail.h" />
+    <ClInclude Include="LevelEngine\Enemies\RedTailPirate.h" />
+    <ClInclude Include="LevelEngine\Enemies\RobberThief.h" />
+    <ClInclude Include="LevelEngine\Enemies\Seagull.h" />
+    <ClInclude Include="LevelEngine\Enemies\Siren.h" />
+    <ClInclude Include="LevelEngine\Enemies\Soldier.h" />
+    <ClInclude Include="LevelEngine\Enemies\TigerGuard.h" />
+    <ClInclude Include="LevelEngine\Enemies\TownGuard.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Wolvington.h" />
     <ClInclude Include="GameMainApp.h" />
-    <ClInclude Include="GlobalObjects.h" />
-    <ClInclude Include="LevelHUD.h" />
-    <ClInclude Include="LevelPlane.h" />
+    <ClInclude Include="LevelEngine\GlobalObjects.h" />
+    <ClInclude Include="LevelEngine\LevelHUD.h" />
+    <ClInclude Include="LevelEngine\LevelPlane.h" />
     <ClInclude Include="Menu\CreditsEngine.h" />
     <ClInclude Include="Menu\HierarchicalMenu.h" />
     <ClInclude Include="Menu\LevelEndEngine.h" />
@@ -306,40 +308,40 @@
     <ClInclude Include="Menu\MenuItem.h" />
     <ClInclude Include="Menu\OpeningScreenEngine.h" />
     <ClInclude Include="Menu\ScreenEngine.h" />
-    <ClInclude Include="LevelObjectsFactory.h" />
-    <ClInclude Include="Objects\ActionPlaneMessage.h" />
-    <ClInclude Include="Objects\AmbientSound.h" />
-    <ClInclude Include="Objects\BaseCharacter.h" />
-    <ClInclude Include="Objects\BasePlaneObject.h" />
-    <ClInclude Include="Objects\Cannon.h" />
-    <ClInclude Include="Objects\Checkpoint.h" />
-    <ClInclude Include="Objects\ClawProjectile.h" />
-    <ClInclude Include="Objects\ConveyorBelt.h" />
-    <ClInclude Include="Objects\CrabNest.h" />
-    <ClInclude Include="Objects\Crate.h" />
-    <ClInclude Include="Objects\DoNothing.h" />
-    <ClInclude Include="Objects\Elevator.h" />
-    <ClInclude Include="Objects\EnemyProjectile.h" />
-    <ClInclude Include="Objects\FloorSpike.h" />
-    <ClInclude Include="Objects\GooVent.h" />
-    <ClInclude Include="Objects\GroundBlower.h" />
-    <ClInclude Include="Objects\Item.h" />
-    <ClInclude Include="Objects\Laser.h" />
-    <ClInclude Include="Objects\LavaHand.h" />
-    <ClInclude Include="Objects\LavaMouth.h" />
-    <ClInclude Include="Objects\OneTimeAnimation.h" />
-    <ClInclude Include="Objects\Pegs.h" />
-    <ClInclude Include="Objects\Player.h" />
-    <ClInclude Include="Objects\PowderKeg.h" />
-    <ClInclude Include="Objects\Projectile.h" />
-    <ClInclude Include="Objects\Rope.h" />
-    <ClInclude Include="Objects\SoundTrigger.h" />
-    <ClInclude Include="Objects\SpringBoard.h" />
-    <ClInclude Include="Objects\Stalactite.h" />
-    <ClInclude Include="Objects\Statue.h" />
-    <ClInclude Include="Objects\TProjectilesShooter.h" />
-    <ClInclude Include="Physics\PhysicsManager.h" />
-    <ClInclude Include="Physics\QuadTree.h" />
+    <ClInclude Include="LevelEngine\LevelObjectsFactory.h" />
+    <ClInclude Include="LevelEngine\Objects\ActionPlaneMessage.h" />
+    <ClInclude Include="LevelEngine\Objects\AmbientSound.h" />
+    <ClInclude Include="LevelEngine\Objects\BaseCharacter.h" />
+    <ClInclude Include="LevelEngine\Objects\BasePlaneObject.h" />
+    <ClInclude Include="LevelEngine\Objects\Cannon.h" />
+    <ClInclude Include="LevelEngine\Objects\Checkpoint.h" />
+    <ClInclude Include="LevelEngine\Objects\ClawProjectile.h" />
+    <ClInclude Include="LevelEngine\Objects\ConveyorBelt.h" />
+    <ClInclude Include="LevelEngine\Objects\CrabNest.h" />
+    <ClInclude Include="LevelEngine\Objects\Crate.h" />
+    <ClInclude Include="LevelEngine\Objects\DoNothing.h" />
+    <ClInclude Include="LevelEngine\Objects\Elevator.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemyProjectile.h" />
+    <ClInclude Include="LevelEngine\Objects\FloorSpike.h" />
+    <ClInclude Include="LevelEngine\Objects\GooVent.h" />
+    <ClInclude Include="LevelEngine\Objects\GroundBlower.h" />
+    <ClInclude Include="LevelEngine\Objects\Item.h" />
+    <ClInclude Include="LevelEngine\Objects\Laser.h" />
+    <ClInclude Include="LevelEngine\Objects\LavaHand.h" />
+    <ClInclude Include="LevelEngine\Objects\LavaMouth.h" />
+    <ClInclude Include="LevelEngine\Objects\OneTimeAnimation.h" />
+    <ClInclude Include="LevelEngine\Objects\Pegs.h" />
+    <ClInclude Include="LevelEngine\Objects\Player.h" />
+    <ClInclude Include="LevelEngine\Objects\PowderKeg.h" />
+    <ClInclude Include="LevelEngine\Objects\Projectile.h" />
+    <ClInclude Include="LevelEngine\Objects\Rope.h" />
+    <ClInclude Include="LevelEngine\Objects\SoundTrigger.h" />
+    <ClInclude Include="LevelEngine\Objects\SpringBoard.h" />
+    <ClInclude Include="LevelEngine\Objects\Stalactite.h" />
+    <ClInclude Include="LevelEngine\Objects\Statue.h" />
+    <ClInclude Include="LevelEngine\Objects\TProjectilesShooter.h" />
+    <ClInclude Include="LevelEngine\Physics\PhysicsManager.h" />
+    <ClInclude Include="LevelEngine\Physics\QuadTree.h" />
     <ClInclude Include="SavedDataManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

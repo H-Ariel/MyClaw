@@ -7,6 +7,7 @@
 class LevelPlane;
 class ActionPlane;
 class ClawLevelEngine;
+class ClawLevelEngineState;
 
 struct ClawLevelEngineFields
 {
@@ -21,30 +22,6 @@ struct ClawLevelEngineFields
 	float _saveWindowScale;
 };
 
-class ClawLevelEngineState {
-public:
-	enum class StateType : int8_t {
-		Play,
-		DeathFall,
-		DeathClose,
-		DeathOpen,
-		WrapClose,
-		WrapOpen,
-		GameOver
-	};
-
-	virtual ~ClawLevelEngineState() = default;
-	virtual void Logic(uint32_t elapsedTime) = 0;
-
-	StateType getType() const { return _type; }
-
-protected:
-	ClawLevelEngineState(StateType type, ClawLevelEngine* clawLevelEngine)
-		: _type(type), _clawLevelEngine(clawLevelEngine) {}
-
-	const StateType _type;
-	ClawLevelEngine* _clawLevelEngine;
-};
 
 class ClawLevelEngine : public BaseEngine
 {
@@ -70,21 +47,11 @@ public:
 
 private:
 	void init(); // call this in each constructor
-
-	float getInitialHoleRadius() const;
+	float getMaximalHoleRadius() const; // used for DeathClose and DeathOpen
 
 	// TODO: try do not save fields seperate. need find better solution
 	shared_ptr<ClawLevelEngineFields> _fields; // save fields for easy access after ingame-menu
 	
-	float _holeRadius; // the radius of the hole that remains until closed
-	
-	D2D1_POINT_2F _wrapDestination;
-	float _wrapCoverTop ; // used in wrap transition animation
-	float _bossWarpX;
-	bool _isBossWarp;
-
-	int _gameOverTimeCounter; // used to delay game over screen
-
 	ClawLevelEngineState* _state, *_nextState;
 
 

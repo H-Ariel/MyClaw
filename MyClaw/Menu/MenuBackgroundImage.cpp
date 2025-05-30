@@ -1,5 +1,5 @@
 #include "MenuBackgroundImage.h"
-#include "../Assets-Managers/AssetsManager.h"
+#include "Assets-Managers/AssetsManager.h"
 #include "GameEngine/WindowManager.h"
 
 

@@ -1,6 +1,6 @@
 #include "OpeningScreenEngine.h"
 #include "MenuEngine.h"
-#include "../Assets-Managers/AssetsManager.h"
+#include "Assets-Managers/AssetsManager.h"
 
 
 constexpr auto OPENING_SOUND_WAV_PATH = "STATES/ATTRACT/SOUNDS/TITLE.WAV";

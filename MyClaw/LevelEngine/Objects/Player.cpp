@@ -142,7 +142,7 @@ Player::Player()
 	_weaponsAmount(10, 5, 3), startPosition({})
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
-	_lives = 6;
+	_lives = 1;//6;
 	_score = 0;
 
 	backToLife();

@@ -1,14 +1,17 @@
 #include "MenuEngine.h"
 #include "GameEngine/WindowManager.h"
-#include "../Assets-Managers/AssetsManager.h"
-#include "../ClawLevelEngine.h"
-#include "../GlobalObjects.h"
+#include "Assets-Managers/AssetsManager.h"
+#include "LevelEngine/ClawLevelEngine.h"
+#include "LevelEngine/GlobalObjects.h"
 #include "HierarchicalMenu.h"
 #include "CreditsEngine.h"
 #include "LevelLoadingEngine.h"
 #include "MenuItem.h"
 
 
+// TODO maybe make stack of BaseEngine and then we can push
+//      every engine inside (includin ClawLevelEngine) and
+//      then we do not need save `_clawLevelEngineFields` anymore
 stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 

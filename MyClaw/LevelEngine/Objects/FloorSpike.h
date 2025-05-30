@@ -11,7 +11,6 @@ public:
 	void Logic(uint32_t elapsedTime) override;
 	bool isDamage() const override;
 
-	void enterEasyMode() override;
 	void exitEasyMode() override;
 
 protected:

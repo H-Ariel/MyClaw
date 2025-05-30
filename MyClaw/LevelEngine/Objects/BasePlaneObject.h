@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Assets-Managers/AssetsManager.h"
+#include "Assets-Managers/AssetsManager.h"
 
 
 constexpr float GRAVITY = 2048e-6f; // gravity acceleration (2.048f/1000)

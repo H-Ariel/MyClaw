@@ -5,7 +5,7 @@
 #include "RezParser/PcxFile.h"
 #include "RezParser/XmiFile.h"
 #include "RezParser/WwdFile.h"
-#include "../SavedDataManager.h"
+#include "SavedDataManager.h"
 
 
 // check if `str` is number as string

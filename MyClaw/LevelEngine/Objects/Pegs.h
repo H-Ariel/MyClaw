@@ -9,7 +9,6 @@ public:
 	TogglePeg(const WwdObject& obj);
 	void Logic(uint32_t elapsedTime) override;
 
-	void enterEasyMode() override;
 	void exitEasyMode() override;
 
 private:

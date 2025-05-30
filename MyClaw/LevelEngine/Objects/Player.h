@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseCharacter.h"
-#include "../SavedDataManager.h"
+#include "SavedDataManager.h"
 #include "Item.h"
 #include "ClawProjectile.h"
 
@@ -100,6 +100,7 @@ private:
 
 	struct WeaponsAmount
 	{
+		// TODO do not use this class... use array or something better
 		int pistol;
 		int magic;
 		int dynamite;
