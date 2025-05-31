@@ -41,7 +41,7 @@ void PlayState::Logic(uint32_t elapsedTime)
 	{
 		if (player->isFinishLevel())
 		{
-			_clawLevelEngine->changeEngine<LevelEndEngine>(_clawLevelEngine->_fields->_wwd->levelNumber, player->getCollectedTreasures());
+			_clawLevelEngine->changeEngine(DBG_NEW LevelEndEngine(_clawLevelEngine->_fields->_wwd->levelNumber, player->getCollectedTreasures()));
 		}
 		else if (!player->hasLives())
 		{
@@ -156,7 +156,7 @@ void GameOverState::Logic(uint32_t elapsedTime)
 	if (_gameOverTimeCounter <= 0)
 	{
 		MenuEngine::setMainMenu();
-		_clawLevelEngine->changeEngine<MenuEngine>();
+		_clawLevelEngine->changeEngine(DBG_NEW MenuEngine());
 	}
 }
 void GameOverState::Draw()

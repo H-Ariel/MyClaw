@@ -26,3 +26,9 @@ shared_ptr<BaseEngine> BaseEngine::getNextEngine()
 	stopEngine = false;
 	return _nextEngine;
 }
+
+void BaseEngine::changeEngine(BaseEngine* newEngine)
+{
+	_nextEngine = shared_ptr<BaseEngine>(newEngine);
+	stopEngine = true;
+}

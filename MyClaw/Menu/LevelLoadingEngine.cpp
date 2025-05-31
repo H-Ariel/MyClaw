@@ -12,7 +12,7 @@ void LevelLoadingEngine::Logic(uint32_t elapsedTime)
 	_bgImg->Logic(elapsedTime);
 	_totalTime += elapsedTime;
 	if (_totalTime > 100) { // wait 100ms
-		changeEngine<ClawLevelEngine>(_level, _checkpoint);
+		changeEngine(DBG_NEW ClawLevelEngine(_level, _checkpoint));
 		_clawLevelEngineFields.reset();
 	}
 }

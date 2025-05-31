@@ -213,7 +213,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_saveWindowScale = WindowManager::getWindowScale();
 		MenuEngine::setHelpScreen();
-		changeEngine<MenuEngine>(_fields);
+		changeEngine(DBG_NEW MenuEngine(_fields));
 		break;
 
 	case VK_ESCAPE: // open pause menu
@@ -221,7 +221,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 		_fields->_saveBgColor = WindowManager::getBackgroundColor();
 		_fields->_saveWindowScale = WindowManager::getWindowScale();
 		MenuEngine::setIngameMenu();
-		changeEngine<MenuEngine>(_fields);
+		changeEngine(DBG_NEW MenuEngine(_fields));
 		break;
 
 	default:

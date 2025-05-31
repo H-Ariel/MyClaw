@@ -115,7 +115,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			onClick = [&](MenuItem*) {
 				_menusStack.push(_currMenu);
 				_currMenu = &m;
-				changeEngine<CreditsEngine>();
+				changeEngine(DBG_NEW CreditsEngine());
 			};
 			break;
 
@@ -126,7 +126,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::EndLife:
 			onClick = [&](MenuItem*) {
 				GO::player->endLife();
-				changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
+				changeEngine(DBG_NEW ClawLevelEngine(_clawLevelEngineFields));
 			};
 			break;
 
@@ -134,7 +134,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			onClick = [&](MenuItem*) {
 				AssetsManager::clearLevelAssets();
 				setMainMenu();
-				changeEngine<MenuEngine>();
+				changeEngine(DBG_NEW MenuEngine());
 				GO::player = nullptr; // do not recycle the player in new game
 				GO::cheats = nullptr; // ^^^
 			};
@@ -217,7 +217,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 					int level = stoi(HierarchicalMenu::SelectCheckpoint.subMenus[0]
 						.imagePath.substr(strlen(LOAD_CHECKPOINT_ROOT), 3)) - 10;
 					int checkpoint = ((m.cmd & 0xf0) >> 4) - 1;
-					changeEngine<LevelLoadingEngine>(level, checkpoint);
+					changeEngine(DBG_NEW LevelLoadingEngine(level, checkpoint));
 				};
 			}
 			else if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
@@ -227,7 +227,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 
 					if (contains(_currMenu->subMenus[0].imagePath, "NEW")) // new game
 					{
-						changeEngine<LevelLoadingEngine>(level);
+						changeEngine(DBG_NEW LevelLoadingEngine(level));
 					}
 					else if (contains(_currMenu->subMenus[0].imagePath, "LOAD")) // load checkpoint
 					{
@@ -430,7 +430,7 @@ void MenuEngine::menuIn(const HierarchicalMenu* newMenu)
 {
 	_menusStack.push(_currMenu);
 	_currMenu = newMenu;
-	changeEngine<MenuEngine>(mousePosition, _cursor);
+	changeEngine(DBG_NEW MenuEngine(mousePosition, _cursor));
 }
 void MenuEngine::menuOut()
 {
@@ -438,14 +438,14 @@ void MenuEngine::menuOut()
 	{
 		_currMenu = _menusStack.top();
 		_menusStack.pop();
-		changeEngine<MenuEngine>(mousePosition, _cursor);
+		changeEngine(DBG_NEW MenuEngine(mousePosition, _cursor));
 	}
 }
 void MenuEngine::backToGame()
 {
 	clearMenusStack();
 	_currMenu = &HierarchicalMenu::InGameMenu;
-	changeEngine<ClawLevelEngine>(_clawLevelEngineFields);
+	changeEngine(DBG_NEW ClawLevelEngine(_clawLevelEngineFields));
 }
 
 void MenuEngine::setMainMenu()

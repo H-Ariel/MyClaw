@@ -188,7 +188,7 @@ void LevelEndEngine::OnMouseButtonUp(MouseButtons btn) { _state += 1; }
 void LevelEndEngine::playNextLevel()
 {
 	if (_lvlNum == 14) // last level
-		changeEngine<CreditsEngine>();
+		changeEngine(DBG_NEW CreditsEngine());
 	else
-		changeEngine<LevelLoadingEngine>(_lvlNum + 1);
+		changeEngine(DBG_NEW LevelLoadingEngine(_lvlNum + 1));
 }
