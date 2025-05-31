@@ -5,9 +5,6 @@
 constexpr auto DEFAULT_BG_IMAGE = "STATES/MENU/SCREENS/MENU.PCX";
 
 
-shared_ptr<ClawLevelEngineFields> ScreenEngine::_clawLevelEngineFields;
-
-
 ScreenEngine::ScreenEngine(const string& bgPcxPath)
 {
 	_bgImg = DBG_NEW MenuBackgroundImage(bgPcxPath.empty() ? DEFAULT_BG_IMAGE : bgPcxPath);
@@ -17,11 +14,6 @@ ScreenEngine::ScreenEngine(const string& bgPcxPath)
 	WindowManager::setWindowOffset({});
 	WindowManager::setBackgroundColor(ColorF::Black);
 	WindowManager::setWindowScale(1);
-}
-ScreenEngine::ScreenEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath)
-	: ScreenEngine(bgPcxPath)
-{
-	_clawLevelEngineFields = fields;
 }
 
 ScreenEngine::~ScreenEngine()

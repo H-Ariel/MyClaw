@@ -61,8 +61,8 @@ public:
 	/// <summary>
 	/// Gets the next engine to transition to.
 	/// </summary>
-	/// <returns>A shared pointer to the next engine.</returns>
-	shared_ptr<BaseEngine> getNextEngine();
+	/// <returns>A pointer to the next engine.</returns>
+	BaseEngine* getNextEngine();
 
 	/// <summary>
 	/// The current mouse position, in screen coordinates (x, y).
@@ -75,17 +75,20 @@ public:
 	bool stopEngine;
 
 	/// <summary>
+	/// If true, the object will be deleted (freed from memory) when the engine stops.
+	/// </summary>
+	bool freeMemoryOnStop;
+
+	/// <summary>
 	/// If true, the screen will be cleared before each frame is drawn.
 	/// </summary>
 	bool clearScreen;
 
 protected:
 	/// <summary>
-	/// Changes the current engine to a new one, transitioning with optional arguments.
+	/// Changes the current engine to a new one.
 	/// </summary>
-	/// <typeparam name="NextEngine">The type of the next engine.</typeparam>
-	/// <typeparam name="Args">The types of arguments required by the new engine's constructor.</typeparam>
-	/// <param name="args">Arguments to pass to the next engine's constructor.</param>
+	/// <param name="newEngine">Pointer to the new engine instance to switch to.</param>
 	void changeEngine(BaseEngine* newEngine);
 
 
@@ -95,7 +98,7 @@ protected:
 	vector<UIBaseElement*> _elementsList;
 
 	/// <summary>
-	/// A shared pointer to the next engine that will be used after the current one ends.
+	/// A pointer to the next engine that will be used after the current one ends.
 	/// </summary>
-	shared_ptr<BaseEngine> _nextEngine;
+	BaseEngine* _nextEngine;
 };

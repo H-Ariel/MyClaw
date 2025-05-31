@@ -1,12 +1,13 @@
 #include "GameMainApp.h"
 #include "Assets-Managers/AssetsManager.h"
-#include "Menu/OpeningScreenEngine.h"
+#include "SavedDataManager.h"
 
 #ifdef _DEBUG
 #include "Menu/LevelLoadingEngine.h"
 #include "Menu/MenuEngine.h"
+#else
+#include "Menu/OpeningScreenEngine.h"
 #endif
-#include "SavedDataManager.h"
 
 
 GameMainApp::GameMainApp()
@@ -24,10 +25,10 @@ GameMainApp::~GameMainApp()
 void GameMainApp::init()
 {
 #ifdef _DEBUG
-//	_pEngine = make_shared<MenuEngine>();
-	_pEngine = make_shared<LevelLoadingEngine>(1);
+//	_pEngine = DBG_NEW MenuEngine();
+	_pEngine = DBG_NEW LevelLoadingEngine(1);
 #else
-	_pEngine = make_shared<OpeningScreenEngine>();
+	_pEngine = DBG_NEW OpeningScreenEngine();
 #endif
 }
 

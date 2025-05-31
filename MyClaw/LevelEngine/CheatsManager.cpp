@@ -70,32 +70,31 @@ void CheatsManager::addKey(int key)
 	case Catnip:			addPowerup(Item::Type::Powerup_Catnip_White); break;
 	case Invisibility:		addPowerup(Item::Type::Powerup_Invisibility); break;
 	case Invincibility:		addPowerup(Item::Type::Powerup_Invincibility); break;
-	case GodMode:		_god = !_god; [[fallthrough]]; // NO BREAKE HERE!
+	case GodMode:			_god = !_god; [[fallthrough]]; // NO BREAKE HERE!
 	case FillHealth:
 	case FillPistol:
 	case FillMagic:
 	case FillDynamite:
 	case FillLife:
-	case FinishLevel:	GO::player->cheat(type); break;
-		//	case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
-		//	case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
-		//	case BgMscNormal:	MidiPlayer::MusicSpeed = 1; break;
+	case FinishLevel:		GO::player->cheat(type); break;
+	//case BgMscSpeedUp:	if (MidiPlayer::MusicSpeed < 2) MidiPlayer::MusicSpeed += 0.25f; break;
+	//case BgMscSlowDown:	if (MidiPlayer::MusicSpeed > 0.25f) MidiPlayer::MusicSpeed -= 0.25f; break;
+	//case BgMscNormal:		MidiPlayer::MusicSpeed = 1; break;
 
-	//case GodMode:		_god = !_god; break;
-	case EasyMode:		_easy = !_easy;
+	case EasyMode:			_easy = !_easy;
 		if (_easy) actionPlane->enterEasyMode();
 		else actionPlane->exitEasyMode();
 		break;
-	case SuperStrong:	_superStrong = !_superStrong; break;
+	case SuperStrong:		_superStrong = !_superStrong; break;
 	case Flying:
 		if (GO::player->cheat(type)) // try to enable flying mode
 			_flying = !_flying;
 		break;
-	case SuperJump:		_superJump = !_superJump; break;
-	case MultiTeasures: _multiTreasures = !_multiTreasures; break;
+	case SuperJump:			_superJump = !_superJump; break;
+	case MultiTeasures:		_multiTreasures = !_multiTreasures; break;
 
-	case IncResolution: WindowManager::setWindowScale(WindowManager::getWindowScale() + 0.5f); break;
-	case DecResolution: WindowManager::setWindowScale(WindowManager::getWindowScale() - 0.5f); break;
+	case IncResolution:		WindowManager::setWindowScale(WindowManager::getWindowScale() + 0.5f); break;
+	case DecResolution:		WindowManager::setWindowScale(WindowManager::getWindowScale() - 0.5f); break;
 	case DefaultResolution: WindowManager::setDefaultWindowScale(); break;
 
 	default: break;

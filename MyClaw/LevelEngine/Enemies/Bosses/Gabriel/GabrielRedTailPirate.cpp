@@ -49,5 +49,5 @@ void GabrielRedTailPirate::stopFalling(float collisionSize)
 	}
 }
 // they always run (until they jump at end of dock)
-void GabrielRedTailPirate::stopMovingLeft(float collisionSize) { }
-void GabrielRedTailPirate::stopMovingRight(float collisionSize) { }
+void GabrielRedTailPirate::stopMovingLeft(float collisionSize) {}
+void GabrielRedTailPirate::stopMovingRight(float collisionSize) {}

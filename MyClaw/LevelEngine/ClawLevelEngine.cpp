@@ -1,16 +1,15 @@
-#include "ClawLevelEngine.h"
+#include "ClawLevelEngineState.h"
 #include "ActionPlane.h"
 #include "CheatsManager.h"
 #include "GlobalObjects.h"
 #include "GameEngine/WindowManager.h"
 #include "Menu/MenuEngine.h"
-#include "ClawLevelEngineState.h"
 
 constexpr auto& player = GO::player;
 
 
-ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber, ClawLevelEngine* clawLevelEngine)
-	: actionPlane(nullptr), _hud(nullptr), _saveBgColor(0), _saveWindowScale(1)
+ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
+	: actionPlane(nullptr), _saveBgColor(0), _saveWindowScale(1)
 {
 	_wwd = AssetsManager::loadLevel(levelNumber);
 
@@ -18,7 +17,7 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber, ClawLevelEngine* c
 	{
 		if (wwdPlane.flags & WwdPlane::WwdPlaneFlags_MainPlane)
 		{
-			actionPlane = DBG_NEW ActionPlane(_wwd.get(), &wwdPlane, clawLevelEngine);
+			actionPlane = DBG_NEW ActionPlane(_wwd.get(), &wwdPlane, this);
 			_planes.push_back(shared_ptr<ActionPlane>(actionPlane));
 		}
 		else
@@ -30,28 +29,26 @@ ClawLevelEngineFields::ClawLevelEngineFields(int levelNumber, ClawLevelEngine* c
 
 	//if (!actionPlane) throw Exception("no main plane found"); // should never happen
 	_hud = DBG_NEW LevelHUD(actionPlane);
-}
-ClawLevelEngineFields::~ClawLevelEngineFields()
-{
-	delete _hud;
-}
-
-
-ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
-{
-	_fields = make_shared<ClawLevelEngineFields>(levelNumber, this);
 
 	if (checkpoint != -1) // according to LevelLoadingEngine
-		_fields->actionPlane->loadGame(levelNumber, checkpoint);
+		actionPlane->loadGame(levelNumber, checkpoint);
 
 	WindowManager::setDefaultWindowScale();
 
-	init();
+
+	_state = DBG_NEW PlayState(this);
+	_nextState = nullptr;
+
+	for (shared_ptr<LevelPlane>& pln : _planes)
+		_elementsList.push_back(pln.get());
+	_elementsList.push_back(_hud);
+
+	WindowManager::setWindowOffset(actionPlane->position);
 
 #ifdef _DEBUG
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 3586, 4859 };
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 8537, 4430 };
-	//if (levelNumber == 1) GO::getPlayerPosition() = { 17485, 1500 }; // END OF LEVEL
+	if (levelNumber == 1) GO::getPlayerPosition() = { 17485, 1500 }; // END OF LEVEL
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 5775, 4347 };
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 9696, 772 };
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 5226, 4035 };
@@ -149,27 +146,12 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	//if (levelNumber == 14) GO::getPlayerPosition() = { 7270, 4140 };
 #endif
 }
-ClawLevelEngine::ClawLevelEngine(shared_ptr<ClawLevelEngineFields> fields)
-	: _fields(fields)
+ClawLevelEngine::~ClawLevelEngine()
 {
-	WindowManager::setBackgroundColor(_fields->_saveBgColor);
-	WindowManager::setWindowScale(_fields->_saveWindowScale);
-
-	init();
+	delete _state;
+	delete _hud;
 }
-ClawLevelEngine::~ClawLevelEngine() { delete _state; }
 
-void ClawLevelEngine::init()
-{
-	_state = DBG_NEW PlayState(this);
-	_nextState = nullptr;
-
-	for (shared_ptr<LevelPlane>& pln : _fields->_planes)
-		_elementsList.push_back(pln.get());
-	_elementsList.push_back(_fields->_hud);
-
-	WindowManager::setWindowOffset(_fields->actionPlane->position);
-}
 void ClawLevelEngine::playerEnterWrap(Warp* destinationWarp)
 {
 	switchState(DBG_NEW WrapCloseState(this, destinationWarp));
@@ -210,18 +192,20 @@ void ClawLevelEngine::OnKeyUp(int key)
 	{
 	case VK_F1: // open help
 		AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
-		_fields->_saveBgColor = WindowManager::getBackgroundColor();
-		_fields->_saveWindowScale = WindowManager::getWindowScale();
+		_saveBgColor = WindowManager::getBackgroundColor();
+		_saveWindowScale = WindowManager::getWindowScale();
 		MenuEngine::setHelpScreen();
-		changeEngine(DBG_NEW MenuEngine(_fields));
+		freeMemoryOnStop = false;
+		changeEngine(DBG_NEW MenuEngine(this));
 		break;
 
 	case VK_ESCAPE: // open pause menu
 		AssetsManager::playWavFile("STATES/MENU/SOUNDS/SELECT.WAV");
-		_fields->_saveBgColor = WindowManager::getBackgroundColor();
-		_fields->_saveWindowScale = WindowManager::getWindowScale();
+		_saveBgColor = WindowManager::getBackgroundColor();
+		_saveWindowScale = WindowManager::getWindowScale();
 		MenuEngine::setIngameMenu();
-		changeEngine(DBG_NEW MenuEngine(_fields));
+		freeMemoryOnStop = false;
+		changeEngine(DBG_NEW MenuEngine(this));
 		break;
 
 	default:

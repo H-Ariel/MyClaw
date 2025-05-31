@@ -9,6 +9,7 @@
 #include "MenuItem.h"
 
 
+ClawLevelEngine* MenuEngine::_clawLevelEngine;
 // TODO maybe make stack of BaseEngine and then we can push
 //      every engine inside (includin ClawLevelEngine) and
 //      then we do not need save `_clawLevelEngineFields` anymore
@@ -126,13 +127,14 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::EndLife:
 			onClick = [&](MenuItem*) {
 				GO::player->endLife();
-				changeEngine(DBG_NEW ClawLevelEngine(_clawLevelEngineFields));
+				changeEngine(_clawLevelEngine);
 			};
 			break;
 
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MenuItem*) {
 				AssetsManager::clearLevelAssets();
+				_clawLevelEngine->freeMemoryOnStop = true;
 				setMainMenu();
 				changeEngine(DBG_NEW MenuEngine());
 				GO::player = nullptr; // do not recycle the player in new game
@@ -308,10 +310,10 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		}
 	}
 }
-MenuEngine::MenuEngine(shared_ptr<ClawLevelEngineFields> fields, const string& bgPcxPath)
+MenuEngine::MenuEngine(ClawLevelEngine* clawLevelEngine, const string& bgPcxPath)
 	: MenuEngine(bgPcxPath)
 {
-	_clawLevelEngineFields = fields; // I don't have another way...
+	_clawLevelEngine = clawLevelEngine; // I don't have another way...
 }
 MenuEngine::~MenuEngine()
 {
@@ -445,14 +447,16 @@ void MenuEngine::backToGame()
 {
 	clearMenusStack();
 	_currMenu = &HierarchicalMenu::InGameMenu;
-	changeEngine(DBG_NEW ClawLevelEngine(_clawLevelEngineFields));
+	changeEngine(_clawLevelEngine);
 }
 
 void MenuEngine::setMainMenu()
 {
 	_currMenu = &HierarchicalMenu::MainMenu;
 	clearMenusStack();
-	_clawLevelEngineFields.reset();
+	if (_clawLevelEngine)
+		delete _clawLevelEngine;
+	_clawLevelEngine = nullptr;
 }
 void MenuEngine::setIngameMenu()
 {

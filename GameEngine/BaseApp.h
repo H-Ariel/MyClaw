@@ -47,7 +47,7 @@ protected:
 	/// <summary>
 	/// A shared pointer to the engine currently running in the application.
 	/// </summary>
-	shared_ptr<BaseEngine> _pEngine;
+	BaseEngine* _pEngine;
 
 	/// <summary>
 	/// A flag indicating whether the application should keep running. Set to false to stop the application.

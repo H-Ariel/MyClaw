@@ -12,6 +12,9 @@ constexpr auto WINDOW_CLASS_NAME = L"MyGameWindow";
 // overrides. safety so the game doesn't go wild.
 constexpr uint32_t MAX_ITER_TIME = 20U;
 
+constexpr int targetFPS = 60;
+constexpr auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);
+
 
 BaseApp::BaseApp(WNDPROC wndproc, const TCHAR title[])
 	: _pEngine(nullptr), _runApp(false)
@@ -23,13 +26,16 @@ BaseApp::BaseApp(WNDPROC wndproc, const TCHAR title[])
 }
 BaseApp::~BaseApp()
 {
+	if (_pEngine)
+		delete _pEngine;
+
 	AudioManager::Finalize();
 	WindowManager::Finalize();
 }
 
 void BaseApp::init()
 {
-	_pEngine = make_shared<BaseEngine>();
+	_pEngine = DBG_NEW BaseEngine();
 }
 void BaseApp::run()
 {
@@ -40,11 +46,8 @@ void BaseApp::run()
 #ifdef _DEBUG
 	// for FPS
 	char fpsText[16] = {};
-	uint32_t framesTime = 0, frames = 0;
 #endif
-
-	const int targetFPS = 60;
-	const auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);
+	uint32_t framesTime = 0, frames = 0;
 
 	_runApp = true;
 
@@ -54,7 +57,6 @@ void BaseApp::run()
 		elapsedTime = (uint32_t)chrono::duration_cast<chrono::milliseconds>(end - begin).count();
 		begin = end;
 
-#ifdef _DEBUG
 		framesTime += elapsedTime;
 		frames++;
 		if (framesTime > 1000)
@@ -62,12 +64,13 @@ void BaseApp::run()
 			if (frames > targetFPS) // fit to 60 fps
 				std::this_thread::sleep_for((frames - targetFPS) * frameDuration);
 
+#ifdef _DEBUG
 			sprintf(fpsText, "%d FPS", frames);
 			WindowManager::setTitle(fpsText);
+#endif
 			frames = 0;
 			framesTime = 0;
 		}
-#endif
 
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
@@ -84,7 +87,12 @@ void BaseApp::run()
 		
 		if (_pEngine->stopEngine)
 		{
+			BaseEngine* prev = _pEngine;
 			_pEngine = _pEngine->getNextEngine();
+			
+			if (prev->freeMemoryOnStop)
+				delete prev;
+
 			if (_pEngine == nullptr)
 			{
 				_runApp = false;
@@ -107,7 +115,7 @@ LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 	{
 		if (app->_pEngine)
 		{
-			engine = app->_pEngine.get();
+			engine = app->_pEngine;
 		}
 	}
 

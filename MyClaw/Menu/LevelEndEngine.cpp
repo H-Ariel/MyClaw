@@ -6,6 +6,9 @@
 #include "LevelEngine/Objects/Player.h"
 
 
+// TODO state design pattern
+
+
 constexpr int NUM_OF_TREASURES = 9;
 #define type_Treasure_Skull		Item::Treasure_Skull_Blue
 #define type_Treasure_Crowns	Item::Treasure_Crowns_Green
@@ -54,7 +57,6 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 		SavedDataManager::saveGame(data);
 	}
 
-	_clawLevelEngineFields.reset(); // clear level data (if player enter menu from level)
 	AssetsManager::clearLevelAssets();
 
 	for (auto& i : collectedTreasures)

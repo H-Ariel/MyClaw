@@ -11,7 +11,7 @@
 #include "../Enemies/BaseEnemy.h"
 
 
-#define cheats GO::cheats
+constexpr auto& cheats = GO::cheats;
 
 
 // TODO: find perfect values (if they are still not perfect :D )
@@ -169,9 +169,7 @@ Player::Player()
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/452.PID"))
 		}));
 }
-Player::~Player() {
-	cheats = nullptr; // when reset the game, the cheats manager should be reset too
-}
+Player::~Player() {}
 
 void Player::Logic(uint32_t elapsedTime)
 {

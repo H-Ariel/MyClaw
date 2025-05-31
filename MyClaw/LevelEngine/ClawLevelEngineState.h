@@ -12,9 +12,9 @@ public:
 
 protected:
 	ClawLevelEngineState(ClawLevelEngine* clawLevelEngine)
-		: _clawLevelEngine(clawLevelEngine) { }
+		: _levelEngine(clawLevelEngine) {}
 
-	ClawLevelEngine* _clawLevelEngine;
+	ClawLevelEngine* _levelEngine;
 };
 
 
@@ -29,7 +29,7 @@ class DeathFallState : public ClawLevelEngineState
 {
 public:
 	DeathFallState(ClawLevelEngine* clawLevelEngine)
-		: ClawLevelEngineState(clawLevelEngine) { }
+		: ClawLevelEngineState(clawLevelEngine) {}
 	void Logic(uint32_t elapsedTime) override;
 };
 
@@ -48,7 +48,7 @@ class DeathOpenState : public ClawLevelEngineState
 {
 public:
 	DeathOpenState(ClawLevelEngine* clawLevelEngine)
-		: ClawLevelEngineState(clawLevelEngine), _holeRadius(0) { }
+		: ClawLevelEngineState(clawLevelEngine), _holeRadius(0) {}
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 
@@ -74,7 +74,7 @@ class WrapOpenState : public ClawLevelEngineState
 {
 public:
 	WrapOpenState(ClawLevelEngine* clawLevelEngine)
-		: ClawLevelEngineState(clawLevelEngine), _wrapCoverTop(0) { }
+		: ClawLevelEngineState(clawLevelEngine), _wrapCoverTop(0) {}
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 

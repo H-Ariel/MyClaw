@@ -41,6 +41,7 @@ ActionPlane::~ActionPlane()
 
 	// because it static member and we don't want recycle objects...
 	GO::actionPlane = nullptr;
+	GO::cheats = nullptr;
 }
 
 void ActionPlane::init()
@@ -53,6 +54,12 @@ void ActionPlane::init()
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	physics = make_shared<PhysicsManager>(_wwdPlane->tiles, _wwd->tileDescriptions); // must be after WWD map loaded and before objects added
 
+	if (!GO::cheats)
+	{
+		// init cheats-manager here because it is for all objects, but mainly for player
+		GO::cheats = make_shared<CheatsManager>(this);
+	}
+
 	// player's initializtion must be before LevelPlane::readPlaneObjects() because some of objects need player
 	if (player && player->hasLives()) // if we have player from previous level, we don't need to create new one
 	{
@@ -62,8 +69,6 @@ void ActionPlane::init()
 	}
 	else
 	{
-		// init cheats-manager here because it is for all objects, but mainly for player
-		GO::cheats = make_shared<CheatsManager>(GO::actionPlane);
 		player = make_shared<Player>();
 		player->position.x = player->startPosition.x = (float)_wwd->startX;
 		player->position.y = player->startPosition.y = (float)_wwd->startY;
