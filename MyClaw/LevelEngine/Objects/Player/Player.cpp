@@ -1,14 +1,14 @@
 #include "Player.h"
-#include "../GlobalObjects.h"
-#include "../CheatsManager.h"
-#include "EnemyProjectile.h"
-#include "LavaMouth.h"
-#include "Rope.h"
-#include "ConveyorBelt.h"
-#include "Stalactite.h"
-#include "PowderKeg.h"
-#include "OneTimeAnimation.h"
-#include "../Enemies/BaseEnemy.h"
+#include "../../GlobalObjects.h"
+#include "../../CheatsManager.h"
+#include "../EnemyProjectile.h"
+#include "../LavaMouth.h"
+#include "../Rope.h"
+#include "../ConveyorBelt.h"
+#include "../Stalactite.h"
+#include "../PowderKeg.h"
+#include "../OneTimeAnimation.h"
+#include "../../Enemies/BaseEnemy.h"
 
 
 constexpr auto& cheats = GO::cheats;
@@ -48,7 +48,7 @@ constexpr int MAX_LIVES_AMOUNT = 9;
 		return true; \
 	} break; }
 
-#define ADD_WEAPON(t, n)	ADD_VALUE(_weaponsAmount. t, n, MAX_WEAPON_AMOUNT)
+#define ADD_WEAPON(t, n)	ADD_VALUE(_weaponsAmount[(int)t], n, MAX_WEAPON_AMOUNT)
 #define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH_AMOUNT)
 #define ADD_LIFE(n)			ADD_VALUE(_lives, n, MAX_LIVES_AMOUNT)
 #define SET_POWERUP(t) { \
@@ -60,10 +60,7 @@ constexpr int MAX_LIVES_AMOUNT = 9;
 
 
 #define loseHealth(damage) if (_currPowerup != Item::Powerup_Invincibility && !cheats->isGodMode()) _health -= damage;
-
-
 #define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
-
 #define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup
 
 
@@ -71,76 +68,14 @@ constexpr int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
 constexpr int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
 
-Player::PowerupSparkles::PowerupSparkles(Rectangle2D* playerRc)
-	: _playerRc(playerRc)
-{
-	for (auto& s : _sparkles)
-	{
-		s = AssetsManager::loadCopyAnimation("GAME/ANIS/GLITTER1.ANI");
-		init(s);
-	}
-}
-void Player::PowerupSparkles::init(shared_ptr<UIAnimation> sparkle)
-{
-	const float a = (_playerRc->right - _playerRc->left) / 2; // vertical radius
-	const float b = (_playerRc->bottom - _playerRc->top) / 2; // horizontal radius
-	float x, y;
-
-	do {
-		x = getRandomFloat(-a, a);
-		y = getRandomFloat(-b, b);
-		// check if (x,y) is in the player ellipse
-	} while (pow(x / a, 2) + pow(y / b, 2) > 1);
-
-	sparkle->position.x = x + (_playerRc->right + _playerRc->left) / 2;
-	sparkle->position.y = y + (_playerRc->bottom + _playerRc->top) / 2;
-
-	for (int i = 0, n = getRandomInt(0, 3); i < n; i++) sparkle->Logic(50);
-}
-void Player::PowerupSparkles::Logic(uint32_t elapsedTime)
-{
-	for (auto& s : _sparkles)
-	{
-		if (s->isFinishAnimation())
-			init(s);
-		s->Logic(elapsedTime);
-	}
-}
-void Player::PowerupSparkles::Draw() {
-	for (auto& s : _sparkles) s->Draw();
-}
-
-
-Player::WeaponsAmount::WeaponsAmount(int pistol, int magic, int dynamite)
-	: pistol(pistol), magic(magic), dynamite(dynamite) {
-}
-int& Player::WeaponsAmount::operator[](ClawProjectile::Types type)
-{
-	switch (type)
-	{
-	case ClawProjectile::Types::Pistol: return pistol;
-	case ClawProjectile::Types::Magic: return magic;
-	case ClawProjectile::Types::Dynamite: return dynamite;
-	default: throw exception("invalid weapon type");
-	}
-}
-int Player::WeaponsAmount::operator[](ClawProjectile::Types type) const
-{
-	switch (type)
-	{
-	case ClawProjectile::Types::Pistol: return pistol;
-	case ClawProjectile::Types::Magic: return magic;
-	case ClawProjectile::Types::Dynamite: return dynamite;
-	default: throw exception("invalid weapon type");
-	}
-}
-
-
 Player::Player()
 	: BaseCharacter({}), _currWeapon(ClawProjectile::Types::Pistol),
-	_finishLevel(false), _powerupSparkles(&_saveCurrRect),
-	_weaponsAmount(10, 5, 3), startPosition({})
+	_finishLevel(false), _powerupSparkles(&_saveCurrRect), startPosition({})
 {
+	_weaponsAmount[(int)ClawProjectile::Types::Pistol] = 10;
+	_weaponsAmount[(int)ClawProjectile::Types::Magic] = 5;
+	_weaponsAmount[(int)ClawProjectile::Types::Dynamite] = 3;
+
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
 	_lives = 1;//6;
 	_score = 0;
@@ -482,7 +417,7 @@ void Player::Logic(uint32_t elapsedTime)
 				case ClawProjectile::Types::Dynamite: _aniName = "POSTDYNAMITE"; break;
 				}
 
-				if (_weaponsAmount[_currWeapon] > 0)
+				if (_weaponsAmount[(int)_currWeapon] > 0)
 				{
 					useWeapon(duck, inAir);
 				}
@@ -806,7 +741,7 @@ void Player::useWeapon(bool duck, bool inAir)
 	default: throw Exception("no more weapons..."); // should never happen
 	}
 
-	_weaponsAmount[_currWeapon] -= 1;
+	_weaponsAmount[(int)_currWeapon] -= 1;
 	if (inAir) obj.y += 10;
 	GO::addObjectToActionPlane(ClawProjectile::createNew(_currWeapon, obj));
 }
@@ -947,13 +882,13 @@ bool Player::collectItem(Item* item)
 		GO::addObjectToActionPlane(ani);
 	}	return true;
 
-	case Item::Ammo_Deathbag:	ADD_WEAPON(pistol, 25);
-	case Item::Ammo_Shot:		ADD_WEAPON(pistol, 5);
-	case Item::Ammo_Shotbag:	ADD_WEAPON(pistol, 10);
-	case Item::Ammo_Magic_5:	ADD_WEAPON(magic, 5);
-	case Item::Ammo_Magic_10:	ADD_WEAPON(magic, 10);
-	case Item::Ammo_Magic_25:	ADD_WEAPON(magic, 25);
-	case Item::Ammo_Dynamite:	ADD_WEAPON(dynamite, 5);
+	case Item::Ammo_Deathbag:	ADD_WEAPON(ClawProjectile::Types::Pistol, 25);
+	case Item::Ammo_Shot:		ADD_WEAPON(ClawProjectile::Types::Pistol, 5);
+	case Item::Ammo_Shotbag:	ADD_WEAPON(ClawProjectile::Types::Pistol, 10);
+	case Item::Ammo_Magic_5:	ADD_WEAPON(ClawProjectile::Types::Magic, 5);
+	case Item::Ammo_Magic_10:	ADD_WEAPON(ClawProjectile::Types::Magic, 10);
+	case Item::Ammo_Magic_25:	ADD_WEAPON(ClawProjectile::Types::Magic, 25);
+	case Item::Ammo_Dynamite:	ADD_WEAPON(ClawProjectile::Types::Dynamite, 5);
 
 	case Item::Health_Level:	ADD_HEALTH(5);
 	case Item::Health_10:		ADD_HEALTH(10);
@@ -1109,9 +1044,9 @@ SavedDataManager::GameData Player::getGameData() const
 	data.lives = _lives;
 	data.health = _health;
 	data.score = _score;
-	data.pistolAmount = _weaponsAmount.pistol;
-	data.magicAmount = _weaponsAmount.magic;
-	data.dynamiteAmount = _weaponsAmount.dynamite;
+	data.pistolAmount = _weaponsAmount[(int)ClawProjectile::Types::Pistol];
+	data.magicAmount = _weaponsAmount[(int)ClawProjectile::Types::Magic];
+	data.dynamiteAmount = _weaponsAmount[(int)ClawProjectile::Types::Dynamite];
 
 	return data;
 }
@@ -1120,9 +1055,9 @@ void Player::setGameData(const SavedDataManager::GameData& data)
 	_lives = data.lives;
 	_health = data.health;
 	_score = data.score;
-	_weaponsAmount.pistol = data.pistolAmount;
-	_weaponsAmount.magic = data.magicAmount;
-	_weaponsAmount.dynamite = data.dynamiteAmount;
+	_weaponsAmount[(int)ClawProjectile::Types::Pistol] = data.pistolAmount;
+	_weaponsAmount[(int)ClawProjectile::Types::Magic] = data.magicAmount;
+	_weaponsAmount[(int)ClawProjectile::Types::Dynamite] = data.dynamiteAmount;
 }
 
 void Player::keyUp(int key)
@@ -1161,7 +1096,7 @@ void Player::keyDown(int key)
 	case 'Z':		if (!rope) _zPressed = true; break;
 	case VK_MENU:	if (!rope && !_raisedPowderKeg) {
 		if (!_altPressed) _holdAltTime = 0;
-		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount.dynamite > 0);
+		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount[(int)ClawProjectile::Types::Dynamite] > 0);
 	} break;
 	}
 }
@@ -1300,16 +1235,16 @@ bool Player::cheat(int cheatType)
 	{
 	case CheatsManager::FillLife:		_lives = MAX_LIVES_AMOUNT; break;
 	case CheatsManager::FillHealth:		_health = MAX_HEALTH_AMOUNT; break;
-	case CheatsManager::FillPistol:		_weaponsAmount.pistol = MAX_WEAPON_AMOUNT; break;
-	case CheatsManager::FillMagic:		_weaponsAmount.magic = MAX_WEAPON_AMOUNT; break;
-	case CheatsManager::FillDynamite:	_weaponsAmount.dynamite = MAX_WEAPON_AMOUNT; break;
+	case CheatsManager::FillPistol:		_weaponsAmount[(int)ClawProjectile::Types::Pistol] = MAX_WEAPON_AMOUNT; break;
+	case CheatsManager::FillMagic:		_weaponsAmount[(int)ClawProjectile::Types::Magic] = MAX_WEAPON_AMOUNT; break;
+	case CheatsManager::FillDynamite:	_weaponsAmount[(int)ClawProjectile::Types::Dynamite] = MAX_WEAPON_AMOUNT; break;
 	case CheatsManager::FinishLevel:	_finishLevel = true; break;
 	case CheatsManager::GodMode:
 		_lives = MAX_LIVES_AMOUNT;
 		_health = MAX_HEALTH_AMOUNT;
-		_weaponsAmount.pistol = MAX_WEAPON_AMOUNT;
-		_weaponsAmount.magic = MAX_WEAPON_AMOUNT;
-		_weaponsAmount.dynamite = MAX_WEAPON_AMOUNT;
+		_weaponsAmount[(int)ClawProjectile::Types::Pistol] = MAX_WEAPON_AMOUNT;
+		_weaponsAmount[(int)ClawProjectile::Types::Magic] = MAX_WEAPON_AMOUNT;
+		_weaponsAmount[(int)ClawProjectile::Types::Dynamite] = MAX_WEAPON_AMOUNT;
 		break;
 	case CheatsManager::Flying:
 		if (_raisedPowderKeg) return false; // CC can't fly when he lifts a keg

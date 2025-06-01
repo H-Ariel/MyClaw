@@ -2,7 +2,7 @@
 
 #include "LevelPlane.h"
 #include "Enemies/BaseEnemy.h"
-#include "Objects/Player.h"
+#include "Objects/Player/Player.h"
 #include "Objects/PowderKeg.h"
 
 

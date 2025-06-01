@@ -1,9 +1,10 @@
 #pragma once
 
-#include "BaseCharacter.h"
+#include "../BaseCharacter.h"
 #include "SavedDataManager.h"
-#include "Item.h"
-#include "ClawProjectile.h"
+#include "../Item.h"
+#include "../ClawProjectile.h"
+#include "PowerupSparkles.h"
 
 
 class Elevator;
@@ -56,8 +57,8 @@ public:
 
 	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
 	int getLivesAmount() const { return _lives; }
-	int getWeaponAmount() const { return _weaponsAmount[_currWeapon]; }
-	int getDynamiteAmount() const { return _weaponsAmount.dynamite; }
+	int getWeaponAmount() const { return _weaponsAmount[(int)_currWeapon]; }
+	int getDynamiteAmount() const { return _weaponsAmount[(int)ClawProjectile::Types::Dynamite]; }
 	uint32_t getScore() const { return _score; }
 	int getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
 	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }
@@ -84,32 +85,6 @@ public:
 
 
 private:
-	class PowerupSparkles
-	{
-	public:
-		PowerupSparkles(Rectangle2D* playerRc);
-		void Logic(uint32_t elapsedTime);
-		void Draw();
-
-	private:
-		void init(shared_ptr<UIAnimation> sparkle); // init one sparkle (from the list)
-
-		Rectangle2D* _playerRc;
-		shared_ptr<UIAnimation> _sparkles[30]; // all sparkles' list
-	};
-
-	struct WeaponsAmount
-	{
-		// TODO do not use this class... use array or something better
-		int pistol;
-		int magic;
-		int dynamite;
-
-		WeaponsAmount(int pistol, int magic, int dynamite);
-		int& operator[](ClawProjectile::Types type);
-		int operator[](ClawProjectile::Types type) const;
-	};
-
 	void useWeapon(bool duck, bool inAir);
 	void jump();
 	bool checkForHurts() override; // check for hits from enemies, projectiles, and exploding powder kegs
@@ -123,7 +98,8 @@ private:
 	map<Item::Type, uint32_t> _collectedTreasures; // save all collected treasures and their amount
 	PowerupSparkles _powerupSparkles;
 	pair<Rectangle2D, int> _saveCurrAttackRect;
-	WeaponsAmount _weaponsAmount;
+	//WeaponsAmount _weaponsAmount;
+	int _weaponsAmount[3]; // 0- pistol, 1- magic, 2- dynamite
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
 	uint32_t _score;
 	int _dialogLeftTime, _powerupLeftTime; // in milliseconds

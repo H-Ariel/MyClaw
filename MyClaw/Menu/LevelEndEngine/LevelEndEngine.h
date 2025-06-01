@@ -1,13 +1,16 @@
 #pragma once
 
-#include "ScreenEngine.h"
+#include "../ScreenEngine.h"
 #include "LevelEngine/Objects/Item.h"
 
+
+class LevelEndEngineState;
 
 class LevelEndEngine : public ScreenEngine
 {
 public:
 	LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& collectedTreasures);
+	~LevelEndEngine();
 
 	void Logic(uint32_t elapsedTime) override;
 
@@ -15,16 +18,13 @@ public:
 	void OnMouseButtonUp(MouseButtons btn) override;
 
 private:
-	void playNextLevel();
-
-	enum State : int8_t {
-		Start,
-		DrawScore,
-		Wait,
-		End
-	};
+	void nextState();
 
 	map<Item::Type, uint32_t> _collectedTreasures;
 	const int _lvlNum;
-	int8_t _state;
+	LevelEndEngineState* _state, * _nextState;
+
+
+	friend class DrawScoreState;
+	friend class EndState;
 };

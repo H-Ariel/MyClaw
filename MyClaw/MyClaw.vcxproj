@@ -164,6 +164,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Menu\LevelEndEngine\LevelEndEngineState.cpp" />
     <ClCompile Include="LevelEngine\ActionPlane.cpp" />
     <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
     <ClCompile Include="Assets-Managers\AssetsManager.cpp" />
@@ -211,7 +212,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu\CreditsEngine.cpp" />
     <ClCompile Include="Menu\HierarchicalMenu.cpp" />
-    <ClCompile Include="Menu\LevelEndEngine.cpp" />
+    <ClCompile Include="Menu\LevelEndEngine\LevelEndEngine.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Player\PowerupSparkles.cpp" />
     <ClCompile Include="Menu\LevelLoadingEngine.cpp" />
     <ClCompile Include="Menu\MenuBackgroundImage.cpp" />
     <ClCompile Include="Menu\MenuEngine.cpp" />
@@ -241,7 +243,7 @@
     <ClCompile Include="LevelEngine\Objects\LavaMouth.cpp" />
     <ClCompile Include="LevelEngine\Objects\OneTimeAnimation.cpp" />
     <ClCompile Include="LevelEngine\Objects\Pegs.cpp" />
-    <ClCompile Include="LevelEngine\Objects\Player.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Player\Player.cpp" />
     <ClCompile Include="LevelEngine\Objects\PowderKeg.cpp" />
     <ClCompile Include="LevelEngine\Objects\Projectile.cpp" />
     <ClCompile Include="LevelEngine\Objects\Rope.cpp" />
@@ -255,6 +257,8 @@
     <ClCompile Include="SavedDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Menu\LevelEndEngine\LevelEndEngineHelper.h" />
+    <ClInclude Include="Menu\LevelEndEngine\LevelEndEngineState.h" />
     <ClInclude Include="LevelEngine\ActionPlane.h" />
     <ClInclude Include="Assets-Managers\AnimationsManager.h" />
     <ClInclude Include="Assets-Managers\AssetsManager.h" />
@@ -301,7 +305,8 @@
     <ClInclude Include="LevelEngine\LevelPlane.h" />
     <ClInclude Include="Menu\CreditsEngine.h" />
     <ClInclude Include="Menu\HierarchicalMenu.h" />
-    <ClInclude Include="Menu\LevelEndEngine.h" />
+    <ClInclude Include="Menu\LevelEndEngine\LevelEndEngine.h" />
+    <ClInclude Include="LevelEngine\Objects\Player\PowerupSparkles.h" />
     <ClInclude Include="Menu\LevelLoadingEngine.h" />
     <ClInclude Include="Menu\MenuBackgroundImage.h" />
     <ClInclude Include="Menu\MenuEngine.h" />
@@ -331,7 +336,7 @@
     <ClInclude Include="LevelEngine\Objects\LavaMouth.h" />
     <ClInclude Include="LevelEngine\Objects\OneTimeAnimation.h" />
     <ClInclude Include="LevelEngine\Objects\Pegs.h" />
-    <ClInclude Include="LevelEngine\Objects\Player.h" />
+    <ClInclude Include="LevelEngine\Objects\Player\Player.h" />
     <ClInclude Include="LevelEngine\Objects\PowderKeg.h" />
     <ClInclude Include="LevelEngine\Objects\Projectile.h" />
     <ClInclude Include="LevelEngine\Objects\Rope.h" />

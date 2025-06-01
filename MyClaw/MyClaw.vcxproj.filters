@@ -38,6 +38,12 @@
     <Filter Include="LevelEngine\Physics">
       <UniqueIdentifier>{94fb84c1-7bad-4e6a-8554-05dcd35cbc66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Menu\LevelEndEngine">
+      <UniqueIdentifier>{1738d50a-e19f-4dda-b355-758e99b31b40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LevelEngine\Objects\Player">
+      <UniqueIdentifier>{0bfda5e3-362b-4cf5-b398-919bd29607ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -136,9 +142,6 @@
     <ClCompile Include="Menu\HierarchicalMenu.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
-    <ClCompile Include="Menu\LevelEndEngine.cpp">
-      <Filter>Menu</Filter>
-    </ClCompile>
     <ClCompile Include="Menu\LevelLoadingEngine.cpp">
       <Filter>Menu</Filter>
     </ClCompile>
@@ -229,9 +232,6 @@
     <ClCompile Include="LevelEngine\Enemies\Bosses\Wolvington.cpp">
       <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClCompile>
-    <ClCompile Include="LevelEngine\Objects\Player.cpp">
-      <Filter>LevelEngine\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="LevelEngine\Enemies\BaseEnemy.cpp">
       <Filter>LevelEngine\Enemies</Filter>
     </ClCompile>
@@ -306,6 +306,18 @@
     </ClCompile>
     <ClCompile Include="LevelEngine\ClawLevelEngineState.cpp">
       <Filter>LevelEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu\LevelEndEngine\LevelEndEngine.cpp">
+      <Filter>Menu\LevelEndEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu\LevelEndEngine\LevelEndEngineState.cpp">
+      <Filter>Menu\LevelEndEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEngine\Objects\Player\Player.cpp">
+      <Filter>LevelEngine\Objects\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEngine\Objects\Player\PowerupSparkles.cpp">
+      <Filter>LevelEngine\Objects\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -394,9 +406,6 @@
       <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="Menu\HierarchicalMenu.h">
-      <Filter>Menu</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu\LevelEndEngine.h">
       <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="Menu\LevelLoadingEngine.h">
@@ -495,9 +504,6 @@
     <ClInclude Include="LevelEngine\Enemies\Bosses\Wolvington.h">
       <Filter>LevelEngine\Enemies\Bosses</Filter>
     </ClInclude>
-    <ClInclude Include="LevelEngine\Objects\Player.h">
-      <Filter>LevelEngine\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="LevelEngine\Enemies\BaseEnemy.h">
       <Filter>LevelEngine\Enemies</Filter>
     </ClInclude>
@@ -572,6 +578,19 @@
     </ClInclude>
     <ClInclude Include="LevelEngine\ClawLevelEngineState.h">
       <Filter>LevelEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu\LevelEndEngine\LevelEndEngine.h">
+      <Filter>Menu\LevelEndEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu\LevelEndEngine\LevelEndEngineState.h">
+      <Filter>Menu\LevelEndEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu\LevelEndEngine\LevelEndEngineHelper.h" />
+    <ClInclude Include="LevelEngine\Objects\Player\Player.h">
+      <Filter>LevelEngine\Objects\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEngine\Objects\Player\PowerupSparkles.h">
+      <Filter>LevelEngine\Objects\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
