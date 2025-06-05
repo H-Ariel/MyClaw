@@ -62,7 +62,7 @@ public:
 	/// Gets the next engine to transition to.
 	/// </summary>
 	/// <returns>A pointer to the next engine.</returns>
-	BaseEngine* getNextEngine();
+	shared_ptr<BaseEngine> getNextEngine();
 
 	/// <summary>
 	/// The current mouse position, in screen coordinates (x, y).
@@ -75,11 +75,6 @@ public:
 	bool stopEngine;
 
 	/// <summary>
-	/// If true, the object will be deleted (freed from memory) when the engine stops.
-	/// </summary>
-	bool freeMemoryOnStop;
-
-	/// <summary>
 	/// If true, the screen will be cleared before each frame is drawn.
 	/// </summary>
 	bool clearScreen;
@@ -89,7 +84,7 @@ protected:
 	/// Changes the current engine to a new one.
 	/// </summary>
 	/// <param name="newEngine">Pointer to the new engine instance to switch to.</param>
-	void changeEngine(BaseEngine* newEngine);
+	void changeEngine(shared_ptr<BaseEngine> newEngine);
 
 
 	/// <summary>
@@ -100,5 +95,5 @@ protected:
 	/// <summary>
 	/// A pointer to the next engine that will be used after the current one ends.
 	/// </summary>
-	BaseEngine* _nextEngine;
+	shared_ptr<BaseEngine> _nextEngine;
 };

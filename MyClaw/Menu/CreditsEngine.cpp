@@ -43,5 +43,5 @@ void CreditsEngine::OnResize() { backToMenu(); }
 void CreditsEngine::backToMenu()
 {
 	MenuEngine::setMainMenu();
-	changeEngine(DBG_NEW MenuEngine());
+	changeEngine(make_shared<MenuEngine>());
 }

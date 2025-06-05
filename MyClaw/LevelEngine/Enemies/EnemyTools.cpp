@@ -1,6 +1,6 @@
 #include "EnemyTools.h"
 #include "GameEngine/WindowManager.h"
-#include "../Objects/Player.h"
+#include "../Objects/Player/Player.h"
 #include "../GlobalObjects.h"
 
 

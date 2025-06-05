@@ -41,7 +41,6 @@ ActionPlane::~ActionPlane()
 
 	// because it static member and we don't want recycle objects...
 	GO::actionPlane = nullptr;
-	GO::cheats = nullptr;
 }
 
 void ActionPlane::init()

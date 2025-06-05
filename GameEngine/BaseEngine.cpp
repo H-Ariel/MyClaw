@@ -2,7 +2,7 @@
 
 
 BaseEngine::BaseEngine() : mousePosition({}), stopEngine(false),
-	freeMemoryOnStop(true), clearScreen(false), _nextEngine(nullptr) {}
+	clearScreen(false), _nextEngine(nullptr) {}
 BaseEngine::~BaseEngine() {}
 
 void BaseEngine::OnKeyUp(int key) {}
@@ -22,13 +22,13 @@ void BaseEngine::Draw()
 		e->Draw();
 }
 
-BaseEngine* BaseEngine::getNextEngine()
+shared_ptr<BaseEngine> BaseEngine::getNextEngine()
 {
 	stopEngine = false;
 	return _nextEngine;
 }
 
-void BaseEngine::changeEngine(BaseEngine* newEngine)
+void BaseEngine::changeEngine(shared_ptr<BaseEngine> newEngine)
 {
 	_nextEngine = newEngine;
 	stopEngine = true;

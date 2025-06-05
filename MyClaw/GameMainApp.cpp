@@ -25,10 +25,10 @@ GameMainApp::~GameMainApp()
 void GameMainApp::init()
 {
 #ifdef _DEBUG
-//	_pEngine = DBG_NEW MenuEngine();
-	_pEngine = DBG_NEW LevelLoadingEngine(1);
+//	_pEngine = make_shared<MenuEngine>();
+	_pEngine = make_shared<LevelLoadingEngine>(1);
 #else
-	_pEngine = DBG_NEW OpeningScreenEngine();
+	_pEngine = make_shared<OpeningScreenEngine>();
 #endif
 }
 
@@ -36,7 +36,7 @@ LRESULT CALLBACK GameMainApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LP
 {
 	switch (message)
 	{
-	case WM_SETCURSOR: SetCursor(NULL); return TRUE;
+	case WM_SETCURSOR: SetCursor(NULL); return TRUE; // TODO set sword as cursor in menu
 	default: break;
 	}
 	return BaseApp::WndProc(hwnd, message, wParam, lParam);

@@ -12,7 +12,8 @@ class ClawLevelEngineState;
 class ClawLevelEngine : public BaseEngine
 {
 public:
-	ClawLevelEngine(int levelNumber, int checkpoint);
+	static shared_ptr<ClawLevelEngine> create(int levelNumber, int checkpoint);
+
 	~ClawLevelEngine();
 
 	void Logic(uint32_t elapsedTime) override;
@@ -29,9 +30,16 @@ public:
 	ClawLevelEngineState* getState() const { return _state; }
 	void switchState(ClawLevelEngineState* newState);
 
+	static shared_ptr<ClawLevelEngine> getInstance() { return _instance; }
+	static void destrotInstance() { _instance = nullptr; }
+
 
 private:
+	ClawLevelEngine(int levelNumber, int checkpoint); // private c'tor, because `create` method sets `_instance`
+
 	float getMaximalHoleRadius() const; // used for DeathClose and DeathOpen
+
+	static shared_ptr<ClawLevelEngine> _instance;
 
 	shared_ptr<WapWwd> _wwd;
 	vector<shared_ptr<LevelPlane>> _planes;

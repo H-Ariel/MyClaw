@@ -1,6 +1,6 @@
 #include "ConveyorBelt.h"
 #include "../GlobalObjects.h"
-#include "Player.h"
+#include "Player/Player.h"
 
 
 constexpr int ANIMATION_DURATION = 100; // TODO: find perfect value (calc from speed)

@@ -72,8 +72,8 @@ LevelEndEngineState* WaitState::nextState() { return DBG_NEW EndState(_levelEndE
 void EndState::Logic()
 {
 	if (_levelEndEngine->_lvlNum == 14) // show credits after last level
-		_levelEndEngine->changeEngine(DBG_NEW CreditsEngine());
+		_levelEndEngine->changeEngine(make_shared<CreditsEngine>());
 	else // play the next level
-		_levelEndEngine->changeEngine(DBG_NEW LevelLoadingEngine(_levelEndEngine->_lvlNum + 1));
+		_levelEndEngine->changeEngine(make_shared<LevelLoadingEngine>(_levelEndEngine->_lvlNum + 1));
 }
 LevelEndEngineState* EndState::nextState() { return nullptr; }

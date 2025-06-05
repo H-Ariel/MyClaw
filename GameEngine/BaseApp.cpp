@@ -26,51 +26,47 @@ BaseApp::BaseApp(WNDPROC wndproc, const TCHAR title[])
 }
 BaseApp::~BaseApp()
 {
-	if (_pEngine)
-		delete _pEngine;
-
 	AudioManager::Finalize();
 	WindowManager::Finalize();
 }
 
 void BaseApp::init()
 {
-	_pEngine = DBG_NEW BaseEngine();
+	_pEngine = make_shared<BaseEngine>();
 }
 void BaseApp::run()
 {
 	MSG msg;
-	chrono::steady_clock::time_point begin, end;
+	//	chrono::steady_clock::time_point begin, end;
+	chrono::steady_clock::time_point frameEnd = chrono::steady_clock::now(), lastFrameTime = chrono::steady_clock::now();
+	chrono::milliseconds elapsed, workTime;
 	uint32_t elapsedTime; // in milliseconds
 
 #ifdef _DEBUG
 	// for FPS
 	char fpsText[16] = {};
-#endif
 	uint32_t framesTime = 0, frames = 0;
+#endif
 
 	_runApp = true;
 
 	while (_runApp && _pEngine && !_pEngine->stopEngine)
 	{
-		end = chrono::steady_clock::now();
-		elapsedTime = (uint32_t)chrono::duration_cast<chrono::milliseconds>(end - begin).count();
-		begin = end;
+		elapsed = chrono::duration_cast<chrono::milliseconds>(frameEnd - lastFrameTime);
+		elapsedTime = min((uint32_t)elapsed.count(), MAX_ITER_TIME);
+		lastFrameTime = frameEnd;
 
+#ifdef _DEBUG
 		framesTime += elapsedTime;
 		frames++;
 		if (framesTime > 1000)
 		{
-			if (frames > targetFPS) // fit to 60 fps
-				std::this_thread::sleep_for((frames - targetFPS) * frameDuration);
-
-#ifdef _DEBUG
 			sprintf(fpsText, "%d FPS", frames);
 			WindowManager::setTitle(fpsText);
-#endif
 			frames = 0;
 			framesTime = 0;
 		}
+#endif
 
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
@@ -83,16 +79,11 @@ void BaseApp::run()
 			}
 		}
 
-		_pEngine->Logic(min(elapsedTime, MAX_ITER_TIME));
-		
+		_pEngine->Logic(elapsedTime);
+
 		if (_pEngine->stopEngine)
 		{
-			BaseEngine* prev = _pEngine;
 			_pEngine = _pEngine->getNextEngine();
-			
-			if (prev->freeMemoryOnStop)
-				delete prev;
-
 			if (_pEngine == nullptr)
 			{
 				_runApp = false;
@@ -106,6 +97,11 @@ void BaseApp::run()
 			WindowManager::Clear();
 		_pEngine->Draw();
 		WindowManager::EndDraw();
+
+		frameEnd = chrono::steady_clock::now();
+		workTime = chrono::duration_cast<chrono::milliseconds>(frameEnd - lastFrameTime);
+		if (workTime < frameDuration) // fit to 60 fps
+			std::this_thread::sleep_for(frameDuration - workTime);
 	}
 }
 LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -115,7 +111,7 @@ LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 	{
 		if (app->_pEngine)
 		{
-			engine = app->_pEngine;
+			engine = app->_pEngine.get();
 		}
 	}
 

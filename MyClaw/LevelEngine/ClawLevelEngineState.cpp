@@ -41,8 +41,7 @@ void PlayState::Logic(uint32_t elapsedTime)
 	{
 		if (player->isFinishLevel())
 		{
-			_levelEngine->freeMemoryOnStop = true;
-			_levelEngine->changeEngine(DBG_NEW LevelEndEngine(_levelEngine->_wwd->levelNumber, player->getCollectedTreasures()));
+			_levelEngine->changeEngine(make_shared<LevelEndEngine>(_levelEngine->_wwd->levelNumber, player->getCollectedTreasures()));
 		}
 		else if (!player->hasLives())
 		{
@@ -157,7 +156,7 @@ void GameOverState::Logic(uint32_t elapsedTime)
 	if (_gameOverTimeCounter <= 0)
 	{
 		MenuEngine::setMainMenu();
-		_levelEngine->changeEngine(DBG_NEW MenuEngine());
+		_levelEngine->changeEngine(make_shared<MenuEngine>());
 	}
 }
 void GameOverState::Draw()

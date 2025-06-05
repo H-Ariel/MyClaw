@@ -24,5 +24,5 @@ void OpeningScreenEngine::continueToMenu()
 {
 	if (_totalTime > 0)
 		AssetsManager::stopWavFile(_wavId);
-	changeEngine(DBG_NEW MenuEngine());
+	changeEngine(make_shared<MenuEngine>());
 }

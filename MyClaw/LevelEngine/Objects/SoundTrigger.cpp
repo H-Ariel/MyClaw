@@ -1,6 +1,6 @@
 #include "SoundTrigger.h"
 #include "../GlobalObjects.h"
-#include "Player.h"
+#include "Player/Player.h"
 
 
 SoundTrigger::SoundTrigger(const WwdObject& obj)

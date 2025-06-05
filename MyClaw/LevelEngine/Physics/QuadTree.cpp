@@ -1,6 +1,6 @@
 ﻿#include "QuadTree.h"
 #include "../GlobalObjects.h"
-#include "../Objects/Player.h"
+#include "../Objects/Player/Player.h"
 
 
 #define SAVE_MAX(a, b) if (a < b) a = (b)

@@ -14,7 +14,6 @@ class MenuEngine : public ScreenEngine
 public:
 	MenuEngine(const string& bgPcxPath = "");
 	MenuEngine(D2D1_POINT_2U mousePosition, shared_ptr<UIAnimation> cursor, const string& bgPcxPath = "");
-	MenuEngine(ClawLevelEngine* clawLevelEngines, const string& bgPcxPath = "");
 	~MenuEngine();
 
 	void Logic(uint32_t elapsedTime) override;
@@ -25,7 +24,6 @@ public:
 	static void setHelpScreen();
 
 protected:
-	static ClawLevelEngine* _clawLevelEngine;
 	static stack<const HierarchicalMenu*> _menusStack;
 	static const HierarchicalMenu* _currMenu;
 

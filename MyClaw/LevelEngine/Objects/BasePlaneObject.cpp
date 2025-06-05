@@ -1,6 +1,6 @@
 #include "BasePlaneObject.h"
 #include "../GlobalObjects.h"
-#include "Player.h"
+#include "Player/Player.h"
 
 
 BasePlaneObject::BasePlaneObject(const WwdObject& obj)

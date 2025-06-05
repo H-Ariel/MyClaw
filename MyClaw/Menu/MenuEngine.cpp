@@ -9,7 +9,6 @@
 #include "MenuItem.h"
 
 
-ClawLevelEngine* MenuEngine::_clawLevelEngine;
 // TODO maybe make stack of BaseEngine and then we can push
 //      every engine inside (includin ClawLevelEngine) and
 //      then we do not need save `_clawLevelEngineFields` anymore
@@ -116,7 +115,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			onClick = [&](MenuItem*) {
 				_menusStack.push(_currMenu);
 				_currMenu = &m;
-				changeEngine(DBG_NEW CreditsEngine());
+				changeEngine(make_shared<CreditsEngine>());
 			};
 			break;
 
@@ -127,18 +126,18 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::EndLife:
 			onClick = [&](MenuItem*) {
 				GO::player->endLife();
-				changeEngine(_clawLevelEngine);
+				changeEngine(ClawLevelEngine::getInstance());
 			};
 			break;
 
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MenuItem*) {
 				AssetsManager::clearLevelAssets();
-				_clawLevelEngine->freeMemoryOnStop = true;
+				ClawLevelEngine::destrotInstance();
 				setMainMenu();
-				changeEngine(DBG_NEW MenuEngine());
-				GO::player = nullptr; // do not recycle the player in new game
-				GO::cheats = nullptr; // ^^^
+				changeEngine(make_shared<MenuEngine>());
+				GO::player.reset(); // do not recycle the player in new game
+				GO::cheats.reset(); // ^^^
 			};
 			break;
 
@@ -219,7 +218,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 					int level = stoi(HierarchicalMenu::SelectCheckpoint.subMenus[0]
 						.imagePath.substr(strlen(LOAD_CHECKPOINT_ROOT), 3)) - 10;
 					int checkpoint = ((m.cmd & 0xf0) >> 4) - 1;
-					changeEngine(DBG_NEW LevelLoadingEngine(level, checkpoint));
+					changeEngine(make_shared<LevelLoadingEngine>(level, checkpoint));
 				};
 			}
 			else if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
@@ -229,7 +228,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 
 					if (contains(_currMenu->subMenus[0].imagePath, "NEW")) // new game
 					{
-						changeEngine(DBG_NEW LevelLoadingEngine(level));
+						changeEngine(make_shared<LevelLoadingEngine>(level));
 					}
 					else if (contains(_currMenu->subMenus[0].imagePath, "LOAD")) // load checkpoint
 					{
@@ -310,18 +309,16 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		}
 	}
 }
-MenuEngine::MenuEngine(ClawLevelEngine* clawLevelEngine, const string& bgPcxPath)
-	: MenuEngine(bgPcxPath)
-{
-	_clawLevelEngine = clawLevelEngine; // I don't have another way...
-}
 MenuEngine::~MenuEngine()
 {
 	if (_cursor) _elementsList.pop_back(); // remove the cursor
 }
 
 void MenuEngine::Logic(uint32_t elapsedTime) {
-	if (_cursor) _cursor->position = { mousePosition.x + 16.f, mousePosition.y + 17.f };
+	if (_cursor) _cursor->position = {
+		(float)mousePosition.x + 16.f / WindowManager::getWindowScale(),
+		(float)mousePosition.y + 17.f / WindowManager::getWindowScale()
+	};
 	//if (_cursor) _cursor->position = { (float)mousePosition.x + 28.f , (float)mousePosition.y + 28 };
 
 	ScreenEngine::Logic(elapsedTime);
@@ -432,7 +429,7 @@ void MenuEngine::menuIn(const HierarchicalMenu* newMenu)
 {
 	_menusStack.push(_currMenu);
 	_currMenu = newMenu;
-	changeEngine(DBG_NEW MenuEngine(mousePosition, _cursor));
+	changeEngine(make_shared<MenuEngine>(mousePosition, _cursor));
 }
 void MenuEngine::menuOut()
 {
@@ -440,23 +437,21 @@ void MenuEngine::menuOut()
 	{
 		_currMenu = _menusStack.top();
 		_menusStack.pop();
-		changeEngine(DBG_NEW MenuEngine(mousePosition, _cursor));
+		changeEngine(make_shared<MenuEngine>(mousePosition, _cursor));
 	}
 }
 void MenuEngine::backToGame()
 {
 	clearMenusStack();
 	_currMenu = &HierarchicalMenu::InGameMenu;
-	changeEngine(_clawLevelEngine);
+	changeEngine(ClawLevelEngine::getInstance());
 }
 
 void MenuEngine::setMainMenu()
 {
 	_currMenu = &HierarchicalMenu::MainMenu;
 	clearMenusStack();
-	if (_clawLevelEngine)
-		delete _clawLevelEngine;
-	_clawLevelEngine = nullptr;
+	ClawLevelEngine::destrotInstance();
 }
 void MenuEngine::setIngameMenu()
 {

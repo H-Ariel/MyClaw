@@ -1,6 +1,7 @@
 #include "LevelEndEngineState.h"
+#include "LevelEngine/ClawLevelEngine.h"
 #include "LevelEngine/GlobalObjects.h"
-#include "LevelEngine/Objects/Player.h"
+#include "LevelEngine/Objects/Player/Player.h"
 #include "LevelEndEngineHelper.h"
 
 
@@ -97,6 +98,9 @@ LevelEndEngine::~LevelEndEngine()
 }
 void LevelEndEngine::Logic(uint32_t elapsedTime)
 {
+	if (ClawLevelEngine::getInstance())
+		ClawLevelEngine::destrotInstance();
+
 	ScreenEngine::Logic(elapsedTime);
 
 	if (!_state->logicDone) {

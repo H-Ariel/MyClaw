@@ -1,6 +1,6 @@
 #include "SpringBoard.h"
 #include "../GlobalObjects.h"
-#include "Player.h"
+#include "Player/Player.h"
 
 
 SpringBoard::SpringBoard(const WwdObject& obj, int levelNumber)

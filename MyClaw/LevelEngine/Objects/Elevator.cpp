@@ -1,6 +1,6 @@
 #include "Elevator.h"
 #include "../GlobalObjects.h"
-#include "Player.h"
+#include "Player/Player.h"
 
 
 // The following classes indicate precisely the type of elevator:

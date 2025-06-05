@@ -8,6 +8,15 @@
 constexpr auto& player = GO::player;
 
 
+shared_ptr<ClawLevelEngine> ClawLevelEngine::_instance;
+
+
+shared_ptr<ClawLevelEngine> ClawLevelEngine::create(int levelNumber, int checkpoint)
+{
+	_instance = shared_ptr<ClawLevelEngine>(DBG_NEW ClawLevelEngine(levelNumber, checkpoint));
+	return _instance;
+}
+
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	: actionPlane(nullptr), _saveBgColor(0), _saveWindowScale(1)
 {
@@ -159,8 +168,7 @@ void ClawLevelEngine::playerEnterWrap(Warp* destinationWarp)
 float ClawLevelEngine::getMaximalHoleRadius() const
 {
 	const D2D1_SIZE_F wndRealSz = WindowManager::getRealSize();
-	const float initialHoleRadius = max(wndRealSz.width, wndRealSz.height) / 2;
-	return initialHoleRadius;
+	return max(wndRealSz.width, wndRealSz.height) / 2;
 }
 void ClawLevelEngine::switchState(ClawLevelEngineState* newState)
 {
@@ -195,8 +203,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 		_saveBgColor = WindowManager::getBackgroundColor();
 		_saveWindowScale = WindowManager::getWindowScale();
 		MenuEngine::setHelpScreen();
-		freeMemoryOnStop = false;
-		changeEngine(DBG_NEW MenuEngine(this));
+		changeEngine(make_shared<MenuEngine>());
 		break;
 
 	case VK_ESCAPE: // open pause menu
@@ -204,8 +211,7 @@ void ClawLevelEngine::OnKeyUp(int key)
 		_saveBgColor = WindowManager::getBackgroundColor();
 		_saveWindowScale = WindowManager::getWindowScale();
 		MenuEngine::setIngameMenu();
-		freeMemoryOnStop = false;
-		changeEngine(DBG_NEW MenuEngine(this));
+		changeEngine(make_shared<MenuEngine>());
 		break;
 
 	default:
