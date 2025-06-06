@@ -1,5 +1,5 @@
 #include "Cannon.h"
-#include "../EnemiesProjectiles/CannonBall.h"
+#include "../Projectiles/CannonBall.h"
 #include "../../GlobalObjects.h"
 
 

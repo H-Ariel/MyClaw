@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../Objects/EnemiesProjectiles/EnemyProjectile.h"
+#include "../../../Objects/Projectiles/EnemyProjectile.h"
 
 
 class LordOmarProjectile : public EnemyProjectile

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Projectile.h"
+#include "BasePlaneObject.h"
 
 
 class LavaMouth : public BaseDamageObject

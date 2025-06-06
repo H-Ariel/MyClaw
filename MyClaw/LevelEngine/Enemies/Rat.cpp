@@ -1,6 +1,6 @@
 #include "Rat.h"
 #include "../GlobalObjects.h"
-#include "../Objects/EnemyProjectile.h"
+#include "../Objects/Projectiles/RatBomb.h"
 
 
 Rat::Rat(const WwdObject& obj)

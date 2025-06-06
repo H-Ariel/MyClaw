@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasePlaneObject.h"
+#include "../BasePlaneObject.h"
 
 constexpr int DEFAULT_PROJECTILE_SPEED = 400;
 

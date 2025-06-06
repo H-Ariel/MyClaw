@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../BaseEnemy.h"
-#include "../../../Objects/Projectile.h"
+#include "../../../Objects/Projectiles/Projectile.h"
 
 
 class Aquatis : public BaseBoss

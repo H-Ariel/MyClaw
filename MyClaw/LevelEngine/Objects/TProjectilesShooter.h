@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Projectile.h"
+#include "Projectiles/Projectile.h"
 
 
 class TProjectilesShooter : public BaseStaticPlaneObject

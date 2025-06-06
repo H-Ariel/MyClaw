@@ -2,8 +2,8 @@
 #include "EnemyTools.h"
 #include "../Physics/PhysicsManager.h"
 #include "../GlobalObjects.h"
-#include "../Objects/EnemyProjectile.h"
-#include "../Objects/ClawProjectile.h"
+#include "../Objects/Projectiles/EnemyProjectile.h"
+#include "../Objects/Projectiles/ClawProjectile.h"
 #include "../Objects/PowderKeg.h"
 #include "../Objects/OneTimeAnimation.h"
 

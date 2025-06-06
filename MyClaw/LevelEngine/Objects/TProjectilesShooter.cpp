@@ -1,6 +1,6 @@
 #include "TProjectilesShooter.h"
 #include "../GlobalObjects.h"
-#include "EnemiesProjectiles/TProjectile.h"
+#include "Projectiles/TProjectile.h"
 
 
 constexpr float OFFSET_X = TILE_SIZE / 2.f;

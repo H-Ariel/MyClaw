@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "../../GlobalObjects.h"
 #include "../../CheatsManager.h"
-#include "../EnemyProjectile.h"
+#include "../Projectiles/SirenScream.h"
 #include "../LavaMouth.h"
 #include "../Rope.h"
 #include "../ConveyorBelt.h"
@@ -1139,7 +1139,7 @@ bool Player::checkForHurts()
 
 	for (Projectile* p : GO::getActionPlaneProjectiles())
 	{
-		if (isinstance<SirenProjectile>(p))
+		if (isinstance<SirenScream>(p))
 		{
 			_freezeTime = 3000; // freeze CC for 3 seconds
 			return false;

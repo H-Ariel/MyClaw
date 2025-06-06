@@ -2,7 +2,7 @@
 #include "LordOmarShield.h"
 #include "LordOmarProjectile.h"
 #include "../../../GlobalObjects.h"
-#include "../../../Objects/ClawProjectile.h"
+#include "../../../Objects/Projectiles/ClawProjectile.h"
 #include "../../../Objects/OneTimeAnimation.h"
 
 

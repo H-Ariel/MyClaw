@@ -3,7 +3,7 @@
 #include "../BaseCharacter.h"
 #include "SavedDataManager.h"
 #include "../Item.h"
-#include "../ClawProjectile.h"
+#include "../Projectiles/ClawProjectile.h"
 #include "PowerupSparkles.h"
 
 

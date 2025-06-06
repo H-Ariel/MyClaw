@@ -1,6 +1,6 @@
 #include "LavaHand.h"
 #include "../GlobalObjects.h"
-#include "../Objects/EnemyProjectile.h"
+#include "../Objects/Projectiles/LavahandProjectile.h"
 
 
 LavaHand::LavaHand(const WwdObject& obj)

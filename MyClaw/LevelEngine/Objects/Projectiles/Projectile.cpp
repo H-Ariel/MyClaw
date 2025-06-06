@@ -1,5 +1,4 @@
 #include "ClawProjectile.h"
-//#include "EnemyProjectile.h"
 
 
 Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet)

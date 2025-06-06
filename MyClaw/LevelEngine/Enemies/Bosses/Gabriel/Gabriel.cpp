@@ -3,7 +3,7 @@
 #include "GabrielBomb.h"
 #include "DeadGabriel.h"
 #include "../../../GlobalObjects.h"
-#include "../../../Objects/EnemiesProjectiles/CannonBall.h"
+#include "../../../Objects/Projectiles/CannonBall.h"
 
 
 // TODO something better than all of this `static`...

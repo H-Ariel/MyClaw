@@ -1,5 +1,5 @@
 #include "Crate.h"
-#include "EnemyProjectile.h"
+#include "Projectiles/EnemyProjectile.h"
 #include "../GlobalObjects.h"
 #include "../CheatsManager.h"
 #include "PowderKeg.h"

@@ -1,6 +1,6 @@
 #include "LordOmarShield.h"
 #include "../../../GlobalObjects.h"
-#include "../../../Objects/ClawProjectile.h"
+#include "../../../Objects/Projectiles/ClawProjectile.h"
 
 
 constexpr int NUM_OF_ITEMS_IN_FULL_SHIELD = 11;

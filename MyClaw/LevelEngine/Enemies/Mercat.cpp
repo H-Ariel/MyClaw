@@ -1,6 +1,6 @@
 #include "Mercat.h"
 #include "../GlobalObjects.h"
-#include "../Objects/EnemiesProjectiles/MercatTridentProjectile.h"
+#include "../Objects/Projectiles/MercatTridentProjectile.h"
 
 // TODO: jump back when CC try to attack
 

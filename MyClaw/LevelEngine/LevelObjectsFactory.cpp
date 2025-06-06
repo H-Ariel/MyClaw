@@ -4,7 +4,6 @@
 #include "Objects/Checkpoint.h"
 #include "Objects/Elevators/Elevator.h"
 #include "Objects/Crate.h"
-#include "Objects/Projectile.h"
 #include "Objects/SoundTrigger.h"
 #include "Objects/AmbientSound.h"
 #include "Objects/Pegs.h"

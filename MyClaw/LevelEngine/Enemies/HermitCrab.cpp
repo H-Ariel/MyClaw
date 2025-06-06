@@ -1,7 +1,7 @@
 #include "HermitCrab.h"
 #include "../GlobalObjects.h"
 #include "../Physics/PhysicsManager.h"
-#include "../Objects/EnemyProjectile.h"
+#include "../Objects/Projectiles/CrabBomb.h"
 
 
 HermitCrab::HermitCrab(const WwdObject& obj, bool isFromNest)

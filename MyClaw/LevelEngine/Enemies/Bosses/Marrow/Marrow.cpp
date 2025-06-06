@@ -1,7 +1,7 @@
 #include "Marrow.h"
 #include "MarrowStates.h"
 #include "../../../GlobalObjects.h"
-#include "../../../Objects/ClawProjectile.h"
+#include "../../../Objects/Projectiles/ClawProjectile.h"
 
 
 #define MARROW_ANIMATION_BLOCK	_animations["BLOCK"]

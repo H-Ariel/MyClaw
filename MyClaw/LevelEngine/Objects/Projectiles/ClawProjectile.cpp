@@ -14,8 +14,10 @@ ClawProjectile* ClawProjectile::createNew(Types type, const WwdObject& data)
 	}
 	return nullptr;
 }
+
 ClawProjectile::ClawProjectile(const WwdObject& obj, const string& aniDirPath, Types type)
 	: Projectile(obj, aniDirPath), type(type) {}
+
 Rectangle2D ClawProjectile::GetRect()
 {
 	Rectangle2D rc = Projectile::GetRect();
@@ -35,6 +37,7 @@ Rectangle2D ClawProjectile::GetRect()
 ClawDynamite::ClawDynamite(const WwdObject& obj)
 	: ClawProjectile(obj, "GAME/ANIS/DYNAMITELIT.ANI", Types::Dynamite),
 	_delayBeforeExplos(500), _state(State::Fly), _isPlaySound(false) {}
+
 void ClawDynamite::Logic(uint32_t elapsedTime)
 {
 	switch (_state)
@@ -69,6 +72,7 @@ void ClawDynamite::Logic(uint32_t elapsedTime)
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
 }
+
 void ClawDynamite::stopFalling(float collisionSize)
 {
 	if (_state == State::Explos) return;
@@ -100,6 +104,7 @@ int ClawDynamite::getDamage() const
 		return ClawProjectile::getDamage();
 	return 0;
 }
+
 bool ClawDynamite::isStartExplode() const
 {
 	return _state == State::Explos && _ani->getFrameNumber() == 1;

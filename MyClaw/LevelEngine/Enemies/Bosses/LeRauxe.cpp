@@ -1,6 +1,6 @@
 #include "LeRauxe.h"
 #include "../../GlobalObjects.h"
-#include "../../Objects/ClawProjectile.h"
+#include "../../Objects/Projectiles/ClawProjectile.h"
 
 
 #define ANIMATION_WALK		_animations.at("ADVANCE")
