@@ -164,6 +164,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LevelEngine\Enemies\PunkRat.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Cannons\SkullCannon.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Cannons\TowerCannon.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Elevators\PathElevator.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Elevators\StartElevator.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Elevators\TriggerElevator.cpp" />
+    <ClCompile Include="LevelEngine\Objects\EnemiesProjectiles\CrabBomb.cpp" />
+    <ClCompile Include="LevelEngine\Objects\EnemiesProjectiles\LavahandProjectile.cpp" />
+    <ClCompile Include="LevelEngine\Objects\EnemiesProjectiles\MercatTridentProjectile.cpp" />
+    <ClCompile Include="LevelEngine\Objects\EnemiesProjectiles\RatBomb.cpp" />
+    <ClCompile Include="LevelEngine\Objects\EnemiesProjectiles\SirenScream.cpp" />
     <ClCompile Include="Menu\LevelEndEngine\LevelEndEngineState.cpp" />
     <ClCompile Include="LevelEngine\ActionPlane.cpp" />
     <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
@@ -218,6 +229,7 @@
     <ClCompile Include="Menu\MenuBackgroundImage.cpp" />
     <ClCompile Include="Menu\MenuEngine.cpp" />
     <ClCompile Include="Menu\MenuItem.cpp" />
+    <ClCompile Include="Menu\MenuSlider.cpp" />
     <ClCompile Include="Menu\OpeningScreenEngine.cpp" />
     <ClCompile Include="Menu\ScreenEngine.cpp" />
     <ClCompile Include="LevelEngine\LevelObjectsFactory.cpp" />
@@ -225,15 +237,14 @@
     <ClCompile Include="LevelEngine\Objects\AmbientSound.cpp" />
     <ClCompile Include="LevelEngine\Objects\BaseCharacter.cpp" />
     <ClCompile Include="LevelEngine\Objects\BasePlaneObject.cpp" />
-    <ClCompile Include="LevelEngine\Objects\Cannon.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Cannons\Cannon.cpp" />
     <ClCompile Include="LevelEngine\Objects\Checkpoint.cpp" />
     <ClCompile Include="LevelEngine\Objects\ClawProjectile.cpp" />
     <ClCompile Include="LevelEngine\Objects\ConveyorBelt.cpp" />
     <ClCompile Include="LevelEngine\Objects\CrabNest.cpp" />
     <ClCompile Include="LevelEngine\Objects\Crate.cpp" />
     <ClCompile Include="LevelEngine\Objects\DoNothing.cpp" />
-    <ClCompile Include="LevelEngine\Objects\Elevator.cpp" />
-    <ClCompile Include="LevelEngine\Objects\EnemyProjectile.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Elevators\Elevator.cpp" />
     <ClCompile Include="LevelEngine\Objects\FloorSpike.cpp" />
     <ClCompile Include="LevelEngine\Objects\GooVent.cpp" />
     <ClCompile Include="LevelEngine\Objects\GroundBlower.cpp" />
@@ -257,6 +268,19 @@
     <ClCompile Include="SavedDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LevelEngine\Enemies\PunkRat.h" />
+    <ClInclude Include="LevelEngine\Objects\Cannons\SkullCannon.h" />
+    <ClInclude Include="LevelEngine\Objects\Cannons\TowerCannon.h" />
+    <ClInclude Include="LevelEngine\Objects\Elevators\PathElevator.h" />
+    <ClInclude Include="LevelEngine\Objects\Elevators\StartElevator.h" />
+    <ClInclude Include="LevelEngine\Objects\Elevators\TriggerElevator.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemiesProjectiles\CannonBall.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemiesProjectiles\CrabBomb.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemiesProjectiles\LavahandProjectile.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemiesProjectiles\MercatTridentProjectile.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemiesProjectiles\RatBomb.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemiesProjectiles\SirenScream.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemiesProjectiles\TProjectile.h" />
     <ClInclude Include="Menu\LevelEndEngine\LevelEndEngineHelper.h" />
     <ClInclude Include="Menu\LevelEndEngine\LevelEndEngineState.h" />
     <ClInclude Include="LevelEngine\ActionPlane.h" />
@@ -311,6 +335,7 @@
     <ClInclude Include="Menu\MenuBackgroundImage.h" />
     <ClInclude Include="Menu\MenuEngine.h" />
     <ClInclude Include="Menu\MenuItem.h" />
+    <ClInclude Include="Menu\MenuSlider.h" />
     <ClInclude Include="Menu\OpeningScreenEngine.h" />
     <ClInclude Include="Menu\ScreenEngine.h" />
     <ClInclude Include="LevelEngine\LevelObjectsFactory.h" />
@@ -318,15 +343,15 @@
     <ClInclude Include="LevelEngine\Objects\AmbientSound.h" />
     <ClInclude Include="LevelEngine\Objects\BaseCharacter.h" />
     <ClInclude Include="LevelEngine\Objects\BasePlaneObject.h" />
-    <ClInclude Include="LevelEngine\Objects\Cannon.h" />
+    <ClInclude Include="LevelEngine\Objects\Cannons\Cannon.h" />
     <ClInclude Include="LevelEngine\Objects\Checkpoint.h" />
     <ClInclude Include="LevelEngine\Objects\ClawProjectile.h" />
     <ClInclude Include="LevelEngine\Objects\ConveyorBelt.h" />
     <ClInclude Include="LevelEngine\Objects\CrabNest.h" />
     <ClInclude Include="LevelEngine\Objects\Crate.h" />
     <ClInclude Include="LevelEngine\Objects\DoNothing.h" />
-    <ClInclude Include="LevelEngine\Objects\Elevator.h" />
-    <ClInclude Include="LevelEngine\Objects\EnemyProjectile.h" />
+    <ClInclude Include="LevelEngine\Objects\Elevators\Elevator.h" />
+    <ClInclude Include="LevelEngine\Objects\EnemiesProjectiles\EnemyProjectile.h" />
     <ClInclude Include="LevelEngine\Objects\FloorSpike.h" />
     <ClInclude Include="LevelEngine\Objects\GooVent.h" />
     <ClInclude Include="LevelEngine\Objects\GroundBlower.h" />

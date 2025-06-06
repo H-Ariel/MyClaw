@@ -1,10 +1,10 @@
 #include "TProjectilesShooter.h"
 #include "../GlobalObjects.h"
-#include "EnemyProjectile.h"
+#include "EnemiesProjectiles/TProjectile.h"
 
 
-constexpr float OFFSET_X = 32.f;
-constexpr float OFFSET_Y = 32.f;
+constexpr float OFFSET_X = TILE_SIZE / 2.f;
+constexpr float OFFSET_Y = TILE_SIZE / 2.f;
 
 
 TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)

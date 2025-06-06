@@ -1,6 +1,6 @@
 #include "Mercat.h"
 #include "../GlobalObjects.h"
-#include "../Objects/EnemyProjectile.h"
+#include "../Objects/EnemiesProjectiles/MercatTridentProjectile.h"
 
 // TODO: jump back when CC try to attack
 
@@ -60,7 +60,7 @@ void Mercat::makeAttack(float deltaX, float deltaY)
 			obj.y = (int32_t)position.y;
 			obj.speedX = _isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED;
 			obj.damage = 10;
-			GO::addObjectToActionPlane(DBG_NEW MercatTrident(obj));
+			GO::addObjectToActionPlane(DBG_NEW MercatTridentProjectile(obj));
 		}
 
 		if (strike)

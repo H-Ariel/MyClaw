@@ -1,6 +1,6 @@
 #include "Siren.h"
 #include "../GlobalObjects.h"
-#include "../Objects/EnemyProjectile.h"
+#include "../Objects/EnemiesProjectiles/SirenScream.h"
 
 
 Siren::Siren(const WwdObject& obj)
@@ -39,7 +39,7 @@ void Siren::makeAttack(float deltaX, float deltaY)
 		obj.y = (int32_t)position.y;
 		obj.speedX = _isMirrored ? -100 : 100;
 		for (int delay = 0; delay <= 1000; delay += 250)
-			GO::addObjectToActionPlane(DBG_NEW SirenProjectile(obj, delay));
+			GO::addObjectToActionPlane(DBG_NEW SirenScream(obj, delay));
 
 		_attackRest = 4500;
 	}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasePlaneObject.h"
+#include "../BasePlaneObject.h"
 
 
 class Cannon : public BaseStaticPlaneObject
@@ -21,18 +21,4 @@ private:
 
 
 	friend class PunkRat;
-};
-
-
-class TowerCannon : public Cannon
-{
-public:
-	TowerCannon(const WwdObject& obj);
-};
-
-
-class SkullCannon : public Cannon
-{
-public:
-	SkullCannon(const WwdObject& obj);
 };

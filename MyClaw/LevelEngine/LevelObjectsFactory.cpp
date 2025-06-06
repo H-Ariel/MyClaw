@@ -2,7 +2,7 @@
 
 #include "Objects/PowderKeg.h"
 #include "Objects/Checkpoint.h"
-#include "Objects/Elevator.h"
+#include "Objects/Elevators/Elevator.h"
 #include "Objects/Crate.h"
 #include "Objects/Projectile.h"
 #include "Objects/SoundTrigger.h"
@@ -14,7 +14,9 @@
 #include "Objects/Statue.h"
 #include "Objects/GroundBlower.h"
 #include "Objects/ConveyorBelt.h"
-#include "Objects/Cannon.h"
+#include "Objects/Cannons/Cannon.h"
+#include "Objects/Cannons/TowerCannon.h"
+#include "Objects/Cannons/SkullCannon.h"
 #include "Objects/GooVent.h"
 #include "Objects/CrabNest.h"
 #include "Objects/TProjectilesShooter.h"
@@ -26,6 +28,7 @@
 #include "Enemies/Officer.h"
 #include "Enemies/Soldier.h"
 #include "Enemies/Rat.h"
+#include "Enemies/PunkRat.h"
 #include "Enemies/RobberThief.h"
 #include "Enemies/CutThroat.h"
 #include "Enemies/Seagull.h"
@@ -51,8 +54,8 @@
 
 
 #ifdef _DEBUG
-#define NO_ENEMIES
-#define NO_OBSTACLES
+//#define NO_ENEMIES
+//#define NO_OBSTACLES
 #endif
 
 

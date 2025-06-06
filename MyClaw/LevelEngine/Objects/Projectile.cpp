@@ -1,5 +1,5 @@
 #include "ClawProjectile.h"
-#include "EnemyProjectile.h"
+//#include "EnemyProjectile.h"
 
 
 Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet)
@@ -44,6 +44,8 @@ void Projectile::Logic(uint32_t elapsedTime)
 }
 void Projectile::bounceTop() { speed.y = 0; }
 void Projectile::stopFalling(float collisionSize) {}
+
+// TODO `virtual... () const = 0`
 bool Projectile::isClawBullet() const 
 {
 	if (isinstance<ClawProjectile>(this))

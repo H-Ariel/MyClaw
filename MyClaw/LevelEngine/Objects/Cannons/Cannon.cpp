@@ -1,6 +1,6 @@
 #include "Cannon.h"
-#include "EnemyProjectile.h"
-#include "../GlobalObjects.h"
+#include "../EnemiesProjectiles/CannonBall.h"
+#include "../../GlobalObjects.h"
 
 
 Cannon::Cannon(const WwdObject& obj)
@@ -47,23 +47,4 @@ void Cannon::Logic(uint32_t elapsedTime)
 	}
 
 	_ani->Logic(elapsedTime);
-}
-
-
-TowerCannon::TowerCannon(const WwdObject& obj)
-	: Cannon(obj)
-{
-	if (endsWith(obj.logic, "Left")) _shootDirection = ToLeft;
-	else if (endsWith(obj.logic, "Right")) _shootDirection = ToRight;
-	else throw Exception('"' + obj.logic + "\" is not a tower-cannon");
-	_ballOffset = 8;
-}
-
-
-SkullCannon::SkullCannon(const WwdObject& obj)
-	: Cannon(obj)
-{
-	if (_isMirrored) _shootDirection = ToLeft;
-	else _shootDirection = ToRight;
-	_ballOffset = 8;
 }
