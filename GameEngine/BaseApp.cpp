@@ -5,7 +5,7 @@
 #include <chrono>
 
 
-constexpr auto WINDOW_CLASS_NAME = L"MyGameWindow";
+constexpr auto WINDOW_CLASS_NAME = L"ClawMainWindow";
 
 // The maximum iteration time.
 // `elapsedTime` used in `EngineBase::Logic` and its
@@ -19,7 +19,7 @@ constexpr auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);
 BaseApp::BaseApp(WNDPROC wndproc, const TCHAR title[])
 	: _pEngine(nullptr), _runApp(false)
 {
-	registerMyWindowClass(wndproc);
+	registerWindowClass(wndproc);
 
 	WindowManager::Initialize(WINDOW_CLASS_NAME, title, this);
 	AudioManager::Initialize();
@@ -143,7 +143,7 @@ LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
 	return 0;
 }
 
-void BaseApp::registerMyWindowClass(WNDPROC wndproc)
+void BaseApp::registerWindowClass(WNDPROC wndproc)
 {
 	static bool doesClassRegistered = false;
 	if (doesClassRegistered) return;

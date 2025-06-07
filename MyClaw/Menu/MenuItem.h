@@ -4,6 +4,7 @@
 #include "MenuEngine.h"
 
 
+// TODO better name than menu, because it used in more engines...
 class MenuItem : public UIBaseButton
 {
 public:

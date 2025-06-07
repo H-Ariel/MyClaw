@@ -6,7 +6,6 @@
 class UIBaseButton : public UIBaseElement
 {
 public:
-	UIBaseButton();
 	UIBaseButton(function<void(MouseButtons)> onClick, BaseEngine* parent);
 	~UIBaseButton();
 
@@ -17,12 +16,9 @@ public:
 	D2D1_SIZE_F size;
 
 private:
-	static void RegisterMyButtonClass();
+	static void registerButtonClass();
 	static LRESULT CALLBACK UIButtonBase_WndProc(HWND, UINT, WPARAM, LPARAM);
-
-	static map<HWND, UIBaseButton*> _allButtons;
 
 	HWND _btnWnd;
 	BaseEngine* _parent;
-	void CreateWnd();
 };

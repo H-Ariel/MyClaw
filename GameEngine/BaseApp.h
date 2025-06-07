@@ -60,5 +60,5 @@ private:
 	/// Registers the window class for the application. This should be done before creating the window.
 	/// </summary>
 	/// <param name="wndproc">The window procedure to be used by the window class.</param>
-	static void registerMyWindowClass(WNDPROC wndproc);
+	static void registerWindowClass(WNDPROC wndproc);
 };
