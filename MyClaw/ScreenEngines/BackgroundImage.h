@@ -4,10 +4,10 @@
 
 
 // an image whose size is determined by window's size
-class MenuBackgroundImage : public UIBaseImage
+class BackgroundImage : public UIBaseImage
 {
 public:
-	MenuBackgroundImage(const string& imagePath);
+	BackgroundImage(const string& imagePath);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

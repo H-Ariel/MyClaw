@@ -2,8 +2,8 @@
 #include "ActionPlane.h"
 #include "GlobalObjects.h"
 #include "GameEngine/WindowManager.h"
-#include "Menu/LevelEndEngine/LevelEndEngine.h"
-#include "Menu/MenuEngine.h"
+#include "ScreenEngines/LevelEndEngine/LevelEndEngine.h"
+#include "ScreenEngines/MenuEngine/MenuEngine.h"
 
 
 constexpr float SCREEN_SPEED = 0.5f; // speed of the screen when CC is died or teleported

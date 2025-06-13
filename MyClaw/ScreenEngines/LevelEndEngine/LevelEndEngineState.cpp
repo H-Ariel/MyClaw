@@ -1,6 +1,6 @@
 #include "LevelEndEngineState.h"
 #include "LevelEndEngineHelper.h"
-#include "../MenuItem.h"
+#include "../AdaptiveImage.h"
 #include "../CreditsEngine.h"
 #include "../LevelLoadingEngine.h"
 
@@ -34,7 +34,7 @@ void DrawScoreState::Logic() {
 
 	delete _levelEndEngine->_bgImg;
 	_levelEndEngine->_elementsList.clear();
-	_levelEndEngine->_elementsList.push_back(_levelEndEngine->_bgImg = DBG_NEW MenuBackgroundImage(getBGImgPath(_levelEndEngine->_lvlNum * 2)));
+	_levelEndEngine->_elementsList.push_back(_levelEndEngine->_bgImg = DBG_NEW BackgroundImage(getBGImgPath(_levelEndEngine->_lvlNum * 2)));
 
 	y = -0.38f;
 
@@ -44,7 +44,7 @@ void DrawScoreState::Logic() {
 		x = -0.12f;
 
 		// draw current treasures
-		_levelEndEngine->_elementsList.push_back(DBG_NEW MenuItem(treasuresData[i].second, -0.25f, y, _levelEndEngine->_bgImg, _levelEndEngine));
+		_levelEndEngine->_elementsList.push_back(DBG_NEW AdaptiveImage(treasuresData[i].second, { -0.25f, y }, _levelEndEngine->_bgImg));
 
 		// draw collected treasures count (3 digits)
 		int score = _levelEndEngine->_collectedTreasures[treasuresData[i].first];
@@ -52,7 +52,7 @@ void DrawScoreState::Logic() {
 		for (j = 0; j < 3; j++)
 		{
 			ScoreNumberPath[35] = (score % 10) + '0';
-			_levelEndEngine->_elementsList.push_back(DBG_NEW MenuItem(ScoreNumberPath, x, y, _levelEndEngine->_bgImg, _levelEndEngine));
+			_levelEndEngine->_elementsList.push_back(DBG_NEW AdaptiveImage(ScoreNumberPath, { x, y }, _levelEndEngine->_bgImg));
 			x -= 0.02f;
 			score /= 10;
 		}

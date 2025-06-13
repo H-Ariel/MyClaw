@@ -3,18 +3,11 @@
 #include "GameEngine/WindowManager.h"
 
 
-MenuItem::MenuItem(const string& imagePath, float xRatio, float yRatio,
-	MenuBackgroundImage* bgImg, ScreenEngine* parent)
-	: MenuItem(imagePath, "", xRatio, yRatio, nullptr, bgImg, parent) {}
-
-MenuItem::MenuItem(const string& imagePath, const string& markedImagePath, float xRatio, float yRatio,
-	function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent)
-	: MenuItem(imagePath, markedImagePath, "", "", xRatio, yRatio, itemOnClick, bgImg, parent, 0) {}
-
 MenuItem::MenuItem(const string& imagePath, const string& markedImagePath,
 	const string& toggleStateImage, const string& markedToggleStateImage, float xRatio, float yRatio,
-	function<void(MenuItem*)> itemOnClick, MenuBackgroundImage* bgImg, ScreenEngine* parent, bool initialState)
-	: UIBaseButton(nullptr, parent), _posRatio({ xRatio, yRatio }), _bgImg(bgImg), marked(false), state(initialState)
+	function<void(MenuItem*)> itemOnClick, BackgroundImage* bgImg, MenuEngine* parent, bool initialState)
+	: UIBaseButton(nullptr, parent), ScreenRelative({ xRatio, yRatio },bgImg), marked(false),
+	state(initialState ? ImageState::Toggled : ImageState::Normal)
 {
 	_image = AssetsManager::loadImage(imagePath)->getCopy(); // do not modify the original image, it makes the menu smaller each time it is opened
 	if (!markedImagePath.empty())
@@ -41,15 +34,14 @@ MenuItem::MenuItem(const string& imagePath, const string& markedImagePath,
 
 void MenuItem::Logic(uint32_t)
 {
-	size.width = _bgImg->size.width / _sizeRatio.width;
-	size.height = _bgImg->size.height / _sizeRatio.height;
-	position.x = _bgImg->position.x + _posRatio.x * _bgImg->size.width;
-	position.y = _bgImg->position.y + _posRatio.y * _bgImg->size.height;
+	updateSizeAndPosition(this->size, this->position);
 	UIBaseButton::Logic(0); // just to update the size and position
 }
 void MenuItem::Draw()
 {
-	shared_ptr<UIBaseImage> imgToDraw = (marked && _markedImage) ? (state ? _markedToggleStateImage : _markedImage) : (state ? _toggleStateImage : _image);
+	shared_ptr<UIBaseImage> imgToDraw = (marked && _markedImage)
+		? (state == ImageState::Toggled ? _markedToggleStateImage : _markedImage)
+		: (state == ImageState::Toggled ? _toggleStateImage : _image);
 	imgToDraw->size = size;
 	imgToDraw->position = position;
 	imgToDraw->Draw();

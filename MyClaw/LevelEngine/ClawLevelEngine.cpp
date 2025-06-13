@@ -3,7 +3,7 @@
 #include "CheatsManager.h"
 #include "GlobalObjects.h"
 #include "GameEngine/WindowManager.h"
-#include "Menu/MenuEngine.h"
+#include "ScreenEngines/MenuEngine/MenuEngine.h"
 
 constexpr auto& player = GO::player;
 

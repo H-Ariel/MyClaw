@@ -4,8 +4,8 @@
 #include "LevelEngine/ClawLevelEngine.h"
 #include "LevelEngine/GlobalObjects.h"
 #include "HierarchicalMenu.h"
-#include "CreditsEngine.h"
-#include "LevelLoadingEngine.h"
+#include "../CreditsEngine.h"
+#include "../LevelLoadingEngine.h"
 #include "MenuSlider.h"
 
 
@@ -177,7 +177,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			isSlider = true;
 			initialValue = SavedDataManager::settings.soundVolume;
 			onMove = [&](MenuSlider* slider, int value) {
-				slider->setStates(value == 0);
+				slider->setStates(value == 0 ? MenuItem::ImageState::Toggled : MenuItem::ImageState::Normal);
 				SavedDataManager::settings.soundVolume = value;
 				AssetsManager::applySettings();
 			};
@@ -203,7 +203,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			isSlider = true;
 			initialValue = SavedDataManager::settings.musicVolume;
 			onMove = [&](MenuSlider* slider, int value) {
-				slider->setStates(value == 0);
+				slider->setStates(value == 0 ? MenuItem::ImageState::Toggled : MenuItem::ImageState::Normal);
 				SavedDataManager::settings.musicVolume = value;
 				AssetsManager::applySettings();
 			};

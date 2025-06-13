@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameEngine/BaseEngine.h"
-#include "MenuBackgroundImage.h"
+#include "BackgroundImage.h"
 
 
 class ScreenEngine : public BaseEngine
@@ -11,5 +11,5 @@ public:
 	~ScreenEngine();
 
 protected:
-	MenuBackgroundImage* _bgImg;
+	BackgroundImage* _bgImg;
 };

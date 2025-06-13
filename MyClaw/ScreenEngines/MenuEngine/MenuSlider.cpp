@@ -5,7 +5,7 @@
 
 MenuSlider::MenuSlider(const string& imagePath, const string& markedImagePath,
 	const string& toggleStateImage, const string& markedToggleStateImage, float xRatio, float yRatio,
-	function<void(MenuSlider*, int)> onMove, MenuBackgroundImage* bgImg, ScreenEngine* parent, int initialValue)
+	function<void(MenuSlider*, int)> onMove, BackgroundImage* bgImg, MenuEngine* parent, int initialValue)
 	: MenuItem(imagePath, markedImagePath, toggleStateImage, markedToggleStateImage, xRatio, yRatio,
 		[&](MenuItem*) { moveSlider(_value == 0 ? 10 : -10); }, bgImg, parent, 0),
 	_onMove(onMove), _value(initialValue)

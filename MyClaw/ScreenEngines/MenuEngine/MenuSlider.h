@@ -10,7 +10,7 @@ public:
 		const string& toggleStateImage, const string& markedToggleStateImage,
 		float xRatio, float yRatio,
 		function<void(MenuSlider*, int)> onMove,
-		MenuBackgroundImage* bgImg, ScreenEngine* parent, int initialValue);
+		BackgroundImage* bgImg, MenuEngine* parent, int initialValue);
 
 	void Draw() override;
 	bool isActive() const override;

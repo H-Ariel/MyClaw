@@ -3,10 +3,10 @@
 #include "SavedDataManager.h"
 
 #ifdef _DEBUG
-#include "Menu/LevelLoadingEngine.h"
-#include "Menu/MenuEngine.h"
+#include "ScreenEngines/LevelLoadingEngine.h"
+#include "ScreenEngines/MenuEngine/MenuEngine.h"
 #else
-#include "Menu/OpeningScreenEngine.h"
+#include "ScreenEngines/OpeningScreenEngine.h"
 #endif
 
 
