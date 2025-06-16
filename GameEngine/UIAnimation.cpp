@@ -3,10 +3,10 @@
 
 
 UIAnimation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, const string& soundKey)
-	: image(image), duration(duration), soundKey(soundKey), elapsedTime(0), soundPlayed(false)
+	: image(image), duration(duration), soundKey(soundKey), soundPlayed(false)
 {
-	if (image == nullptr)
-		throw Exception("image can't be null"); // should never happen
+//	if (image == nullptr)
+//		throw Exception("image can't be null"); // should never happen
 }
 
 
@@ -18,16 +18,14 @@ UIAnimation::UIAnimation(const vector<FrameData*>& frames)
 UIAnimation::~UIAnimation()
 {
 	for (FrameData* i : _frames)
-	{
 		delete i;
-	}
 }
 
 void UIAnimation::Logic(uint32_t elapsedTime)
 {
 	if (updateFrames)
 	{
-		_frames[_currFrameIdx]->elapsedTime += elapsedTime;
+		_frameTotalElapsedTime += elapsedTime;
 
 		if (!_frames[_currFrameIdx]->soundKey.empty())
 		{
@@ -40,7 +38,7 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 			}
 		}
 
-		if (_frames[_currFrameIdx]->elapsedTime >= _frames[_currFrameIdx]->duration)
+		if (_frameTotalElapsedTime >= _frames[_currFrameIdx]->duration)
 		{
 			advanceFrame();
 		}
@@ -49,7 +47,7 @@ void UIAnimation::Logic(uint32_t elapsedTime)
 void UIAnimation::advanceFrame()
 {
 	_frames[_currFrameIdx]->soundPlayed = false;
-	_frames[_currFrameIdx]->elapsedTime = 0;
+	_frameTotalElapsedTime = 0;
 	_isFinishAnimation = (_currFrameIdx == _frames.size() - 1);
 
 	if (_isFinishAnimation)
@@ -91,11 +89,9 @@ void UIAnimation::reset()
 	updateFrames = true;
 	loopAni = true;
 	opacity = 1;
+	_frameTotalElapsedTime = 0;
 	for (FrameData* i : _frames)
-	{
-		i->elapsedTime = 0;
 		i->soundPlayed = false;
-	}
 }
 
 vector<UIAnimation::FrameData*> UIAnimation::getFramesList() const

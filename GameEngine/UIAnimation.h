@@ -14,7 +14,6 @@ public:
 		const string soundKey; // key for AudioManager
 		const shared_ptr<UIBaseImage> image;
 		const uint32_t duration; // in milliseconds
-		uint32_t elapsedTime; // in milliseconds
 		bool soundPlayed;
 	};
 
@@ -50,5 +49,6 @@ private:
 
 	vector<FrameData*> _frames;
 	size_t _currFrameIdx;
+	uint32_t _frameTotalElapsedTime; // accumulated time spent on the current frame (in milliseconds)
 	bool _isFinishAnimation;
 };
