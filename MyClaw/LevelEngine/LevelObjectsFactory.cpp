@@ -53,8 +53,8 @@
 
 
 #ifdef _DEBUG
-//#define NO_ENEMIES
-//#define NO_OBSTACLES
+#define NO_ENEMIES
+#define NO_OBSTACLES
 #endif
 
 

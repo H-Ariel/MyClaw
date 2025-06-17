@@ -13,7 +13,7 @@ constexpr auto WINDOW_CLASS_NAME = L"ClawMainWindow";
 constexpr uint32_t MAX_ITER_TIME = 20U;
 
 constexpr int targetFPS = 60;
-constexpr auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);
+constexpr DWORD frameDuration = 1000 / targetFPS;
 
 
 BaseApp::BaseApp(WNDPROC wndproc, const TCHAR title[])
@@ -36,10 +36,11 @@ void BaseApp::init()
 }
 void BaseApp::run()
 {
+	timeBeginPeriod(1); // enable 1ms timer resolution for accurate frame timing
+
 	MSG msg;
-	//	chrono::steady_clock::time_point begin, end;
-	chrono::steady_clock::time_point frameEnd = chrono::steady_clock::now(), lastFrameTime = chrono::steady_clock::now();
-	chrono::milliseconds elapsed, workTime;
+	DWORD frameEnd = timeGetTime(), lastFrameTime = timeGetTime();
+	DWORD elapsed, workTime;
 	uint32_t elapsedTime; // in milliseconds
 
 #ifdef _DEBUG
@@ -52,8 +53,8 @@ void BaseApp::run()
 
 	while (_runApp && _pEngine && !_pEngine->stopEngine)
 	{
-		elapsed = chrono::duration_cast<chrono::milliseconds>(frameEnd - lastFrameTime);
-		elapsedTime = min((uint32_t)elapsed.count(), MAX_ITER_TIME);
+		elapsed = frameEnd - lastFrameTime;
+		elapsedTime = min((uint32_t)elapsed, MAX_ITER_TIME);
 		lastFrameTime = frameEnd;
 
 #ifdef _DEBUG
@@ -98,11 +99,13 @@ void BaseApp::run()
 		_pEngine->Draw();
 		WindowManager::EndDraw();
 
-		frameEnd = chrono::steady_clock::now();
-		workTime = chrono::duration_cast<chrono::milliseconds>(frameEnd - lastFrameTime);
+		frameEnd = timeGetTime();
+		workTime = frameEnd - lastFrameTime;
 		if (workTime < frameDuration) // fit to 60 fps
-			std::this_thread::sleep_for(frameDuration - workTime);
+			Sleep(frameDuration - workTime);
 	}
+
+	timeEndPeriod(1); // restore default timer resolution
 }
 LRESULT CALLBACK BaseApp::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
