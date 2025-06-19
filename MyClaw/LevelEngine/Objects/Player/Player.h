@@ -2,8 +2,8 @@
 
 #include "../BaseCharacter.h"
 #include "SavedDataManager.h"
-#include "../Item.h"
 #include "../Projectiles/ClawProjectile.h"
+#include "Inventory.h"
 #include "PowerupSparkles.h"
 
 
@@ -43,32 +43,28 @@ public:
 	bool isFreeze() const { return _freezeTime > 0; }
 	bool isSqueezed() const { return _aniName == "SQUEEZED"; }
 	bool isGhost() const { return _currPowerup == Item::Powerup_Invisibility; }
+	bool isInvincibility() const { return _currPowerup == Item::Powerup_Invincibility; }
 	bool isFalling() const override;
 	bool isStanding() const override;
 	bool isDuck() const override;
 	bool isTakeDamage() const override;
 
 	void backToLife();
-	bool hasLives() const { return _lives > 0; }
+	bool hasLives() const { return _inventory.getLives() > 0; }
 	void loseLife();
 	void setLadderFlags(bool isOnLadderTop) { _isOnLadderTop = isOnLadderTop; _isCollideWithLadder = true; }
 	void nextLevel();
 	void endLife(); // at ingame-menu
 
-	ClawProjectile::Types getCurrentWeapon() const { return _currWeapon; }
-	int getLivesAmount() const { return _lives; }
-	int getWeaponAmount() const { return _weaponsAmount[(int)_currWeapon]; }
-	int getDynamiteAmount() const { return _weaponsAmount[(int)ClawProjectile::Types::Dynamite]; }
-	uint32_t getScore() const { return _score; }
+	ClawProjectile::Types getCurrentWeaponType() const { return _inventory.getCurrentWeaponType(); }
+	int getCurrentWeaponAmount() const { return _inventory.getCurrentWeaponAmount(); }
+	int getLivesAmount() const { return _inventory.getLives(); }
+	uint32_t getScore() const { return _inventory.getScore(); }
 	int getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
-	map<Item::Type, uint32_t> getCollectedTreasures() const { return _collectedTreasures; }
+	map<Item::Type, uint32_t> getCollectedTreasures() const { return _inventory.getCollectedTreasures(); }
 
 	SavedDataManager::GameData getGameData() const;
 	void setGameData(const SavedDataManager::GameData& data);
-
-	// used to move player
-	void keyUp(int key);
-	void keyDown(int key);
 
 	void activateDialog(int duration) { _dialogLeftTime = duration; }
 
@@ -95,21 +91,19 @@ private:
 
 	string _aniName;
 	vector<string> AttackAnimations, NoLoopAnimations;
-	map<Item::Type, uint32_t> _collectedTreasures; // save all collected treasures and their amount
 	PowerupSparkles _powerupSparkles;
 	pair<Rectangle2D, int> _saveCurrAttackRect;
-	//WeaponsAmount _weaponsAmount;
-	int _weaponsAmount[3]; // 0- pistol, 1- magic, 2- dynamite
+	Inventory _inventory;
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
-	uint32_t _score;
 	int _dialogLeftTime, _powerupLeftTime; // in milliseconds
 	int _holdAltTime; // in milliseconds. it used for pre-dynamite
 	int _damageRest; // rest time between enemies attacks
 	int _freezeTime; // in milliseconds. it used for freeze from siren.
-	int _lives;
-	ClawProjectile::Types _currWeapon;
 	Item::Type _currPowerup; // the current powerup he has (not treasures!)
 	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _spacePressed, _altPressed, _zPressed;
 	bool _leftCollision, _rightCollision, _isOnLadder, _useWeapon;
 	bool _finishLevel, _isCollideWithLadder, _isOnLadderTop;
+
+
+	friend class InputController;
 };

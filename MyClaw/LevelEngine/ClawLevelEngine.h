@@ -2,6 +2,7 @@
 
 #include "GameEngine/BaseEngine.h"
 #include "LevelHUD.h"
+#include "InputController.h"
 
 
 class LevelPlane;
@@ -43,6 +44,7 @@ private:
 
 	shared_ptr<WapWwd> _wwd;
 	vector<shared_ptr<LevelPlane>> _planes;
+	InputController* _inputController;
 	ActionPlane* actionPlane;
 	LevelHUD* _hud;
 	ColorF _saveBgColor;

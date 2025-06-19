@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BasePlaneObject.h"
+#include "OneTimeAnimation.h"
 
 
 class Item : public BaseDynamicPlaneObject
@@ -74,6 +75,8 @@ public:
 		NineLivesGem = 100
 	};
 
+	~Item();
+
 	void Logic(uint32_t elapsedTime) override;
 	void Draw() override;
 
@@ -81,8 +84,10 @@ public:
 
 	Type getType() const { return _type; }
 	int getDuration() const { return _duration; }
-	int getTreasureScore() const;
+	OneTimeAnimation* getTreasureScoreAnimation() const;
 	void playItemSound() const;
+	
+	static int getTreasureScore(Type treasure);
 
 	static Item* getItem(const WwdObject& obj, bool isFromMap, int8_t type);
 	static Item* getItem(const WwdObject& obj, bool isFromMap);

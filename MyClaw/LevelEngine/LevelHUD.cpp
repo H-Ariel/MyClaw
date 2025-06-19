@@ -34,7 +34,6 @@ void LevelHUD::Draw()
 {
 	WindowManager::setWindowOffset({}); // reset the offset
 
-
 	Rectangle2D rc;
 	D2D1_SIZE_F camSz = WindowManager::getCameraSize();
 
@@ -43,7 +42,7 @@ void LevelHUD::Draw()
 	rc = _health->GetRect();
 	_health->position = { camSz.width - 32, 20 };
 	_health->Draw();
-	shared_ptr<UIAnimation> ani = _weaponAni[GO::player->getCurrentWeapon()];
+	shared_ptr<UIAnimation> ani = _weaponAni[GO::player->getCurrentWeaponType()];
 	rc = ani->GetRect();
 	ani->position = { camSz.width - (rc.right - rc.left) / 2, 50 };
 	ani->Draw();
@@ -61,7 +60,7 @@ void LevelHUD::Draw()
 
 	float posX = camSz.width - 32;
 	drawNumbers(GO::player->getHealth(), 3, _healthNumbers, posX, 17);
-	drawNumbers(GO::player->getWeaponAmount(), 2, _smallNumbers, posX, 52);
+	drawNumbers(GO::player->getCurrentWeaponAmount(), 2, _smallNumbers, posX, 52);
 	drawNumbers(GO::player->getLivesAmount(), 1, _smallNumbers, posX, 81);
 	drawNumbers(GO::player->getScore(), 8, _scoreNumbers, 128, 20);
 
@@ -83,7 +82,6 @@ void LevelHUD::Draw()
 
 		WindowManager::fillRect(rc, ColorF::Red); // draw the health bar
 	}
-
 
 	WindowManager::setWindowOffset(_actionPlane->position); // restore the offset
 }

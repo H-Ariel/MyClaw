@@ -190,7 +190,9 @@ void AssetsManager::Finalize()
 	}
 }
 
-shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
+
+
+shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path, const vector<ColorF>* colors)
 {
 	shared_ptr<UIBaseImage> img = WindowManager::getImage(path);
 	if (img == nullptr)
@@ -201,6 +203,10 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path)
 			{
 				WapPid pid(instance->_rezArchive.getFile(path)->getFileData(), &instance->_palette);
 				fixPidOffset(path, pid.offsetX, pid.offsetY);
+				if (colors != nullptr)
+					img = WindowManager::createColorfullyImage(path, pid.colors.data(),
+						pid.width, pid.height, (float)pid.offsetX, (float)pid.offsetY, *colors);
+				else
 				img = WindowManager::createImage(path, pid.colors.data(),
 					pid.width, pid.height, (float)pid.offsetX, (float)pid.offsetY);
 			}
@@ -257,6 +263,8 @@ map<int, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const stri
 	return images;
 }
 
+// TODO rename `create*` to `get*`
+
 shared_ptr<UIAnimation> AssetsManager::loadAnimation(const string& aniPath, const string& imageSetPath)
 {
 	return instance->_animationsManager->loadAnimation(aniPath, imageSetPath);
@@ -281,9 +289,9 @@ shared_ptr<UIAnimation> AssetsManager::createCopyAnimationFromPidImage(const str
 {
 	return createAnimationFromPidImage(pidPath)->getCopy();
 }
-map<string, shared_ptr<UIAnimation>> AssetsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath)
+map<string, shared_ptr<UIAnimation>> AssetsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath, const vector<ColorF>* colors)
 {
-	return instance->_animationsManager->loadAnimationsFromDirectory(dirPath, imageSetPath);
+	return instance->_animationsManager->loadAnimationsFromDirectory(dirPath, imageSetPath, colors);
 }
 
 shared_ptr<WapWwd> AssetsManager::loadLevel(int levelNumber)

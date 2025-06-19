@@ -36,7 +36,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 		_planes.back()->init();
 	}
 
-	//if (!actionPlane) throw Exception("no main plane found"); // should never happen
+	if (!actionPlane) throw Exception("no main plane found"); // should never happen
 	_hud = DBG_NEW LevelHUD(actionPlane);
 
 	if (checkpoint != -1) // according to LevelLoadingEngine
@@ -53,6 +53,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	_elementsList.push_back(_hud);
 
 	WindowManager::setWindowOffset(actionPlane->position);
+
+	_inputController = DBG_NEW InputController(player.get());
 
 #ifdef _DEBUG
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 3586, 4859 };
@@ -157,6 +159,7 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 }
 ClawLevelEngine::~ClawLevelEngine()
 {
+	delete _inputController;
 	delete _state;
 	delete _hud;
 }
@@ -194,8 +197,6 @@ void ClawLevelEngine::Draw()
 
 void ClawLevelEngine::OnKeyUp(int key)
 {
-	GO::cheats->addKey(key);
-
 	switch (key)
 	{
 	case VK_F1: // open help
@@ -215,13 +216,13 @@ void ClawLevelEngine::OnKeyUp(int key)
 		break;
 
 	default:
-		player->keyUp(key);
+		_inputController->keyUp(key);
 		break;
 	}
 }
 void ClawLevelEngine::OnKeyDown(int key)
 {
-	player->keyDown(key);
+	_inputController->keyDown(key);
 }
 void ClawLevelEngine::OnResize()
 {

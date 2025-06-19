@@ -170,6 +170,8 @@
     <ClCompile Include="LevelEngine\Objects\Elevators\PathElevator.cpp" />
     <ClCompile Include="LevelEngine\Objects\Elevators\StartElevator.cpp" />
     <ClCompile Include="LevelEngine\Objects\Elevators\TriggerElevator.cpp" />
+    <ClCompile Include="LevelEngine\InputController.cpp" />
+    <ClCompile Include="LevelEngine\Objects\Player\Inventory.cpp" />
     <ClCompile Include="LevelEngine\Objects\Projectiles\CrabBomb.cpp" />
     <ClCompile Include="LevelEngine\Objects\Projectiles\LavahandProjectile.cpp" />
     <ClCompile Include="LevelEngine\Objects\Projectiles\MercatTridentProjectile.cpp" />
@@ -275,6 +277,8 @@
     <ClInclude Include="LevelEngine\Objects\Elevators\PathElevator.h" />
     <ClInclude Include="LevelEngine\Objects\Elevators\StartElevator.h" />
     <ClInclude Include="LevelEngine\Objects\Elevators\TriggerElevator.h" />
+    <ClInclude Include="LevelEngine\InputController.h" />
+    <ClInclude Include="LevelEngine\Objects\Player\Inventory.h" />
     <ClInclude Include="LevelEngine\Objects\Projectiles\CannonBall.h" />
     <ClInclude Include="LevelEngine\Objects\Projectiles\CrabBomb.h" />
     <ClInclude Include="LevelEngine\Objects\Projectiles\LavahandProjectile.h" />

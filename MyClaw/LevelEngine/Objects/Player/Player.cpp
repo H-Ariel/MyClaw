@@ -34,9 +34,7 @@ constexpr auto& cheats = GO::cheats;
 
 #define EXCLAMATION_MARK	_animations["exclamation-mark"] // it used when claw is speaking
 
-constexpr int MAX_WEAPON_AMOUNT = 99;
 constexpr int MAX_HEALTH_AMOUNT = 100;
-constexpr int MAX_LIVES_AMOUNT = 9;
 
 // code blocks for `collectItem`
 
@@ -48,9 +46,9 @@ constexpr int MAX_LIVES_AMOUNT = 9;
 		return true; \
 	} break; }
 
-#define ADD_WEAPON(t, n)	ADD_VALUE(_weaponsAmount[(int)t], n, MAX_WEAPON_AMOUNT)
+#define ADD_WEAPON(t, n)	{ if (_inventory.addWeapon(t, n)) return true; else break; }
 #define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH_AMOUNT)
-#define ADD_LIFE(n)			ADD_VALUE(_lives, n, MAX_LIVES_AMOUNT)
+#define ADD_LIFE(n)			ADD_VALUE(_inventory._lives, n, MAX_LIVES_AMOUNT)
 #define SET_POWERUP(t) { \
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
 	if (_currPowerup != Item:: t) _powerupLeftTime = 0; \
@@ -59,7 +57,7 @@ constexpr int MAX_LIVES_AMOUNT = 9;
 	return true; }
 
 
-#define loseHealth(damage) if (_currPowerup != Item::Powerup_Invincibility && !cheats->isGodMode()) _health -= damage;
+#define loseHealth(damage) if (!isInvincibility() && !cheats->isGodMode()) _health -= damage;
 #define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
 #define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup
 
@@ -67,18 +65,34 @@ constexpr int MAX_LIVES_AMOUNT = 9;
 constexpr int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
 constexpr int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
+// TODO orgnize all here
+
+
+static const vector<ColorF> InvincibilityColors = {
+	ColorF(0, 0, 1, 1),
+	ColorF(0, 1, 1, 1),
+	ColorF(0, 1, 0, 1),
+	ColorF(1, 1, 0, 1),
+	ColorF(1, 0, 0, 1),
+	ColorF(1, 0, 1, 1)
+};
+static size_t currInvincibilityColorIdx = 0;
+int _invincibilityTime = 0; // timer for color changeing in milliseconds
+
+static int calcNextInvincibilityColor() {
+	currInvincibilityColorIdx = (currInvincibilityColorIdx + 1) % InvincibilityColors.size();
+	return currInvincibilityColorIdx;
+}
+static const ColorF* getInvincibilityColor() {
+	return &(InvincibilityColors[currInvincibilityColorIdx]);
+}
+
+
 
 Player::Player()
-	: BaseCharacter({}), _currWeapon(ClawProjectile::Types::Pistol),
-	_finishLevel(false), _powerupSparkles(&_saveCurrRect), startPosition({})
+	: BaseCharacter({}), _finishLevel(false), _powerupSparkles(&_saveCurrRect), startPosition({})
 {
-	_weaponsAmount[(int)ClawProjectile::Types::Pistol] = 10;
-	_weaponsAmount[(int)ClawProjectile::Types::Magic] = 5;
-	_weaponsAmount[(int)ClawProjectile::Types::Dynamite] = 3;
-
-	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS");
-	_lives = 1;//6;
-	_score = 0;
+	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS", "", &InvincibilityColors);
 
 	backToLife();
 
@@ -102,7 +116,7 @@ Player::Player()
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/450.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/451.PID")),
 		DBG_NEW UIAnimation::FrameData(AssetsManager::loadImage("CLAW/IMAGES/452.PID"))
-		}));
+	}));
 }
 Player::~Player() {}
 
@@ -111,9 +125,16 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
 	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
 	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
-	else if (_currPowerup != Item::None)
+	else if (_currPowerup != Item::None) // now powerup finished
 	{
 		_powerupLeftTime = 0;
+		if (isInvincibility()) {
+			// back to regular images
+			for (auto& [k, a] : _animations) {
+				a->setCurrentColor(nullptr);
+				a->opacity = 1;
+			}
+		}
 		_currPowerup = Item::None;
 		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	}
@@ -178,18 +199,6 @@ void Player::Logic(uint32_t elapsedTime)
 		_zPressed = false;
 	}
 
-	/*
-	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
-	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
-	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
-	else if (_currPowerup != Item::None)
-	{
-		_powerupLeftTime = 0;
-		_currPowerup = Item::None;
-		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
-	}
-	*/
-
 	float speedX = SpeedX_Normal, speedYClimb = SpeedY_Climb;
 
 	if (_currPowerup == Item::Powerup_Catnip)
@@ -202,7 +211,6 @@ void Player::Logic(uint32_t elapsedTime)
 	if (_raisedPowderKeg)
 		speedX = SpeedX_LiftPowderKeg;
 
-	//	_damageRest -= elapsedTime;
 	if (checkForHurts() || _health <= 0)
 	{
 		if (_health <= 0)
@@ -397,7 +405,7 @@ void Player::Logic(uint32_t elapsedTime)
 				_isAttack = !_ani->isFinishAnimation();
 			}
 		}
-		else if (_altPressed && _currWeapon == ClawProjectile::Types::Dynamite && !inAir)
+		else if (_altPressed && _inventory.hasDynamiteEquipped() && !inAir)
 		{
 			_aniName = "PREDYNAMITE";
 			if (duck) _aniName = "DUCK" + _aniName;
@@ -410,14 +418,14 @@ void Player::Logic(uint32_t elapsedTime)
 			}
 			else
 			{
-				switch (_currWeapon)
+				switch (_inventory.getCurrentWeaponType())
 				{
 				case ClawProjectile::Types::Pistol: _aniName = "PISTOL"; break;
 				case ClawProjectile::Types::Magic: _aniName = "MAGIC"; break;
 				case ClawProjectile::Types::Dynamite: _aniName = "POSTDYNAMITE"; break;
 				}
 
-				if (_weaponsAmount[(int)_currWeapon] > 0)
+				if (_inventory.getCurrentWeaponAmount() > 0)
 				{
 					useWeapon(duck, inAir);
 				}
@@ -503,6 +511,11 @@ void Player::Logic(uint32_t elapsedTime)
 			{
 				shootSwordProjectile();
 			}
+
+			if (isInvincibility()) {
+				_ani->setCurrentColor(getInvincibilityColor());
+				_ani->opacity = 0.5;
+			}
 		}
 	}
 	else
@@ -510,8 +523,20 @@ void Player::Logic(uint32_t elapsedTime)
 		_ani->loopAni = false;
 	}
 
-	_ani->opacity = isGhost() ? 0.5f : 1.f;
-	// TODO: when `_currPowerup` is `Invincibility` draw CC colorfuly
+	_ani->opacity = isGhost() || isInvincibility() ? 0.5f : 1.f;
+	// when `_currPowerup` is `Invincibility` draw CC colorfuly
+	if (isInvincibility())
+	{
+		_invincibilityTime += elapsedTime;
+		if (_invincibilityTime >= 150) // change color every 150ms
+		{
+			_invincibilityTime = 0;
+			calcNextInvincibilityColor();
+			_ani->setCurrentColor(getInvincibilityColor());
+			_ani->opacity = 0.5;
+		}
+	}
+
 	_ani->mirrored = _isMirrored && !_isOnLadder;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
@@ -702,7 +727,7 @@ void Player::useWeapon(bool duck, bool inAir)
 	obj.x = (int32_t)(position.x + (_isMirrored ? _saveCurrRect.left - _saveCurrRect.right : _saveCurrRect.right - _saveCurrRect.left));
 	obj.speedX = (_isMirrored ? -DEFAULT_PROJECTILE_SPEED : DEFAULT_PROJECTILE_SPEED);
 
-	switch (_currWeapon)
+	switch (_inventory.getCurrentWeaponType())
 	{
 	case ClawProjectile::Types::Pistol:
 		obj.y = (int32_t)(position.y - (duck ? -12 : 16));
@@ -741,9 +766,9 @@ void Player::useWeapon(bool duck, bool inAir)
 	default: throw Exception("no more weapons..."); // should never happen
 	}
 
-	_weaponsAmount[(int)_currWeapon] -= 1;
+	_inventory.useWeapon();
 	if (inAir) obj.y += 10;
-	GO::addObjectToActionPlane(ClawProjectile::createNew(_currWeapon, obj));
+	GO::addObjectToActionPlane(ClawProjectile::createNew(_inventory.getCurrentWeaponType(), obj));
 }
 
 void Player::stopFalling(float collisionSize)
@@ -849,38 +874,7 @@ bool Player::collectItem(Item* item)
 	case Item::Treasure_Skull_Red:
 	case Item::Treasure_Skull_Green:
 	case Item::Treasure_Skull_Blue:
-	case Item::Treasure_Skull_Purple: {
-		_collectedTreasures[type] += 1;
-		int tScore = item->getTreasureScore();
-
-		// each 500,000 points CC gets an extra life
-		uint32_t lastScoreForExtraLife = _score / 500000;
-		_score += tScore;
-		if (lastScoreForExtraLife < _score / 500000)
-			ADD_LIFE(1);
-
-		int i = 0;
-
-		switch (tScore)
-		{
-		case   100: i = 1; break;
-		case   500: i = 2; break;
-		case  1500: i = 3; break;
-		case  2500: i = 4; break;
-		case  5000: i = 5; break;
-		case  7500: i = 6; break;
-		case 10000: i = 7; break;
-		case 15000: i = 8; break;
-		case 25000: i = 9; break;
-		}
-
-		vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getFramesList();
-		myMemCpy(images[0]->duration, 1000U);
-		OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(item->position, make_shared<UIAnimation>(images));
-		myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);
-
-		GO::addObjectToActionPlane(ani);
-	}	return true;
+	case Item::Treasure_Skull_Purple:	_inventory.collectTreasure(type); return true;
 
 	case Item::Ammo_Deathbag:	ADD_WEAPON(ClawProjectile::Types::Pistol, 25);
 	case Item::Ammo_Shot:		ADD_WEAPON(ClawProjectile::Types::Pistol, 5);
@@ -901,18 +895,22 @@ bool Player::collectItem(Item* item)
 	case Item::Powerup_Catnip_White:
 	case Item::Powerup_Catnip_Red:		SET_POWERUP(Powerup_Catnip);
 	case Item::Powerup_Invisibility:	SET_POWERUP(Powerup_Invisibility);
-	case Item::Powerup_Invincibility:	SET_POWERUP(Powerup_Invincibility);
+	case Item::Powerup_Invincibility:
+		_invincibilityTime = 0;
+		_ani->setCurrentColor(getInvincibilityColor());
+		_ani->opacity = 0.5;
+		SET_POWERUP(Powerup_Invincibility);
 	case Item::Powerup_FireSword:		SET_POWERUP(Powerup_FireSword);
 	case Item::Powerup_LightningSword:	SET_POWERUP(Powerup_LightningSword);
 	case Item::Powerup_IceSword:		SET_POWERUP(Powerup_IceSword);
-	case Item::Powerup_ExtraLife:		ADD_LIFE(1);
+	case Item::Powerup_ExtraLife:		if (_inventory.addLives(1)) return true; else break;
 
 	case Item::Warp:
 	case Item::BossWarp:
 		// impleted as `class Warp`
 		break;
 
-		// these items used in multiplayer mode, so I don't need to implement them now
+	// these items used in multiplayer mode, so I don't need to implement them now
 	case Item::Curse_Ammo:		break;
 	case Item::Curse_Magic:		break;
 	case Item::Curse_Health:	break;
@@ -993,7 +991,7 @@ void Player::loseLife()
 {
 	if (!isInDeathAnimation() || isFallDeath())
 	{
-		_lives -= 1;
+		_inventory.loseLife();
 		_health = 0;
 		_damageRest = 0;
 		_aniName = "SPIKEDEATH";
@@ -1008,7 +1006,7 @@ void Player::loseLife()
 void Player::nextLevel()
 {
 	_finishLevel = false;
-	_collectedTreasures.clear();
+	_inventory.resetTreasures();
 	backToLife();
 }
 void Player::endLife()
@@ -1041,64 +1039,24 @@ SavedDataManager::GameData Player::getGameData() const
 {
 	SavedDataManager::GameData data = {};
 
-	data.lives = _lives;
+	data.lives = _inventory.getLives();
 	data.health = _health;
-	data.score = _score;
-	data.pistolAmount = _weaponsAmount[(int)ClawProjectile::Types::Pistol];
-	data.magicAmount = _weaponsAmount[(int)ClawProjectile::Types::Magic];
-	data.dynamiteAmount = _weaponsAmount[(int)ClawProjectile::Types::Dynamite];
+	data.score = _inventory.getScore();
+	data.pistolAmount = _inventory.getWeaponAmount(ClawProjectile::Types::Pistol);
+	data.magicAmount = _inventory.getWeaponAmount(ClawProjectile::Types::Magic);
+	data.dynamiteAmount = _inventory.getWeaponAmount(ClawProjectile::Types::Dynamite);
 
 	return data;
 }
 void Player::setGameData(const SavedDataManager::GameData& data)
 {
-	_lives = data.lives;
+	// TODO method in Inventory
+	_inventory.setLives(data.lives);
 	_health = data.health;
-	_score = data.score;
-	_weaponsAmount[(int)ClawProjectile::Types::Pistol] = data.pistolAmount;
-	_weaponsAmount[(int)ClawProjectile::Types::Magic] = data.magicAmount;
-	_weaponsAmount[(int)ClawProjectile::Types::Dynamite] = data.dynamiteAmount;
-}
-
-void Player::keyUp(int key)
-{
-	if (isInDeathAnimation() || _freezeTime > 0) return;
-
-	switch (key)
-	{
-	case VK_UP:		_upPressed = false; break;
-	case VK_DOWN:	_downPressed = false; break;
-	case VK_LEFT:	_leftPressed = false; _leftCollision = false; _rightCollision = false; break;
-	case VK_RIGHT:	_rightPressed = false; _leftCollision = false; _rightCollision = false; break;
-	case VK_SPACE:	_spacePressed = false; break;
-	case 'Z':		_zPressed = false; break;
-
-	case VK_SHIFT:	if (!_useWeapon) _currWeapon = ClawProjectile::Types(((int)_currWeapon + 1) % 3); break;
-	case '1':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Pistol; break;
-	case '2':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Magic; break;
-	case '3':		if (!_useWeapon) _currWeapon = ClawProjectile::Types::Dynamite; break;
-
-	case VK_MENU:		_useWeapon = !_isOnLadder && !rope && !_raisedPowderKeg; _altPressed = false; break;
-	case VK_CONTROL:	_isAttack = !_isOnLadder && !_altPressed && !rope && !_raisedPowderKeg; break;
-	}
-}
-void Player::keyDown(int key)
-{
-	if (isInDeathAnimation() || _useWeapon || _freezeTime > 0) return;
-
-	switch (key)
-	{
-	case VK_UP:		if (!_useWeapon && !_isAttack && !_altPressed && !rope && !_raisedPowderKeg) _upPressed = true; break;
-	case VK_DOWN:	if (!rope && !_raisedPowderKeg) _downPressed = true; break;
-	case VK_LEFT:	_leftPressed = true; break;
-	case VK_RIGHT:	_rightPressed = true; break;
-	case VK_SPACE:	_spacePressed = true; break;
-	case 'Z':		if (!rope) _zPressed = true; break;
-	case VK_MENU:	if (!rope && !_raisedPowderKeg) {
-		if (!_altPressed) _holdAltTime = 0;
-		_altPressed = (_currWeapon != ClawProjectile::Types::Dynamite || _weaponsAmount[(int)ClawProjectile::Types::Dynamite] > 0);
-	} break;
-	}
+	_inventory.setScore(data.score);
+	_inventory.setWeaponAmount(ClawProjectile::Types::Pistol, data.pistolAmount);
+	_inventory.setWeaponAmount(ClawProjectile::Types::Magic, data.magicAmount);
+	_inventory.setWeaponAmount(ClawProjectile::Types::Dynamite, data.dynamiteAmount);
 }
 
 bool Player::checkForHurts()
@@ -1213,7 +1171,7 @@ void Player::unsqueeze() {}
 #else
 void Player::squeeze(D2D1_POINT_2F pos, bool mirror)
 {
-	if (_currPowerup == Item::Powerup_Invincibility)
+	if (isInvincibility())
 		return;
 
 	_isMirrored = mirror;
@@ -1233,18 +1191,18 @@ bool Player::cheat(int cheatType)
 {
 	switch (cheatType)
 	{
-	case CheatsManager::FillLife:		_lives = MAX_LIVES_AMOUNT; break;
+	case CheatsManager::FillLife:		_inventory.setMaxLives(); break;
 	case CheatsManager::FillHealth:		_health = MAX_HEALTH_AMOUNT; break;
-	case CheatsManager::FillPistol:		_weaponsAmount[(int)ClawProjectile::Types::Pistol] = MAX_WEAPON_AMOUNT; break;
-	case CheatsManager::FillMagic:		_weaponsAmount[(int)ClawProjectile::Types::Magic] = MAX_WEAPON_AMOUNT; break;
-	case CheatsManager::FillDynamite:	_weaponsAmount[(int)ClawProjectile::Types::Dynamite] = MAX_WEAPON_AMOUNT; break;
+	case CheatsManager::FillPistol:		_inventory.setWeaponMaxAmount(ClawProjectile::Types::Pistol); break;
+	case CheatsManager::FillMagic:		_inventory.setWeaponMaxAmount(ClawProjectile::Types::Magic); break;
+	case CheatsManager::FillDynamite:	_inventory.setWeaponMaxAmount(ClawProjectile::Types::Dynamite); break;
 	case CheatsManager::FinishLevel:	_finishLevel = true; break;
 	case CheatsManager::GodMode:
-		_lives = MAX_LIVES_AMOUNT;
+		_inventory.setMaxLives();
 		_health = MAX_HEALTH_AMOUNT;
-		_weaponsAmount[(int)ClawProjectile::Types::Pistol] = MAX_WEAPON_AMOUNT;
-		_weaponsAmount[(int)ClawProjectile::Types::Magic] = MAX_WEAPON_AMOUNT;
-		_weaponsAmount[(int)ClawProjectile::Types::Dynamite] = MAX_WEAPON_AMOUNT;
+		_inventory.setWeaponMaxAmount(ClawProjectile::Types::Pistol);
+		_inventory.setWeaponMaxAmount(ClawProjectile::Types::Magic);
+		_inventory.setWeaponMaxAmount(ClawProjectile::Types::Dynamite);
 		break;
 	case CheatsManager::Flying:
 		if (_raisedPowderKeg) return false; // CC can't fly when he lifts a keg

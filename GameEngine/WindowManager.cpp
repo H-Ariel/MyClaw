@@ -281,6 +281,65 @@ shared_ptr<UIBaseImage> WindowManager::createImage(const string& key, const void
 
 	return instance->images[key];
 }
+
+static string colorToString(const ColorF& color) {
+	char buf[32] = {};
+	sprintf(buf, "%.2f %.2f %.2f %.2f", color.r, color.g, color.b, color.a);
+	return buf;
+}
+
+shared_ptr<UIColorfullyImage> WindowManager::createColorfullyImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY, const vector<ColorF>& colors)
+{
+	// TODO better palce for colorCompare
+	static function<bool(const ColorF&, const ColorF&)> colorCompare = [](const ColorF& x, const ColorF& y) {
+		if (x.r != y.r) return x.r < y.r;
+		if (x.g != y.g) return x.g < y.g;
+		if (x.b != y.b) return x.b < y.b;
+		return x.a < y.a;
+	};
+
+	shared_ptr<UIColorfullyImage> colorfullyImage;
+
+	if (instance->images.count(key) == 0)
+	{
+		map<ColorF, ID2D1Bitmap*, function<bool(const ColorF&, const ColorF&)>> images(colorCompare);
+
+		ID2D1Bitmap* bitmap = nullptr;
+
+		TRY_HRESULT(instance->_renderTarget->CreateBitmap(
+			{ width, height }, buffer, width * 4,
+			BitmapProperties(PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
+			&bitmap),
+			"Failed to create D2D bitmap");
+
+		images[ColorF(0, 0, 0, 0)] = bitmap; // regular image
+
+		uint32_t len = width * height * 4;
+		uint8_t* coloredBuffer = DBG_NEW uint8_t[len];
+		memcpy(coloredBuffer, buffer, len);
+
+		for (const ColorF& color : colors) {
+			for (uint32_t i = 0; i < len; i += 4) {
+				if (coloredBuffer[i + 3] != 0) {  // not transparent pixel
+					coloredBuffer[i + 0] = (uint8_t)(color.r * 255);
+					coloredBuffer[i + 1] = (uint8_t)(color.g * 255);
+					coloredBuffer[i + 2] = (uint8_t)(color.b * 255);
+				}
+			}
+
+			TRY_HRESULT(instance->_renderTarget->CreateBitmap(
+				{ width, height }, coloredBuffer, width * 4,
+				BitmapProperties(PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
+				&(images[color])),
+				"Failed to create D2D bitmap " + colorToString(color));
+		}
+		delete[] coloredBuffer;
+		colorfullyImage = make_shared<UIColorfullyImage>(images, Point2F(offsetX, offsetY));
+		instance->images[key] = colorfullyImage;
+	}
+ 
+ 	return colorfullyImage;
+}
 shared_ptr<UIBaseImage> WindowManager::getImage(const string& key)
 {
 	auto it = instance->images.find(key);

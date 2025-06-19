@@ -37,6 +37,8 @@ public:
 	bool isFinishAnimation() const { return _isFinishAnimation; } // return if we finish the animation loop
 	bool isPassedHalf() const { return getFramesProgress() >= 0.5f; }
 
+	void setCurrentColor(const ColorF* color); // NOTE: works only if the frames are UIColorfullyImage
+
 
 	float opacity; // value between 0 (transparent) and 1 (opaque)
 	bool updateFrames;

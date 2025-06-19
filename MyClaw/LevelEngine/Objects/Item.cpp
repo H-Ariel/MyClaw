@@ -67,6 +67,15 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 	if (drawZ == 0) // is that correct?
 		drawZ = DefaultZCoord::Items;
 }
+Item::~Item()
+{
+	if (removeObject) // we still in game
+	{
+		OneTimeAnimation* scoreAni = getTreasureScoreAnimation();
+		if (scoreAni)
+			GO::addObjectToActionPlane(scoreAni);
+	}
+}
 void Item::Logic(uint32_t elapsedTime)
 {
 	if (speed.x == 0 && speed.y == 0)
@@ -119,62 +128,71 @@ void Item::stopFalling(float collisionSize)
 	_useGlitter = true;
 	_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
 }
-int Item::getTreasureScore() const
+OneTimeAnimation* Item::getTreasureScoreAnimation() const
 {
+	int i = 0;
+
 	switch (_type)
 	{
 	case Default:
 	case Treasure_Coins:
-		return 100;
+		i = 1; break;
 
 	case Treasure_Goldbars:
-		return 500;
+		i = 2; break;
 
 	case Treasure_Rings_Red:
 	case Treasure_Rings_Green:
 	case Treasure_Rings_Blue:
 	case Treasure_Rings_Purple:
-		return 1500;
+		i = 3; break;
 
 	case Treasure_Necklace:
 	case Treasure_Chalices_Red:
 	case Treasure_Chalices_Green:
 	case Treasure_Chalices_Blue:
 	case Treasure_Chalices_Purple:
-		return 2500;
+		i = 4; break;
 
 	case Treasure_Crosses_Red:
 	case Treasure_Crosses_Green:
 	case Treasure_Crosses_Blue:
 	case Treasure_Crosses_Purple:
-		return 5000;
+		i = 5; break;
 
 	case Treasure_Scepters_Red:
 	case Treasure_Scepters_Green:
 	case Treasure_Scepters_Blue:
 	case Treasure_Scepters_Purple:
-		return 7500;
+		i = 6; break;
 
 	case Treasure_Geckos_Red:
 	case Treasure_Geckos_Green:
 	case Treasure_Geckos_Blue:
 	case Treasure_Geckos_Purple:
-		return 10000;
+		i = 7; break;
 
 	case Treasure_Crowns_Red:
 	case Treasure_Crowns_Green:
 	case Treasure_Crowns_Blue:
 	case Treasure_Crowns_Purple:
-		return 15000;
+		i = 8; break;
 
 	case Treasure_Skull_Red:
 	case Treasure_Skull_Green:
 	case Treasure_Skull_Blue:
 	case Treasure_Skull_Purple:
-		return 25000;
+		i = 9; break;
+
+	default: return nullptr; //throw Exception("Item is not a treasure");
 	}
 
-	throw Exception("invalid treasure type");
+	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getFramesList();
+	myMemCpy(images[0]->duration, 1000U);
+	OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(position, make_shared<UIAnimation>(images));
+	myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);
+
+	return ani;
 }
 void Item::playItemSound() const
 {
@@ -323,6 +341,64 @@ void Item::playItemSound() const
 		if (!strcmp(path, "GAME/SOUNDS/MAPPIECE.WAV"))
 			Sleep(1520); // in case of map-piece sound, wait for the sound to finish
 	}
+}
+
+int Item::getTreasureScore(Type treasure)
+{
+	switch (treasure)
+	{
+	case Default:
+	case Treasure_Coins:
+		return 100;
+
+	case Treasure_Goldbars:
+		return 500;
+
+	case Treasure_Rings_Red:
+	case Treasure_Rings_Green:
+	case Treasure_Rings_Blue:
+	case Treasure_Rings_Purple:
+		return 1500;
+
+	case Treasure_Necklace:
+	case Treasure_Chalices_Red:
+	case Treasure_Chalices_Green:
+	case Treasure_Chalices_Blue:
+	case Treasure_Chalices_Purple:
+		return 2500;
+
+	case Treasure_Crosses_Red:
+	case Treasure_Crosses_Green:
+	case Treasure_Crosses_Blue:
+	case Treasure_Crosses_Purple:
+		return 5000;
+
+	case Treasure_Scepters_Red:
+	case Treasure_Scepters_Green:
+	case Treasure_Scepters_Blue:
+	case Treasure_Scepters_Purple:
+		return 7500;
+
+	case Treasure_Geckos_Red:
+	case Treasure_Geckos_Green:
+	case Treasure_Geckos_Blue:
+	case Treasure_Geckos_Purple:
+		return 10000;
+
+	case Treasure_Crowns_Red:
+	case Treasure_Crowns_Green:
+	case Treasure_Crowns_Blue:
+	case Treasure_Crowns_Purple:
+		return 15000;
+
+	case Treasure_Skull_Red:
+	case Treasure_Skull_Green:
+	case Treasure_Skull_Blue:
+	case Treasure_Skull_Purple:
+		return 25000;
+	}
+
+	throw Exception("item is not a treasure");
 }
 
 Item* Item::getItem(const WwdObject& obj, bool isFromMap, int8_t type)

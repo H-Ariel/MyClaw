@@ -184,6 +184,7 @@
     <ClCompile Include="UIBaseButton.cpp" />
     <ClCompile Include="UIBaseElement.cpp" />
     <ClCompile Include="UIBaseImage.cpp" />
+    <ClCompile Include="UIColorfullyImage.cpp" />
     <ClCompile Include="UITextElement.cpp" />
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
@@ -198,6 +199,7 @@
     <ClInclude Include="UIBaseButton.h" />
     <ClInclude Include="UIBaseElement.h" />
     <ClInclude Include="UIBaseImage.h" />
+    <ClInclude Include="UIColorfullyImage.h" />
     <ClInclude Include="UITextElement.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>

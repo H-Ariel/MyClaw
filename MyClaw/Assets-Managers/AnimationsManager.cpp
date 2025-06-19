@@ -36,14 +36,14 @@ static void fixAniDuration(const string& aniPath, const string& imageSetPath, in
 
 AnimationsManager::AnimationsManager(RezArchive* rezArchive) : _rezArchive(rezArchive) {}
 
-shared_ptr<UIAnimation> AnimationsManager::loadAnimation(const string& aniPath, const string& imageSetPath, bool save)
+shared_ptr<UIAnimation> AnimationsManager::loadAnimation(const string& aniPath, const string& imageSetPath, bool save, const vector<ColorF>* colors)
 {
 	const string k = aniPath + '+' + imageSetPath;
 	if (_loadedAnimations.count(k) == 0)
 	{
 		try
 		{
-			shared_ptr<UIAnimation> ani(DBG_NEW UIAnimation(getAnimationImages(aniPath, imageSetPath)));
+			shared_ptr<UIAnimation> ani(DBG_NEW UIAnimation(getAnimationImages(aniPath, imageSetPath, colors)));
 			if (!save)
 				return ani;
 			_loadedAnimations[k] = ani;
@@ -55,7 +55,7 @@ shared_ptr<UIAnimation> AnimationsManager::loadAnimation(const string& aniPath, 
 	}
 	return _loadedAnimations[k];
 }
-map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath)
+map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath, const vector<ColorF>* colors)
 {
 	map<string, shared_ptr<UIAnimation>> anis;
 
@@ -71,7 +71,7 @@ map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirect
 				if (endsWith(path, ".ANI"))
 				{
 					// get the animation's name (without the extension) and load it
-					anis[name.substr(0, name.length() - 4)] = loadAnimation(path, imageSetPath, false);
+					anis[name.substr(0, name.length() - 4)] = loadAnimation(path, imageSetPath, false, colors);
 				}
 			}
 		}
@@ -193,7 +193,7 @@ void AnimationsManager::clearAnimations(function <bool(const string&)> filter)
 	}
 }
 
-vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const string& aniPath, const string& defaultImageSetPath)
+vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const string& aniPath, const string& defaultImageSetPath, const vector<ColorF>* colors)
 {
 	WapAni ani(_rezArchive->getFile(aniPath)->getFileReader());
 
@@ -230,7 +230,7 @@ vector<UIAnimation::FrameData*> AnimationsManager::getAnimationImages(const stri
 		sprintf(imgName, "/%03d.PID", frame.imageFileId); // according to `fixFileName` at `RezArchive.cpp`
 
 		images.push_back(DBG_NEW UIAnimation::FrameData(
-			AssetsManager::loadImage(imageSetPath + imgName),
+			AssetsManager::loadImage(imageSetPath + imgName, colors),
 			frame.duration, frame.eventFilePath)
 		);
 	}

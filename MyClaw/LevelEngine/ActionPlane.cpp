@@ -19,6 +19,9 @@ constexpr auto& player = GO::player;
 constexpr auto& physics = GO::physics;
 
 
+// TODO think about "State" design pattern...
+
+
 ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane, ClawLevelEngine* cEngine)
 	: LevelPlane(wwd, wwdPlane), _planeSize({}), _boss(nullptr), _shakeTime(0),
 	_BossStagerDelay(0), _isInBoss(false), _levelState(LevelState::Playing),
@@ -78,7 +81,7 @@ void ActionPlane::init()
 
 	if (_loadGameData)
 	{
-		player->setGameData(*_loadGameData.get());
+		player->setGameData(*_loadGameData);
 		_loadGameData = nullptr;
 	}
 	_objects.push_back(player.get()); // must be after LevelPlane::init() because we reset the objects vector there
@@ -289,7 +292,7 @@ void ActionPlane::writeMessage(const string& message, int timeout)
 
 void ActionPlane::Logic(uint32_t elapsedTime)
 {
-	if (player->isFinishLevel()) return;
+	if (player->isFinishLevel()) return; // TODO: check if we use this condition
 
 	if (_levelState != LevelState::Playing)
 	{

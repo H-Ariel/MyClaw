@@ -21,7 +21,7 @@ public:
 	static void Initialize();
 	static void Finalize();
 
-	static shared_ptr<UIBaseImage> loadImage(const string& path);
+	static shared_ptr<UIBaseImage> loadImage(const string& path, const vector<ColorF>* colors = nullptr);
 	static map<int, shared_ptr<UIBaseImage>> loadPlaneTilesImages(const string& planeImagesPath);
 
 	static shared_ptr<UIAnimation> loadAnimation(const string& aniPath, const string& imageSetPath = ""); // load from ANI file
@@ -30,7 +30,7 @@ public:
 	static shared_ptr<UIAnimation> createCopyAnimationFromDirectory(const string& dirPath, bool reversedOrder = false, uint32_t duration = 100);
 	static shared_ptr<UIAnimation> createAnimationFromPidImage(const string& pidPath); // convert PID image to an animtion
 	static shared_ptr<UIAnimation> createCopyAnimationFromPidImage(const string& pidPath);
-	static map<string, shared_ptr<UIAnimation>> loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath = ""); // load all ANI files in `dirPath`
+	static map<string, shared_ptr<UIAnimation>> loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath = "", const vector<ColorF>* colors = nullptr); // load all ANI files in `dirPath`
 
 	static shared_ptr<WapWwd> loadLevel(int levelNumber); // load and init level, return its WWD
 	static void loadPidPalette(const string& palPath); // load the palette and set it to the images manager
