@@ -51,7 +51,7 @@ constexpr int MAX_HEALTH_AMOUNT = 100;
 #define ADD_LIFE(n)			ADD_VALUE(_inventory._lives, n, MAX_LIVES_AMOUNT)
 #define SET_POWERUP(t) { \
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
-	if (_currPowerup != Item:: t) _powerupLeftTime = 0; \
+	if (_currPowerup != Item:: t) { _powerupLeftTime = 0; cancelInvincibilityEffect(); } \
 	_powerupLeftTime += item->getDuration(); \
 	_currPowerup = Item:: t; \
 	return true; }
@@ -65,34 +65,12 @@ constexpr int MAX_HEALTH_AMOUNT = 100;
 constexpr int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
 constexpr int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
-// TODO orgnize all here
-
-
-static const vector<ColorF> InvincibilityColors = {
-	ColorF(0, 0, 1, 1),
-	ColorF(0, 1, 1, 1),
-	ColorF(0, 1, 0, 1),
-	ColorF(1, 1, 0, 1),
-	ColorF(1, 0, 0, 1),
-	ColorF(1, 0, 1, 1)
-};
-static size_t currInvincibilityColorIdx = 0;
-int _invincibilityTime = 0; // timer for color changeing in milliseconds
-
-static int calcNextInvincibilityColor() {
-	currInvincibilityColorIdx = (currInvincibilityColorIdx + 1) % InvincibilityColors.size();
-	return currInvincibilityColorIdx;
-}
-static const ColorF* getInvincibilityColor() {
-	return &(InvincibilityColors[currInvincibilityColorIdx]);
-}
-
-
 
 Player::Player()
 	: BaseCharacter({}), _finishLevel(false), _powerupSparkles(&_saveCurrRect), startPosition({})
+	, _invincibilityComponent(this)
 {
-	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS", "", &InvincibilityColors);
+	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS", "", _invincibilityComponent.getColorsList());
 
 	backToLife();
 
@@ -106,6 +84,7 @@ Player::Player()
 
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT" };
+	UninterruptibleAnimations = { "LIFT" ,"THROW" ,"FALLDEATH" ,"EMPTYPOSTDYNAMITE" ,"DUCKEMPTYPOSTDYNAMITE" ,"SPIKEDEATH" };
 
 	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
@@ -122,81 +101,36 @@ Player::~Player() {}
 
 void Player::Logic(uint32_t elapsedTime)
 {
-	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
-	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
-	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
-	else if (_currPowerup != Item::None) // now powerup finished
+	if (cheats->isFlying())
 	{
-		_powerupLeftTime = 0;
-		if (isInvincibility()) {
-			// back to regular images
-			for (auto& [k, a] : _animations) {
-				a->setCurrentColor(nullptr);
-				a->opacity = 1;
-			}
-		}
-		_currPowerup = Item::None;
-		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
-	}
-	if (_damageRest > 0) _damageRest -= elapsedTime;
-
-	if (cheats->isFlying()) {
-		if (_upPressed) position.y -= elapsedTime;
-		if (_downPressed) position.y += elapsedTime;
-		if (_leftPressed) position.x -= elapsedTime;
-		if (_rightPressed) position.x += elapsedTime;
-
-		_ani->position = position;
-		_ani->Logic(elapsedTime);
-
-		calcRect();
-
+		handleFlyingCheat(elapsedTime);
 		return;
 	}
+
+	updateTimers(elapsedTime);
 
 	if (isSqueezed())
 	{
-		_ani->position = position;
 		_ani->mirrored = _isMirrored;
-		_ani->Logic(elapsedTime);
+		callAnimationLogic(elapsedTime);
 		return;
 	}
 
-	if (_aniName == "LIFT" || _aniName == "THROW" || _aniName == "FALLDEATH" ||
-		_aniName == "EMPTYPOSTDYNAMITE" || _aniName == "DUCKEMPTYPOSTDYNAMITE" ||
-		_aniName == "SPIKEDEATH")
+	if (FindInArray(UninterruptibleAnimations, _aniName))
 	{
 		if (!_ani->isFinishAnimation() || _aniName == "FALLDEATH" || _aniName == "SPIKEDEATH")
 		{
-			_ani->position = position;
-			_ani->Logic(elapsedTime);
+			callAnimationLogic(elapsedTime);
+			calcRect();
+			updateInvincibilityColorEffect();
 			return;
 		}
-	}
-
-	if (_spacePressed && (speed.y == 0 || _isOnLadder))
-	{
-		jump(); // TODO: add case of small jump
-		_spacePressed = false;
-		_isOnLadder = false;
-	}
-
-	if ((isJumping() || isFalling()) && _aniName != "WALK")
-	{
-		_leftCollision = false;
-		_rightCollision = false;
 	}
 
 	if (_freezeTime > 0)
 	{
 		_freezeTime -= elapsedTime;
-		_leftPressed = false;
-		_rightPressed = false;
-		_downPressed = false;
-		_upPressed = false;
-		_spacePressed = false;
-		_altPressed = false;
-		_zPressed = false;
+		resetKeys();
 	}
 
 	float speedX = SpeedX_Normal, speedYClimb = SpeedY_Climb;
@@ -208,45 +142,11 @@ void Player::Logic(uint32_t elapsedTime)
 		speedYClimb = SpeedY_SuperClimb;
 	}
 
+	if (handleDamage(elapsedTime))
+		return;
+
 	if (_raisedPowderKeg)
 		speedX = SpeedX_LiftPowderKeg;
-
-	if (checkForHurts() || _health <= 0)
-	{
-		if (_health <= 0)
-		{
-			_aniName = "FALLDEATH";
-		}
-		else if (!isFreeze()) // when CC is freeze, he can't show take damage
-		{
-			_aniName = "DAMAGE" + to_string(getRandomInt(1, 2));
-		}
-
-		_ani = _animations[_aniName];
-		_ani->reset();
-		_ani->loopAni = false;
-		_ani->mirrored = _isMirrored;
-		_ani->position = position;
-		_isOnLadder = false;
-	}
-	if (isTakeDamage() || _aniName == "FALLDEATH")
-	{
-		if (_raisedPowderKeg)
-		{
-			_raisedPowderKeg->fall();
-			_raisedPowderKeg = nullptr;
-		}
-
-		_ani->Logic(elapsedTime);
-		_lastAttackRect = {};
-
-		if (_ani->isFinishAnimation())
-			_damageRest = 250;
-
-		calcRect();
-		calcAttackRect();
-		return;
-	}
 
 
 	const D2D1_POINT_2F prevPosition = position;
@@ -262,8 +162,8 @@ void Player::Logic(uint32_t elapsedTime)
 	}
 
 	const bool canWalk = (!_useWeapon || (_useWeapon && inAir)) && (!_isAttack || (_isAttack && inAir)) && !duck && !lookup && !_altPressed && !_isOnLadder;
-	const bool goLeft = _leftPressed && !_leftCollision && canWalk;
-	const bool goRight = _rightPressed && !_rightCollision && canWalk;
+	const bool goLeft = _leftPressed && canWalk;
+	const bool goRight = _rightPressed && canWalk;
 	bool climbUp = false, climbDown = false;
 
 
@@ -285,6 +185,7 @@ void Player::Logic(uint32_t elapsedTime)
 
 	if (_isCollideWithLadder)
 	{
+		handleLadderCollision(elapsedTime);
 		_isCollideWithLadder = false;
 		climbUp = _upPressed && !_isOnLadderTop;
 		climbDown = _downPressed;
@@ -345,177 +246,13 @@ void Player::Logic(uint32_t elapsedTime)
 			position.y += speed.y * elapsedTime;
 		}
 
-		// select animation
-
-		const string prevAniName = _aniName;
-
-		if (_freezeTime > 0)
-		{
-			_aniName = "SIREN-FREEZE";
-		}
-		else if (climbDown)
-		{
-			_aniName = "CLIMBDOWN";
-		}
-		else if (climbUp)
-		{
-			_aniName = "CLIMB";
-		}
-		else if (_isOnLadder)
-		{
-			_aniName = "CLIMBIDLE";
-		}
-		else if (lookup)
-		{
-			_aniName = "LOOKUP";
-		}
-		else if (rope)
-		{
-			_aniName = "SWING";
-			_isMirrored = rope->isPassedHalf();
-			speed = {};
-		}
-		else if (_isAttack)
-		{
-			if (!FindInArray(AttackAnimations, _aniName))
-			{
-				_aniName = "SWIPE";
-
-				if (duck) _aniName = "DUCK" + _aniName;
-				else if (inAir) _aniName = "JUMP" + _aniName;
-				else
-				{
-					if (_currPowerup != Item::Powerup_FireSword &&
-						_currPowerup != Item::Powerup_IceSword &&
-						_currPowerup != Item::Powerup_LightningSword)
-					{
-						// get random attack
-						switch (getRandomInt(0, 5))
-						{
-						case 0: _aniName = "KICK"; break;
-						case 1: _aniName = "UPPERCUT"; break;
-						case 2: _aniName = "PUNCH"; break;
-						default: break;
-						}
-					}
-				}
-			}
-			else
-			{
-				_isAttack = !_ani->isFinishAnimation();
-			}
-		}
-		else if (_altPressed && _inventory.hasDynamiteEquipped() && !inAir)
-		{
-			_aniName = "PREDYNAMITE";
-			if (duck) _aniName = "DUCK" + _aniName;
-		}
-		else if (_useWeapon)
-		{
-			if (isWeaponAnimation() && !endsWith(_aniName, "PREDYNAMITE"))
-			{
-				_useWeapon = !_ani->isFinishAnimation();
-			}
-			else
-			{
-				switch (_inventory.getCurrentWeaponType())
-				{
-				case ClawProjectile::Types::Pistol: _aniName = "PISTOL"; break;
-				case ClawProjectile::Types::Magic: _aniName = "MAGIC"; break;
-				case ClawProjectile::Types::Dynamite: _aniName = "POSTDYNAMITE"; break;
-				}
-
-				if (_inventory.getCurrentWeaponAmount() > 0)
-				{
-					useWeapon(duck, inAir);
-				}
-				else
-				{
-					_aniName = "EMPTY" + _aniName;
-				}
-
-				if (duck) _aniName = "DUCK" + _aniName;
-				else if (inAir) _aniName = "JUMP" + _aniName;
-			}
-		}
-		else if (duck)
-		{
-			_aniName = "DUCK";
-		}
-		else if (position.y - prevPosition.y > 5)
-		{
-			_aniName = "FALL";
-		}
-		else if (isJumping())
-		{
-			_aniName = "JUMP";
-		}
-		else if (goLeft || goRight)
-		{
-			_aniName = _raisedPowderKeg ? "LIFTWALK" : "WALK";
-		}
-		else if (_aniName != "JUMP")
-		{
-			if (_zPressed)
-			{
-				if (_raisedPowderKeg)
-				{
-					// throw the powder keg
-					_raisedPowderKeg->thrown(!_isMirrored);
-					_raisedPowderKeg = nullptr;
-					_aniName = "THROW";
-					_zPressed = false; // if we throw do not try catch other keg
-				}
-				else
-				{
-					// try lift powder keg
-					const vector<PowderKeg*>& powderKegs = GO::getActionPlanePowderKegs();
-					auto keg = find_if(powderKegs.begin(), powderKegs.end(),
-						[&](PowderKeg* p) {
-							if (_saveCurrRect.intersects(p->GetRect()))
-								return p->raise();
-							return false;
-						});
-					if (keg != powderKegs.end()) {
-						_raisedPowderKeg = *keg;
-						_aniName = "LIFT";
-						_zPressed = false; // if we lift do not try throw other keg
-					}
-
-					// TODO: throw enemies
-				}
-			}
-			else
-			{
-				_aniName = _raisedPowderKeg ? "LIFT2" : "STAND";
-			}
-		}
+		setAnimation(elapsedTime, lookup, climbUp, climbDown,
+			duck, inAir, goLeft, goRight, position.y - prevPosition.y > 5);
 
 		if (_raisedPowderKeg)
 		{
 			_raisedPowderKeg->position.x = position.x;
 			_raisedPowderKeg->position.y = position.y - 104;
-		}
-
-
-		if (prevAniName != _aniName)
-		{
-			_ani = _animations[_aniName];
-			_ani->reset();
-			_ani->updateFrames = true;
-
-			_ani->loopAni = !FindInArray(NoLoopAnimations, _aniName) && !FindInArray(AttackAnimations, _aniName)
-				&& !isWeaponAnimation() && !isDuck();
-
-			if (endsWith(_aniName, "SWIPE") && _currPowerup != Item::None)
-			{
-				shootSwordProjectile();
-			}
-
-			if (isInvincibility()) {
-				_ani->setCurrentColor(getInvincibilityColor());
-				_ani->opacity = 0.5;
-			}
 		}
 	}
 	else
@@ -526,24 +263,292 @@ void Player::Logic(uint32_t elapsedTime)
 	_ani->opacity = isGhost() || isInvincibility() ? 0.5f : 1.f;
 	// when `_currPowerup` is `Invincibility` draw CC colorfuly
 	if (isInvincibility())
-	{
-		_invincibilityTime += elapsedTime;
-		if (_invincibilityTime >= 150) // change color every 150ms
-		{
-			_invincibilityTime = 0;
-			calcNextInvincibilityColor();
-			_ani->setCurrentColor(getInvincibilityColor());
-			_ani->opacity = 0.5;
-		}
-	}
+		_invincibilityComponent.update(elapsedTime);
 
 	_ani->mirrored = _isMirrored && !_isOnLadder;
-	_ani->position = position;
-	_ani->Logic(elapsedTime);
+	callAnimationLogic(elapsedTime);
 
 	calcRect();
 	calcAttackRect();
 }
+
+void Player::callAnimationLogic(uint32_t elapsedTime)
+{
+	_ani->position = position;
+	_ani->Logic(elapsedTime);
+}
+void Player::changeAnimation(const string& newAniName)
+{
+	_aniName = newAniName;
+	_ani = _animations[_aniName];
+	_ani->reset();
+	_ani->mirrored = _isMirrored && !_isOnLadder;
+	_ani->position = position;
+}
+
+void Player::setAnimation(uint32_t elapsedTime, bool lookup, bool climbUp, bool climbDown,
+	bool duck, bool inAir,bool goLeft, bool goRight, bool isFall)
+{
+	// select animation
+
+	const string prevAniName = _aniName;
+
+	if (_freezeTime > 0)
+	{
+		_aniName = "SIREN-FREEZE";
+	}
+	else if (climbDown)
+	{
+		_aniName = "CLIMBDOWN";
+	}
+	else if (climbUp)
+	{
+		_aniName = "CLIMB";
+	}
+	else if (_isOnLadder)
+	{
+		_aniName = "CLIMBIDLE";
+	}
+	else if (lookup)
+	{
+		_aniName = "LOOKUP";
+	}
+	else if (rope)
+	{
+		_aniName = "SWING";
+		_isMirrored = rope->isPassedHalf();
+		speed = {};
+	}
+	else if (_isAttack)
+	{
+		if (!FindInArray(AttackAnimations, _aniName))
+		{
+			_aniName = "SWIPE";
+
+			if (duck) _aniName = "DUCK" + _aniName;
+			else if (inAir) _aniName = "JUMP" + _aniName;
+			else
+			{
+				if (_currPowerup != Item::Powerup_FireSword &&
+					_currPowerup != Item::Powerup_IceSword &&
+					_currPowerup != Item::Powerup_LightningSword)
+				{
+					// get random attack, 40%-swipe, 20%-[kick|uppercut|punch]
+					switch (getRandomInt(0, 5))
+					{
+					case 0: _aniName = "KICK"; break;
+					case 1: _aniName = "UPPERCUT"; break;
+					case 2: _aniName = "PUNCH"; break;
+					default: break;
+					}
+				}
+			}
+		}
+		else
+		{
+			_isAttack = !_ani->isFinishAnimation();
+		}
+	}
+	else if (_altPressed && _inventory.hasDynamiteEquipped() && !inAir)
+	{
+		_aniName = "PREDYNAMITE";
+		if (duck) _aniName = "DUCK" + _aniName;
+	}
+	else if (_useWeapon)
+	{
+		if (isWeaponAnimation() && !endsWith(_aniName, "PREDYNAMITE"))
+		{
+			_useWeapon = !_ani->isFinishAnimation();
+		}
+		else
+		{
+			switch (_inventory.getCurrentWeaponType())
+			{
+			case ClawProjectile::Types::Pistol: _aniName = "PISTOL"; break;
+			case ClawProjectile::Types::Magic: _aniName = "MAGIC"; break;
+			case ClawProjectile::Types::Dynamite: _aniName = "POSTDYNAMITE"; break;
+			}
+
+			if (_inventory.getCurrentWeaponAmount() > 0)
+			{
+				useWeapon(duck, inAir);
+			}
+			else
+			{
+				_aniName = "EMPTY" + _aniName;
+			}
+
+			if (duck) _aniName = "DUCK" + _aniName;
+			else if (inAir) _aniName = "JUMP" + _aniName;
+		}
+	}
+	else if (duck)
+	{
+		_aniName = "DUCK";
+	}
+	else if (isFall)
+	{
+		_aniName = "FALL";
+	}
+	else if (isJumping())
+	{
+		_aniName = "JUMP";
+	}
+	else if (goLeft || goRight)
+	{
+		_aniName = _raisedPowderKeg ? "LIFTWALK" : "WALK";
+	}
+	else if (_aniName != "JUMP")
+	{
+		// TODO better condition
+		if ((_ani != _animations["THROW"] && _ani != _animations["LIFT"]) || _ani->isFinishAnimation())
+		{
+			if (_ani == _animations["THROW"] && _ani->isFinishAnimation())
+				_aniName = "STAND";
+			else
+				_aniName = _raisedPowderKeg ? "LIFT2" : "STAND";
+		}
+	}
+	
+
+	if (prevAniName != _aniName)
+	{
+		_ani = _animations[_aniName];
+		_ani->reset();
+		_ani->updateFrames = true;
+
+		_ani->loopAni = !FindInArray(NoLoopAnimations, _aniName)
+			&& !FindInArray(AttackAnimations, _aniName) && !isWeaponAnimation() && !isDuck();
+
+		if (endsWith(_aniName, "SWIPE") && _currPowerup != Item::None)
+			shootSwordProjectile();
+		else // invincibility mode does not involved projectiles
+			updateInvincibilityColorEffect();
+	}
+}
+void Player::updateTimers(uint32_t elapsedTime)
+{
+	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
+	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
+	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
+	else if (_currPowerup != Item::None) // now powerup finished
+	{
+		_powerupLeftTime = 0;
+		if (isInvincibility())
+			cancelInvincibilityEffect();
+		_currPowerup = Item::None;
+		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
+	}
+	if (_damageRest > 0) _damageRest -= elapsedTime;
+}
+void Player::handleFlyingCheat(uint32_t elapsedTime)
+{
+	if (_upPressed) position.y -= elapsedTime;
+	if (_downPressed) position.y += elapsedTime;
+	if (_leftPressed) position.x -= elapsedTime;
+	if (_rightPressed) position.x += elapsedTime;
+
+	callAnimationLogic(elapsedTime);
+}
+bool Player::handleDamage(uint32_t elapsedTime)
+{
+	if (checkForHurts() || _health <= 0)
+	{
+		if (_health <= 0)
+		{
+			_aniName = "FALLDEATH";
+		}
+		else if (!isFreeze()) // when CC is freeze, he can't show take damage
+		{
+			_aniName = "DAMAGE" + to_string(getRandomInt(1, 2));
+		}
+
+		_ani = _animations[_aniName];
+		_ani->reset();
+		_ani->loopAni = false;
+		_ani->mirrored = _isMirrored;
+		_ani->position = position;
+		_isOnLadder = false;
+	}
+	if (isTakeDamage() || _aniName == "FALLDEATH")
+	{
+		if (_raisedPowderKeg)
+		{
+			_raisedPowderKeg->fall();
+			_raisedPowderKeg = nullptr;
+		}
+
+		_lastAttackRect = {};
+		callAnimationLogic(elapsedTime);
+		if (_ani->isFinishAnimation())
+			_damageRest = 250;
+		calcRect();
+		calcAttackRect();
+		return true;
+	}
+	return false;
+}
+void Player::handleLadderCollision(uint32_t elapsedTime)
+{
+	// TODO implement
+}
+
+void Player::updateInvincibilityColorEffect()
+{
+	if (isInvincibility()) {
+		_ani->setCurrentColor(_invincibilityComponent.getColor());
+		_ani->opacity = 0.5;
+	}
+}
+void Player::cancelInvincibilityEffect()
+{
+	// back to regular images
+	for (auto& [k, a] : _animations) {
+		a->setCurrentColor(nullptr);
+		a->opacity = 1;
+	}
+}
+
+void Player::onSpacePressed() {
+	if (cheats->isFlying() || isSqueezed() || FindInArray(UninterruptibleAnimations, _aniName))
+		return;
+
+	if (speed.y == 0 || _isOnLadder)
+	{
+		jump(); // TODO: add case of small jump
+		_isOnLadder = false;
+	}
+}
+void Player::onZPressed() {
+	if (_raisedPowderKeg)
+	{
+		// throw the powder keg
+		_raisedPowderKeg->thrown(!_isMirrored);
+		_raisedPowderKeg = nullptr;
+		changeAnimation("THROW");
+	}
+	else
+	{
+		if (_ani == _animations["THROW"] && !_ani->isFinishAnimation())
+			return;
+
+		// try lift powder keg
+		const vector<PowderKeg*>& powderKegs = GO::getActionPlanePowderKegs();
+		auto keg = find_if(powderKegs.begin(), powderKegs.end(),
+			[&](PowderKeg* p) {
+				if (_saveCurrRect.intersects(p->GetRect()))
+					return p->raise();
+				return false;
+			});
+		if (keg != powderKegs.end()) {
+			_raisedPowderKeg = *keg;
+			changeAnimation("LIFT");
+		}
+	}
+
+	// TODO: throw enemies
+}
+
 void Player::Draw()
 {
 	BaseCharacter::Draw();
@@ -778,38 +783,30 @@ void Player::stopFalling(float collisionSize)
 	BaseCharacter::stopFalling(collisionSize);
 	if (speed.x == 0 && !isDuck() && !isStanding() && !_isAttack && !isWeaponAnimation())
 	{
-		// If CC stopped falling (and he is not walking) he should stand
-		_ani = _animations[_aniName = "STAND"];
-		_ani->reset();
-		_ani->mirrored = _isMirrored && !_isOnLadder;
-		_ani->position = position;
+		changeAnimation("STAND");
 	}
 	_isOnLadder = false;
 }
 void Player::stopMovingLeft(float collisionSize)
 {
-	if (cheats->isFlying()) return;
+	if (isClimbing() || cheats->isFlying()) return;
 
-	if (isClimbing()) return;
 	if (speed.x != 0)
 	{
 		speed.x = 0;
 		position.x += collisionSize;
-		_leftCollision = true;
 	}
 	elevator = nullptr;
 	conveyorBelt = nullptr;
 }
 void Player::stopMovingRight(float collisionSize)
 {
-	if (cheats->isFlying()) return;
+	if (isClimbing() || cheats->isFlying()) return;
 
-	if (isClimbing()) return;
 	if (speed.x != 0)
 	{
 		speed.x = 0;
 		position.x -= collisionSize;
-		_rightCollision = true;
 	}
 	elevator = nullptr;
 	conveyorBelt = nullptr;
@@ -896,9 +893,8 @@ bool Player::collectItem(Item* item)
 	case Item::Powerup_Catnip_Red:		SET_POWERUP(Powerup_Catnip);
 	case Item::Powerup_Invisibility:	SET_POWERUP(Powerup_Invisibility);
 	case Item::Powerup_Invincibility:
-		_invincibilityTime = 0;
-		_ani->setCurrentColor(getInvincibilityColor());
-		_ani->opacity = 0.5;
+		_invincibilityComponent.reset();
+		updateInvincibilityColorEffect();
 		SET_POWERUP(Powerup_Invincibility);
 	case Item::Powerup_FireSword:		SET_POWERUP(Powerup_FireSword);
 	case Item::Powerup_LightningSword:	SET_POWERUP(Powerup_LightningSword);
@@ -948,18 +944,10 @@ bool Player::isWeaponAnimation() const
 
 void Player::backToLife()
 {
-	_leftCollision = false;
-	_rightCollision = false;
 	_isCollideWithLadder = false;
 	_isOnLadderTop = false;
 	_isOnLadder = false;
-	_upPressed = false;
-	_downPressed = false;
-	_leftPressed = false;
-	_rightPressed = false;
-	_spacePressed = false;
-	_altPressed = false;
-	_zPressed = false;
+	resetKeys();
 	_useWeapon = false;
 	_isAttack = false;
 	elevator = nullptr;
@@ -968,7 +956,7 @@ void Player::backToLife()
 	_health = 100;
 	if (!cheats->isFlying()) {
 		_aniName = "STAND";
-		_ani = _animations["STAND"];
+		_ani = _animations[_aniName];
 	}
 	position = startPosition;
 	speed = {};
@@ -977,6 +965,7 @@ void Player::backToLife()
 	_dialogLeftTime = 0;
 	_holdAltTime = 0;
 	_currPowerup = Item::None;
+	cancelInvincibilityEffect();
 	_raisedPowderKeg = nullptr;
 	_lastAttackRect = {};
 	_saveCurrAttackRect = {};
@@ -994,9 +983,7 @@ void Player::loseLife()
 		_inventory.loseLife();
 		_health = 0;
 		_damageRest = 0;
-		_aniName = "SPIKEDEATH";
-		_ani = _animations[_aniName];
-		_ani->reset();
+		changeAnimation("SPIKEDEATH");
 		_ani->loopAni = false;
 		_powerupLeftTime = 0;
 		_currPowerup = Item::None;
@@ -1061,7 +1048,7 @@ void Player::setGameData(const SavedDataManager::GameData& data)
 
 bool Player::checkForHurts()
 {
-	if (_isAttack || isTakeDamage() || _damageRest > 0 || _currPowerup == Item::Powerup_Invincibility || cheats->isGodMode())
+	if (_isAttack || isTakeDamage() || _damageRest > 0 || isInvincibility() || cheats->isGodMode())
 		return false;
 
 	pair<Rectangle2D, int> atkRc;
@@ -1214,12 +1201,8 @@ bool Player::cheat(int cheatType)
 		_lastAttackRect = {};
 		_freezeTime = false;
 		_useWeapon = false;
-		_altPressed = false;
-		_zPressed = false;
-		_holdAltTime = 0;
+		resetKeys();
 		_damageRest = 0;
-		_leftCollision = false;
-		_rightCollision = false;
 		elevator = nullptr;
 		rope = nullptr;
 		conveyorBelt = nullptr;
@@ -1227,4 +1210,14 @@ bool Player::cheat(int cheatType)
 	}
 
 	return true;
+}
+
+void Player::resetKeys()
+{
+	_upPressed = false;
+	_downPressed = false;
+	_leftPressed = false;
+	_rightPressed = false;
+	_altPressed = false;
+	_holdAltTime = 0;
 }

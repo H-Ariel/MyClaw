@@ -59,7 +59,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 #ifdef _DEBUG
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 3586, 4859 };
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 8537, 4430 };
-	if (levelNumber == 1) GO::getPlayerPosition() = { 17485, 1500 }; // END OF LEVEL
+	if (levelNumber == 1) GO::getPlayerPosition() = { 15511, 1514 };
+	//if (levelNumber == 1) GO::getPlayerPosition() = { 17485, 1500 }; // END OF LEVEL
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 5775, 4347 };
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 9696, 772 };
 	//if (levelNumber == 1) GO::getPlayerPosition() = { 5226, 4035 };

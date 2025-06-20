@@ -18,10 +18,9 @@ void InputController::keyUp(int key)
 	{
 	case VK_UP:		player->_upPressed = false; break;
 	case VK_DOWN:	player->_downPressed = false; break;
-	case VK_LEFT:	player->_leftPressed = false; player->_leftCollision = false; player->_rightCollision = false; break;
-	case VK_RIGHT:	player->_rightPressed = false; player->_leftCollision = false; player->_rightCollision = false; break;
-	case VK_SPACE:	player->_spacePressed = false; break;
-	case 'Z':		player->_zPressed = false; break;
+	case VK_LEFT:	player->_leftPressed = false; break;
+	case VK_RIGHT:	player->_rightPressed = false; break;
+	case 'Z':		player->onZPressed(); break;
 
 	case VK_SHIFT:	if (!player->_useWeapon) player->_inventory.setNextWeapon(); break;
 	case '1':		if (!player->_useWeapon) player->_inventory.setWeapon(ClawProjectile::Types::Pistol); break;
@@ -44,8 +43,7 @@ void InputController::keyDown(int key)
 	case VK_DOWN:	if (!player->rope && !player->_raisedPowderKeg) player->_downPressed = true; break;
 	case VK_LEFT:	player->_leftPressed = true; break;
 	case VK_RIGHT:	player->_rightPressed = true; break;
-	case VK_SPACE:	player->_spacePressed = true; break;
-	case 'Z':		if (!player->rope) player->_zPressed = true; break;
+	case VK_SPACE:	player->onSpacePressed(); break;
 	case VK_MENU:	if (!player->rope && !player->_raisedPowderKeg) {
 		if (!player->_altPressed) player->_holdAltTime = 0;
 		player->_altPressed = (!player->_inventory.hasDynamiteEquipped() || player->_inventory.getWeaponAmount(ClawProjectile::Types::Dynamite) > 0);

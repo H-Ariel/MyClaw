@@ -7,7 +7,7 @@
 class DeadGabriel : public OneTimeAnimation
 {
 public:
-	DeadGabriel(D2D1_POINT_2F pos, const map<string, shared_ptr<UIAnimation>>& gabrielAnimations);
+	DeadGabriel(D2D1_POINT_2F pos, const unordered_map<string, shared_ptr<UIAnimation>>& gabrielAnimations);
 	void Logic(uint32_t elapsedTime) override;
 
 private:

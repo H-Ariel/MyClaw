@@ -5,6 +5,7 @@
 #include "../Projectiles/ClawProjectile.h"
 #include "Inventory.h"
 #include "PowerupSparkles.h"
+#include "InvincibilityComponent.h"
 
 
 class Elevator;
@@ -74,6 +75,10 @@ public:
 	bool cheat(int cheatType); // return `true` if the cheat is activated
 
 
+	void onSpacePressed();
+	void onZPressed();
+
+
 	D2D1_POINT_2F startPosition;
 	Elevator* elevator; // stores the elevator he is standing on (if any)
 	Rope* rope; // stores the rope he is holding (if any)
@@ -81,6 +86,20 @@ public:
 
 
 private:
+	void callAnimationLogic(uint32_t elapsedTime); // update position and apply logic
+	void changeAnimation(const string& newAniName);
+
+	void setAnimation(uint32_t elapsedTime, bool lookup, bool climbUp, bool climbDown,
+		bool duck, bool inAir, bool goLeft, bool goRight, bool isFall);
+	void updateTimers(uint32_t elapsedTime);
+	void handleFlyingCheat(uint32_t elapsedTime);
+	bool handleDamage(uint32_t elapsedTime); // return true if take damage and should stop current logic
+	void handleLadderCollision(uint32_t elapsedTime);
+	
+	void updateInvincibilityColorEffect(); // update color (only in invincibility mode)
+	void cancelInvincibilityEffect();
+
+
 	void useWeapon(bool duck, bool inAir);
 	void jump();
 	bool checkForHurts() override; // check for hits from enemies, projectiles, and exploding powder kegs
@@ -89,21 +108,26 @@ private:
 	void calcAttackRect(); // calculate the player attack rectangle and save in `_saveCurrAttackRect`
 	void shootSwordProjectile();
 
+	void resetKeys();
+	
+
 	string _aniName;
-	vector<string> AttackAnimations, NoLoopAnimations;
+	vector<string> AttackAnimations, NoLoopAnimations, UninterruptibleAnimations;
 	PowerupSparkles _powerupSparkles;
 	pair<Rectangle2D, int> _saveCurrAttackRect;
 	Inventory _inventory;
+	InvincibilityComponent _invincibilityComponent;
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
 	int _dialogLeftTime, _powerupLeftTime; // in milliseconds
 	int _holdAltTime; // in milliseconds. it used for pre-dynamite
 	int _damageRest; // rest time between enemies attacks
 	int _freezeTime; // in milliseconds. it used for freeze from siren.
 	Item::Type _currPowerup; // the current powerup he has (not treasures!)
-	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _spacePressed, _altPressed, _zPressed;
-	bool _leftCollision, _rightCollision, _isOnLadder, _useWeapon;
+	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _altPressed;
+	bool _isOnLadder, _useWeapon;
 	bool _finishLevel, _isCollideWithLadder, _isOnLadderTop;
 
 
 	friend class InputController;
+	friend class InvincibilityComponent; // TODO: maybe no need friends...
 };

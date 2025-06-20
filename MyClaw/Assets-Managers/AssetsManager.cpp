@@ -204,7 +204,7 @@ shared_ptr<UIBaseImage> AssetsManager::loadImage(const string& path, const vecto
 				WapPid pid(instance->_rezArchive.getFile(path)->getFileData(), &instance->_palette);
 				fixPidOffset(path, pid.offsetX, pid.offsetY);
 				if (colors != nullptr)
-					img = WindowManager::createColorfullyImage(path, pid.colors.data(),
+					img = WindowManager::createColorfulImage(path, pid.colors.data(),
 						pid.width, pid.height, (float)pid.offsetX, (float)pid.offsetY, *colors);
 				else
 				img = WindowManager::createImage(path, pid.colors.data(),
@@ -289,7 +289,7 @@ shared_ptr<UIAnimation> AssetsManager::createCopyAnimationFromPidImage(const str
 {
 	return createAnimationFromPidImage(pidPath)->getCopy();
 }
-map<string, shared_ptr<UIAnimation>> AssetsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath, const vector<ColorF>* colors)
+unordered_map<string, shared_ptr<UIAnimation>> AssetsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath, const vector<ColorF>* colors)
 {
 	return instance->_animationsManager->loadAnimationsFromDirectory(dirPath, imageSetPath, colors);
 }

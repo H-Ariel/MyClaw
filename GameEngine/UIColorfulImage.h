@@ -3,10 +3,10 @@
 #include "UIBaseImage.h"
 
 
-class UIColorfullyImage : public UIBaseImage
+class UIColorfulImage : public UIBaseImage
 {
 public:
-	UIColorfullyImage(const map<ColorF, ID2D1Bitmap*, function<bool(const ColorF&, const ColorF&)>>& images, D2D1_POINT_2F offset = {});
+	UIColorfulImage(const map<ColorF, ID2D1Bitmap*, function<bool(const ColorF&, const ColorF&)>>& images, D2D1_POINT_2F offset = {});
 
 	void setCurrentColor(const ColorF* color);
 

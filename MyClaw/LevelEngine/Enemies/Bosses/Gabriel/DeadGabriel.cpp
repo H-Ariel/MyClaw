@@ -1,7 +1,7 @@
 #include "DeadGabriel.h"
 
 
-DeadGabriel::DeadGabriel(D2D1_POINT_2F pos, const map<string, shared_ptr<UIAnimation>>& gabrielAnimations)
+DeadGabriel::DeadGabriel(D2D1_POINT_2F pos, const unordered_map<string, shared_ptr<UIAnimation>>& gabrielAnimations)
 	: OneTimeAnimation(pos, make_shared<UIAnimation>(
 		gabrielAnimations.at("KILLFALL1")->getFramesList() +
 		gabrielAnimations.at("KILLFALL2")->getFramesList() +

@@ -55,9 +55,9 @@ shared_ptr<UIAnimation> AnimationsManager::loadAnimation(const string& aniPath, 
 	}
 	return _loadedAnimations[k];
 }
-map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath, const vector<ColorF>* colors)
+unordered_map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath, const vector<ColorF>* colors)
 {
-	map<string, shared_ptr<UIAnimation>> anis;
+	unordered_map<string, shared_ptr<UIAnimation>> anis;
 
 	if (_savedAniDirs.count(dirPath) == 0)
 	{

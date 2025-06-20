@@ -1,6 +1,6 @@
 #include "UIAnimation.h"
 #include "AudioManager.h"
-#include "UIColorfullyImage.h"
+#include "UIColorfulImage.h"
 
 
 UIAnimation::FrameData::FrameData(shared_ptr<UIBaseImage> image, uint32_t duration, const string& soundKey)
@@ -112,10 +112,10 @@ size_t UIAnimation::getTotalDuration() const
 
 void UIAnimation::setCurrentColor(const ColorF* color)
 {
-	if (isinstance<UIColorfullyImage>(_frames[0]->image.get()))
+	if (isinstance<UIColorfulImage>(_frames[0]->image.get()))
 	{
 		for (FrameData* frame : _frames) {
-			static_cast<UIColorfullyImage*>(frame->image.get())->setCurrentColor(color);
+			static_cast<UIColorfulImage*>(frame->image.get())->setCurrentColor(color);
 		}
 	}
 }

@@ -288,7 +288,7 @@ static string colorToString(const ColorF& color) {
 	return buf;
 }
 
-shared_ptr<UIColorfullyImage> WindowManager::createColorfullyImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY, const vector<ColorF>& colors)
+shared_ptr<UIColorfulImage> WindowManager::createColorfulImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY, const vector<ColorF>& colors)
 {
 	// TODO better palce for colorCompare
 	static function<bool(const ColorF&, const ColorF&)> colorCompare = [](const ColorF& x, const ColorF& y) {
@@ -298,7 +298,7 @@ shared_ptr<UIColorfullyImage> WindowManager::createColorfullyImage(const string&
 		return x.a < y.a;
 	};
 
-	shared_ptr<UIColorfullyImage> colorfullyImage;
+	shared_ptr<UIColorfulImage> colorfullyImage;
 
 	if (instance->images.count(key) == 0)
 	{
@@ -334,7 +334,7 @@ shared_ptr<UIColorfullyImage> WindowManager::createColorfullyImage(const string&
 				"Failed to create D2D bitmap " + colorToString(color));
 		}
 		delete[] coloredBuffer;
-		colorfullyImage = make_shared<UIColorfullyImage>(images, Point2F(offsetX, offsetY));
+		colorfullyImage = make_shared<UIColorfulImage>(images, Point2F(offsetX, offsetY));
 		instance->images[key] = colorfullyImage;
 	}
  

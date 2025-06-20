@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UITextElement.h"
-#include "UIColorfullyImage.h"
+#include "UIColorfulImage.h"
 
 /// <summary>
 /// Manages window creation, rendering, and UI elements in a Direct2D-based graphical environment.
@@ -197,7 +197,7 @@ public:
 	/// <returns>A smart pointer to the created image.</returns>
 	static shared_ptr<UIBaseImage> createImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY);
 	
-	static shared_ptr<UIColorfullyImage> createColorfullyImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY, const vector<ColorF>& colors);
+	static shared_ptr<UIColorfulImage> createColorfulImage(const string& key, const void* const buffer, uint32_t width, uint32_t height, float offsetX, float offsetY, const vector<ColorF>& colors);
 
 	/// <summary>
 	/// Retrieves an image from the cache using its key.
