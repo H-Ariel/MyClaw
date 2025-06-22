@@ -20,6 +20,8 @@ shared_ptr<ClawLevelEngine> ClawLevelEngine::create(int levelNumber, int checkpo
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	: actionPlane(nullptr), _saveBgColor(0), _saveWindowScale(1)
 {
+	GO::clawLevelEngine = this; // TODO use instance
+
 	_wwd = AssetsManager::loadLevel(levelNumber);
 
 	for (WwdPlane& wwdPlane : _wwd->planes)
@@ -80,12 +82,12 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	if (levelNumber == 2) GO::getPlayerPosition() = { 20070, 2092 }; // END OF LEVEL
 
 	//if (levelNumber == 3) GO::getPlayerPosition() = { 23072, 6141 }; // ALMOST END OF LEVEL
-	if (levelNumber == 3) GO::getPlayerPosition() = { 6080, 6224 };
+	//if (levelNumber == 3) GO::getPlayerPosition() = { 6080, 6224 };
 	//if (levelNumber == 3) GO::getPlayerPosition() = { 2396, 1168 };
 	//if (levelNumber == 3) GO::getPlayerPosition() = { 2201, 10756 };
 	//if (levelNumber == 3) GO::getPlayerPosition() = { 9693, 8528 };
 	//if (levelNumber == 3) GO::getPlayerPosition() = { 12289, 8144 };
-	//if (levelNumber == 3) GO::getPlayerPosition() = { 11054, 8720 };
+	if (levelNumber == 3) GO::getPlayerPosition() = { 11054, 8720 };
 
 	//if (levelNumber == 4) GO::getPlayerPosition() = { 3127, 5024 };
 	//if (levelNumber == 4) GO::getPlayerPosition() = { 3902, 4192 };
@@ -160,6 +162,8 @@ ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 }
 ClawLevelEngine::~ClawLevelEngine()
 {
+	GO::clawLevelEngine = nullptr;
+
 	delete _inputController;
 	delete _state;
 	delete _hud;
@@ -228,4 +232,9 @@ void ClawLevelEngine::OnKeyDown(int key)
 void ClawLevelEngine::OnResize()
 {
 	WindowManager::setDefaultWindowScale();
+}
+
+void ClawLevelEngine::addTimer(Timer* timer)
+{
+	_timers.push_back(timer);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Assets-Managers/AssetsManager.h"
+#include "GameEngine/Timer.h"
 
 
 constexpr float GRAVITY = 2048e-6f; // gravity acceleration (2.048f/1000)
@@ -33,7 +34,7 @@ public:
 	virtual void exitEasyMode();  // ^^^
 
 	void Delay(int timeDelay) { _timeDelay = timeDelay; } // delay object for `timeDelay` ms
-	bool isDelayed() const { return _timeDelay > 0; }
+	bool isDelayed() const { return _timeDelay > 0; } // TODO use Timer?
 	void decreaseTimeDelay(int ms) { _timeDelay -= ms; }
 
 	bool tryCatchPlayer(); // returns if successfully caught the player

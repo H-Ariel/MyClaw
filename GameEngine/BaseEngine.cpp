@@ -13,6 +13,13 @@ void BaseEngine::OnResize() {}
 
 void BaseEngine::Logic(uint32_t elapsedTime)
 {
+	for (auto it = _timers.begin(); it != _timers.end(); )
+	{
+		(*it)->update(elapsedTime);
+		if ((*it)->isFinished()) it = _timers.erase(it);
+		else ++it;
+	}
+
 	for (UIBaseElement* e : _elementsList)
 		e->Logic(elapsedTime);
 }

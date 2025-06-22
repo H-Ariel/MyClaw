@@ -1,8 +1,9 @@
 #include "ClawProjectile.h"
+#include "../../GlobalObjects.h"
 
 
 Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet)
-	: BaseDynamicPlaneObject(obj), _damage(obj.damage), _timeLeft(3000)
+	: BaseDynamicPlaneObject(obj), _damage(obj.damage)
 {
 	if (aniDirPath.empty()) return;
 	else if (endsWith(aniDirPath, ".ANI"))
@@ -14,16 +15,26 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 	speed.x = obj.speedX / 1000.f;
 	speed.y = obj.speedY / 1000.f;
 	_isMirrored = speed.x < 0;
-	drawZ = DefaultZCoord::Characters + 1;
+	init();
 }
 Projectile::Projectile(shared_ptr<UIAnimation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
-	: BaseDynamicPlaneObject({}), _damage(damage), _timeLeft(3000)
+	: BaseDynamicPlaneObject({}), _damage(damage)
 {
 	_ani = ani;
 	this->speed = speed;
 	position = initialPosition;
-	drawZ = DefaultZCoord::Characters + 1;
+	init();
 }
+Projectile::~Projectile()
+{
+	delete _timer;
+}
+void Projectile::init() {
+	drawZ = DefaultZCoord::Characters + 1;
+	_timer = DBG_NEW Timer(3000, [this] {removeObject = true; });
+	GO::addTimer(_timer);
+}
+
 void Projectile::Logic(uint32_t elapsedTime)
 {
 	if (!removeObject)
@@ -31,12 +42,6 @@ void Projectile::Logic(uint32_t elapsedTime)
 		position.x += speed.x * elapsedTime;
 		position.y += speed.y * elapsedTime;
 		removeObject = speed.x == 0 && speed.y == 0;
-	}
-	if (_timeLeft > 0)
-	{
-		_timeLeft -= elapsedTime;
-		if (_timeLeft <= 0)
-			removeObject = true;
 	}
 
 	_ani->Logic(elapsedTime);

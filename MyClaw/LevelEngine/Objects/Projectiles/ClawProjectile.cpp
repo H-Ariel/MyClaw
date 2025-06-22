@@ -1,4 +1,5 @@
 #include "ClawProjectile.h"
+#include "../../GlobalObjects.h"
 
 
 ClawProjectile* ClawProjectile::createNew(Types type, const WwdObject& data)
@@ -36,7 +37,8 @@ Rectangle2D ClawProjectile::GetRect()
 
 ClawDynamite::ClawDynamite(const WwdObject& obj)
 	: ClawProjectile(obj, "GAME/ANIS/DYNAMITELIT.ANI", Types::Dynamite),
-	_delayBeforeExplos(500), _state(State::Fly), _isPlaySound(false) {}
+	_delayBeforeExplos(500, bind(&ClawDynamite::startExplos, this)),
+	_state(State::Fly), _isPlaySound(false) {}
 
 void ClawDynamite::Logic(uint32_t elapsedTime)
 {
@@ -49,14 +51,6 @@ void ClawDynamite::Logic(uint32_t elapsedTime)
 		break;
 
 	case State::Wait:
-		_delayBeforeExplos -= elapsedTime;
-		if (_delayBeforeExplos <= 0)
-		{
-			position.y -= 32;
-			_state = State::Explos;
-			_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/DYNAMITEEXPLO.ANI");
-			_ani->loopAni = false;
-		}
 		break;
 
 	case State::Explos:
@@ -80,6 +74,7 @@ void ClawDynamite::stopFalling(float collisionSize)
 	speed = {};
 	_ani->updateFrames = false;
 	_state = State::Wait;
+	GO::addTimer(&_delayBeforeExplos);
 }
 void ClawDynamite::stopMovingLeft(float collisionSize)
 {
@@ -108,4 +103,12 @@ int ClawDynamite::getDamage() const
 bool ClawDynamite::isStartExplode() const
 {
 	return _state == State::Explos && _ani->getFrameNumber() == 1;
+}
+
+void ClawDynamite::startExplos()
+{
+	position.y -= 32;
+	_state = State::Explos;
+	_ani = AssetsManager::loadCopyAnimation("GAME/ANIS/DYNAMITEEXPLO.ANI");
+	_ani->loopAni = false;
 }

@@ -1,12 +1,14 @@
 #include "GlobalObjects.h"
 #include "Objects/Player/Player.h"
 #include "ActionPlane.h"
+#include "ClawLevelEngine.h"
 
 
 shared_ptr<Player> GlobalObjects::player;
 shared_ptr<PhysicsManager> GlobalObjects::physics;
 shared_ptr<CheatsManager> GlobalObjects::cheats;
 ActionPlane* GlobalObjects::actionPlane = nullptr;
+ClawLevelEngine* GlobalObjects::clawLevelEngine = nullptr;
 
 
 D2D1_POINT_2F& GlobalObjects::getPlayerPosition() { return player->position; }
@@ -28,3 +30,5 @@ const vector<PowderKeg*>& GlobalObjects::getActionPlanePowderKegs() { return act
 const vector<BaseEnemy*>& GlobalObjects::getActionPlaneEnemies() { return actionPlane->getEnemies(); }
 const vector<Projectile*>& GlobalObjects::getActionPlaneProjectiles() { return actionPlane->getProjectiles(); }
 const vector<BaseDamageObject*>& GlobalObjects::getActionPlaneDamageObjects() { return actionPlane->getDamageObjects(); }
+
+void GlobalObjects::addTimer(Timer* timer) { clawLevelEngine->addTimer(timer); }

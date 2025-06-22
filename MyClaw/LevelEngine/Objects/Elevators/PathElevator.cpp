@@ -1,4 +1,5 @@
 #include "PathElevator.h"
+#include "../../GlobalObjects.h"
 
 
 PathElevator::PathElevator(const WwdObject& obj)
@@ -17,31 +18,18 @@ PathElevator::PathElevator(const WwdObject& obj)
 
 	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
 
-	Reset();
+	position = _initialPos;
+	_pathIdx = -1;
+
+	_timer = DBG_NEW Timer((int)(_paths[0].second / _totalSpeed), bind(&PathElevator::changeDirection, this));
+	GO::addTimer(_timer);
+}
+PathElevator::~PathElevator() {
+	delete _timer;
 }
 
 void PathElevator::Logic(uint32_t elapsedTime)
 {
-	_timeCounter -= elapsedTime;
-
-	if (_timeCounter <= 0)
-	{
-		_pathIdx = (_pathIdx + 1) % _paths.size();
-		_timeCounter = (int)(_paths[_pathIdx].second / _totalSpeed);
-		switch (_paths[_pathIdx].first)
-		{
-		case WwdObject::Direction_BottomLeft:	speed = { -_totalSpeed, _totalSpeed }; break;
-		case WwdObject::Direction_Down:			speed = { 0, _totalSpeed }; break;
-		case WwdObject::Direction_BottomRight:	speed = { _totalSpeed, _totalSpeed }; break;
-		case WwdObject::Direction_Left:			speed = { -_totalSpeed, 0 }; break;
-		case WwdObject::Direction_Right:		speed = { _totalSpeed, 0 }; break;
-		case WwdObject::Direction_TopLeft:		speed = { -_totalSpeed, -_totalSpeed }; break;
-		case WwdObject::Direction_Up:			speed = { 0, -_totalSpeed }; break;
-		case WwdObject::Direction_TopRight:		speed = { _totalSpeed, -_totalSpeed }; break;
-		default: speed = {}; break;
-		}
-	}
-
 	mainLogic(elapsedTime);
 }
 
@@ -49,5 +37,24 @@ void PathElevator::Reset()
 {
 	position = _initialPos;
 	_pathIdx = -1;
-	_timeCounter = 0;
+	_timer->reset();
+}
+
+void PathElevator::changeDirection()
+{
+	_pathIdx = (_pathIdx + 1) % _paths.size();
+	switch (_paths[_pathIdx].first)
+	{
+	case WwdObject::Direction_BottomLeft:	speed = { -_totalSpeed, _totalSpeed }; break;
+	case WwdObject::Direction_Down:			speed = { 0, _totalSpeed }; break;
+	case WwdObject::Direction_BottomRight:	speed = { _totalSpeed, _totalSpeed }; break;
+	case WwdObject::Direction_Left:			speed = { -_totalSpeed, 0 }; break;
+	case WwdObject::Direction_Right:		speed = { _totalSpeed, 0 }; break;
+	case WwdObject::Direction_TopLeft:		speed = { -_totalSpeed, -_totalSpeed }; break;
+	case WwdObject::Direction_Up:			speed = { 0, -_totalSpeed }; break;
+	case WwdObject::Direction_TopRight:		speed = { _totalSpeed, -_totalSpeed }; break;
+	default: speed = {}; break;
+	}
+
+	_timer->reset((int)(_paths[_pathIdx].second / _totalSpeed));
 }

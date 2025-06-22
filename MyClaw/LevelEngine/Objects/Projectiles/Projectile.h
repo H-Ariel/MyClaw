@@ -9,6 +9,7 @@ class Projectile : public BaseDynamicPlaneObject
 {
 public:
 	Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet = "");
+	~Projectile();
 	void Logic(uint32_t elapsedTime) override;
 
 	void bounceTop() override;
@@ -23,6 +24,8 @@ protected:
 	Projectile(shared_ptr<UIAnimation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition);
 
 private:
-	int _timeLeft; // time left before projectile disappears
+	void init();
+
+	Timer* _timer;
 	const int _damage;
 };

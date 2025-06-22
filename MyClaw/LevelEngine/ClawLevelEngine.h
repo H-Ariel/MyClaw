@@ -34,6 +34,8 @@ public:
 	static shared_ptr<ClawLevelEngine> getInstance() { return _instance; }
 	static void destrotInstance() { _instance = nullptr; }
 
+	void addTimer(Timer* timer);
+
 
 private:
 	ClawLevelEngine(int levelNumber, int checkpoint); // private c'tor, because `create` method sets `_instance`

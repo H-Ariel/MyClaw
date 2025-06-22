@@ -7,12 +7,14 @@ class Player;
 class PhysicsManager;
 class CheatsManager;
 class ActionPlane;
+class ClawLevelEngine;
 
 class BasePlaneObject;
 class PowderKeg;
 class BaseEnemy;
 class Projectile;
 class BaseDamageObject;
+class Timer;
 
 /// <summary>
 /// Static class holding global shared objects used across the game.
@@ -24,6 +26,7 @@ public:
 	static shared_ptr<PhysicsManager> physics;
 	static shared_ptr<CheatsManager> cheats;
 	static ActionPlane* actionPlane;
+	static ClawLevelEngine* clawLevelEngine;
 
 	static D2D1_POINT_2F& getPlayerPosition();
 	static Rectangle2D getPlayerRect();
@@ -45,6 +48,8 @@ public:
 	static const vector<Projectile*>& getActionPlaneProjectiles();
 	static const vector<BaseDamageObject*>& getActionPlaneDamageObjects();
 
+
+	static void addTimer(Timer* timer);
 };
 
 #ifndef GO

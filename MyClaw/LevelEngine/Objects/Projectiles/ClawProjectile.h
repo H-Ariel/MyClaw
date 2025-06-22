@@ -44,8 +44,10 @@ public:
 	bool isStartExplode() const;
 
 private:
+	void startExplos();
+
 	enum class State : int8_t { Fly, Wait, Explos };
-	int _delayBeforeExplos; // in milliseconds
+	Timer _delayBeforeExplos;
 	State _state;
 	bool _isPlaySound;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UIBaseElement.h"
+#include "Timer.h"
 
 /// <summary>
 /// Base class for engine management, handling events and rendering logic for a game or UI.
@@ -91,6 +92,12 @@ protected:
 	/// A list of UI elements that are part of the engine's current state.
 	/// </summary>
 	vector<UIBaseElement*> _elementsList;
+
+	/// <summary>
+	/// A list of active timers used for delayed actions or time-based events.
+	/// Each timer is updated every frame and removed when completed.
+	/// </summary>
+	vector<Timer*> _timers;
 
 	/// <summary>
 	/// A pointer to the next engine that will be used after the current one ends.
