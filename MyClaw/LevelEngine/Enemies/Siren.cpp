@@ -41,6 +41,7 @@ void Siren::makeAttack(float deltaX, float deltaY)
 		for (int delay = 0; delay <= 1000; delay += 250)
 			GO::addObjectToActionPlane(DBG_NEW SirenScream(obj, delay));
 
-		_attackRest = 4500;
+		_attackTimer.reset(4500);
+		addTimer(&_attackTimer);
 	}
 }

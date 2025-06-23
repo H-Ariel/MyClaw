@@ -10,10 +10,17 @@ public:
 	/// <summary>
 	/// Constructs a Timer with a duration and a callback function.
 	/// </summary>
+	/// <param name="cb">Callback function to execute when timer finishes.</param>
+	Timer(std::function<void()> cb) : Timer(0, cb) {}
+
+	/// <summary>
+	/// Constructs a Timer with a duration and a callback function.
+	/// </summary>
 	/// <param name="ms">Duration in milliseconds before callback is invoked.</param>
 	/// <param name="cb">Callback function to execute when timer finishes.</param>
-	Timer(int ms, std::function<void()> cb)
-		: totalTime(ms), callback(cb) { reset(); }
+	Timer(int ms = 0, std::function<void()> cb = nullptr)
+		: firstTime(ms), callback(cb) { reset(); }
+
 
 	/// <summary>
 	/// Updates the timer by decreasing the remaining time.
@@ -25,7 +32,8 @@ public:
 			timeLeft -= delta;
 			if (timeLeft <= 0) {
 				finished = true;
-				callback(); // we can reset timer in callback, so `finished=false`
+				if (callback)
+					callback(); // we can reset timer in callback, so `finished=false`
 			}
 		}
 	}
@@ -40,9 +48,10 @@ public:
 	/// <summary>
 	/// Resets the timer.
 	/// </summary>
+	/// <param name="ms">Duration in milliseconds before the callback is invoked. If `ms` is less than 0, the previous value will be used.</param>
 	void reset(int ms = -1) {
-		timeLeft = ms > 0 ? ms : totalTime;
-		finished = false;
+		timeLeft = ms > 0 ? ms : firstTime;
+		finished = !((bool)timeLeft); // if `timeLeft == 0` its finished
 	}
 
 	/// <summary>
@@ -60,7 +69,7 @@ public:
 
 private:
 	std::function<void()> callback;
-	const int totalTime;
+	const int firstTime; // in milliseconds
 	int timeLeft; // in milliseconds
 	bool finished;
 };

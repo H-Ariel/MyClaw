@@ -18,7 +18,7 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string&
 	_canShoot(!shootAni.empty()), _canShootDuck(!shootDuckAni.empty()),
 	_projectileAniDir(projectileAniDir),
 	_minX((float)obj.minX), _maxX((float)obj.maxX),
-	_isStaticEnemy(obj.userValue1), _attackRest(0), _fallDead(true),
+	_isStaticEnemy(obj.userValue1), _fallDead(true),
 	_deathType(DeathType::Regular)
 {
 	_isMirrored = false;
@@ -166,14 +166,11 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 	}
 	else
 	{
-		if (_attackRest > 0)
-			_attackRest -= elapsedTime;
-
 		if (_isStaticEnemy)
 		{
 			_isStanding = true;
 		}
-		if (_attackRest <= 0)
+		if (_attackTimer.isFinished())
 			makeAttack();
 	}
 

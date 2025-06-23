@@ -1,5 +1,4 @@
 #include "PathElevator.h"
-#include "../../GlobalObjects.h"
 
 
 PathElevator::PathElevator(const WwdObject& obj)
@@ -22,7 +21,7 @@ PathElevator::PathElevator(const WwdObject& obj)
 	_pathIdx = -1;
 
 	_timer = DBG_NEW Timer((int)(_paths[0].second / _totalSpeed), bind(&PathElevator::changeDirection, this));
-	GO::addTimer(_timer);
+	addTimer(_timer);
 }
 PathElevator::~PathElevator() {
 	delete _timer;

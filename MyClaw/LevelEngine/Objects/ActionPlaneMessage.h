@@ -17,5 +17,5 @@ public:
 	UITextElement text;
 
 private:
-	int _timeLeft;
+	Timer _timer;
 };

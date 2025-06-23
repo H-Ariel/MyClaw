@@ -71,7 +71,8 @@ void Mercat::makeAttack(float deltaX, float deltaY)
 			_isAttack = true;
 			_isMirrored = GO::getPlayerPosition().x < position.x;
 
-			_attackRest = 2500;
+			_attackTimer.reset(2500);
+			addTimer(&_attackTimer);
 		}
 	}
 }

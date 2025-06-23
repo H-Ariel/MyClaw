@@ -61,19 +61,18 @@ public:
 	int getCurrentWeaponAmount() const { return _inventory.getCurrentWeaponAmount(); }
 	int getLivesAmount() const { return _inventory.getLives(); }
 	uint32_t getScore() const { return _inventory.getScore(); }
-	int getPowerupLeftTime() const { return _powerupLeftTime; } // in milliseconds
 	map<Item::Type, uint32_t> getCollectedTreasures() const { return _inventory.getCollectedTreasures(); }
+	int getPowerupLeftTime() const { return _powerupTimer.isFinished() ? 0 : _powerupTimer.getTimeLeft(); } // in milliseconds
 
 	SavedDataManager::GameData getGameData() const;
 	void setGameData(const SavedDataManager::GameData& data);
 
-	void activateDialog(int duration) { _dialogLeftTime = duration; }
+	void activateDialog(int duration);
 
 	void squeeze(D2D1_POINT_2F pos, bool mirror = false);
 	void unsqueeze();
 
 	bool cheat(int cheatType); // return `true` if the cheat is activated
-
 
 	void onSpacePressed();
 	void onZPressed();
@@ -99,7 +98,6 @@ private:
 	void updateInvincibilityColorEffect(); // update color (only in invincibility mode)
 	void cancelInvincibilityEffect();
 
-
 	void useWeapon(bool duck, bool inAir);
 	void jump();
 	bool checkForHurts() override; // check for hits from enemies, projectiles, and exploding powder kegs
@@ -107,8 +105,8 @@ private:
 	void calcRect(); // calculate the player rectangle and save in `_saveCurrRect`
 	void calcAttackRect(); // calculate the player attack rectangle and save in `_saveCurrAttackRect`
 	void shootSwordProjectile();
-
 	void resetKeys();
+	void stopPowerup();
 	
 
 	string _aniName;
@@ -117,10 +115,10 @@ private:
 	pair<Rectangle2D, int> _saveCurrAttackRect;
 	Inventory _inventory;
 	InvincibilityComponent _invincibilityComponent;
+	Timer _dialogTimer, _powerupTimer;
+	Timer _damageRestTimer; // rest time between enemies attacks
 	PowderKeg* _raisedPowderKeg; // saves the keg he's picking up now.
-	int _dialogLeftTime, _powerupLeftTime; // in milliseconds
 	int _holdAltTime; // in milliseconds. it used for pre-dynamite
-	int _damageRest; // rest time between enemies attacks
 	int _freezeTime; // in milliseconds. it used for freeze from siren.
 	Item::Type _currPowerup; // the current powerup he has (not treasures!)
 	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _altPressed;

@@ -102,7 +102,7 @@ protected:
 private:
 	shared_ptr<UIAnimation> _glitterAnimation;
 	int _duration; // (in milliseconds). used in Catnip, Fire-Sword, etc.
-	int _delayBeforeRespawn; // (in milliseconds)
+	Timer _respawnTimer; // (in milliseconds)
 	bool _respawning;
 	bool _useGlitter;
 

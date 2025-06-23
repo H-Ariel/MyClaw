@@ -22,7 +22,7 @@ const initializer_list<Item::Type> Item::UpdateFramesTypes = {
 
 
 Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
-	: BaseDynamicPlaneObject(obj), _type((Type)type), _delayBeforeRespawn(0), _useGlitter(false)
+	: BaseDynamicPlaneObject(obj), _type((Type)type), _useGlitter(false)
 {
 	if (_type == Type::Default)
 	{
@@ -80,10 +80,7 @@ void Item::Logic(uint32_t elapsedTime)
 {
 	if (speed.x == 0 && speed.y == 0)
 	{
-		if (_delayBeforeRespawn > 0)
-			_delayBeforeRespawn -= elapsedTime;
-
-		if (!_respawning || _delayBeforeRespawn <= 0)
+		if (!_respawning || _respawnTimer.isFinished())
 		{
 			if (GetRect().intersects(GO::getPlayerRect()))
 			{
@@ -91,7 +88,8 @@ void Item::Logic(uint32_t elapsedTime)
 				{
 					playItemSound();
 					removeObject = !_respawning;
-					_delayBeforeRespawn = 10000; // respawn after 10 seconds
+					_respawnTimer.reset(10000); // respawn after 10 seconds
+					addTimer(&_respawnTimer);
 				}
 			}
 		}
@@ -109,7 +107,7 @@ void Item::Logic(uint32_t elapsedTime)
 }
 void Item::Draw()
 {
-	if (_delayBeforeRespawn <= 0) // draw only if playr can take it
+	if (_respawnTimer.isFinished()) // draw only if playr can take it
 	{
 		BaseDynamicPlaneObject::Draw();
 

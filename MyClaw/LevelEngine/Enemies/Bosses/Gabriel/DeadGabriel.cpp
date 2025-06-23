@@ -8,23 +8,16 @@ DeadGabriel::DeadGabriel(D2D1_POINT_2F pos, const unordered_map<string, shared_p
 		gabrielAnimations.at("KILLFALL3")->getFramesList() +
 		gabrielAnimations.at("KILLFALL4")->getFramesList()
 	), false),
-	_delay((int)gabrielAnimations.at("KILLFALL1")->getTotalDuration()), _moved(false)
+	_timer((int)gabrielAnimations.at("KILLFALL1")->getTotalDuration(),
+		bind(&DeadGabriel::changeAnimation, this))
 {
 	drawZ = DefaultZCoord::Characters + 1;
+	addTimer(&_timer);
 }
-void DeadGabriel::Logic(uint32_t elapsedTime)
-{
-	if (!_moved)
-	{
-		_delay -= elapsedTime;
-		if (_delay <= 0)
-		{
-			// TODO: add flip in air before stay in this position
-			_ani->position = { 42992, 5240 };
-			_ani->mirrored = true;
-			_moved = true;
-		}
-	}
 
-	_ani->Logic(elapsedTime);
+void DeadGabriel::changeAnimation()
+{
+	// TODO: add flip in air before stay in this position
+	_ani->position = { 42992, 5240 };
+	_ani->mirrored = true;
 }

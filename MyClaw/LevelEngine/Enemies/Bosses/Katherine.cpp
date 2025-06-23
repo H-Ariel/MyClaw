@@ -50,7 +50,7 @@ void Katherine::Logic(uint32_t elapsedTime)
 	speed.y += GRAVITY * elapsedTime;
 	position.y += speed.y * elapsedTime;
 
-	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_FLIP)
+	if (!_isAttack && _attackTimer.isFinished() && _ani != ANIMATION_FLIP)
 	{
 		BaseBoss::makeAttack();
 	}
@@ -164,11 +164,6 @@ void Katherine::stopMovingRight(float collisionSize)
 
 bool Katherine::PreLogic(uint32_t elapsedTime)
 {
-	if (_attackRest > 0)
-	{
-		_attackRest -= elapsedTime;
-	}
-
 	if (_ani == ANIMATION_FLIP)
 	{
 		if (_ani->isFinishAnimation())
@@ -214,7 +209,8 @@ void Katherine::makeAttack(float deltaX, float deltaY)
 		_isAttack = true;
 		_isMirrored = GO::getPlayerPosition().x < position.x;
 
-		_attackRest = 800;
+		_attackTimer.reset(800);
+		addTimer(&_attackTimer);
 	}
 	else if (192 < deltaX && deltaX < 208 && deltaY < 24) // CC is far from K
 	{
@@ -223,7 +219,8 @@ void Katherine::makeAttack(float deltaX, float deltaY)
 		_isAttack = true;
 		_isMirrored = GO::getPlayerPosition().x < position.x;
 
-		_attackRest = 1200;
+		_attackTimer.reset(1200);
+		addTimer(&_attackTimer);
 	}
 }
 bool Katherine::checkForHurts()

@@ -47,7 +47,8 @@ void BearSailor::makeAttack(float deltaX, float deltaY)
 			_isAttack = true;
 			_isMirrored = GO::getPlayerPosition().x < position.x;
 			GO::squeezePlayer({ position.x + (_isMirrored ? -48 : 48), position.y - 8 }, !_isMirrored);
-			_attackRest = 1000;
+			_attackTimer.reset(1000);
+			addTimer(&_attackTimer);
 		}
 		else if (deltaX < 96) // CC is little far from enemy
 		{

@@ -10,7 +10,7 @@ constexpr float OFFSET_Y = TILE_SIZE / 2.f;
 TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 	: BaseStaticPlaneObject(obj), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
 	_damage(obj.damage > 0 ? obj.damage : 5), _projSpeed({ obj.speedX / 1000.f, obj.speedY / 1000.f }),
-	_restTime(0), _offset({}), _projIsOut(false)
+	_offset({}), _projIsOut(false)
 {
 	char frame[9];
 
@@ -54,10 +54,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 
 void TProjectilesShooter::Logic(uint32_t elapsedTime)
 {
-	if (_restTime > 0)
-		_restTime -= elapsedTime;
-
-	if (_restTime <= 0 && _objRc.intersects(GO::getPlayerRect()))
+	if (_restTimer.isFinished() && _objRc.intersects(GO::getPlayerRect()))
 	{
 		_ani->updateFrames = true;
 	}
@@ -66,7 +63,8 @@ void TProjectilesShooter::Logic(uint32_t elapsedTime)
 
 	if (_ani->isFinishAnimation())
 	{
-		_restTime = _maxRestTime;
+		_restTimer.reset(_maxRestTime);
+		addTimer(&_restTimer);
 		_ani->reset();
 		_ani->updateFrames = false;
 		_projIsOut = false;

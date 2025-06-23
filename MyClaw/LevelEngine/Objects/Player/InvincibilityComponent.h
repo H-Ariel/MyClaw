@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameEngine/GameEngineFramework.hpp"
+#include "GameEngine/Timer.h"
 
 class Player;
 
@@ -10,22 +11,18 @@ class InvincibilityComponent
 public:
 	InvincibilityComponent(Player* player);
 
-	void update(uint32_t elapsedTime);
+	void init(); // init to start timer and colors
 
-	void reset() { currColorIdx = 0; _timeCounter = 0; }
-
-	int calcNextColor() {
-		currColorIdx = (currColorIdx + 1) % colors.size();
-		return (int)currColorIdx;
-	}
 	const ColorF* getColor() const { return &(colors[currColorIdx]); }
 
 	const vector<ColorF>* getColorsList() const { return &colors;  }
 
 private:
+	void changePlayerColor();
+
 	static const vector<ColorF> colors;
 
 	Player* player;
+	Timer timer;
 	size_t currColorIdx;
-	int _timeCounter; // timer for color changeing in milliseconds
 };

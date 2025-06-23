@@ -63,7 +63,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 	speed.y += GRAVITY * elapsedTime;
 	position.y += speed.y * elapsedTime;
 
-	if (!_isAttack && _attackRest <= 0 && _ani != ANIMATION_JUMPBACK)
+	if (!_isAttack && _attackTimer.isFinished() && _ani != ANIMATION_JUMPBACK)
 	{
 		BaseBoss::makeAttack();
 	}
@@ -169,11 +169,6 @@ void LeRauxe::stopMovingRight(float collisionSize)
 
 bool LeRauxe::PreLogic(uint32_t elapsedTime)
 {
-	if (_attackRest > 0)
-	{
-		_attackRest -= elapsedTime;
-	}
-
 	if (_ani == ANIMATION_JUMPBACK)
 	{
 		if (_ani->isFinishAnimation())
@@ -220,7 +215,8 @@ void LeRauxe::makeAttack(float deltaX, float deltaY)
 		_isAttack = true;
 		_isMirrored = GO::getPlayerPosition().x < position.x;
 
-		_attackRest = 600;
+		_attackTimer.reset(600);
+		addTimer(&_attackTimer);
 	}
 }
 bool LeRauxe::checkForHurts()

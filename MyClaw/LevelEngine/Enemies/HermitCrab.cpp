@@ -51,7 +51,8 @@ void HermitCrab::makeAttack(float deltaX, float deltaY)
 		obj.damage = 10;
 		GO::addObjectToActionPlane(DBG_NEW CrabBomb(obj));
 
-		_attackRest = 1200;
+		_attackTimer.reset(1200);
+		addTimer(&_attackTimer);
 	}
 }
 

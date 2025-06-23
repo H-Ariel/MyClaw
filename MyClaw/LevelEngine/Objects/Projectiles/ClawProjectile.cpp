@@ -1,5 +1,4 @@
 #include "ClawProjectile.h"
-#include "../../GlobalObjects.h"
 
 
 ClawProjectile* ClawProjectile::createNew(Types type, const WwdObject& data)
@@ -74,7 +73,7 @@ void ClawDynamite::stopFalling(float collisionSize)
 	speed = {};
 	_ani->updateFrames = false;
 	_state = State::Wait;
-	GO::addTimer(&_delayBeforeExplos);
+	addTimer(&_delayBeforeExplos);
 }
 void ClawDynamite::stopMovingLeft(float collisionSize)
 {

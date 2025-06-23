@@ -15,6 +15,6 @@ private:
 	const D2D1_POINT_2F _projSpeed, _offset;
 	const int _maxRestTime, _damage;
 	int _shootIndex;
-	int _restTime;
+	Timer _restTimer;
 	bool _projIsOut;
 };

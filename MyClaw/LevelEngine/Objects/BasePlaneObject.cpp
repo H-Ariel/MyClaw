@@ -42,6 +42,10 @@ bool BasePlaneObject::tryCatchPlayer()
 	}
 	return false;
 }
+void BasePlaneObject::addTimer(Timer* timer)
+{
+	GO::addTimer(timer);
+}
 
 
 BaseStaticPlaneObject::BaseStaticPlaneObject(const WwdObject& obj)

@@ -1,5 +1,6 @@
 #include "InvincibilityComponent.h"
 #include "Player.h"
+#include "../../GlobalObjects.h"
 
 
 const vector<ColorF> InvincibilityComponent::colors = {
@@ -11,18 +12,24 @@ const vector<ColorF> InvincibilityComponent::colors = {
 	ColorF(1, 0, 1, 1)
 };
 
+constexpr int CHANGE_COLOR_TIME = 150;
 
-InvincibilityComponent::InvincibilityComponent(Player* player) 
-	: player(player), currColorIdx(0), _timeCounter(0) {}
-
-
-void InvincibilityComponent::update(uint32_t elapsedTime)
+InvincibilityComponent::InvincibilityComponent(Player* player)
+	: player(player), currColorIdx(0),
+	timer(bind(&InvincibilityComponent::changePlayerColor, this))
 {
-	_timeCounter += elapsedTime;
-	if (_timeCounter >= 150) // change color every 150ms
-	{
-		_timeCounter = 0;
-		calcNextColor();
-		player->updateInvincibilityColorEffect();
-	}
+}
+
+void InvincibilityComponent::changePlayerColor()
+{
+	currColorIdx = (currColorIdx + 1) % colors.size();  // calc next color
+	player->updateInvincibilityColorEffect();
+	timer.reset(CHANGE_COLOR_TIME);
+}
+
+void InvincibilityComponent::init()
+{
+	currColorIdx = -1;
+	changePlayerColor();
+	GO::addTimer(&timer);
 }

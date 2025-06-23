@@ -34,9 +34,7 @@ void Fish::Logic(uint32_t elapsedTime)
 
 	if (!_isAttack)
 	{
-		if (_attackRest > 0)
-			_attackRest -= elapsedTime;
-		if (_attackRest <= 0)
+		if (_attackTimer.isFinished()) // TODO search when i update this timer :/
 			BaseEnemy::makeAttack();
 	}
 	else

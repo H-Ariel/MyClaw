@@ -27,10 +27,8 @@ void Seagull::Logic(uint32_t elapsedTime)
 
 	if (_ani == ANIMATION_FLYING)
 	{
-		_attackRest -= elapsedTime;
-
 		// if CC close to enemy - dive and attack
-		if (_attackRest <= 0 && doesEnemySeeClaw() &&
+		if (_attackTimer.isFinished() && doesEnemySeeClaw() &&
 			(_minX <= GO::getPlayerPosition().x && GO::getPlayerPosition().x <= _maxX) &&
 			(_minY <= GO::getPlayerPosition().y && GO::getPlayerPosition().y <= _maxY))
 		{
@@ -56,7 +54,8 @@ void Seagull::Logic(uint32_t elapsedTime)
 			position.y = _minY;
 			speed.x = _isMirrored ? ENEMY_PATROL_SPEED : -ENEMY_PATROL_SPEED;
 			speed.y = 0;
-			_attackRest = 1000;
+			_attackTimer.reset(1000);
+			addTimer(&_attackTimer);
 			_ani = ANIMATION_FLYING;
 		}
 	}

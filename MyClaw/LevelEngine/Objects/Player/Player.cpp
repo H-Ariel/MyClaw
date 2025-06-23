@@ -49,12 +49,24 @@ constexpr int MAX_HEALTH_AMOUNT = 100;
 #define ADD_WEAPON(t, n)	{ if (_inventory.addWeapon(t, n)) return true; else break; }
 #define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH_AMOUNT)
 #define ADD_LIFE(n)			ADD_VALUE(_inventory._lives, n, MAX_LIVES_AMOUNT)
-#define SET_POWERUP(t) { \
+#define SET_POWERUP(t) {\
 	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
-	if (_currPowerup != Item:: t) { _powerupLeftTime = 0; cancelInvincibilityEffect(); } \
-	_powerupLeftTime += item->getDuration(); \
-	_currPowerup = Item:: t; \
-	return true; }
+	if (_currPowerup != Item::t) {\
+		_powerupTimer.reset(item->getDuration());\
+		cancelInvincibilityEffect();\
+	} else {\
+		_powerupTimer.reset(_powerupTimer.getTimeLeft() + item->getDuration());\
+	}\
+	_currPowerup = Item::t; \
+	GO::addTimer(&_powerupTimer); \
+	return true;\
+}
+//#define SET_POWERUP(t) { \
+//	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
+//	if (_currPowerup != Item:: t) { _powerupLeftTime = 0; cancelInvincibilityEffect(); } \
+//	_powerupLeftTime += item->getDuration(); \
+//	_currPowerup = Item:: t; \
+//	return true; }
 
 
 #define loseHealth(damage) if (!isInvincibility() && !cheats->isGodMode()) _health -= damage;
@@ -68,7 +80,7 @@ constexpr int MAX_DYNAMITE_SPEED_Y = DEFAULT_PROJECTILE_SPEED * 5 / 3;
 
 Player::Player()
 	: BaseCharacter({}), _finishLevel(false), _powerupSparkles(&_saveCurrRect), startPosition({})
-	, _invincibilityComponent(this)
+	, _invincibilityComponent(this), _powerupTimer(bind(&Player::stopPowerup, this))
 {
 	_animations = AssetsManager::loadAnimationsFromDirectory("CLAW/ANIS", "", _invincibilityComponent.getColorsList());
 
@@ -261,10 +273,6 @@ void Player::Logic(uint32_t elapsedTime)
 	}
 
 	_ani->opacity = isGhost() || isInvincibility() ? 0.5f : 1.f;
-	// when `_currPowerup` is `Invincibility` draw CC colorfuly
-	if (isInvincibility())
-		_invincibilityComponent.update(elapsedTime);
-
 	_ani->mirrored = _isMirrored && !_isOnLadder;
 	callAnimationLogic(elapsedTime);
 
@@ -429,17 +437,6 @@ void Player::setAnimation(uint32_t elapsedTime, bool lookup, bool climbUp, bool 
 void Player::updateTimers(uint32_t elapsedTime)
 {
 	if (_holdAltTime < 1000) _holdAltTime += elapsedTime; // the max time for holding is 1000 milliseconds
-	if (_dialogLeftTime > 0) _dialogLeftTime -= elapsedTime;
-	if (_powerupLeftTime > 0) _powerupLeftTime -= elapsedTime;
-	else if (_currPowerup != Item::None) // now powerup finished
-	{
-		_powerupLeftTime = 0;
-		if (isInvincibility())
-			cancelInvincibilityEffect();
-		_currPowerup = Item::None;
-		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
-	}
-	if (_damageRest > 0) _damageRest -= elapsedTime;
 }
 void Player::handleFlyingCheat(uint32_t elapsedTime)
 {
@@ -481,7 +478,7 @@ bool Player::handleDamage(uint32_t elapsedTime)
 		_lastAttackRect = {};
 		callAnimationLogic(elapsedTime);
 		if (_ani->isFinishAnimation())
-			_damageRest = 250;
+			_damageRestTimer.reset(250);
 		calcRect();
 		calcAttackRect();
 		return true;
@@ -553,7 +550,7 @@ void Player::Draw()
 {
 	BaseCharacter::Draw();
 
-	if (_dialogLeftTime > 0)
+	if (!_dialogTimer.isFinished())
 	{
 		EXCLAMATION_MARK->position = { position.x, position.y - 64 };
 		EXCLAMATION_MARK->Draw();
@@ -893,7 +890,7 @@ bool Player::collectItem(Item* item)
 	case Item::Powerup_Catnip_Red:		SET_POWERUP(Powerup_Catnip);
 	case Item::Powerup_Invisibility:	SET_POWERUP(Powerup_Invisibility);
 	case Item::Powerup_Invincibility:
-		_invincibilityComponent.reset();
+		_invincibilityComponent.init();
 		updateInvincibilityColorEffect();
 		SET_POWERUP(Powerup_Invincibility);
 	case Item::Powerup_FireSword:		SET_POWERUP(Powerup_FireSword);
@@ -961,15 +958,14 @@ void Player::backToLife()
 	position = startPosition;
 	speed = {};
 	_saveCurrRect = GetRect();
-	_powerupLeftTime = 0;
-	_dialogLeftTime = 0;
+	_powerupTimer.stop();
+	stopPowerup();
+	_dialogTimer.stop();
 	_holdAltTime = 0;
-	_currPowerup = Item::None;
-	cancelInvincibilityEffect();
 	_raisedPowderKeg = nullptr;
 	_lastAttackRect = {};
 	_saveCurrAttackRect = {};
-	_damageRest = 0;
+	_damageRestTimer.stop();
 	_isMirrored = false;
 	_freezeTime = 0;
 
@@ -982,12 +978,11 @@ void Player::loseLife()
 	{
 		_inventory.loseLife();
 		_health = 0;
-		_damageRest = 0;
+		_damageRestTimer.stop();
 		changeAnimation("SPIKEDEATH");
 		_ani->loopAni = false;
-		_powerupLeftTime = 0;
-		_currPowerup = Item::None;
-		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
+		_powerupTimer.stop();
+		stopPowerup();
 	}
 }
 void Player::nextLevel()
@@ -1048,7 +1043,7 @@ void Player::setGameData(const SavedDataManager::GameData& data)
 
 bool Player::checkForHurts()
 {
-	if (_isAttack || isTakeDamage() || _damageRest > 0 || isInvincibility() || cheats->isGodMode())
+	if (_isAttack || isTakeDamage() || !_damageRestTimer.isFinished() || isInvincibility() || cheats->isGodMode())
 		return false;
 
 	pair<Rectangle2D, int> atkRc;
@@ -1152,6 +1147,12 @@ bool Player::checkForHurts()
 	return false;
 }
 
+void Player::activateDialog(int duration)
+{
+	_dialogTimer.reset(duration);
+	GO::addTimer(&_dialogTimer);
+}
+
 #ifdef _DEBUG // in debug mode, player can move freely
 void Player::squeeze(D2D1_POINT_2F pos, bool mirror) {}
 void Player::unsqueeze() {}
@@ -1202,7 +1203,7 @@ bool Player::cheat(int cheatType)
 		_freezeTime = false;
 		_useWeapon = false;
 		resetKeys();
-		_damageRest = 0;
+		_damageRestTimer.stop();
 		elevator = nullptr;
 		rope = nullptr;
 		conveyorBelt = nullptr;
@@ -1220,4 +1221,15 @@ void Player::resetKeys()
 	_rightPressed = false;
 	_altPressed = false;
 	_holdAltTime = 0;
+}
+
+void Player::stopPowerup()
+{
+	if (_currPowerup != Item::None) // now powerup finished
+	{
+		if (isInvincibility())
+			cancelInvincibilityEffect();
+		_currPowerup = Item::None;
+		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
+	}
 }

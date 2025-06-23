@@ -44,6 +44,9 @@ public:
 	bool removeObject;
 
 protected:
+	void addTimer(Timer* timer); // many object use this method...
+
+
 	shared_ptr<UIAnimation> _ani;
 	bool _isMirrored, _isVisible, _upsideDown;
 

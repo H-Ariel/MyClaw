@@ -47,7 +47,7 @@ protected:
 	vector<int8_t> _itemsTypes;
 	const float _minX, _maxX;
 	const int _damage; // the amount of health that enemy took when he hit Claw
-	int _attackRest; // rest time between attack. NOTE: not all enemies used that
+	Timer _attackTimer; // rest time between attack. NOTE: not all enemies used that
 	bool _isStanding;
 	bool _fallDead; // `true` if enemy is falling dead
 	const bool _canStrike, _canStrikeDuck, _canShoot, _canShootDuck;

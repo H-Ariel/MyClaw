@@ -1,9 +1,8 @@
 #include "ClawProjectile.h"
-#include "../../GlobalObjects.h"
 
 
 Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet)
-	: BaseDynamicPlaneObject(obj), _damage(obj.damage)
+	: BaseDynamicPlaneObject(obj), _damage(obj.damage), _timer(nullptr)
 {
 	if (aniDirPath.empty()) return;
 	else if (endsWith(aniDirPath, ".ANI"))
@@ -31,8 +30,8 @@ Projectile::~Projectile()
 }
 void Projectile::init() {
 	drawZ = DefaultZCoord::Characters + 1;
-	_timer = DBG_NEW Timer(3000, [this] {removeObject = true; });
-	GO::addTimer(_timer);
+	_timer = DBG_NEW Timer(3000, [this] { removeObject = true; });
+	addTimer(_timer);
 }
 
 void Projectile::Logic(uint32_t elapsedTime)
