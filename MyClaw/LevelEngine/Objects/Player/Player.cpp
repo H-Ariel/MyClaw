@@ -16,62 +16,25 @@ constexpr auto& cheats = GO::cheats;
 
 // TODO: find perfect values (if they are still not perfect :D )
 
-#define SpeedX_Normal			0.288f
-#define SpeedX_SuperSpeed		0.416f
-#define SpeedX_LiftPowderKeg	0.144f
-#define SpeedY_Climb			0.288f
-#define SpeedY_SuperClimb		0.412f
-#define SpeedY_RegularJump		0.800f
-#define SpeedY_SuperJump		0.920f
-#define SpeedY_MAX				MAX_Y_SPEED
+constexpr float SpeedX_SuperSpeed	= 0.416f;
+constexpr float SpeedX_LiftPowderKeg= 0.144f;
+constexpr float SpeedY_SuperClimb	= 0.412f;
+constexpr float SpeedY_RegularJump	= 0.800f;
+constexpr float SpeedY_SuperJump	= 0.920f;
+constexpr float SpeedY_MAX = MAX_Y_SPEED;
 
 #ifdef _DEBUG // move fast in debug mode
-#undef SpeedX_Normal
-#define SpeedX_Normal	SpeedX_SuperSpeed
-#undef SpeedY_Climb
-#define SpeedY_Climb	SpeedY_SuperClimb
+constexpr float SpeedX_Normal = SpeedX_SuperSpeed;
+constexpr float SpeedY_Climb = SpeedY_SuperClimb;
+#else
+constexpr float SpeedX_Normal = 0.288f;
+constexpr float SpeedY_Climb = 0.288f;
 #endif
-
-#define EXCLAMATION_MARK	_animations["exclamation-mark"] // it used when claw is speaking
 
 constexpr int MAX_HEALTH_AMOUNT = 100;
 
-// code blocks for `collectItem`
 
-#define ADD_VALUE(dst, n, max) { \
-	if (dst < max) { \
-		dst += n; \
-		if (dst > max) \
-			dst = max; \
-		return true; \
-	} break; }
-
-#define ADD_WEAPON(t, n)	{ if (_inventory.addWeapon(t, n)) return true; else break; }
-#define ADD_HEALTH(n)		ADD_VALUE(_health, n, MAX_HEALTH_AMOUNT)
-#define ADD_LIFE(n)			ADD_VALUE(_inventory._lives, n, MAX_LIVES_AMOUNT)
-#define SET_POWERUP(t) {\
-	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
-	if (_currPowerup != Item::t) {\
-		_powerupTimer.reset(item->getDuration());\
-		cancelInvincibilityEffect();\
-	} else {\
-		_powerupTimer.reset(_powerupTimer.getTimeLeft() + item->getDuration());\
-	}\
-	_currPowerup = Item::t; \
-	GO::addTimer(&_powerupTimer); \
-	return true;\
-}
-//#define SET_POWERUP(t) { \
-//	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup); \
-//	if (_currPowerup != Item:: t) { _powerupLeftTime = 0; cancelInvincibilityEffect(); } \
-//	_powerupLeftTime += item->getDuration(); \
-//	_currPowerup = Item:: t; \
-//	return true; }
-
-
-#define loseHealth(damage) if (!isInvincibility() && !cheats->isGodMode()) _health -= damage;
-#define renameKey(oldKey, newKey) { _animations[newKey] = _animations[oldKey]; _animations.erase(oldKey); }
-#define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup
+#define Powerup_Catnip Powerup_Catnip_White // used for catnip powerup (for uniform use)
 
 
 constexpr int MAX_DYNAMITE_SPEED_X = DEFAULT_PROJECTILE_SPEED * 8 / 7;
@@ -87,18 +50,18 @@ Player::Player()
 	backToLife();
 
 	// change keys for easy codeing
-	renameKey("JUMPDYNAMITE", "JUMPPOSTDYNAMITE");
-	renameKey("DUCKEMPTYDYNAMITE", "DUCKEMPTYPOSTDYNAMITE");
-	renameKey("EMPTYDYNAMITE", "EMPTYPOSTDYNAMITE");
-	renameKey("EMPTYJUMPDYNAMITE", "JUMPEMPTYPOSTDYNAMITE");
-	renameKey("EMPTYJUMPPISTOL", "JUMPEMPTYPISTOL");
-	renameKey("EMPTYJUMPMAGIC", "JUMPEMPTYMAGIC");
+	renameKey(_animations, string("JUMPDYNAMITE"), string("JUMPPOSTDYNAMITE"));
+	renameKey(_animations, string("DUCKEMPTYDYNAMITE"), string("DUCKEMPTYPOSTDYNAMITE"));
+	renameKey(_animations, string("EMPTYDYNAMITE"), string("EMPTYPOSTDYNAMITE"));
+	renameKey(_animations, string("EMPTYJUMPDYNAMITE"), string("JUMPEMPTYPOSTDYNAMITE"));
+	renameKey(_animations, string("EMPTYJUMPPISTOL"), string("JUMPEMPTYPISTOL"));
+	renameKey(_animations, string("EMPTYJUMPMAGIC"), string("JUMPEMPTYMAGIC"));
 
 	AttackAnimations = { "SWIPE", "KICK", "UPPERCUT", "PUNCH", "DUCKSWIPE", "JUMPSWIPE" };
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT" };
 	UninterruptibleAnimations = { "LIFT" ,"THROW" ,"FALLDEATH" ,"EMPTYPOSTDYNAMITE" ,"DUCKEMPTYPOSTDYNAMITE" ,"SPIKEDEATH" };
 
-	EXCLAMATION_MARK = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
+	_exclamationMark = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
 	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
 	_animations["FLYING-CHEAT"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/401.PID");
 	_animations["FLYING-CHEAT"]->upsideDown = true;
@@ -552,8 +515,8 @@ void Player::Draw()
 
 	if (!_dialogTimer.isFinished())
 	{
-		EXCLAMATION_MARK->position = { position.x, position.y - 64 };
-		EXCLAMATION_MARK->Draw();
+		_exclamationMark->position = { position.x, position.y - 64 };
+		_exclamationMark->Draw();
 	}
 
 	if (_currPowerup == Item::Powerup_Catnip)
@@ -870,33 +833,36 @@ bool Player::collectItem(Item* item)
 	case Item::Treasure_Skull_Blue:
 	case Item::Treasure_Skull_Purple:	_inventory.collectTreasure(type); return true;
 
-	case Item::Ammo_Deathbag:	ADD_WEAPON(ClawProjectile::Types::Pistol, 25);
-	case Item::Ammo_Shot:		ADD_WEAPON(ClawProjectile::Types::Pistol, 5);
-	case Item::Ammo_Shotbag:	ADD_WEAPON(ClawProjectile::Types::Pistol, 10);
-	case Item::Ammo_Magic_5:	ADD_WEAPON(ClawProjectile::Types::Magic, 5);
-	case Item::Ammo_Magic_10:	ADD_WEAPON(ClawProjectile::Types::Magic, 10);
-	case Item::Ammo_Magic_25:	ADD_WEAPON(ClawProjectile::Types::Magic, 25);
-	case Item::Ammo_Dynamite:	ADD_WEAPON(ClawProjectile::Types::Dynamite, 5);
+	case Item::Ammo_Deathbag:	if (_inventory.addWeapon(ClawProjectile::Types::Pistol,  25)) return true; break;
+	case Item::Ammo_Shot:		if (_inventory.addWeapon(ClawProjectile::Types::Pistol,   5)) return true; break;
+	case Item::Ammo_Shotbag:	if (_inventory.addWeapon(ClawProjectile::Types::Pistol,  10)) return true; break;
+	case Item::Ammo_Magic_5:	if (_inventory.addWeapon(ClawProjectile::Types::Magic,    5)) return true; break;
+	case Item::Ammo_Magic_10:	if (_inventory.addWeapon(ClawProjectile::Types::Magic,   10)) return true; break;
+	case Item::Ammo_Magic_25:	if (_inventory.addWeapon(ClawProjectile::Types::Magic,   25)) return true; break;
+	case Item::Ammo_Dynamite:	if (_inventory.addWeapon(ClawProjectile::Types::Dynamite, 5)) return true; break;
 
-	case Item::Health_Level:	ADD_HEALTH(5);
-	case Item::Health_10:		ADD_HEALTH(10);
-	case Item::Health_15:		ADD_HEALTH(15);
-	case Item::Health_25:		ADD_HEALTH(25);
+	case Item::Health_Level:	if (addHealth( 5)) return true; break;
+	case Item::Health_10:		if (addHealth(10)) return true; break;
+	case Item::Health_15:		if (addHealth(15)) return true; break;
+	case Item::Health_25:		if (addHealth(25)) return true; break;
 
 	case Item::MapPiece:
 	case Item::NineLivesGem:	_finishLevel = true; return true;
 
-	case Item::Powerup_Catnip_White:
-	case Item::Powerup_Catnip_Red:		SET_POWERUP(Powerup_Catnip);
-	case Item::Powerup_Invisibility:	SET_POWERUP(Powerup_Invisibility);
 	case Item::Powerup_Invincibility:
 		_invincibilityComponent.init();
 		updateInvincibilityColorEffect();
-		SET_POWERUP(Powerup_Invincibility);
-	case Item::Powerup_FireSword:		SET_POWERUP(Powerup_FireSword);
-	case Item::Powerup_LightningSword:	SET_POWERUP(Powerup_LightningSword);
-	case Item::Powerup_IceSword:		SET_POWERUP(Powerup_IceSword);
-	case Item::Powerup_ExtraLife:		if (_inventory.addLives(1)) return true; else break;
+		[[fallthrough]]; // special init for this type
+	case Item::Powerup_Catnip_White:
+	case Item::Powerup_Catnip_Red:
+	case Item::Powerup_Invisibility:
+	case Item::Powerup_FireSword:
+	case Item::Powerup_LightningSword:
+	case Item::Powerup_IceSword:
+		startPowerup(item);
+		return true;
+
+	case Item::Powerup_ExtraLife:	if (_inventory.addLives(1)) return true; else break;
 
 	case Item::Warp:
 	case Item::BossWarp:
@@ -1041,6 +1007,10 @@ void Player::setGameData(const SavedDataManager::GameData& data)
 	_inventory.setWeaponAmount(ClawProjectile::Types::Dynamite, data.dynamiteAmount);
 }
 
+void Player::loseHealth(int damage) {
+	if (!isInvincibility() && !cheats->isGodMode())
+		_health -= damage;
+}
 bool Player::checkForHurts()
 {
 	if (_isAttack || isTakeDamage() || !_damageRestTimer.isFinished() || isInvincibility() || cheats->isGodMode())
@@ -1150,7 +1120,7 @@ bool Player::checkForHurts()
 void Player::activateDialog(int duration)
 {
 	_dialogTimer.reset(duration);
-	GO::addTimer(&_dialogTimer);
+	addTimer(&_dialogTimer);
 }
 
 #ifdef _DEBUG // in debug mode, player can move freely
@@ -1232,4 +1202,31 @@ void Player::stopPowerup()
 		_currPowerup = Item::None;
 		AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Level);
 	}
+}
+void Player::startPowerup(Item* powerup)
+{
+	AssetsManager::startBackgroundMusic(AssetsManager::BackgroundMusicType::Powerup);
+	Item::Type type = powerup->getType();
+	if (type == Item::Type::Powerup_Catnip_Red)
+		type = Item::Type::Powerup_Catnip;
+
+	if (_currPowerup != type) {
+		_powerupTimer.reset(powerup->getDuration());
+		cancelInvincibilityEffect();
+	}
+	else {
+		_powerupTimer.reset(_powerupTimer.getTimeLeft() + powerup->getDuration());
+	}
+	_currPowerup = type;
+	addTimer(&_powerupTimer);
+}
+bool Player::addHealth(int health)
+{
+	if (_health < MAX_HEALTH_AMOUNT) {
+		_health += health;
+		if (_health > MAX_HEALTH_AMOUNT)
+			_health = MAX_HEALTH_AMOUNT;
+		return true;
+	}
+	return false;
 }

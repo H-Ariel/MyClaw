@@ -97,3 +97,10 @@ inline void myMemCpy(const T& dst, const T& src) { memcpy((void*)&dst, &src, siz
 // check if `p`'s type is `Type`
 template<typename Type, typename V>
 inline bool isinstance(const V* p) { return dynamic_cast<const Type*>(p) != nullptr; }
+
+// rename key in unordered_map
+template <class K, class V>
+inline void renameKey(unordered_map<K, V>& m, const K&& oldKey, const K&& newKey) {
+	m[newKey] = m[oldKey];
+	m.erase(oldKey);
+}

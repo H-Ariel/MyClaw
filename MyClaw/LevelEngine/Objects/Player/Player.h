@@ -107,10 +107,14 @@ private:
 	void shootSwordProjectile();
 	void resetKeys();
 	void stopPowerup();
+	void startPowerup(Item* powerup);
+	bool addHealth(int health);
+	void loseHealth(int damage);
 	
 
 	string _aniName;
 	vector<string> AttackAnimations, NoLoopAnimations, UninterruptibleAnimations;
+	shared_ptr<UIAnimation> _exclamationMark; // it used when claw is speaking
 	PowerupSparkles _powerupSparkles;
 	pair<Rectangle2D, int> _saveCurrAttackRect;
 	Inventory _inventory;
