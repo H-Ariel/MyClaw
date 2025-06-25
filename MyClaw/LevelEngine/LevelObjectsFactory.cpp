@@ -47,6 +47,9 @@
 #include "Enemies/Bosses/Marrow/Marrow.h"
 #include "Enemies/Chameleon.h"
 #include "Enemies/Bosses/Aquatis/Aquatis.h"
+#include "Enemies/Bosses/Aquatis/AquatisCrack.h"
+#include "Enemies/Bosses/Aquatis/AquatisTentacle.h"
+#include "Enemies/Bosses/Aquatis/AquatisStalactite.h"
 #include "Enemies/Bosses/RedTail.h"
 #include "Enemies/TigerGuard.h"
 #include "Enemies/Bosses/LordOmar/LordOmar.h"
@@ -325,11 +328,11 @@ BasePlaneObject* LevelObjectsFactory::createObject(const WwdObject& obj) {
 	}
 	else if (obj.logic == "Aquatis")
 	{
-		return DBG_NEW Aquatis(obj);
+		return Aquatis::createAquatis(obj);
 	}
 	else if (obj.logic == "Tentacle")
 	{
-		return DBG_NEW AquatisTentacle(obj);
+		return Aquatis::getInstance()->addTentacle(obj);
 	}
 	else if (obj.logic == "AquatisCrack")
 	{
@@ -341,7 +344,7 @@ BasePlaneObject* LevelObjectsFactory::createObject(const WwdObject& obj) {
 	}
 	else if (obj.logic == "AquatisStalactite")
 	{
-		return DBG_NEW AquatisStalactite(obj);
+		return Aquatis::getInstance()->addStalactite(obj);
 	}
 	else if (obj.logic == "RedTail")
 	{

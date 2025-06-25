@@ -70,7 +70,7 @@ void CheatsManager::addKey(int key)
 	case Catnip:			addPowerup(Item::Type::Powerup_Catnip_White); break;
 	case Invisibility:		addPowerup(Item::Type::Powerup_Invisibility); break;
 	case Invincibility:		addPowerup(Item::Type::Powerup_Invincibility); break;
-	case GodMode:			_god = !_god; [[fallthrough]]; // NO BREAKE HERE!
+	case GodMode:			_god = !_god; [[fallthrough]];
 	case FillHealth:
 	case FillPistol:
 	case FillMagic:

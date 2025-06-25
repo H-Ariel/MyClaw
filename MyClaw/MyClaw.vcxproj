@@ -164,6 +164,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Aquatis\AquatisCrack.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Aquatis\AquatisStalactite.cpp" />
+    <ClCompile Include="LevelEngine\Enemies\Bosses\Aquatis\AquatisTentacle.cpp" />
     <ClCompile Include="LevelEngine\Enemies\PunkRat.cpp" />
     <ClCompile Include="LevelEngine\Objects\Cannons\SkullCannon.cpp" />
     <ClCompile Include="LevelEngine\Objects\Cannons\TowerCannon.cpp" />
@@ -272,6 +275,9 @@
     <ClCompile Include="SavedDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Aquatis\AquatisCrack.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Aquatis\AquatisStalactite.h" />
+    <ClInclude Include="LevelEngine\Enemies\Bosses\Aquatis\AquatisTentacle.h" />
     <ClInclude Include="LevelEngine\Enemies\PunkRat.h" />
     <ClInclude Include="LevelEngine\Objects\Cannons\SkullCannon.h" />
     <ClInclude Include="LevelEngine\Objects\Cannons\TowerCannon.h" />

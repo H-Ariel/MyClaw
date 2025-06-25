@@ -1,64 +1,37 @@
 #pragma once
 
 #include "../../BaseEnemy.h"
-#include "../../../Objects/Projectiles/Projectile.h"
 
+
+class AquatisTentacle;
+class AquatisStalactite;
 
 class Aquatis : public BaseBoss
 {
 public:
-	Aquatis(const WwdObject& obj);
+	static Aquatis* createAquatis(const WwdObject& obj);
+	static Aquatis* getInstance() { return _Aquatis; }
+
 	~Aquatis();
 
 	void Logic(uint32_t elapsedTime) override;
 	pair<Rectangle2D, int> GetAttackRect() override;
 	bool checkForHurts() override;
-};
 
+	void activateNextStalactite();
 
-class AquatisTentacle : public BaseDamageObject
-{
-public:
-	AquatisTentacle(const WwdObject& obj);
-	~AquatisTentacle();
-	void Logic(uint32_t elapsedTime) override;
-	Rectangle2D GetRect() override;
-	bool isDamage() const override;
+	AquatisTentacle* addTentacle(const WwdObject& obj);
+	AquatisStalactite* addStalactite(const WwdObject& obj);
+
 
 private:
-	bool checkForHurts();
+	Aquatis(const WwdObject& obj);
 
-	shared_ptr<UIAnimation> _idle, _hit, _killfall, _respawn,
-		_slap, // tentacle slap/whip (when player is too far)
-		_squeeze; // tentacle squeeze (when player is too close)
-	Rectangle2D _lastAttackRect;
-	int _squeezeRestTime;
-	int _deadTime;
-};
+	static constexpr int STALACTITES_COUNT = 5;
 
+	vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that can hurt CC
+	AquatisStalactite* AquatisStalactitesList[STALACTITES_COUNT]; // list of stalactites that can hurt Aquatis
+	int currStalactiteIdx;
 
-class AquatisCrack : public BaseStaticPlaneObject
-{
-public:
-	AquatisCrack(const WwdObject& obj);
-
-	void Logic(uint32_t elapsedTime) override;
-
-private:
-	Projectile* _lastDynamite;
-};
-
-
-class AquatisStalactite : public Projectile
-{
-public:
-	AquatisStalactite(const WwdObject& obj);
-	~AquatisStalactite();
-
-	void Logic(uint32_t elapsedTime) override;
-	void stopFalling(float collisionSize) override;
-	int getDamage() const override;
-
-private:
-	const int _idx;
+	static Aquatis* _Aquatis;
 };
