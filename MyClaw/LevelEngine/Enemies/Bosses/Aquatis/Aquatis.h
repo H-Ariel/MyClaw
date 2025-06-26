@@ -29,8 +29,8 @@ private:
 
 	static constexpr int STALACTITES_COUNT = 5;
 
-	vector<AquatisTentacle*> AquatisTentaclesList; // list of tentacles that can hurt CC
-	AquatisStalactite* AquatisStalactitesList[STALACTITES_COUNT]; // list of stalactites that can hurt Aquatis
+	vector<AquatisTentacle*> tentaclesList; // list of tentacles that can hurt CC
+	AquatisStalactite* stalactitesList[STALACTITES_COUNT]; // list of stalactites that can hurt Aquatis
 	int currStalactiteIdx;
 
 	static Aquatis* _Aquatis;

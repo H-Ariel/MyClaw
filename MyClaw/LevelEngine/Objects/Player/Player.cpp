@@ -473,7 +473,7 @@ void Player::onSpacePressed() {
 	if (cheats->isFlying() || isSqueezed() || FindInArray(UninterruptibleAnimations, _aniName))
 		return;
 
-	if (speed.y == 0 || _isOnLadder)
+	if (speed.y <= 0.1f || _isOnLadder) // if player is standing (ignore very small speed changes) or climbing
 	{
 		jump(); // TODO: add case of small jump
 		_isOnLadder = false;

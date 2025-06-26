@@ -31,10 +31,11 @@ public:
 	ClawLevelEngineState* getState() const { return _state; }
 	void switchState(ClawLevelEngineState* newState);
 
-	static shared_ptr<ClawLevelEngine> getInstance() { return _instance; }
-	static void destrotInstance() { _instance = nullptr; }
-
+	ActionPlane* getActionPlane() const { return actionPlane; }
 	void addTimer(Timer* timer);
+
+	static shared_ptr<ClawLevelEngine> getInstance() { return _instance; }
+	static void destroyInstance() { _instance = nullptr; }
 
 
 private:

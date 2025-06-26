@@ -1,6 +1,6 @@
 #include "MenuEngine.h"
 #include "GameEngine/WindowManager.h"
-#include "Assets-Managers/AssetsManager.h"
+#include "AssetsManagers/AssetsManager.h"
 #include "LevelEngine/ClawLevelEngine.h"
 #include "LevelEngine/GlobalObjects.h"
 #include "HierarchicalMenu.h"
@@ -133,7 +133,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 		case HierarchicalMenu::EndGame:
 			onClick = [&](MenuItem*) {
 				AssetsManager::clearLevelAssets();
-				ClawLevelEngine::destrotInstance();
+				ClawLevelEngine::destroyInstance();
 				setMainMenu();
 				changeEngine(make_shared<MenuEngine>());
 				GO::player.reset(); // do not recycle the player in new game
@@ -451,7 +451,7 @@ void MenuEngine::setMainMenu()
 {
 	_currMenu = &HierarchicalMenu::MainMenu;
 	clearMenusStack();
-	ClawLevelEngine::destrotInstance();
+	ClawLevelEngine::destroyInstance();
 }
 void MenuEngine::setIngameMenu()
 {

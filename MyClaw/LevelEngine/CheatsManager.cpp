@@ -1,8 +1,11 @@
 #include "CheatsManager.h"
-#include "ActionPlane.h"
 #include "Objects/Item.h"
+#include "Objects/ActionPlaneMessage.h"
+#include "Objects/Player/Player.h"
 #include "GameEngine/WindowManager.h"
 #include "GlobalObjects.h"
+#include "ActionPlane.h"
+#include "ClawLevelEngine.h"
 
 
 constexpr auto MODE_CHANGE_MSG = "%s mode is %s";
@@ -82,8 +85,8 @@ void CheatsManager::addKey(int key)
 	//case BgMscNormal:		MidiPlayer::MusicSpeed = 1; break;
 
 	case EasyMode:			_easy = !_easy;
-		if (_easy) actionPlane->enterEasyMode();
-		else actionPlane->exitEasyMode();
+		if (_easy) GO::clawLevelEngine->getActionPlane()->enterEasyMode();
+		else GO::clawLevelEngine->getActionPlane()->exitEasyMode();
 		break;
 	case SuperStrong:		_superStrong = !_superStrong; break;
 	case Flying:
@@ -125,7 +128,7 @@ int CheatsManager::getCheatType()
 				}
 				sprintf(temp, msg, mode, status ? "off" : "on");
 			}
-			actionPlane->writeMessage(temp[0] ? temp : msg);
+			GO::addObjectToActionPlane(DBG_NEW ActionPlaneMessage(temp[0] ? temp : msg));
 
 			return type;
 		}

@@ -24,7 +24,7 @@ Aquatis* Aquatis::createAquatis(const WwdObject& obj) {
 }
 
 Aquatis::Aquatis(const WwdObject& obj)
-	: BaseBoss(obj), AquatisStalactitesList({}), currStalactiteIdx(0)
+	: BaseBoss(obj), stalactitesList({}), currStalactiteIdx(0)
 {
 	_ani = ANIMATION_IDLE;
 	_isMirrored = true;
@@ -39,8 +39,8 @@ Aquatis::~Aquatis()
 	if (removeObject)
 	{
 		GO::addObjectToActionPlane(DBG_NEW OneTimeAnimation(position, ANIMATION_KILLFALL));
-		for (AquatisTentacle* i : AquatisTentaclesList)
-			i->removeObject = true;
+		for (AquatisTentacle* i : tentaclesList)
+			i->removeObject = true; // when they removed they add their animation
 	}
 
 	_Aquatis = nullptr;
@@ -81,7 +81,7 @@ void Aquatis::Logic(uint32_t elapsedTime)
 	}
 
 	// check is stalactite touch Aquatis
-	AquatisStalactite* stalactite = AquatisStalactitesList[currStalactiteIdx];
+	AquatisStalactite* stalactite = stalactitesList[currStalactiteIdx];
 	if (this->GetRect().intersects(stalactite->GetRect()))
 	{
 		stalactite->stopFalling(0);
@@ -113,19 +113,21 @@ bool Aquatis::checkForHurts()
 
 
 void Aquatis::activateNextStalactite() {
-	AquatisStalactitesList[currStalactiteIdx]->activate();
-	currStalactiteIdx += 1;
+	if (currStalactiteIdx < STALACTITES_COUNT) {
+		stalactitesList[currStalactiteIdx]->activate();
+		currStalactiteIdx += 1;
+	}
 }
 
 AquatisTentacle* Aquatis::addTentacle(const WwdObject& obj)
 {
 	AquatisTentacle* tentacle = DBG_NEW AquatisTentacle(obj);
-	AquatisTentaclesList.push_back(tentacle);
+	tentaclesList.push_back(tentacle);
 	return tentacle;
 }
 AquatisStalactite* Aquatis::addStalactite(const WwdObject& obj)
 {
 	AquatisStalactite* stalactite = DBG_NEW AquatisStalactite(obj);
-	AquatisStalactitesList[obj.smarts - 1] = stalactite;
+	stalactitesList[obj.smarts - 1] = stalactite;
 	return stalactite;
 }

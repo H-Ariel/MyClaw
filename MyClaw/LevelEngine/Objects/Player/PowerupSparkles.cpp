@@ -1,5 +1,5 @@
 #include "PowerupSparkles.h"
-#include "Assets-Managers/AssetsManager.h"
+#include "AssetsManagers/AssetsManager.h"
 
 
 PowerupSparkles::PowerupSparkles(Rectangle2D* playerRc)

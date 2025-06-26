@@ -1,5 +1,5 @@
 #include "CreditsEngine.h"
-#include "Assets-Managers/AssetsManager.h"
+#include "AssetsManagers/AssetsManager.h"
 #include "MenuEngine/MenuEngine.h"
 
 

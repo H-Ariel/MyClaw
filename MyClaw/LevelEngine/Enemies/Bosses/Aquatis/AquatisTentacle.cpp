@@ -3,10 +3,12 @@
 #include "../../../GlobalObjects.h"
 #include "../../../Objects/OneTimeAnimation.h"
 #include "../../../Objects/Projectiles/ClawProjectile.h"
+#include "../../../Objects/Player/Player.h"
 
 
 AquatisTentacle::AquatisTentacle(const WwdObject& obj)
-	: BaseDamageObject(obj, 5), _squeezeRestTime(0), _deadTime(0)
+	: BaseDamageObject(obj, 5), _squeezeTimer(1000),
+	_deadTimer(bind(&AquatisTentacle::respawn, this))
 {
 	string imageSet = PathManager::getImageSetPath(obj.imageSet);
 	string aniSet = PathManager::getAnimationSetPath(obj.imageSet);
@@ -20,6 +22,9 @@ AquatisTentacle::AquatisTentacle(const WwdObject& obj)
 
 	_ani = _idle;
 	drawZ = DefaultZCoord::Characters + 1;
+
+	addTimer(&_deadTimer);
+	addTimer(&_squeezeTimer);
 }
 AquatisTentacle::~AquatisTentacle()
 {
@@ -31,74 +36,57 @@ AquatisTentacle::~AquatisTentacle()
 }
 void AquatisTentacle::Logic(uint32_t elapsedTime)
 {
-	if (_deadTime > 0)
-	{
-		_deadTime -= elapsedTime;
+	if (_deadTimer.isFinished()) {
 
-		if (_deadTime <= 0)
+		if (checkForHurts())
 		{
-			_ani = _respawn;
+			_ani = _killfall;
+			_deadTimer.reset(5000);
+			addTimer(&_deadTimer);
 			_ani->reset();
 			_ani->loopAni = false;
 		}
-		else
+		else if (_ani->isFinishAnimation())
 		{
-			_ani->Logic(elapsedTime);
-			return;
-		}
-	}
-
-	if (checkForHurts())
-	{
-		_ani = _killfall;
-		_deadTime = 5000;
-		_ani->reset();
-		_ani->loopAni = false;
-	}
-	else if (_ani->isFinishAnimation())
-	{
-		if (_ani == _squeeze)
-		{
-			_ani = _idle;
-			_ani->reset();
-			_squeezeRestTime = 1000;
-			GO::unsqueezePlayer();
-		}
-		else if (_ani == _respawn || _ani == _slap)
-		{
-			_ani = _idle;
-			_ani->reset();
-		}
-	}
-
-	if (_ani == _idle)
-	{
-		float distance = position.x - GO::getPlayerPosition().x - 37;
-		if (-55 <= distance && distance < 40)
-		{
-			_ani = _slap;
-			_ani->reset();
-			_ani->loopAni = false;
-		}
-		else if (-96 <= distance && distance < -55)
-		{
-			if (_squeezeRestTime <= 0)
+			if (_ani == _squeeze)
 			{
-				if (_ani != _squeeze && !GO::isPlayerSqueezed())
+				_ani = _idle;
+				_ani->reset();
+				_squeezeTimer.reset();
+				addTimer(&_squeezeTimer);
+				GO::player->unsqueeze();
+			}
+			else if (_ani == _respawn || _ani == _slap)
+			{
+				_ani = _idle;
+				_ani->reset();
+			}
+		}
+
+		if (_ani == _idle)
+		{
+			float distance = position.x - GO::getPlayerPosition().x - 37;
+			if (-55 <= distance && distance < 40)
+			{
+				_ani = _slap;
+				_ani->reset();
+				_ani->loopAni = false;
+			}
+			else if (-96 <= distance && distance < -55)
+			{
+				if (_squeezeTimer.isFinished())
 				{
-					_ani = _squeeze;
-					_ani->reset();
-					_ani->loopAni = false;
-					GO::squeezePlayer({ position.x + 40, position.y - 80 });
+					if (_ani != _squeeze && !GO::isPlayerSqueezed())
+					{
+						_ani = _squeeze;
+						_ani->reset();
+						_ani->loopAni = false;
+						GO::player->squeeze({ position.x + 40, position.y - 80 });
+					}
 				}
 			}
-			else
-			{
-				_squeezeRestTime -= elapsedTime;
-			}
 		}
 	}
-
 
 	_ani->Logic(elapsedTime);
 }
@@ -148,4 +136,11 @@ bool AquatisTentacle::checkForHurt(pair<Rectangle2D, int> hurtData, const Rectan
 bool AquatisTentacle::isDamage() const
 {
 	return _ani == _slap;
+}
+
+void AquatisTentacle::respawn()
+{
+	_ani = _respawn;
+	_ani->reset();
+	_ani->loopAni = false;
 }

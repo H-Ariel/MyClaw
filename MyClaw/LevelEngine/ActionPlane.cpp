@@ -27,8 +27,6 @@ ActionPlane::ActionPlane(WapWwd* wwd, WwdPlane* wwdPlane, ClawLevelEngine* cEngi
 	_BossStagerDelay(0), _isInBoss(false), _levelState(LevelState::Playing),
 	cEngine(cEngine), _levelObjectsFactory(DBG_NEW LevelObjectsFactory(wwd))
 {
-	//if (BasePlaneObject::actionPlane) LOG("[Warning] ActionPlane already exists\n"); // should never happen
-	GO::actionPlane = this;
 }
 
 ActionPlane::~ActionPlane()
@@ -41,9 +39,6 @@ ActionPlane::~ActionPlane()
 		delete i;
 
 	delete _levelObjectsFactory;
-
-	// because it static member and we don't want recycle objects...
-	GO::actionPlane = nullptr;
 }
 
 void ActionPlane::init()
@@ -285,11 +280,6 @@ void ActionPlane::addPlaneObject(BasePlaneObject* obj)
 	else if (isinstance<BaseEnemy>(obj)) _enemies.push_back((BaseEnemy*)obj);
 }
 
-void ActionPlane::writeMessage(const string& message, int timeout)
-{
-	addPlaneObject(DBG_NEW ActionPlaneMessage(message, timeout));
-}
-
 void ActionPlane::Logic(uint32_t elapsedTime)
 {
 	if (player->isFinishLevel()) return; // TODO: check if we use this condition
@@ -512,7 +502,7 @@ void ActionPlane::resetObjects()
 
 void ActionPlane::enterEasyMode() {
 	for (BasePlaneObject* obj : _objects)
-		obj->enterEasyMode(); // TODO: make sure i am realy used this...
+		obj->enterEasyMode();
 }
 
 void ActionPlane::exitEasyMode() {

@@ -1,6 +1,7 @@
 #include "Checkpoint.h"
 #include "../GlobalObjects.h"
-#include "../ActionPlane.h"
+#include "Player/Player.h"
+#include "ActionPlaneMessage.h"
 
 
 Checkpoint::Checkpoint(const WwdObject& obj, int levelNumber)
@@ -35,7 +36,7 @@ void Checkpoint::Logic(uint32_t elapsedTime)
 				data.savePoint = (SavedDataManager::SavePoints)_superCheckpoint;
 				SavedDataManager::saveGame(data);
 				_isSaved = true;
-				GO::actionPlane->writeMessage("Your game has been saved");
+				GO::addObjectToActionPlane(DBG_NEW ActionPlaneMessage("Your game has been saved"));
 			}
 		}
 		break;

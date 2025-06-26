@@ -1,5 +1,5 @@
 #include "BackgroundImage.h"
-#include "Assets-Managers/AssetsManager.h"
+#include "AssetsManagers/AssetsManager.h"
 #include "GameEngine/WindowManager.h"
 
 

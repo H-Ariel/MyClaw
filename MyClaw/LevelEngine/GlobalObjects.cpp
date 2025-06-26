@@ -7,7 +7,6 @@
 shared_ptr<Player> GlobalObjects::player;
 shared_ptr<PhysicsManager> GlobalObjects::physics;
 shared_ptr<CheatsManager> GlobalObjects::cheats;
-ActionPlane* GlobalObjects::actionPlane = nullptr;
 ClawLevelEngine* GlobalObjects::clawLevelEngine = nullptr;
 
 
@@ -20,15 +19,13 @@ bool GlobalObjects::isPlayerAttack() { return player->isAttack(); }
 bool GlobalObjects::isPlayerGhost() { return player->isGhost(); }
 bool GlobalObjects::isPlayerSqueezed() { return player->isSqueezed(); }
 bool GlobalObjects::isPlayerFreeze() { return player->isFreeze(); }
-void GlobalObjects::squeezePlayer(D2D1_POINT_2F pos, bool mirror) { player->squeeze(pos, mirror); }
-void GlobalObjects::unsqueezePlayer() { player->unsqueeze(); }
 
 
-void GlobalObjects::addObjectToActionPlane(BasePlaneObject* obj) { actionPlane->addPlaneObject(obj); }
+void GlobalObjects::addObjectToActionPlane(BasePlaneObject* obj) { clawLevelEngine->getActionPlane()->addPlaneObject(obj); }
 
-const vector<PowderKeg*>& GlobalObjects::getActionPlanePowderKegs() { return actionPlane->getPowderKegs(); }
-const vector<BaseEnemy*>& GlobalObjects::getActionPlaneEnemies() { return actionPlane->getEnemies(); }
-const vector<Projectile*>& GlobalObjects::getActionPlaneProjectiles() { return actionPlane->getProjectiles(); }
-const vector<BaseDamageObject*>& GlobalObjects::getActionPlaneDamageObjects() { return actionPlane->getDamageObjects(); }
+const vector<PowderKeg*>& GlobalObjects::getActionPlanePowderKegs() { return clawLevelEngine->getActionPlane()->getPowderKegs(); }
+const vector<BaseEnemy*>& GlobalObjects::getActionPlaneEnemies() { return clawLevelEngine->getActionPlane()->getEnemies(); }
+const vector<Projectile*>& GlobalObjects::getActionPlaneProjectiles() { return clawLevelEngine->getActionPlane()->getProjectiles(); }
+const vector<BaseDamageObject*>& GlobalObjects::getActionPlaneDamageObjects() { return clawLevelEngine->getActionPlane()->getDamageObjects(); }
 
 void GlobalObjects::addTimer(Timer* timer) { clawLevelEngine->addTimer(timer); }

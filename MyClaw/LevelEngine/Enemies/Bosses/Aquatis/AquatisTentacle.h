@@ -17,13 +17,14 @@ private:
 	bool checkForHurts();
 	bool checkForHurt(pair<Rectangle2D, int> hurtData, const Rectangle2D& thisRc);
 
+	void respawn();
+
 	shared_ptr<UIAnimation> _idle, _hit, _killfall, _respawn,
 		_slap, // tentacle slap/whip (when player is too far)
 		_squeeze; // tentacle squeeze (when player is too close)
 	Rectangle2D _lastAttackRect;
-	int _squeezeRestTime;
-	int _deadTime;
-
+	Timer _squeezeTimer; // timer for delay before squeeze CC again
+	Timer _deadTimer; // timer for delay before it raised again after CC hit it
 
 	friend class Aquatis;
 };

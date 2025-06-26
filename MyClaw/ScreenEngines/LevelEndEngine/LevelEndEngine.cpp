@@ -99,7 +99,7 @@ LevelEndEngine::~LevelEndEngine()
 void LevelEndEngine::Logic(uint32_t elapsedTime)
 {
 	if (ClawLevelEngine::getInstance())
-		ClawLevelEngine::destrotInstance();
+		ClawLevelEngine::destroyInstance();
 
 	ScreenEngine::Logic(elapsedTime);
 

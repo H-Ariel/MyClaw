@@ -6,7 +6,6 @@
 class Player;
 class PhysicsManager;
 class CheatsManager;
-class ActionPlane;
 class ClawLevelEngine;
 
 class BasePlaneObject;
@@ -25,7 +24,6 @@ public:
 	static shared_ptr<Player> player;
 	static shared_ptr<PhysicsManager> physics;
 	static shared_ptr<CheatsManager> cheats;
-	static ActionPlane* actionPlane;
 	static ClawLevelEngine* clawLevelEngine;
 
 	static D2D1_POINT_2F& getPlayerPosition();
@@ -37,9 +35,6 @@ public:
 	static bool isPlayerGhost();
 	static bool isPlayerSqueezed();
 	static bool isPlayerFreeze();
-
-	static void squeezePlayer(D2D1_POINT_2F pos, bool mirror = false);
-	static void unsqueezePlayer();
 
 
 	static void addObjectToActionPlane(BasePlaneObject* obj);

@@ -184,9 +184,9 @@
     <ClCompile Include="ScreenEngines\AdaptiveImage.cpp" />
     <ClCompile Include="ScreenEngines\LevelEndEngine\LevelEndEngineState.cpp" />
     <ClCompile Include="LevelEngine\ActionPlane.cpp" />
-    <ClCompile Include="Assets-Managers\AnimationsManager.cpp" />
-    <ClCompile Include="Assets-Managers\AssetsManager.cpp" />
-    <ClCompile Include="Assets-Managers\PathManager.cpp" />
+    <ClCompile Include="AssetsManagers\AnimationsManager.cpp" />
+    <ClCompile Include="AssetsManagers\AssetsManager.cpp" />
+    <ClCompile Include="AssetsManagers\PathManager.cpp" />
     <ClCompile Include="LevelEngine\CheatsManager.cpp" />
     <ClCompile Include="LevelEngine\ClawLevelEngine.cpp" />
     <ClCompile Include="LevelEngine\ClawLevelEngineState.cpp" />
@@ -298,9 +298,9 @@
     <ClInclude Include="ScreenEngines\LevelEndEngine\LevelEndEngineHelper.h" />
     <ClInclude Include="ScreenEngines\LevelEndEngine\LevelEndEngineState.h" />
     <ClInclude Include="LevelEngine\ActionPlane.h" />
-    <ClInclude Include="Assets-Managers\AnimationsManager.h" />
-    <ClInclude Include="Assets-Managers\AssetsManager.h" />
-    <ClInclude Include="Assets-Managers\PathManager.h" />
+    <ClInclude Include="AssetsManagers\AnimationsManager.h" />
+    <ClInclude Include="AssetsManagers\AssetsManager.h" />
+    <ClInclude Include="AssetsManagers\PathManager.h" />
     <ClInclude Include="LevelEngine\CheatsManager.h" />
     <ClInclude Include="LevelEngine\ClawLevelEngine.h" />
     <ClInclude Include="LevelEngine\ClawLevelEngineState.h" />

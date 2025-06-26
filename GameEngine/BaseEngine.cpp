@@ -32,7 +32,7 @@ void BaseEngine::Draw()
 shared_ptr<BaseEngine> BaseEngine::getNextEngine()
 {
 	stopEngine = false;
-	return _nextEngine;
+	return std::exchange(_nextEngine, nullptr); // do not recycle the engine after it used
 }
 
 void BaseEngine::changeEngine(shared_ptr<BaseEngine> newEngine)

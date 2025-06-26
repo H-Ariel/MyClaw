@@ -20,7 +20,6 @@ public:
 	void loadGame(int level, int checkpoint);
 	void addObject(const WwdObject& obj) override;
 	void addPlaneObject(BasePlaneObject* obj);
-	void writeMessage(const string& message, int timeout = 2000);
 
 	void Logic(uint32_t elapsedTime) override;
 	void updatePosition();

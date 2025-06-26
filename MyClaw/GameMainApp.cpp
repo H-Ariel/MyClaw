@@ -1,6 +1,7 @@
 #include "GameMainApp.h"
-#include "Assets-Managers/AssetsManager.h"
+#include "AssetsManagers/AssetsManager.h"
 #include "SavedDataManager.h"
+#include "LevelEngine/ClawLevelEngine.h"
 
 #ifdef _DEBUG
 #include "ScreenEngines/LevelLoadingEngine.h"
@@ -18,6 +19,7 @@ GameMainApp::GameMainApp()
 }
 GameMainApp::~GameMainApp()
 {
+	ClawLevelEngine::destroyInstance();
 	AssetsManager::Finalize();
 	SavedDataManager::Finalize();
 }
