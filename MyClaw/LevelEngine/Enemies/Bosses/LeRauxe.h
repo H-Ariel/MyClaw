@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../BaseEnemy.h"
+#include "BaseBoss.h"
 
 
 class LeRauxe : public BaseBoss

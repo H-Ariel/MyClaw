@@ -5,12 +5,11 @@
 #include "ClawLevelEngine.h"
 #include "Physics/PhysicsManager.h"
 #include "GameEngine/WindowManager.h"
-#include "Objects/ActionPlaneMessage.h"
 #include "Objects/ConveyorBelt.h"
-#include "Objects/Checkpoint.h"
 #include "Objects/Stalactite.h"
 #include "Objects/Crate.h"
 #include "Objects/OneTimeAnimation.h"
+#include "Enemies/Bosses/BaseBoss.h"
 #include "Enemies/Bosses/Gabriel/GabrielRedTailPirate.h"
 
 
@@ -139,6 +138,7 @@ void ActionPlane::loadGame(int level, int checkpoint)
 
 void ActionPlane::addObject(const WwdObject& obj)
 {
+	// TODO make Shake object, if player colide with it will shake the screen
 	if (obj.logic == "Shake") // this logic does not create an object
 	{
 		_shakeRects.push_back(Rectangle2D((float)obj.attackRect.left, (float)obj.attackRect.top,
@@ -147,7 +147,7 @@ void ActionPlane::addObject(const WwdObject& obj)
 
 	BasePlaneObject* bpObj = _levelObjectsFactory->createObject(obj);
 	if (!bpObj)
-		return; // nothingto do with empty object
+		return; // nothing to do with empty object
 
 	/* Objects */
 	if (obj.logic == "FrontCandy" || obj.logic == "FrontAniCandy"
@@ -545,3 +545,5 @@ void ActionPlane::playerEnterToBoss(float bossWarpX)
 	_BossStagerDelay = 0;
 	_levelState = LevelState::BossStager_Start;
 }
+
+int ActionPlane::getBossHealth() const { return _boss ? _boss->getHealth() : 0; }

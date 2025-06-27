@@ -8,6 +8,7 @@
 
 class ClawLevelEngine;
 class LevelObjectsFactory;
+class BaseBoss;
 
 
 class ActionPlane : public LevelPlane
@@ -34,7 +35,7 @@ public:
 	const vector<Projectile*>& getProjectiles() const { return _projectiles; }
 	const vector<BaseDamageObject*>& getDamageObjects() const { return _damageObjects; }
 	bool isInBoss() const { return _isInBoss; }
-	int getBossHealth() const { return _boss ? _boss->getHealth() : 0; }
+	int getBossHealth() const;
 
 private:
 	void joinConveyorBelts();
