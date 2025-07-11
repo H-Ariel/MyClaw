@@ -16,6 +16,15 @@ stack<const HierarchicalMenu*> MenuEngine::_menusStack;
 const HierarchicalMenu* MenuEngine::_currMenu = &HierarchicalMenu::MainMenu;
 
 
+const unordered_map<int, bool*> toggleSettings = {
+	{ HierarchicalMenu::Details, &SavedDataManager::settings.details },
+	{ HierarchicalMenu::FrontLayer, &SavedDataManager::settings.frontLayer },
+	{ HierarchicalMenu::Movies, &SavedDataManager::settings.movies },
+	{ HierarchicalMenu::Voice, &SavedDataManager::settings.voice },
+	{ HierarchicalMenu::Ambient, &SavedDataManager::settings.ambient }
+};
+
+
 MenuEngine::MenuEngine(const string& bgPcxPath) : MenuEngine({}, nullptr, bgPcxPath) {}
 MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const string& bgPcxPath)
 	: ScreenEngine(bgPcxPath), _currMarkedItem(nullptr)
@@ -67,7 +76,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::MenuOut:
-			onClick = [&](MenuItem*) { menuOut(); };
+			onClick = [this](MenuItem*) { menuOut(); };
 			break;
 
 		case HierarchicalMenu::SelectLevel:
@@ -105,10 +114,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::ExitApp:
-			onClick = [&](MenuItem*) {
-				_nextEngine = nullptr;
-				stopEngine = true;
-			};
+			onClick = [this](MenuItem*) { changeEngine(nullptr); };
 			break;
 
 		case HierarchicalMenu::Credits:
@@ -120,20 +126,18 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::BackToGame:
-			onClick = [&](MenuItem*) { backToGame(); };
+			onClick = [this](MenuItem*) { backToGame(); };
 			break;
 
 		case HierarchicalMenu::EndLife:
-			onClick = [&](MenuItem*) {
+			onClick = [this](MenuItem*) {
 				GO::player->endLife();
 				changeEngine(ClawLevelEngine::getInstance());
 			};
 			break;
 
 		case HierarchicalMenu::EndGame:
-			onClick = [&](MenuItem*) {
-				AssetsManager::clearLevelAssets();
-				ClawLevelEngine::destroyInstance();
+			onClick = [this](MenuItem*) {
 				setMainMenu();
 				changeEngine(make_shared<MenuEngine>());
 				GO::player.reset(); // do not recycle the player in new game
@@ -142,67 +146,39 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			break;
 
 		case HierarchicalMenu::Details:
-			initialValue = SavedDataManager::settings.details;
-			onClick = [&](MenuItem* item) {
-				item->switchState();
-				SavedDataManager::settings.details = !SavedDataManager::settings.details;
-			};
-			break;
-
 		case HierarchicalMenu::FrontLayer:
-			initialValue = SavedDataManager::settings.frontLayer;
-			onClick = [&](MenuItem* item) {
+		case HierarchicalMenu::Movies:
+		case HierarchicalMenu::Voice:
+		case HierarchicalMenu::Ambient:
+			initialValue = *toggleSettings.at(m.cmd);
+			onClick = [ptr = toggleSettings.at(m.cmd)](MenuItem* item) {
 				item->switchState();
-				SavedDataManager::settings.frontLayer = !SavedDataManager::settings.frontLayer;
+				*ptr = !*ptr;
 			};
 			break;
 
 		case HierarchicalMenu::Area:
 			isSlider = true;
 			initialValue = SavedDataManager::settings.area;
-			onMove = [&](MenuSlider* slider, int value) {
+			onMove = [](MenuSlider* slider, int value) {
 				SavedDataManager::settings.area = value;
-			};
-			break;
-
-		case HierarchicalMenu::Movies:
-			initialValue = SavedDataManager::settings.movies;
-			onClick = [&](MenuItem* item) {
-				item->switchState();
-				SavedDataManager::settings.movies = !SavedDataManager::settings.movies;
 			};
 			break;
 
 		case HierarchicalMenu::Sound:
 			isSlider = true;
 			initialValue = SavedDataManager::settings.soundVolume;
-			onMove = [&](MenuSlider* slider, int value) {
+			onMove = [](MenuSlider* slider, int value) {
 				slider->setStates(value == 0 ? MenuItem::ImageState::Toggled : MenuItem::ImageState::Normal);
 				SavedDataManager::settings.soundVolume = value;
 				AssetsManager::applySettings();
 			};
 			break;
 
-		case HierarchicalMenu::Voice:
-			initialValue = SavedDataManager::settings.voice;
-			onClick = [&](MenuItem* item) {
-				item->switchState();
-				SavedDataManager::settings.voice = !SavedDataManager::settings.voice;
-			};
-			break;
-
-		case HierarchicalMenu::Ambient:
-			initialValue = SavedDataManager::settings.ambient;
-			onClick = [&](MenuItem* item) {
-				item->switchState();
-				SavedDataManager::settings.ambient = !SavedDataManager::settings.ambient;
-			};
-			break;
-
 		case HierarchicalMenu::Music:
 			isSlider = true;
 			initialValue = SavedDataManager::settings.musicVolume;
-			onMove = [&](MenuSlider* slider, int value) {
+			onMove = [](MenuSlider* slider, int value) {
 				slider->setStates(value == 0 ? MenuItem::ImageState::Toggled : MenuItem::ImageState::Normal);
 				SavedDataManager::settings.musicVolume = value;
 				AssetsManager::applySettings();
@@ -214,7 +190,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 
 			if ((m.cmd & HierarchicalMenu::LoadCheckpoint) == HierarchicalMenu::LoadCheckpoint)
 			{
-				onClick = [&](MenuItem*) {
+				onClick = [this, m = m](MenuItem*) {
 					int level = stoi(HierarchicalMenu::SelectCheckpoint.subMenus[0]
 						.imagePath.substr(strlen(LOAD_CHECKPOINT_ROOT), 3)) - 10;
 					int checkpoint = ((m.cmd & 0xf0) >> 4) - 1;
@@ -223,7 +199,7 @@ MenuEngine::MenuEngine(D2D1_POINT_2U mPos, shared_ptr<UIAnimation> cursor, const
 			}
 			else if ((m.cmd & HierarchicalMenu::OpenLevel) == HierarchicalMenu::OpenLevel)
 			{
-				onClick = [&](MenuItem*) {
+				onClick = [this, m=m](MenuItem*) {
 					int level = (m.cmd & 0xf0) >> 4;
 
 					if (contains(_currMenu->subMenus[0].imagePath, "NEW")) // new game

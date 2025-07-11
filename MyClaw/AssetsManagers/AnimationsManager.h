@@ -11,8 +11,8 @@ public:
 
 	shared_ptr<UIAnimation> loadAnimation(const string& aniPath, const string& imageSetPath, bool save = true, const vector<ColorF>* colors = nullptr);
 	unordered_map<string, shared_ptr<UIAnimation>> loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath, const vector<ColorF>* colors); // load all ANI files in `dirPath`
-	shared_ptr<UIAnimation> createAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration); // create new animation from directory content
-	shared_ptr<UIAnimation> createAnimationFromPidImage(const string& pidPath);
+	shared_ptr<UIAnimation> getAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration); // create new animation from directory content
+	shared_ptr<UIAnimation> getAnimationFromPidImage(const string& pidPath);
 
 	void callAnimationsLogic(uint32_t elapsedTime);
 

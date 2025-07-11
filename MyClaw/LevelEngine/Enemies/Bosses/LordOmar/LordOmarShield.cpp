@@ -16,7 +16,7 @@ LordOmarShield::LordOmarShield(D2D1_POINT_2F center, const string& shieldItemIma
 	_rotateClockwise(rotateClockwise)
 {
 	drawZ = DefaultZCoord::Characters + 1;
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(shieldItemImageSet));
+	_ani = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(shieldItemImageSet));
 
 	// set the positions:
 

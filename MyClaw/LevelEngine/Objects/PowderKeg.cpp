@@ -6,7 +6,7 @@
 PowderKeg::PowderKeg(const WwdObject& obj)
 	: BaseDynamicPlaneObject(obj), _imageSet(obj.imageSet), _state(State::Stand), _isPlaySound(false)
 {
-	_ani = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath(_imageSet) + "/001.PID")->getCopy();
+	_ani = AssetsManager::getAnimationFromPidImage(PathManager::getImageSetPath(_imageSet) + "/001.PID")->getCopy();
 }
 
 void PowderKeg::Logic(uint32_t elapsedTime)
@@ -75,7 +75,7 @@ bool PowderKeg::raise()
 		return false;
 
 	_state = State::Raised;
-	_ani = AssetsManager::createCopyAnimationFromPidImage(PathManager::getImageSetPath(_imageSet) + "/014.PID");
+	_ani = AssetsManager::getCopyAnimationFromPidImage(PathManager::getImageSetPath(_imageSet) + "/014.PID");
 
 	return true;
 }

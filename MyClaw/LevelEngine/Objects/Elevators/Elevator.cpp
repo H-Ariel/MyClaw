@@ -46,33 +46,17 @@ Elevator::Elevator(const WwdObject& obj)
 	_isOneWayElevator(contains(obj.logic, "OneWay")),
 	_operateElevator(true), _offsetY(-64)
 {
-	_ani = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
+	_ani = AssetsManager::getAnimationFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
 
 	if (obj.minX > 0 && obj.maxX > 0)
 	{
-		if (obj.speedX > 0)
-		{
-			speed.x = (float)obj.speedX;
-		}
-		else
-		{
-			speed.x = 125;
-		}
+		speed.x = (obj.speedX > 0) ? (float)obj.speedX : 125;
 	}
 	if (obj.minY > 0 && obj.maxY > 0)
 	{
-		if (obj.speedY > 0)
-		{
-			speed.y = (float)obj.speedY;
-		}
-		else if (obj.speedX > 0)
-		{
-			speed.y = (float)obj.speedX;
-		}
-		else
-		{
-			speed.y = 125;
-		}
+		speed.y = (obj.speedY > 0) ? (float)obj.speedY
+			: (obj.speedX > 0) ? (float)obj.speedX
+			: 125;
 	}
 
 	switch (obj.direction)

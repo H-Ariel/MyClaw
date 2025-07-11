@@ -21,7 +21,7 @@ Crate::Crate(const WwdObject& obj)
 	if (obj.userRect2.top > 0) _itemsTypes.push_back(obj.userRect2.top);
 	if (_itemsTypes.size() == 0) _itemsTypes.push_back(Item::Type::Treasure_Coins);
 
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
+	_ani = AssetsManager::getCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
 	_ani->updateFrames = false;
 	_ani->loopAni = false;
 

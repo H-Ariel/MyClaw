@@ -237,13 +237,11 @@ map<int, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const stri
 	const RezDirectory* dir = instance->_rezArchive.getDirectory(planeImagesPath);
 	if (dir)
 	{
-		string newname;
 		for (auto& [filename, file] : dir->rezFiles)
 		{
-			newname = filename.substr(0, filename.length() - 4); // remove ".PID"
 			// the files path format is "LEVEL<N>/TILES/<PLN>/<XXX>.PID"
-			if (!strcmp(file->extension, "PID") && isNumber(newname))
-				images[stoi(newname)] = loadImage(file->getFullPath());
+			if (!strcmp(file->extension, "PID") && isNumber(file->name))
+				images[stoi(file->name)] = loadImage(file->getFullPath());
 		}
 	}
 
@@ -263,8 +261,6 @@ map<int, shared_ptr<UIBaseImage>> AssetsManager::loadPlaneTilesImages(const stri
 	return images;
 }
 
-// TODO rename `create*` to `get*`
-
 shared_ptr<UIAnimation> AssetsManager::loadAnimation(const string& aniPath, const string& imageSetPath)
 {
 	return instance->_animationsManager->loadAnimation(aniPath, imageSetPath);
@@ -273,21 +269,21 @@ shared_ptr<UIAnimation> AssetsManager::loadCopyAnimation(const string& aniPath, 
 {
 	return instance->_animationsManager->loadAnimation(aniPath, imageSetPath, false);
 }
-shared_ptr<UIAnimation> AssetsManager::createAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
+shared_ptr<UIAnimation> AssetsManager::getAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
 {
-	return instance->_animationsManager->createAnimationFromDirectory(dirPath, reversedOrder, duration);
+	return instance->_animationsManager->getAnimationFromDirectory(dirPath, reversedOrder, duration);
 }
-shared_ptr<UIAnimation> AssetsManager::createCopyAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
+shared_ptr<UIAnimation> AssetsManager::getCopyAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
 {
-	return createAnimationFromDirectory(dirPath, reversedOrder, duration)->getCopy();
+	return getAnimationFromDirectory(dirPath, reversedOrder, duration)->getCopy();
 }
-shared_ptr<UIAnimation> AssetsManager::createAnimationFromPidImage(const string& pidPath)
+shared_ptr<UIAnimation> AssetsManager::getAnimationFromPidImage(const string& pidPath)
 {
-	return instance->_animationsManager->createAnimationFromPidImage(pidPath);
+	return instance->_animationsManager->getAnimationFromPidImage(pidPath);
 }
-shared_ptr<UIAnimation> AssetsManager::createCopyAnimationFromPidImage(const string& pidPath)
+shared_ptr<UIAnimation> AssetsManager::getCopyAnimationFromPidImage(const string& pidPath)
 {
-	return createAnimationFromPidImage(pidPath)->getCopy();
+	return getAnimationFromPidImage(pidPath)->getCopy();
 }
 unordered_map<string, shared_ptr<UIAnimation>> AssetsManager::loadAnimationsFromDirectory(const string& dirPath, const string& imageSetPath, const vector<ColorF>* colors)
 {

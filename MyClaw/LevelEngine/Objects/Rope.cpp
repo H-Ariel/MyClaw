@@ -11,7 +11,7 @@ Rope::Rope(const WwdObject& obj)
 	: BasePlaneObject(obj), _edgePos({})
 {
 	logicZ = DefaultZCoord::Characters + 1;
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, obj.speedX ? (obj.speedX / 60) : 25);
+	_ani = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, obj.speedX ? (obj.speedX / 60) : 25);
 }
 
 void Rope::Logic(uint32_t elapsedTime)

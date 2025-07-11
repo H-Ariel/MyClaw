@@ -127,7 +127,7 @@ unordered_map<string, shared_ptr<UIAnimation>> AnimationsManager::loadAnimations
 		anis[name] = ani->getCopy();
 	return anis;
 }
-shared_ptr<UIAnimation> AnimationsManager::createAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
+shared_ptr<UIAnimation> AnimationsManager::getAnimationFromDirectory(const string& dirPath, bool reversedOrder, uint32_t duration)
 {
 	const string k = dirPath + '+' + to_string(duration) + '+' + to_string(reversedOrder);
 	if (_loadedAnimations.count(k) == 0)
@@ -158,7 +158,7 @@ shared_ptr<UIAnimation> AnimationsManager::createAnimationFromDirectory(const st
 
 	return _loadedAnimations[k];
 }
-shared_ptr<UIAnimation> AnimationsManager::createAnimationFromPidImage(const string& pidPath)
+shared_ptr<UIAnimation> AnimationsManager::getAnimationFromPidImage(const string& pidPath)
 {
 	if (_loadedAnimations.count(pidPath) == 0)
 	{

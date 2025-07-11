@@ -50,7 +50,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 	myMemCpy(_startTimeDelay, startTimeDelay);
 	Delay(_startTimeDelay);
 
-	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getFramesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::getAnimationFromDirectory(imageSetPath, true)->getFramesList();
 
 	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1500));
 
@@ -64,7 +64,7 @@ TogglePeg::TogglePeg(const WwdObject& obj)
 	else
 	{
 		// combine images in straight and reverse order for full animation
-		vector<UIAnimation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath)->getFramesList();
+		vector<UIAnimation::FrameData*> appearImages = AssetsManager::getAnimationFromDirectory(imageSetPath)->getFramesList();
 		myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 1500)); // last frame 'waits' (easy to implementation)
 		images = appearImages + images;
 	}
@@ -109,9 +109,9 @@ StartSteppingStone::StartSteppingStone(const WwdObject& obj)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
 
-	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(imageSetPath, true)->getFramesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::getAnimationFromDirectory(imageSetPath, true)->getFramesList();
 	myMemCpy(images.back()->duration, uint32_t(obj.speedX > 0 ? obj.speedX : 1000));
-	vector<UIAnimation::FrameData*> appearImages = AssetsManager::createAnimationFromDirectory(imageSetPath, false)->getFramesList();
+	vector<UIAnimation::FrameData*> appearImages = AssetsManager::getAnimationFromDirectory(imageSetPath, false)->getFramesList();
 	myMemCpy(appearImages.back()->duration, uint32_t(obj.speedY > 0 ? obj.speedY : 2000));
 	images = appearImages + images;
 
@@ -143,7 +143,7 @@ void StartSteppingStone::Logic(uint32_t elapsedTime)
 CrumblingPeg::CrumblingPeg(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
-	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
 	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
 	_ani = make_shared<UIAnimation>(images);
 	_ani->position = position;
@@ -175,7 +175,7 @@ void CrumblingPeg::Reset()
 BreakPlank::BreakPlank(const WwdObject& obj, float topOffset)
 	: BaseStaticPlaneObject(obj), _topOffset(topOffset)
 {
-	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
 	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
 	_ani = make_shared<UIAnimation>(images);
 

@@ -6,7 +6,7 @@ Stalactite::Stalactite(const WwdObject& obj)
 	: Projectile(obj, "") // the stalactite behave like a projectile
 	, _initialPosition({ (float)obj.x, (float)obj.y })
 {
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, 50);
+	_ani = AssetsManager::getCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, 50);
 
 	_activityArea.left = (float)obj.userRect1.left;
 	_activityArea.top = (float)obj.userRect1.top;

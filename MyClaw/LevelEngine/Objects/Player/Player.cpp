@@ -61,9 +61,9 @@ Player::Player()
 	NoLoopAnimations = { "LOOKUP", "SPIKEDEATH", "LIFT" };
 	UninterruptibleAnimations = { "LIFT" ,"THROW" ,"FALLDEATH" ,"EMPTYPOSTDYNAMITE" ,"DUCKEMPTYPOSTDYNAMITE" ,"SPIKEDEATH" };
 
-	_exclamationMark = AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
-	_animations["SIREN-FREEZE"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/100.PID");
-	_animations["FLYING-CHEAT"] = AssetsManager::createAnimationFromPidImage("CLAW/IMAGES/401.PID");
+	_exclamationMark = AssetsManager::getCopyAnimationFromDirectory("GAME/IMAGES/EXCLAMATION");
+	_animations["SIREN-FREEZE"] = AssetsManager::getAnimationFromPidImage("CLAW/IMAGES/100.PID");
+	_animations["FLYING-CHEAT"] = AssetsManager::getAnimationFromPidImage("CLAW/IMAGES/401.PID");
 	_animations["FLYING-CHEAT"]->upsideDown = true;
 
 	_animations["SQUEEZED"] = make_shared<UIAnimation>(vector<UIAnimation::FrameData*>({
@@ -1037,7 +1037,7 @@ bool Player::checkForHurts()
 					OneTimeAnimation* ani = DBG_NEW OneTimeAnimation({
 							position.x + (damageRc.left - damageRc.right) / 2,
 							position.y + (damageRc.top - damageRc.bottom) / 2
-						}, AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", false, 50));
+						}, AssetsManager::getCopyAnimationFromDirectory("GAME/IMAGES/CLAWHIT", false, 50));
 					myMemCpy(ani->drawZ, drawZ + 1);
 					GO::addObjectToActionPlane(ani);
 

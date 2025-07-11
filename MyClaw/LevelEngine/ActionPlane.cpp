@@ -450,7 +450,7 @@ void ActionPlane::bossStagerLogic(uint32_t elapsedTime) {
 		sprintf(path, "LEVEL%d/IMAGES/BOSSNAME/001.PID", _wwd->levelNumber);
 		_objects.push_back(DBG_NEW OneTimeAnimation(
 			{ camSz.width / 2 + position.x,camSz.height / 2 + position.y },
-			AssetsManager::createAnimationFromPidImage(path), false));
+			AssetsManager::getAnimationFromPidImage(path), false));
 		sprintf(path, "LEVEL%d/SOUNDS/DEFEAT.WAV", _wwd->levelNumber);
 		_BossStagerDelay = AssetsManager::getWavFileDuration(path);
 		_shakeTime = _BossStagerDelay; // shake the screen while the boss name is showing

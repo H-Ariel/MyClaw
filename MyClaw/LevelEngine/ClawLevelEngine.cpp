@@ -17,6 +17,11 @@ shared_ptr<ClawLevelEngine> ClawLevelEngine::create(int levelNumber, int checkpo
 	return _instance;
 }
 
+void ClawLevelEngine::destroyInstance() {
+	AssetsManager::clearLevelAssets();
+	_instance = nullptr;
+}
+
 ClawLevelEngine::ClawLevelEngine(int levelNumber, int checkpoint)
 	: actionPlane(nullptr), _saveBgColor(0), _saveWindowScale(1)
 {

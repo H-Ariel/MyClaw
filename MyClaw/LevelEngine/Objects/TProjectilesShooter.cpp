@@ -22,7 +22,7 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 		}
 
 		sprintf(frame, "/%d", obj.userValue2);
-		_projectileAni = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
+		_projectileAni = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
 
 		_shootIndex = 1;
 	}
@@ -38,14 +38,14 @@ TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
 		}
 
 		sprintf(frame, "/%03d.PID", obj.userValue1);
-		_projectileAni = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
+		_projectileAni = AssetsManager::getAnimationFromPidImage(PathManager::getImageSetPath("LEVEL_PROJECTILES") + frame);
 
 		_shootIndex = 5;
 	}
 
 	vector<UIAnimation::FrameData*> newImgs;
 	newImgs.push_back(DBG_NEW UIAnimation::FrameData(make_shared<UIBaseImage>(nullptr))); // insert empty image at end
-	newImgs += AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
+	newImgs += AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
 	_ani = make_shared<UIAnimation>(newImgs);
 	_ani->updateFrames = false;
 

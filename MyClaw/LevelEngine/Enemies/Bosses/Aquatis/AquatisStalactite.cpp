@@ -5,7 +5,7 @@
 AquatisStalactite::AquatisStalactite(const WwdObject& obj)
 	: Projectile(obj, "")
 {
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, 50);
+	_ani = AssetsManager::getCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, 50);
 	_ani->updateFrames = false;
 	speed = {};
 }

@@ -29,12 +29,12 @@ public:
 	static shared_ptr<UIAnimation> loadCopyAnimation(const string& aniPath, const string& imageSetPath = "");
 
 	// Creates a new animation from the contents of a directory.
-	static shared_ptr<UIAnimation> createAnimationFromDirectory(const string& dirPath, bool reversedOrder = false, uint32_t duration = 100);
-	static shared_ptr<UIAnimation> createCopyAnimationFromDirectory(const string& dirPath, bool reversedOrder = false, uint32_t duration = 100);
+	static shared_ptr<UIAnimation> getAnimationFromDirectory(const string& dirPath, bool reversedOrder = false, uint32_t duration = 100);
+	static shared_ptr<UIAnimation> getCopyAnimationFromDirectory(const string& dirPath, bool reversedOrder = false, uint32_t duration = 100);
 
 	// Converts a PID image into a UIAnimation.
-	static shared_ptr<UIAnimation> createAnimationFromPidImage(const string& pidPath);
-	static shared_ptr<UIAnimation> createCopyAnimationFromPidImage(const string& pidPath);
+	static shared_ptr<UIAnimation> getAnimationFromPidImage(const string& pidPath);
+	static shared_ptr<UIAnimation> getCopyAnimationFromPidImage(const string& pidPath);
 
 	// Loads all ANI files from `dirPath`.
 	// If `colors` is not null, each image includes shadows in all colors, in addition to the original image.

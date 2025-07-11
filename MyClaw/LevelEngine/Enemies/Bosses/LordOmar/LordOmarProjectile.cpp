@@ -2,7 +2,7 @@
 
 
 LordOmarProjectile::LordOmarProjectile(D2D1_POINT_2F pos, float speedX)
-	: EnemyProjectile(AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_OMARPROJECTILE")), 20, { speedX , 0 }, pos)
+	: EnemyProjectile(AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath("LEVEL_OMARPROJECTILE")), 20, { speedX , 0 }, pos)
 {
 }
 Rectangle2D LordOmarProjectile::GetRect()

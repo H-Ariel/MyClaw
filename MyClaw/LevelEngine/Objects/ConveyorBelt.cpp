@@ -11,7 +11,7 @@ ConveyorBelt::ConveyorBelt(const WwdObject& obj)
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
 	logicZ = DefaultZCoord::Characters + 1;
-	_ani = AssetsManager::createCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), obj.speed > 0, ANIMATION_DURATION);
+	_ani = AssetsManager::getCopyAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), obj.speed > 0, ANIMATION_DURATION);
 	if (_canMoveCC) logicZ -= 1; // handle the belts that can move CC first
 	myMemCpy(_objRc, Rectangle2D((float)obj.moveRect.left, (float)obj.moveRect.top,
 		(float)obj.moveRect.right, (float)obj.moveRect.bottom)); // I calc `moveRect` in `LevelPlane::updateObject`

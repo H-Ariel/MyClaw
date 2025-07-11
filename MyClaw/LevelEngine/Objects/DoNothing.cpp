@@ -12,14 +12,14 @@ DoNothing::DoNothing(const WwdObject& obj)
 		int i = obj.i;
 		if (i == -1) i = 1;
 		sprintf(str, "/%03d.PID", i);
-		_ani = AssetsManager::createAnimationFromPidImage(path + str);
+		_ani = AssetsManager::getAnimationFromPidImage(path + str);
 	}
 	else if (obj.animation.empty())
 	{
 		if (contains(path, "SIGN/"))
 			path[path.find_last_of('/')] = '_';
 
-		_ani = AssetsManager::createAnimationFromDirectory(path);
+		_ani = AssetsManager::getAnimationFromDirectory(path);
 	}
 	else
 	{

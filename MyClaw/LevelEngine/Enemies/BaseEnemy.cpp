@@ -26,8 +26,8 @@ BaseEnemy::BaseEnemy(const WwdObject& obj, int health, int damage, const string&
 	_animations = AssetsManager::loadAnimationsFromDirectory(PathManager::getAnimationSetPath(obj.imageSet), obj.imageSet);
 	// add burnt and frozen animations:
 	string imagesDirectoryPath = PathManager::getImageSetPath(obj.imageSet);
-	_animations["burnt"] = AssetsManager::createCopyAnimationFromPidImage(imagesDirectoryPath + "/550.PID");
-	_animations["frozen"] = AssetsManager::createCopyAnimationFromPidImage(imagesDirectoryPath + "/560.PID");
+	_animations["burnt"] = AssetsManager::getCopyAnimationFromPidImage(imagesDirectoryPath + "/550.PID");
+	_animations["frozen"] = AssetsManager::getCopyAnimationFromPidImage(imagesDirectoryPath + "/560.PID");
 
 	_aniWalk = _animations[walkAni];
 	_aniStrike = _animations[strikeAni];
@@ -327,7 +327,7 @@ bool BaseEnemy::checkClawHit()
 				position.x + (damageRc.left - damageRc.right) / 2,
 				position.y + (damageRc.top - damageRc.bottom) / 2
 			},
-			AssetsManager::createCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", false, 50));
+			AssetsManager::getCopyAnimationFromDirectory("GAME/IMAGES/ENEMYHIT", false, 50));
 		GO::addObjectToActionPlane(ani);
 		return true;
 	}

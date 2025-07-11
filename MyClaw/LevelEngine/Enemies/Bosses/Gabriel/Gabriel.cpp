@@ -254,7 +254,7 @@ GabrielCannonButton::GabrielCannonButton(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj)
 {
 	_idle = AssetsManager::loadAnimation(PathManager::getAnimationSetPath(obj.imageSet) + "/IDLE.ANI", PathManager::getImageSetPath(obj.imageSet));
-	_pressed = AssetsManager::createAnimationFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
+	_pressed = AssetsManager::getAnimationFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");
 	_ani = _idle;
 	setObjectRectangle();
 }

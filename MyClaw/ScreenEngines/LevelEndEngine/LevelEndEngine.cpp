@@ -18,7 +18,7 @@ LevelEndEngine::LevelEndEngine(int lvlNum, const map<Item::Type, uint32_t>& coll
 		SavedDataManager::saveGame(data);
 	}
 
-	AssetsManager::clearLevelAssets();
+	ClawLevelEngine::destroyInstance();
 
 	for (auto& i : collectedTreasures)
 	{
@@ -98,9 +98,6 @@ LevelEndEngine::~LevelEndEngine()
 }
 void LevelEndEngine::Logic(uint32_t elapsedTime)
 {
-	if (ClawLevelEngine::getInstance())
-		ClawLevelEngine::destroyInstance();
-
 	ScreenEngine::Logic(elapsedTime);
 
 	if (!_state->logicDone) {

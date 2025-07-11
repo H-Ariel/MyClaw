@@ -35,7 +35,7 @@ public:
 	void addTimer(Timer* timer);
 
 	static shared_ptr<ClawLevelEngine> getInstance() { return _instance; }
-	static void destroyInstance() { _instance = nullptr; }
+	static void destroyInstance();
 
 
 private:

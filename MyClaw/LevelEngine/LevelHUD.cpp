@@ -7,13 +7,13 @@
 LevelHUD::LevelHUD(ActionPlane* actionPlane)
 	: _actionPlane(actionPlane)
 {
-	_chest = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/TREASURECHEST");
-	_health = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/HEALTHHEART", false, 150);
+	_chest = AssetsManager::getAnimationFromDirectory("GAME/IMAGES/INTERFACE/TREASURECHEST");
+	_health = AssetsManager::getAnimationFromDirectory("GAME/IMAGES/INTERFACE/HEALTHHEART", false, 150);
 	_weaponAni[ClawProjectile::Types::Pistol] = AssetsManager::loadAnimation("GAME/ANIS/INTERFACE/PISTOL.ANI");
 	_weaponAni[ClawProjectile::Types::Magic] = AssetsManager::loadAnimation("GAME/ANIS/INTERFACE/MAGIC.ANI");
 	_weaponAni[ClawProjectile::Types::Dynamite] = AssetsManager::loadAnimation("GAME/ANIS/INTERFACE/DYNAMITE.ANI");
 	_lives = AssetsManager::loadAnimation("GAME/ANIS/INTERFACE/LIVES.ANI");
-	_stopwatch = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/INTERFACE/STOPWATCH");
+	_stopwatch = AssetsManager::getAnimationFromDirectory("GAME/IMAGES/INTERFACE/STOPWATCH");
 	_bossBar = AssetsManager::loadImage("GAME/IMAGES/BOSSBAR/001.PID");
 
 	char imgPath[44] = {};

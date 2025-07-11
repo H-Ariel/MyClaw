@@ -36,7 +36,7 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 	if (isFromMap && _type != Type::BossWarp && _type != Type::Warp && _type != Type::Treasure_Coins)
 	{
 		_useGlitter = true;
-		_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
+		_glitterAnimation = AssetsManager::getAnimationFromDirectory("GAME/IMAGES/GLITTER");
 	}
 
 	_respawning = obj.damage;
@@ -61,7 +61,7 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 		}
 	}
 
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getItemPath(_type, obj.imageSet));
+	_ani = AssetsManager::getAnimationFromDirectory(PathManager::getItemPath(_type, obj.imageSet));
 	_ani->updateFrames = FindInArray(UpdateFramesTypes, _type);
 
 	if (drawZ == 0) // is that correct?
@@ -124,7 +124,7 @@ void Item::stopFalling(float collisionSize)
 	speed.x = 0;
 	position.y -= collisionSize;
 	_useGlitter = true;
-	_glitterAnimation = AssetsManager::createAnimationFromDirectory("GAME/IMAGES/GLITTER");
+	_glitterAnimation = AssetsManager::getAnimationFromDirectory("GAME/IMAGES/GLITTER");
 }
 OneTimeAnimation* Item::getTreasureScoreAnimation() const
 {
@@ -185,7 +185,7 @@ OneTimeAnimation* Item::getTreasureScoreAnimation() const
 	default: return nullptr; //throw Exception("Item is not a treasure");
 	}
 
-	vector<UIAnimation::FrameData*> images = AssetsManager::createAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getFramesList();
+	vector<UIAnimation::FrameData*> images = AssetsManager::getAnimationFromPidImage("GAME/IMAGES/POINTS/00" + to_string(i) + ".PID")->getFramesList();
 	myMemCpy(images[0]->duration, 1000U);
 	OneTimeAnimation* ani = DBG_NEW OneTimeAnimation(position, make_shared<UIAnimation>(images));
 	myMemCpy<int>(ani->drawZ, DefaultZCoord::Items);

@@ -6,7 +6,7 @@
 AquatisCrack::AquatisCrack(const WwdObject& obj)
 	: BaseStaticPlaneObject(obj), _lastDynamite(nullptr)
 {
-	_ani = AssetsManager::createAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
+	_ani = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
 	setObjectRectangle();
 }
 void AquatisCrack::Logic(uint32_t elapsedTime)
