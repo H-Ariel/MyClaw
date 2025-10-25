@@ -2,7 +2,7 @@
 
 
 DoNothing::DoNothing(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj)
+	: BaseStaticPlaneObject(obj, false)
 {
 	string path(PathManager::getImageSetPath(obj.imageSet));
 

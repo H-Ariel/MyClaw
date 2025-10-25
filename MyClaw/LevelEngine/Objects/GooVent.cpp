@@ -2,7 +2,7 @@
 
 
 GooVent::GooVent(const WwdObject& obj)
-	: BaseDamageObject(obj, obj.damage ? obj.damage : 1)
+	: BaseDamageObject(obj, obj.damage ? obj.damage : 1, false)
 {
 	_ani = AssetsManager::loadAnimation(PathManager::getAnimationSetPath(obj.imageSet) + "/GOOVENT.ANI");
 	setObjectRectangle();

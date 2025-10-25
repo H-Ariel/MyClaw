@@ -4,7 +4,7 @@
 
 
 GabrielRedTailPirate::GabrielRedTailPirate()
-	: BaseDynamicPlaneObject({}), _isJumping(false)
+	: BaseDynamicPlaneObject({},true), _isJumping(false)
 {
 	position = { 43479, 5020 };
 	logicZ = DefaultZCoord::Characters;

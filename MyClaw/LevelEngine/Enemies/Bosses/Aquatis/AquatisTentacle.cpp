@@ -7,7 +7,7 @@
 
 
 AquatisTentacle::AquatisTentacle(const WwdObject& obj)
-	: BaseDamageObject(obj, 5), _squeezeTimer(1000),
+	: BaseDamageObject(obj, 5, true), _squeezeTimer(1000),
 	_deadTimer(bind(&AquatisTentacle::respawn, this))
 {
 	string imageSet = PathManager::getImageSetPath(obj.imageSet);

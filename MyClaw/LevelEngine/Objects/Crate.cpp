@@ -8,7 +8,7 @@ constexpr int CRATE_HEIGHT = 43;
 
 
 Crate::Crate(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj)
+	: BaseStaticPlaneObject(obj, false)
 {
 	if (obj.powerup > 0) _itemsTypes.push_back(obj.powerup);
 	if (obj.userRect1.left > 0) _itemsTypes.push_back(obj.userRect1.left);
@@ -88,7 +88,7 @@ vector<BasePlaneObject*> Crate::getItems()
 }
 
 StackedCrates::StackedCrates(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj)
+	: BaseStaticPlaneObject(obj, false)
 {
 	int height = obj.height;
 	if (height < 1) height = 1;

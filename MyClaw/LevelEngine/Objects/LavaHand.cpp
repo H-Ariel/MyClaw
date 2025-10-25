@@ -4,7 +4,7 @@
 
 
 LavaHand::LavaHand(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _delay(obj.speed), _throwed(false)
+	: BaseStaticPlaneObject(obj, false), _delay(obj.speed), _throwed(false)
 {
 	_ani = AssetsManager::loadCopyAnimation(PathManager::getAnimationPath(obj.imageSet), PathManager::getImageSetPath(obj.imageSet));
 	_ani->loopAni = false;

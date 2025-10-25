@@ -304,6 +304,10 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	{
 		obj = _objects[i];
 
+		if (!WindowManager::isInScreen(obj->GetRect()) && !obj->canUpdateOffScreen()) {
+			continue;
+		}
+
 		if (obj->isDelayed()) {
 			obj->decreaseTimeDelay(elapsedTime);
 			continue;

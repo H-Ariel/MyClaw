@@ -7,7 +7,7 @@ constexpr int ANIMATION_DURATION = 100; // TODO: find perfect value (calc from s
 
 
 ConveyorBelt::ConveyorBelt(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _speed(obj.speed / 1000.f),
+	: BaseStaticPlaneObject(obj, false), _speed(obj.speed / 1000.f),
 	_canMoveCC(contains(obj.imageSet, "MIDDLE"))
 {
 	logicZ = DefaultZCoord::Characters + 1;

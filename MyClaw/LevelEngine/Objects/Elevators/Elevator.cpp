@@ -40,7 +40,7 @@ Elevator* Elevator::create(const WwdObject& obj, int levelNumber)
 
 
 Elevator::Elevator(const WwdObject& obj)
-	: BaseDynamicPlaneObject(obj), _arrivedToEdge(false),
+	: BaseDynamicPlaneObject(obj, true), _arrivedToEdge(false),
 	_minPos({ (float)obj.minX, (float)obj.minY }), _maxPos({ (float)obj.maxX, (float)obj.maxY }),
 	_initialPos({ (float)obj.x, (float)obj.y }), _initialSpeed({}),
 	_isOneWayElevator(contains(obj.logic, "OneWay")),

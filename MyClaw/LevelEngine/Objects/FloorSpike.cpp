@@ -7,7 +7,7 @@
 
 // FloorSpike ctor. The purpose of `doFloorSpikeCtor` flag is to save time in children classes. TODO: check obj.logic \O/
 FloorSpike::FloorSpike(const WwdObject& obj, bool doFloorSpikeCtor)
-	: BaseDamageObject(obj, 10), _startTimeDelay(0)
+	: BaseDamageObject(obj, 10, false), _startTimeDelay(0)
 {
 	int startTimeDelay = 0;
 	if (obj.speed > 0)

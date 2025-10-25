@@ -4,7 +4,7 @@
 
 
 SoundTrigger::SoundTrigger(const WwdObject& obj)
-	: BaseSoundObject(obj), _timesToPlay(0), _isClawDialog(startsWith(obj.logic, "ClawDialog"))
+	: BaseSoundObject(obj, true), _timesToPlay(0), _isClawDialog(startsWith(obj.logic, "ClawDialog"))
 {
 	int timesToPlay = 0;
 

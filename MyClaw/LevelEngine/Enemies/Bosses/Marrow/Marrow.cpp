@@ -185,7 +185,7 @@ void MarrowParrot::bounceTop() {}
 
 
 MarrowFloor::MarrowFloor(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj),
+	: BaseStaticPlaneObject(obj, true),
 	_minX((float)obj.minX), _maxX((float)obj.maxX),
 	_speedX((obj.direction ? obj.speedX : -obj.speedX) / 1000.f)
 {

@@ -3,7 +3,7 @@
 
 
 BaseCharacter::BaseCharacter(const WwdObject& obj)
-	: BaseDynamicPlaneObject(obj), _health(obj.health), _isAttack(false)
+	: BaseDynamicPlaneObject(obj, true), _health(obj.health), _isAttack(false)
 {
 	logicZ = DefaultZCoord::Characters;
 	drawZ = DefaultZCoord::Characters;

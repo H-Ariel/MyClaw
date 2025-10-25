@@ -470,8 +470,10 @@ void Player::cancelInvincibilityEffect()
 }
 
 void Player::onSpacePressed() {
-	if (cheats->isFlying() || isSqueezed() || FindInArray(UninterruptibleAnimations, _aniName))
+	if (_spaceWasPressedLastFrame || cheats->isFlying() || isSqueezed() || FindInArray(UninterruptibleAnimations, _aniName))
 		return;
+
+	_spaceWasPressedLastFrame = true;
 
 	if (speed.y <= 0.1f || _isOnLadder) // if player is standing (ignore very small speed changes) or climbing
 	{
@@ -746,6 +748,7 @@ void Player::stopFalling(float collisionSize)
 		changeAnimation("STAND");
 	}
 	_isOnLadder = false;
+	_spaceWasPressedLastFrame = false;
 }
 void Player::stopMovingLeft(float collisionSize)
 {
@@ -1190,6 +1193,7 @@ void Player::resetKeys()
 	_leftPressed = false;
 	_rightPressed = false;
 	_altPressed = false;
+	_spaceWasPressedLastFrame = false;
 	_holdAltTime = 0;
 }
 

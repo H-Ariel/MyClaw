@@ -126,6 +126,7 @@ private:
 	int _freezeTime; // in milliseconds. it used for freeze from siren.
 	Item::Type _currPowerup; // the current powerup he has (not treasures!)
 	bool _upPressed, _downPressed, _leftPressed, _rightPressed, _altPressed;
+	bool _spaceWasPressedLastFrame;
 	bool _isOnLadder, _useWeapon;
 	bool _finishLevel, _isCollideWithLadder, _isOnLadderTop;
 

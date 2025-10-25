@@ -3,7 +3,7 @@
 
 
 AmbientSound::AmbientSound(const WwdObject& obj)
-	: BaseSoundObject(obj), _isPlaying(false), _wavPlayerId(AssetsManager::INVALID_AUDIOPLAYER_ID)
+	: BaseSoundObject(obj, true), _isPlaying(false), _wavPlayerId(AssetsManager::INVALID_AUDIOPLAYER_ID)
 {
 }
 void AmbientSound::Logic(uint32_t elapsedTime)
@@ -27,7 +27,7 @@ void AmbientSound::Logic(uint32_t elapsedTime)
 }
 
 GlobalAmbientSound::GlobalAmbientSound(const WwdObject& obj, int levelNumber)
-	: BaseSoundObject(obj), _minTimeOn(obj.moveRect.left), _maxTimeOn(obj.moveRect.top),
+	: BaseSoundObject(obj, true), _minTimeOn(obj.moveRect.left), _maxTimeOn(obj.moveRect.top),
 	_minTimeOff(obj.moveRect.right), _maxTimeOff(obj.moveRect.bottom),
 	_isLooping(obj.moveRect.left == 0), _currentTime(0), _soundDurationMs(0)
 {

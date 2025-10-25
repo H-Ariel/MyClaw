@@ -15,6 +15,8 @@ public:
 	void stopMovingRight(float collisionSize) override;
 	void bounceTop() override;
 
+	bool canUpdateOffScreen() const override { return _state != State::Stand; }
+
 	int getDamage() const;
 
 	bool raise(); // makes the powder keg state to `Raised` and returns `true` if it was `Stand`

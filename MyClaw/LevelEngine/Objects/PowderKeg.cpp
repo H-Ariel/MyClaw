@@ -4,7 +4,7 @@
 
 
 PowderKeg::PowderKeg(const WwdObject& obj)
-	: BaseDynamicPlaneObject(obj), _imageSet(obj.imageSet), _state(State::Stand), _isPlaySound(false)
+	: BaseDynamicPlaneObject(obj, false), _imageSet(obj.imageSet), _state(State::Stand), _isPlaySound(false)
 {
 	_ani = AssetsManager::getAnimationFromPidImage(PathManager::getImageSetPath(_imageSet) + "/001.PID")->getCopy();
 }

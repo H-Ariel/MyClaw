@@ -4,7 +4,7 @@
 
 
 Cannon::Cannon(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _timeCounter(0), _shootDirection(NotShoot), _ballOffset(0)
+	: BaseStaticPlaneObject(obj, true), _timeCounter(0), _shootDirection(NotShoot), _ballOffset(0)
 {
 	const string anisPath = PathManager::getAnimationSetPath(obj.imageSet);
 

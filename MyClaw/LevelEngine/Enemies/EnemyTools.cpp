@@ -8,7 +8,7 @@ constexpr float GEM_SPEED = 0.2f;
 
 
 EnemyFallDeath::EnemyFallDeath(const WwdObject& obj, shared_ptr<UIAnimation> deadAni)
-	: BaseDynamicPlaneObject(obj)
+	: BaseDynamicPlaneObject(obj, true)
 {
 	_ani = deadAni;
 	speed.x = obj.speedX / 1000.f;

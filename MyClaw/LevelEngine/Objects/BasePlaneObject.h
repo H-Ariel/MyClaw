@@ -25,7 +25,7 @@ public:
 		Interface = 9000
 	};
 
-	BasePlaneObject(const WwdObject& obj);
+	BasePlaneObject(const WwdObject& obj, bool canUpdateOffScreen);
 	virtual void Logic(uint32_t elapsedTime) override = 0;
 	virtual void Draw() override;
 	virtual Rectangle2D GetRect() override;
@@ -39,6 +39,7 @@ public:
 
 	bool tryCatchPlayer(); // returns if successfully caught the player
 	bool isMirrored() const { return _isMirrored; }
+	virtual bool canUpdateOffScreen() const { return _canUpdateOffScreen; }
 
 	int logicZ, drawZ;
 	bool removeObject;
@@ -52,6 +53,7 @@ protected:
 
 private:
 	int _timeDelay; // time to dealy in milliseconds. `private` to force use of `Delay`, `isDelayed`, and `decreaseTimeDelay`
+	bool _canUpdateOffScreen; // If the value is true then the object will update even if it is not on the screen, otherwise it will freeze and update when the player is close to it.
 };
 
 
@@ -59,7 +61,7 @@ private:
 class BaseStaticPlaneObject : public BasePlaneObject
 {
 public:
-	BaseStaticPlaneObject(const WwdObject& obj);
+	BaseStaticPlaneObject(const WwdObject& obj, bool canUpdateOffScreen);
 	void Logic(uint32_t elapsedTime) override;
 	Rectangle2D GetRect() override;
 
@@ -74,7 +76,7 @@ protected:
 class BaseDynamicPlaneObject : public BasePlaneObject
 {
 public:
-	BaseDynamicPlaneObject(const WwdObject& obj);
+	BaseDynamicPlaneObject(const WwdObject& obj, bool canUpdateOffScreen);
 
 	virtual bool isFalling() const;
 
@@ -95,7 +97,7 @@ public:
 class BaseDamageObject : public BaseStaticPlaneObject 
 {
 public:
-	BaseDamageObject(const WwdObject& obj, int damage);
+	BaseDamageObject(const WwdObject& obj, int damage, bool canUpdateOffScreen);
 
 	virtual bool isDamage() const = 0;
 
@@ -109,7 +111,7 @@ protected:
 class BaseSoundObject : public BaseStaticPlaneObject
 {
 public:
-	BaseSoundObject(const WwdObject& obj);
+	BaseSoundObject(const WwdObject& obj, bool canUpdateOffScreen);
 
 	void Draw() override;
 

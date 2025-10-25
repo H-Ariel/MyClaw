@@ -2,7 +2,7 @@
 
 
 Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const string& imageSet)
-	: BaseDynamicPlaneObject(obj), _damage(obj.damage), _timer(nullptr)
+	: BaseDynamicPlaneObject(obj, true), _damage(obj.damage), _timer(nullptr)
 {
 	if (aniDirPath.empty()) return;
 	else if (endsWith(aniDirPath, ".ANI"))
@@ -17,7 +17,7 @@ Projectile::Projectile(const WwdObject& obj, const string& aniDirPath, const str
 	init();
 }
 Projectile::Projectile(shared_ptr<UIAnimation> ani, int damage, D2D1_POINT_2F speed, D2D1_POINT_2F initialPosition)
-	: BaseDynamicPlaneObject({}), _damage(damage)
+	: BaseDynamicPlaneObject({}, true), _damage(damage)
 {
 	_ani = ani;
 	this->speed = speed;

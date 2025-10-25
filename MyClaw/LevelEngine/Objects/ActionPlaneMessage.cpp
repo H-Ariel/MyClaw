@@ -3,7 +3,7 @@
 
 
 ActionPlaneMessage::ActionPlaneMessage(const string& message, int timeout)
-	: BasePlaneObject({}), _timer(timeout, [this] { removeObject = true; })
+	: BasePlaneObject({}, true), _timer(timeout, [this] { removeObject = true; })
 {
 	text.text = wstring(message.begin(), message.end());
 	text.color = ColorF::White;

@@ -108,7 +108,7 @@ bool RedTail::checkForHurts()
 
 
 RedTailSpikes::RedTailSpikes(const WwdObject& obj)
-	: BaseDamageObject(obj, 20)
+	: BaseDamageObject(obj, 20, false)
 {
 	_ani = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet));
 	_ani->updateFrames = false; // only one frame, no need to update
@@ -118,7 +118,7 @@ bool RedTailSpikes::isDamage() const { return true; }
 
 
 RedTailWind::RedTailWind(const WwdObject& obj)
-	: BasePlaneObject(obj), _windTimeCounter(0), _windSoundId(AssetsManager::INVALID_AUDIOPLAYER_ID)
+	: BasePlaneObject(obj, true), _windTimeCounter(0), _windSoundId(AssetsManager::INVALID_AUDIOPLAYER_ID)
 {
 	_wind = this;
 	logicZ = DefaultZCoord::Characters - 1; // before the player so he can stop moving left when he arrives to the spikes

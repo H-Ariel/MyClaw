@@ -3,9 +3,10 @@
 #include "Player/Player.h"
 
 
-BasePlaneObject::BasePlaneObject(const WwdObject& obj)
+BasePlaneObject::BasePlaneObject(const WwdObject& obj, bool canUpdateOffScreen)
 	: UIBaseElement({ (float)obj.x, (float)obj.y }), _timeDelay(0),
 	logicZ(obj.z), drawZ(obj.z), removeObject(false), _ani(nullptr),
+	_canUpdateOffScreen(canUpdateOffScreen),
 	_isMirrored(obj.drawFlags & WwdObject::Mirror),
 	_isVisible(!(obj.drawFlags & WwdObject::NoDraw)),
 	_upsideDown(obj.drawFlags & WwdObject::Invert) {}
@@ -45,15 +46,15 @@ bool BasePlaneObject::tryCatchPlayer()
 void BasePlaneObject::addTimer(Timer* timer) { GO::addTimer(timer); } // TODO maybe this metho should not be here... let them use `GO::`
 
 
-BaseStaticPlaneObject::BaseStaticPlaneObject(const WwdObject& obj)
-	: BasePlaneObject(obj) {}
+BaseStaticPlaneObject::BaseStaticPlaneObject(const WwdObject& obj, bool canUpdateOffScreen)
+	: BasePlaneObject(obj, canUpdateOffScreen) {}
 void BaseStaticPlaneObject::Logic(uint32_t elapsedTime) {}
 Rectangle2D BaseStaticPlaneObject::GetRect() { return _objRc; }
 void BaseStaticPlaneObject::setObjectRectangle() { myMemCpy(_objRc, BasePlaneObject::GetRect()); }
 
 
-BaseDynamicPlaneObject::BaseDynamicPlaneObject(const WwdObject& obj)
-	: BasePlaneObject(obj), speed({}) {}
+BaseDynamicPlaneObject::BaseDynamicPlaneObject(const WwdObject& obj, bool canUpdateOffScreen)
+	: BasePlaneObject(obj, canUpdateOffScreen), speed({}) {}
 bool BaseDynamicPlaneObject::isFalling() const { return speed.y > 0; }
 void BaseDynamicPlaneObject::stopFalling(float collisionSize) { speed.y = 0; position.y -= collisionSize; }
 void BaseDynamicPlaneObject::stopMovingLeft(float collisionSize) { speed.x = 0; position.x += collisionSize; }
@@ -63,12 +64,12 @@ void BaseDynamicPlaneObject::whenTouchDeath() { removeObject = true; }
 
 
 
-BaseDamageObject::BaseDamageObject(const WwdObject& obj, int damage)
-	: BaseStaticPlaneObject(obj), _damage(damage) {}
+BaseDamageObject::BaseDamageObject(const WwdObject& obj, int damage, bool canUpdateOffScreen)
+	: BaseStaticPlaneObject(obj, canUpdateOffScreen), _damage(damage) {}
 
 
-BaseSoundObject::BaseSoundObject(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj),
+BaseSoundObject::BaseSoundObject(const WwdObject& obj, bool canUpdateOffScreen)
+	: BaseStaticPlaneObject(obj, canUpdateOffScreen),
 	_wavPath(PathManager::getSoundFilePath(obj.animation))
 {
 	_volume = obj.damage ? obj.damage : 100;

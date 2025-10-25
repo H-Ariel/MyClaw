@@ -22,7 +22,7 @@ const initializer_list<Item::Type> Item::UpdateFramesTypes = {
 
 
 Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
-	: BaseDynamicPlaneObject(obj), _type((Type)type), _useGlitter(false)
+	: BaseDynamicPlaneObject(obj, false), _type((Type)type), _useGlitter(false)
 {
 	if (_type == Type::Default)
 	{

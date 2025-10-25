@@ -11,7 +11,7 @@ constexpr float STEP_SIZE = M_2PI / NUM_OF_ITEMS_IN_FULL_SHIELD; // the angle be
 
 
 LordOmarShield::LordOmarShield(D2D1_POINT_2F center, const string& shieldItemImageSet, bool rotateClockwise)
-	: BaseDynamicPlaneObject({}),
+	: BaseDynamicPlaneObject({}, true),
 	_center(center),
 	_rotateClockwise(rotateClockwise)
 {

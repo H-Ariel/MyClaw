@@ -8,7 +8,7 @@ constexpr float RECT_OFFSET = 5;
 
 
 Rope::Rope(const WwdObject& obj)
-	: BasePlaneObject(obj), _edgePos({})
+	: BasePlaneObject(obj, false), _edgePos({})
 {
 	logicZ = DefaultZCoord::Characters + 1;
 	_ani = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet), false, obj.speedX ? (obj.speedX / 60) : 25);

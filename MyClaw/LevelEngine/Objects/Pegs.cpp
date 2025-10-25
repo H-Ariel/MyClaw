@@ -10,7 +10,7 @@ static bool canCatchPlayer(UIAnimation* ani) {
 }
 
 TogglePeg::TogglePeg(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _startTimeDelay(0)
+	: BaseStaticPlaneObject(obj, true), _startTimeDelay(0)
 {
 	int startTimeDelay = 0;
 
@@ -105,7 +105,7 @@ void TogglePeg::exitEasyMode() {
 }
 
 StartSteppingStone::StartSteppingStone(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj)
+	: BaseStaticPlaneObject(obj, true)
 {
 	const string imageSetPath(PathManager::getImageSetPath(obj.imageSet));
 
@@ -141,7 +141,7 @@ void StartSteppingStone::Logic(uint32_t elapsedTime)
 }
 
 CrumblingPeg::CrumblingPeg(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj)
+	: BaseStaticPlaneObject(obj, false)
 {
 	vector<UIAnimation::FrameData*> images = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
 	myMemCpy(images[0]->duration, (uint32_t)obj.counter);
@@ -173,7 +173,7 @@ void CrumblingPeg::Reset()
 }
 
 BreakPlank::BreakPlank(const WwdObject& obj, float topOffset)
-	: BaseStaticPlaneObject(obj), _topOffset(topOffset)
+	: BaseStaticPlaneObject(obj, false), _topOffset(topOffset)
 {
 	vector<UIAnimation::FrameData*> images = AssetsManager::getAnimationFromDirectory(PathManager::getImageSetPath(obj.imageSet))->getFramesList();
 	myMemCpy(images[0]->duration, (uint32_t)obj.counter);

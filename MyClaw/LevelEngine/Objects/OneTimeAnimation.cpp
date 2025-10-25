@@ -2,7 +2,7 @@
 
 
 OneTimeAnimation::OneTimeAnimation(D2D1_POINT_2F pos, shared_ptr<UIAnimation> ani, bool removeAtEnd)
-	: BasePlaneObject({}), _removeAtEnd(removeAtEnd)
+	: BasePlaneObject({}, true), _removeAtEnd(removeAtEnd)
 {
 	drawZ = DefaultZCoord::Characters + 2; // always cover characters
 	_ani = ani;

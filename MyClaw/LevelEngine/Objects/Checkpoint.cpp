@@ -5,7 +5,7 @@
 
 
 Checkpoint::Checkpoint(const WwdObject& obj, int levelNumber)
-	: BaseStaticPlaneObject(obj), _state(States::Down), _levelNumber(levelNumber),
+	: BaseStaticPlaneObject(obj, false), _state(States::Down), _levelNumber(levelNumber),
 	_imageSetPath(PathManager::getImageSetPath(obj.imageSet)), _superCheckpoint(0), _isSaved(false)
 {
 	_ani = AssetsManager::getAnimationFromPidImage(_imageSetPath + "/001.PID");

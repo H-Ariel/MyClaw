@@ -4,7 +4,7 @@
 
 
 SpringBoard::SpringBoard(const WwdObject& obj, int levelNumber)
-	: BaseStaticPlaneObject(obj), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
+	: BaseStaticPlaneObject(obj, false), _force(sqrt(2 * GRAVITY * (obj.maxY > 0 ? obj.maxY : 450)))
 {
 	string anisPath;
 	if (obj.imageSet == "LEVEL_WATERROCK") // level 7,13

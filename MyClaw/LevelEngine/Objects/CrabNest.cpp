@@ -3,7 +3,7 @@
 
 
 CrabNest::CrabNest(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj)
+	: BaseStaticPlaneObject(obj, false)
 {
 	_ani = AssetsManager::loadCopyAnimation("LEVEL7/ANIS/HATCHNEST.ANI", PathManager::getImageSetPath(obj.imageSet));
 	_ani->position = position;

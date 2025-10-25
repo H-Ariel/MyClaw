@@ -152,7 +152,7 @@ void Gabriel::changeSwitch()
 }
 
 GabrielCannon::GabrielCannon(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj)
+	: BaseStaticPlaneObject(obj, true)
 {
 	_GabrielCannon = this;
 
@@ -228,7 +228,7 @@ void GabrielCannon::setAnimation(shared_ptr<UIAnimation> newAni){
 
 
 GabrielCannonSwitch::GabrielCannonSwitch(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj), _switchCannonTime(OPERATE_CANNON_TIME)
+	: BaseStaticPlaneObject(obj, true), _switchCannonTime(OPERATE_CANNON_TIME)
 {
 	_ani = AssetsManager::loadAnimation(PathManager::getAnimationSetPath(obj.imageSet) + "/SWITCH.ANI", PathManager::getImageSetPath(obj.imageSet));
 	_ani->position = position;
@@ -251,7 +251,7 @@ void GabrielCannonSwitch::Logic(uint32_t elapsedTime)
 
 
 GabrielCannonButton::GabrielCannonButton(const WwdObject& obj)
-	: BaseStaticPlaneObject(obj)
+	: BaseStaticPlaneObject(obj, true)
 {
 	_idle = AssetsManager::loadAnimation(PathManager::getAnimationSetPath(obj.imageSet) + "/IDLE.ANI", PathManager::getImageSetPath(obj.imageSet));
 	_pressed = AssetsManager::getAnimationFromPidImage(PathManager::getImageSetPath(obj.imageSet) + "/001.PID");

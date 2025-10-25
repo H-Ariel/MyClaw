@@ -8,7 +8,7 @@ constexpr float OFFSET_Y = TILE_SIZE / 2.f;
 
 
 TProjectilesShooter::TProjectilesShooter(const WwdObject& obj, int levelNumber)
-	: BaseStaticPlaneObject(obj), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
+	: BaseStaticPlaneObject(obj, false), _maxRestTime(obj.speed > 100 ? obj.speed : 500),
 	_damage(obj.damage > 0 ? obj.damage : 5), _projSpeed({ obj.speedX / 1000.f, obj.speedY / 1000.f }),
 	_offset({}), _projIsOut(false)
 {
