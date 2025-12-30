@@ -86,7 +86,7 @@ public:
 	/// </summary>
 	/// <param name="rc">The rectangle to check for visibility within the window.</param>
 	/// <returns>True if the rectangle is within the window, false otherwise.</returns>
-	static bool isInScreen(Rectangle2D rc);
+	static bool isInCameraBounds(const Rectangle2D& rc);
 
 	/// <summary>
 	/// Resizes the rendering target.
@@ -115,14 +115,14 @@ public:
 	/// <param name="dst">The rectangle area to draw.</param>
 	/// <param name="color">The color to use for drawing the rectangle.</param>
 	/// <param name="width">The line width for the rectangle. Default is 1.</param>
-	static void drawRect(Rectangle2D dst, ColorF color, float width = 1);
+	static void drawRect(const Rectangle2D& dst, ColorF color, float width = 1);
 
 	/// <summary>
 	/// Fills a rectangle on the window with the specified color.
 	/// </summary>
 	/// <param name="dst">The rectangle area to fill.</param>
 	/// <param name="color">The color to fill the rectangle with.</param>
-	static void fillRect(Rectangle2D dst, ColorF color);
+	static void fillRect(const Rectangle2D& dst, ColorF color);
 
 	/// <summary>
 	/// Draws a bitmap (image) on the window with the specified transformations.
@@ -132,7 +132,7 @@ public:
 	/// <param name="mirrored">Whether to mirror the image horizontally.</param>
 	/// <param name="upsideDown">Whether to flip the image vertically.</param>
 	/// <param name="opacity">The opacity level of the image (0.0 to 1.0).</param>
-	static void drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, bool upsideDown, float opacity);
+	static void drawBitmap(ID2D1Bitmap* bitmap, const Rectangle2D& dst, bool mirrored, bool upsideDown, float opacity);
 
 	/// <summary>
 	/// Draws an image on the window.
@@ -176,7 +176,7 @@ public:
 	/// </summary>
 	/// <param name="color">The color to create the brush with.</param>
 	/// <returns>A pointer to the created solid color brush.</returns>
-	static ID2D1SolidColorBrush* getBrush(ColorF color);
+	static ID2D1SolidColorBrush* getBrush(const ColorF& color);
 
 	/// <summary>
 	/// Creates a text format from the provided font data.
@@ -218,10 +218,11 @@ public:
 	static const D2D1_SIZE_F DEFAULT_WINDOW_SIZE;
 
 private:
-	static void drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width);
-	static void fillRect(Rectangle2D dst, D2D1_COLOR_F color);
+	static void drawRect(const Rectangle2D& dst, D2D1_COLOR_F color, float width);
+	static void fillRect(const Rectangle2D& dst, D2D1_COLOR_F color);
 	static ID2D1SolidColorBrush* getBrush(D2D1_COLOR_F color);
-	static bool _isInScreen(Rectangle2D& rc); // return if `rc` is in the window area and subtracts the window-offset from it
+	static bool isVisibleOnScreen(const Rectangle2D& rc); // return if `rc` is in the window area
+	static Rectangle2D removeOffsets(const Rectangle2D& rc); // subtracts the window-offset from it
 
 	static WindowManager* instance;
 

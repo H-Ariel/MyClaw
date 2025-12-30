@@ -54,6 +54,7 @@
 #include "Enemies/TigerGuard.h"
 #include "Enemies/Bosses/LordOmar/LordOmar.h"
 
+#include "../SavedDataManager.h"
 
 #ifdef _DEBUG
 #define NO_ENEMIES
@@ -69,15 +70,21 @@ BasePlaneObject* LevelObjectsFactory::createObject(const WwdObject& obj) {
 		obj.logic == "AniCycle" || obj.logic == "AniCycleNormal" ||
 		obj.logic == "Sign" || obj.logic == "GooCoverup")
 	{
-		return DBG_NEW DoNothing(obj);
+		if (SavedDataManager::settings.details)
+			return DBG_NEW DoNothing(obj);
+		return nullptr;
 	}
 	else if (obj.logic == "GlobalAmbientSound")
 	{
-		return DBG_NEW GlobalAmbientSound(obj, _wwd->levelNumber);
+		if (SavedDataManager::settings.details)
+			return DBG_NEW GlobalAmbientSound(obj, _wwd->levelNumber);
+		return nullptr;
 	}
 	else if (obj.logic == "AmbientSound" || obj.logic == "SpotAmbientSound")
 	{
-		return DBG_NEW AmbientSound(obj);
+		if (SavedDataManager::settings.details)
+			return DBG_NEW AmbientSound(obj);
+		return nullptr;
 	}
 	else if (contains(obj.logic, "SoundTrigger"))
 	{

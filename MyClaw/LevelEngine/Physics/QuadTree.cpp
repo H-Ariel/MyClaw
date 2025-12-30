@@ -112,7 +112,7 @@ void QuadTree::QuadTreeNode::checkCollides(BaseDynamicPlaneObject* obj, const Re
 				if (GO::player->isClimbing())
 				{
 					// set the player position on the ladder easily for the user
-					GO::getPlayerPosition().x = (tileRc.left + tileRc.right) / 2;
+					GO::playerPosition().x = (tileRc.left + tileRc.right) / 2;
 				}
 			}
 			};

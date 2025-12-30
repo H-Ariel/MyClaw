@@ -81,6 +81,6 @@ void Fish::makeAttack(float deltaX, float deltaY)
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 	}
 }

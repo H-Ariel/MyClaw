@@ -67,9 +67,9 @@ void Katherine::Logic(uint32_t elapsedTime)
 			_isMirrored = speed.x < 0;
 	}
 
-	if (_ani != ANIMATION_FLIP && abs(GO::getPlayerPosition().x - position.x) > 64)
+	if (_ani != ANIMATION_FLIP && abs(GO::playerPosition().x - position.x) > 64)
 	{
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 		if (_isMirrored) speed.x = -abs(speed.x);
 		else speed.x = abs(speed.x);
 	}
@@ -207,7 +207,7 @@ void Katherine::makeAttack(float deltaX, float deltaY)
 		_ani = ANIMATION_STRIKE2;
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 
 		_attackTimer.reset(800);
 		addTimer(&_attackTimer);
@@ -217,7 +217,7 @@ void Katherine::makeAttack(float deltaX, float deltaY)
 		_ani = ANIMATION_STRIKE1;
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 
 		_attackTimer.reset(1200);
 		addTimer(&_attackTimer);

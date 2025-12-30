@@ -1,4 +1,4 @@
-#include "Rope.h"
+﻿#include "Rope.h"
 #include "Player/Player.h"
 #include "../GlobalObjects.h"
 #include "../CheatsManager.h"
@@ -31,22 +31,23 @@ void Rope::Logic(uint32_t elapsedTime)
 	if (!GO::player->isJumping() && GO::getPlayerRect().intersects(GetRect()) && !GO::cheats->isFlying())
 	{
 		GO::player->rope = this;
+		GO::player->resetKeys();
 	}
 
 	if (GO::player->rope == this)
 	{
 		// TODO maybe calculate according to speed and angle...
 
-		GO::getPlayerPosition().x = _edgePos.x;
-		GO::getPlayerPosition().y = _edgePos.y;
+		GO::playerPosition().x = _edgePos.x;
+		GO::playerPosition().y = _edgePos.y;
 
 		if (GO::player->isMirrored())
 		{
-			GO::getPlayerPosition().x -= 2 * RECT_OFFSET;
+			GO::playerPosition().x -= 2 * RECT_OFFSET;
 		}
 		else
 		{
-			GO::getPlayerPosition().x += 2 * RECT_OFFSET;
+			GO::playerPosition().x += 2 * RECT_OFFSET;
 		}
 	}
 }

@@ -77,6 +77,8 @@ public:
 	void onSpacePressed();
 	void onZPressed();
 
+	void resetKeys();
+
 
 	D2D1_POINT_2F startPosition;
 	Elevator* elevator; // stores the elevator he is standing on (if any)
@@ -105,7 +107,6 @@ private:
 	void calcRect(); // calculate the player rectangle and save in `_saveCurrRect`
 	void calcAttackRect(); // calculate the player attack rectangle and save in `_saveCurrAttackRect`
 	void shootSwordProjectile();
-	void resetKeys();
 	void stopPowerup();
 	void startPowerup(Item* powerup);
 	bool addHealth(int health);

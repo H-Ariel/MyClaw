@@ -1,6 +1,7 @@
 #include "Player/Player.h"
 #include "../GlobalObjects.h"
 
+#define GLITTER_ANIMATION  AssetsManager::getAnimationFromDirectory("GAME/IMAGES/GLITTER");
 
 const initializer_list<Item::Type> Item::UpdateFramesTypes = {
 	Warp,
@@ -22,7 +23,7 @@ const initializer_list<Item::Type> Item::UpdateFramesTypes = {
 
 
 Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
-	: BaseDynamicPlaneObject(obj, false), _type((Type)type), _useGlitter(false)
+	: BaseDynamicPlaneObject(obj, false), _type((Type)type)
 {
 	if (_type == Type::Default)
 	{
@@ -35,8 +36,8 @@ Item::Item(const WwdObject& obj, int8_t type, bool isFromMap)
 
 	if (isFromMap && _type != Type::BossWarp && _type != Type::Warp && _type != Type::Treasure_Coins)
 	{
-		_useGlitter = true;
-		_glitterAnimation = AssetsManager::getAnimationFromDirectory("GAME/IMAGES/GLITTER");
+		if (SavedDataManager::settings.details)
+			_glitterAnimation = GLITTER_ANIMATION;
 	}
 
 	_respawning = obj.damage;
@@ -111,7 +112,7 @@ void Item::Draw()
 	{
 		BaseDynamicPlaneObject::Draw();
 
-		if (_useGlitter)
+		if (_glitterAnimation)
 		{
 			_glitterAnimation->position = position;
 			_glitterAnimation->Draw();
@@ -123,8 +124,7 @@ void Item::stopFalling(float collisionSize)
 	speed.y = 0;
 	speed.x = 0;
 	position.y -= collisionSize;
-	_useGlitter = true;
-	_glitterAnimation = AssetsManager::getAnimationFromDirectory("GAME/IMAGES/GLITTER");
+	_glitterAnimation = GLITTER_ANIMATION;
 }
 OneTimeAnimation* Item::getTreasureScoreAnimation() const
 {

@@ -26,7 +26,7 @@ public:
 	static shared_ptr<CheatsManager> cheats;
 	static ClawLevelEngine* clawLevelEngine;
 
-	static D2D1_POINT_2F& getPlayerPosition();
+	static D2D1_POINT_2F& playerPosition();
 	static Rectangle2D getPlayerRect();
 	static pair<Rectangle2D, int> getPlayerAttackRect();
 	static bool isPlayerTakeDamage();

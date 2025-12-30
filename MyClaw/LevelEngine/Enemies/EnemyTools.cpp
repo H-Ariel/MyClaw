@@ -23,7 +23,7 @@ void EnemyFallDeath::Logic(uint32_t elapsedTime)
 	position.y += speed.y * elapsedTime;
 	_ani->position = position;
 	_ani->Logic(elapsedTime);
-	removeObject = !WindowManager::isInScreen(_ani->GetRect());
+	removeObject = !WindowManager::isInCameraBounds(_ani->GetRect());
 }
 
 BossGem::BossGem(const WwdObject& obj)

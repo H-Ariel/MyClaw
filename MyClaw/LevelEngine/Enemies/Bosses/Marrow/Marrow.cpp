@@ -70,7 +70,7 @@ void Marrow::makeAttack(float deltaX, float deltaY)
 		_ani = _animations["STRIKE2"]; // knife attack
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 	}
 }
 bool Marrow::checkForHurts()

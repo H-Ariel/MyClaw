@@ -55,9 +55,9 @@ void PlayState::Logic(uint32_t elapsedTime)
 
 void DeathFallState::Logic(uint32_t elapsedTime)
 {
-	GO::getPlayerPosition().y += CC_FALLDEATH_SPEED * elapsedTime;
+	GO::playerPosition().y += CC_FALLDEATH_SPEED * elapsedTime;
 	player->Logic(0); // update position of animation
-	if (GO::getPlayerPosition().y - _levelEngine->actionPlane->position.y > WindowManager::getCameraSize().height)
+	if (GO::playerPosition().y - _levelEngine->actionPlane->position.y > WindowManager::getCameraSize().height)
 	{
 		player->loseLife();
 		AssetsManager::playWavFile("GAME/SOUNDS/CIRCLEFADE.WAV");
@@ -90,7 +90,7 @@ void DeathCloseState::Logic(uint32_t elapsedTime)
 }
 void DeathCloseState::Draw()
 {
-	WindowManager::drawHole(GO::getPlayerPosition(), _holeRadius);
+	WindowManager::drawHole(GO::playerPosition(), _holeRadius);
 }
 
 void DeathOpenState::Logic(uint32_t elapsedTime)
@@ -101,7 +101,7 @@ void DeathOpenState::Logic(uint32_t elapsedTime)
 }
 void DeathOpenState::Draw()
 {
-	WindowManager::drawHole(GO::getPlayerPosition(), _holeRadius);
+	WindowManager::drawHole(GO::playerPosition(), _holeRadius);
 }
 
 WrapCloseState::WrapCloseState(ClawLevelEngine* clawLevelEngine, Warp* destinationWarp)
@@ -115,7 +115,7 @@ void WrapCloseState::Logic(uint32_t elapsedTime)
 	_wrapCoverTop -= SCREEN_SPEED * elapsedTime;
 	if (_wrapCoverTop <= 0)
 	{
-		GO::getPlayerPosition() = _wrapDestination;
+		GO::playerPosition() = _wrapDestination;
 		player->speed = {}; // stop player
 		if (_isBossWarp)
 		{

@@ -9,6 +9,7 @@
 #include "Objects/Stalactite.h"
 #include "Objects/Crate.h"
 #include "Objects/OneTimeAnimation.h"
+#include "Objects/Rope.h"
 #include "Enemies/Bosses/BaseBoss.h"
 #include "Enemies/Bosses/Gabriel/GabrielRedTailPirate.h"
 
@@ -304,7 +305,7 @@ void ActionPlane::Logic(uint32_t elapsedTime)
 	{
 		obj = _objects[i];
 
-		if (!WindowManager::isInScreen(obj->GetRect()) && !obj->canUpdateOffScreen()) {
+		if (!WindowManager::isInCameraBounds(obj->GetRect()) && !obj->canUpdateOffScreen()) {
 			continue;
 		}
 

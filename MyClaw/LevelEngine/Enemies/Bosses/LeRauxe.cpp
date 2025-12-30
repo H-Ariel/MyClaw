@@ -41,7 +41,7 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		...
 		*/
 		speed.y = -(0.64f - 75 * GRAVITY);
-		speed.x = (position.x < GO::getPlayerPosition().x) ? -0.35f : 0.35f;
+		speed.x = (position.x < GO::playerPosition().x) ? -0.35f : 0.35f;
 
 		_isAttack = false;
 		_canJump = false;
@@ -74,9 +74,9 @@ void LeRauxe::Logic(uint32_t elapsedTime)
 		_isMirrored = speed.x < 0;
 	}
 	
-	if (_ani != ANIMATION_JUMPBACK && abs(GO::getPlayerPosition().x - position.x) > 64)
+	if (_ani != ANIMATION_JUMPBACK && abs(GO::playerPosition().x - position.x) > 64)
 	{
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 		if (!_isMirrored) speed.x = abs(speed.x);
 		else speed.x = -abs(speed.x);
 	}
@@ -213,7 +213,7 @@ void LeRauxe::makeAttack(float deltaX, float deltaY)
 		else _ani = ANIMATION_STAB;
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 
 		_attackTimer.reset(600);
 		addTimer(&_attackTimer);

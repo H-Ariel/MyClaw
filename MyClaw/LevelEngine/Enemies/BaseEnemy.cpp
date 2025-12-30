@@ -95,7 +95,7 @@ BaseEnemy::~BaseEnemy()
 		}
 
 		// add dead enemy
-		obj.speedX = position.x < GO::getPlayerPosition().x ? -250 : 250;
+		obj.speedX = position.x < GO::playerPosition().x ? -250 : 250;
 		obj.speedY = -500;
 		// fit enemy death animation
 		switch (_deathType)
@@ -179,7 +179,7 @@ void BaseEnemy::Logic(uint32_t elapsedTime)
 void BaseEnemy::makeAttack()
 {
 	if (_isStanding || doesEnemySeeClaw())
-		makeAttack(abs(GO::getPlayerPosition().x - position.x), abs(GO::getPlayerPosition().y - position.y));
+		makeAttack(abs(GO::playerPosition().x - position.x), abs(GO::playerPosition().y - position.y));
 }
 void BaseEnemy::makeAttack(float deltaX, float deltaY)
 {
@@ -191,7 +191,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = GO::getPlayerPosition().x < position.x;
+			_isMirrored = GO::playerPosition().x < position.x;
 		}
 		if (_canStrikeDuck && GO::isPlayerDuck())
 		{
@@ -199,7 +199,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = GO::getPlayerPosition().x < position.x;
+			_isMirrored = GO::playerPosition().x < position.x;
 		}
 	}
 	else if (deltaX < 256) // CC is far from enemy
@@ -210,7 +210,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = GO::getPlayerPosition().x < position.x;
+			_isMirrored = GO::playerPosition().x < position.x;
 
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
@@ -225,7 +225,7 @@ void BaseEnemy::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = GO::getPlayerPosition().x < position.x;
+			_isMirrored = GO::playerPosition().x < position.x;
 
 			WwdObject obj;
 			obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));
@@ -376,7 +376,7 @@ bool BaseEnemy::checkForHurts()
 bool BaseEnemy::doesEnemySeeClaw() const
 {
 	return !GO::isPlayerGhost() && (
-		(!_isMirrored && GO::getPlayerPosition().x > position.x) ||
-		(_isMirrored && GO::getPlayerPosition().x < position.x)
+		(!_isMirrored && GO::playerPosition().x > position.x) ||
+		(_isMirrored && GO::playerPosition().x < position.x)
 	);
 }

@@ -142,7 +142,7 @@ void CheatsManager::addPowerup(int8_t powerupType)
 	WwdObject obj;
 	obj.smarts = 30000; // 30 seconds
 	Item* item = Item::getItem(obj, powerupType);
-	item->position = GO::getPlayerPosition();
+	item->position = GO::playerPosition();
 	GO::player->collectItem(item);
 	item->playItemSound();
 	delete item;

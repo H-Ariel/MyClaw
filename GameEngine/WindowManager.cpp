@@ -79,9 +79,9 @@ void WindowManager::setDefaultWindowScale()
 	));
 }
 
-bool WindowManager::isInScreen(Rectangle2D rc)
+bool WindowManager::isInCameraBounds(const Rectangle2D& rc)
 {
-	return _isInScreen(rc);
+	return isVisibleOnScreen(removeOffsets(rc));
 }
 
 void WindowManager::resizeRenderTarget(D2D1_SIZE_U newSize)
@@ -106,33 +106,39 @@ void WindowManager::Clear()
 	instance->_renderTarget->Clear(instance->_backgroundColor);
 }
 
-void WindowManager::drawRect(Rectangle2D dst, D2D1_COLOR_F color, float width)
+void WindowManager::drawRect(const Rectangle2D& dst, D2D1_COLOR_F color, float width)
 {
-	if (!_isInScreen(dst))
-		return;
-	if (ID2D1SolidColorBrush* brush = getBrush(color))
-		instance->_renderTarget->DrawRectangle(dst, brush, width);
+	Rectangle2D rc = removeOffsets(dst);
+	if (isVisibleOnScreen(rc))
+	{
+		if (ID2D1SolidColorBrush* brush = getBrush(color))
+			instance->_renderTarget->DrawRectangle(rc, brush, width);
+	}
 }
-void WindowManager::drawRect(Rectangle2D dst, ColorF color, float width)
+void WindowManager::drawRect(const Rectangle2D& dst, ColorF color, float width)
 {
 	drawRect(dst, (D2D1_COLOR_F)color, width);
 }
-void WindowManager::fillRect(Rectangle2D dst, D2D1_COLOR_F color)
+void WindowManager::fillRect(const Rectangle2D& dst, D2D1_COLOR_F color)
 {
-	if (!_isInScreen(dst))
-		return;
-	if (ID2D1SolidColorBrush* brush = getBrush(color))
-		instance->_renderTarget->FillRectangle(dst, brush);
+	Rectangle2D rc = removeOffsets(dst);
+	if (isVisibleOnScreen(rc))
+	{
+		if (ID2D1SolidColorBrush* brush = getBrush(color))
+			instance->_renderTarget->FillRectangle(rc, brush);
+	}
 }
-void WindowManager::fillRect(Rectangle2D dst, ColorF color)
+void WindowManager::fillRect(const Rectangle2D& dst, ColorF color)
 {
 	fillRect(dst, (D2D1_COLOR_F)color);
 }
-void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirrored, bool upsideDown, float opacity)
+void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, const Rectangle2D& dst, bool mirrored, bool upsideDown, float opacity)
 {
 	// TODO find way to render more efficiently - maybe save last `transformMatrix` or render all `mirrored` and `upsideDown` at once
 
-	if (!_isInScreen(dst) || bitmap == nullptr) return;
+	Rectangle2D rc = removeOffsets(dst);
+
+	if (!isVisibleOnScreen(rc) || bitmap == nullptr) return;
 
 	Matrix3x2F originalTransform;
 	instance->_renderTarget->GetTransform(&originalTransform);
@@ -141,18 +147,18 @@ void WindowManager::drawBitmap(ID2D1Bitmap* bitmap, Rectangle2D dst, bool mirror
 	if (mirrored || upsideDown) {
 		Matrix3x2F transformMatrix = originalTransform;
 		if (mirrored) {
-			transformMatrix.dx = (dst.left + dst.right) * transformMatrix.m11; // set offset of X-axis to draw mirrored
+			transformMatrix.dx = (rc.left + rc.right) * transformMatrix.m11; // set offset of X-axis to draw mirrored
 			transformMatrix.m11 = -transformMatrix.m11; // set to draw mirrored (reverse the X-axis)
 		}
 		if (upsideDown) {
-			transformMatrix.dy = (dst.top + dst.bottom) * transformMatrix.m22; // set offset of Y-axis to draw upside down
+			transformMatrix.dy = (rc.top + rc.bottom) * transformMatrix.m22; // set offset of Y-axis to draw upside down
 			transformMatrix.m22 = -transformMatrix.m22; // reverse the Y-axis for upside-down
 		}
 		instance->_renderTarget->SetTransform(transformMatrix);
 	}
 
 	// draw the bitmap
-	instance->_renderTarget->DrawBitmap(bitmap, dst, opacity);
+	instance->_renderTarget->DrawBitmap(bitmap, rc, opacity);
 
 	// reset to the original transformation
 	if (mirrored || upsideDown) {
@@ -227,7 +233,7 @@ ID2D1SolidColorBrush* WindowManager::getBrush(D2D1_COLOR_F color)
 {
 	return getBrush(*((ColorF*)&color));
 }
-ID2D1SolidColorBrush* WindowManager::getBrush(ColorF color)
+ID2D1SolidColorBrush* WindowManager::getBrush(const ColorF& color)
 {
 	if (instance->brushes.count(color) == 0)
 	{
@@ -358,13 +364,19 @@ void WindowManager::clearImages(function<bool(const string&)> filter)
 	}
 }
 
-// remove the window-offset from `rc` and return if it's in the window area
-bool WindowManager::_isInScreen(Rectangle2D& rc)
+bool WindowManager::isVisibleOnScreen(const Rectangle2D& rc)
 {
-	rc.top -= instance->_windowOffset.y;
-	rc.bottom -= instance->_windowOffset.y;
-	rc.left -= instance->_windowOffset.x;
-	rc.right -= instance->_windowOffset.x;
-
 	return (0 <= rc.right && rc.left < instance->_camSize.width && 0 <= rc.bottom && rc.top < instance->_camSize.height);
+}
+
+Rectangle2D WindowManager::removeOffsets(const Rectangle2D& rc)
+{
+	Rectangle2D copy(rc);
+
+	copy.top -= instance->_windowOffset.y;
+	copy.bottom -= instance->_windowOffset.y;
+	copy.left -= instance->_windowOffset.x;
+	copy.right -= instance->_windowOffset.x;
+
+	return copy;
 }

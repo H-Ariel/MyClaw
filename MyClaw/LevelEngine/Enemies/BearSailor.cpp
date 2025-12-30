@@ -46,7 +46,7 @@ void BearSailor::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = GO::getPlayerPosition().x < position.x;
+			_isMirrored = GO::playerPosition().x < position.x;
 			GO::player->squeeze({ position.x + (_isMirrored ? -48 : 48), position.y - 8 }, !_isMirrored);
 			_attackTimer.reset(1000);
 			addTimer(&_attackTimer);
@@ -57,7 +57,7 @@ void BearSailor::makeAttack(float deltaX, float deltaY)
 			_ani->reset();
 			_isStanding = false;
 			_isAttack = true;
-			_isMirrored = GO::getPlayerPosition().x < position.x;
+			_isMirrored = GO::playerPosition().x < position.x;
 		}
 	}
 }

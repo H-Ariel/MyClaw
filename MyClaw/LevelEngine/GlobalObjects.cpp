@@ -10,7 +10,7 @@ shared_ptr<CheatsManager> GlobalObjects::cheats;
 ClawLevelEngine* GlobalObjects::clawLevelEngine = nullptr;
 
 
-D2D1_POINT_2F& GlobalObjects::getPlayerPosition() { return player->position; }
+D2D1_POINT_2F& GlobalObjects::playerPosition() { return player->position; }
 Rectangle2D GlobalObjects::getPlayerRect() { return player->GetRect(); }
 pair<Rectangle2D, int> GlobalObjects::getPlayerAttackRect() { return player->GetAttackRect(); }
 bool GlobalObjects::isPlayerTakeDamage() { return player->isTakeDamage(); }

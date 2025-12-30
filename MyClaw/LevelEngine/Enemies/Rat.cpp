@@ -15,7 +15,7 @@ void Rat::makeAttack(float deltaX, float deltaY)
 		_ani->reset();
 		_isStanding = false;
 		_isAttack = true;
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 
 		WwdObject obj;
 		obj.x = (int32_t)(position.x + (!_isMirrored ? _saveCurrRect.right - _saveCurrRect.left : _saveCurrRect.left - _saveCurrRect.right));

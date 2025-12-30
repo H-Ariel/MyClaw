@@ -29,8 +29,8 @@ void Seagull::Logic(uint32_t elapsedTime)
 	{
 		// if CC close to enemy - dive and attack
 		if (_attackTimer.isFinished() && doesEnemySeeClaw() &&
-			(_minX <= GO::getPlayerPosition().x && GO::getPlayerPosition().x <= _maxX) &&
-			(_minY <= GO::getPlayerPosition().y && GO::getPlayerPosition().y <= _maxY))
+			(_minX <= GO::playerPosition().x && GO::playerPosition().x <= _maxX) &&
+			(_minY <= GO::playerPosition().y && GO::playerPosition().y <= _maxY))
 		{
 			_isAttack = true;
 			speed.x = _isMirrored ? -0.3f : 0.3f;
@@ -40,7 +40,7 @@ void Seagull::Logic(uint32_t elapsedTime)
 	}
 	else if (_ani == ANIMATION_DIVE)
 	{
-		if (position.y >= GO::getPlayerPosition().y)
+		if (position.y >= GO::playerPosition().y)
 		{
 			_isAttack = false;
 			speed.y = -speed.y;

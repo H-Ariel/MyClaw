@@ -129,8 +129,8 @@ void RedTailWind::Logic(uint32_t elapsedTime)
 	if (_windTimeCounter > 0)
 	{
 		_windTimeCounter -= elapsedTime;
-		if (GO::getPlayerPosition().x > 37122) // make sure player do not pass the spikes
-			GO::getPlayerPosition().x -= 0.1f * elapsedTime;
+		if (GO::playerPosition().x > 37122) // make sure player do not pass the spikes
+			GO::playerPosition().x -= 0.1f * elapsedTime;
 		if (_windSoundId == AssetsManager::INVALID_AUDIOPLAYER_ID)
 		{
 			_windSoundId = AssetsManager::playWavFile("LEVEL13/SOUNDS/REDTAIL/WINDWHISTLING.WAV", 50);

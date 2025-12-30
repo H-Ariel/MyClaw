@@ -30,7 +30,7 @@ void Wolvington::Logic(uint32_t elapsedTime)
 		_ani = ANIMATION_JUMPBACK;
 
 		speed.y = -(0.64f - 75 * GRAVITY); // see LeRauex ...
-		speed.x = (position.x < GO::getPlayerPosition().x) ? -0.35f : 0.35f;
+		speed.x = (position.x < GO::playerPosition().x) ? -0.35f : 0.35f;
 
 		_isAttack = false;
 		_canJump = false;
@@ -62,9 +62,9 @@ void Wolvington::Logic(uint32_t elapsedTime)
 		_isMirrored = speed.x < 0;
 	}
 
-	if (_ani != ANIMATION_JUMPBACK && abs(GO::getPlayerPosition().x - position.x) > 64)
+	if (_ani != ANIMATION_JUMPBACK && abs(GO::playerPosition().x - position.x) > 64)
 	{
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 		if (!_isMirrored) speed.x = abs(speed.x);
 		else speed.x = -abs(speed.x);
 	}
@@ -193,7 +193,7 @@ void Wolvington::makeAttack(float deltaX, float deltaY)
 		else _ani = ANIMATION_STRIKE2;
 		_ani->reset();
 		_isAttack = true;
-		_isMirrored = GO::getPlayerPosition().x < position.x;
+		_isMirrored = GO::playerPosition().x < position.x;
 
 		_attackTimer.reset(700);
 		addTimer(&_attackTimer);
@@ -219,7 +219,7 @@ void Wolvington::makeAttack(float deltaX, float deltaY)
 
 			_ani->reset();
 			_isAttack = true;
-			_isMirrored = GO::getPlayerPosition().x < position.x;
+			_isMirrored = GO::playerPosition().x < position.x;
 
 			GO::addObjectToActionPlane(DBG_NEW EnemyProjectile(obj, "LEVEL_WOLVINGTONMAGIC"));
 

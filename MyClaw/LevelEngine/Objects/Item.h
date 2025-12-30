@@ -104,7 +104,6 @@ private:
 	int _duration; // (in milliseconds). used in Catnip, Fire-Sword, etc.
 	Timer _respawnTimer; // (in milliseconds)
 	bool _respawning;
-	bool _useGlitter;
 
 
 	static const initializer_list<Item::Type> UpdateFramesTypes;

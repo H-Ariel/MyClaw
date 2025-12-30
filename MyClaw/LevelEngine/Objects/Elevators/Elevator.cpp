@@ -120,8 +120,8 @@ void Elevator::mainLogic(uint32_t elapsedTime) // logic for every elevator
 		}
 		else
 		{
-			GO::getPlayerPosition().x += deltaX;
-			GO::getPlayerPosition().y = position.y + _offsetY;
+			GO::playerPosition().x += deltaX;
+			GO::playerPosition().y = position.y + _offsetY;
 		}
 	}
 	else

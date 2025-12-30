@@ -65,7 +65,7 @@ void AquatisTentacle::Logic(uint32_t elapsedTime)
 
 		if (_ani == _idle)
 		{
-			float distance = position.x - GO::getPlayerPosition().x - 37;
+			float distance = position.x - GO::playerPosition().x - 37;
 			if (-55 <= distance && distance < 40)
 			{
 				_ani = _slap;

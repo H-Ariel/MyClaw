@@ -23,10 +23,10 @@ void Cannon::Logic(uint32_t elapsedTime)
 {
 	_timeCounter += elapsedTime;
 
-	if ((_shootDirection == ToLeft && position.x > GO::getPlayerPosition().x ||
-		_shootDirection == ToRight && position.x < GO::getPlayerPosition().x)
-		&& abs(position.x - GO::getPlayerPosition().x) <= 512
-		&& abs(position.y - GO::getPlayerPosition().y) <= 256
+	if ((_shootDirection == ToLeft && position.x > GO::playerPosition().x ||
+		_shootDirection == ToRight && position.x < GO::playerPosition().x)
+		&& abs(position.x - GO::playerPosition().x) <= 512
+		&& abs(position.y - GO::playerPosition().y) <= 256
 		&& _ani != _firing && _timeCounter >= 2000) // shoot new bullet each 2 seconds
 	{
 		_ani = _firing;
